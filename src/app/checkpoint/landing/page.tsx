@@ -67,7 +67,7 @@ export default function LandingPage() {
               <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
                 <Button
                   component={Link}
-                  href="/login"
+                  href="/checkpoint/login"
                   size="large"
                   fullWidth
                   variant="contained"
@@ -88,18 +88,10 @@ export default function LandingPage() {
               <Button component={Link} href="/scan" variant="text">
                 Zur Scanner‑Ansicht
               </Button>
-              <Button
-                component={Link}
-                href="/security"
-                variant="text"
-              >
+              <Button component={Link} href="/security" variant="text">
                 Security‑Dashboard
               </Button>
-              <Button
-                component={Link}
-                href="/invitations"
-                variant="text"
-              >
+              <Button component={Link} href="/invitations" variant="text">
                 Einladungen
               </Button>
             </Stack>

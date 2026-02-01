@@ -30,17 +30,17 @@ export default function MePage() {
       </Card>
 
       <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
-        <Button variant="contained" onClick={() => router.push("/me/profile")}>
+        <Button variant="contained" onClick={() => router.push("/checkpoint/me/profile")}>
           Edit Profile
         </Button>
 
-        <Button variant="outlined" onClick={() => router.push("/me/security")}>
+        <Button variant="outlined" onClick={() => router.push("/checkpoint/me/security")}>
           Security & Password
         </Button>
 
         <Button
           variant="outlined"
-          onClick={() => router.push("/me/notifications")}
+          onClick={() => router.push("/checkpoint/me/notifications")}
         >
           My Notifications
         </Button>

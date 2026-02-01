@@ -1,6 +1,11 @@
 "use client";
 
-import { AnimatePresence, cubicBezier, motion, useIsPresent } from "framer-motion";
+import {
+  AnimatePresence,
+  cubicBezier,
+  motion,
+  useIsPresent,
+} from "framer-motion";
 import { usePathname } from "next/navigation";
 import React, { JSX } from "react";
 
@@ -9,9 +14,9 @@ import React, { JSX } from "react";
  * ------------------------------------------------------------ */
 function getAnimationType(path: string): "card" | "push" {
   if (
-    path.startsWith("/login") ||
-    path.startsWith("/register") ||
-    path.startsWith("/unlock")
+    path.startsWith("/checkpoint/login") ||
+    path.startsWith("/checkpoint/register") ||
+    path.startsWith("/checkpoint/unlock")
   ) {
     return "card";
   }

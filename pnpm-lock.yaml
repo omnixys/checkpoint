@@ -95,6 +95,9 @@ importers:
       papaparse:
         specifier: ^5.5.3
         version: 5.5.3
+      qrcode.react:
+        specifier: ^4.2.0
+        version: 4.2.0(react@19.2.3)
       react:
         specifier: 19.2.3
         version: 19.2.3
@@ -1735,6 +1738,11 @@ packages:
 
   property-information@7.1.0:
     resolution: {integrity: sha512-TwEZ+X+yCJmYfL7TPUOcvBZ4QfoT5YenQiJuX//0th53DE6w0xxLEtfK3iyryQFddXuvkIk51EEgrJQ0WJkOmQ==}
+
+  qrcode.react@4.2.0:
+    resolution: {integrity: sha512-QpgqWi8rD9DsS9EP3z7BT+5lY5SFhsqGjpgW5DY/i3mK4M9DTBNz3ErMi8BWYEfI3L0d8GIbGmcdFAS1uIRGjA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   react-country-flag@3.1.0:
     resolution: {integrity: sha512-JWQFw1efdv9sTC+TGQvTKXQg1NKbDU2mBiAiRWcKM9F1sK+/zjhP2yGmm8YDddWyZdXVkR8Md47rPMJmo4YO5g==}
@@ -3791,6 +3799,10 @@ snapshots:
       react-is: 16.13.1
 
   property-information@7.1.0: {}
+
+  qrcode.react@4.2.0(react@19.2.3):
+    dependencies:
+      react: 19.2.3
 
   react-country-flag@3.1.0(react@19.2.3):
     dependencies:

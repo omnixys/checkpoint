@@ -126,7 +126,7 @@ export default function UserMenu(): JSX.Element | null {
           </MenuItem>
         )}
         {/* Profile */}
-        <MenuItem onClick={() => go("/me")}>
+        <MenuItem onClick={() => go("/checkpoint/me")}>
           <ListItemIcon>
             <Person fontSize="small" />
           </ListItemIcon>
@@ -134,7 +134,7 @@ export default function UserMenu(): JSX.Element | null {
         </MenuItem>
 
         {/* Notifications */}
-        <MenuItem onClick={() => go("/me/notifications")}>
+        <MenuItem onClick={() => go("/checkpoint/me/notifications")}>
           <ListItemIcon>
             <NotificationsIcon fontSize="small" />
           </ListItemIcon>
@@ -142,7 +142,7 @@ export default function UserMenu(): JSX.Element | null {
         </MenuItem>
 
         {/* My QR */}
-        <MenuItem onClick={() => go("/my-qr")}>
+        <MenuItem onClick={() => go("/checkpoint/my-qr")}>
           <ListItemIcon>
             <BadgeIcon fontSize="small" />
           </ListItemIcon>
@@ -151,7 +151,7 @@ export default function UserMenu(): JSX.Element | null {
 
         {/* Plus-Ones → only for guests */}
         {eventRole === "GUEST" && (
-          <MenuItem onClick={() => go("/my-plus-ones")}>
+          <MenuItem onClick={() => go("/checkpoint/my-plus-ones")}>
             <ListItemIcon>
               <GroupsIcon fontSize="small" />
             </ListItemIcon>
@@ -161,7 +161,7 @@ export default function UserMenu(): JSX.Element | null {
 
         {/* Security-only */}
         {eventRole === "SECURITY" && (
-          <MenuItem onClick={() => go("/scan")}>
+          <MenuItem onClick={() => go("/checkpoint/scan")}>
             <ListItemIcon>
               <QrCodeScannerIcon fontSize="small" />
             </ListItemIcon>
@@ -171,7 +171,7 @@ export default function UserMenu(): JSX.Element | null {
 
         {/* Admin-only */}
         {eventRole === "ADMIN" && (
-          <MenuItem onClick={() => go("/admin")}>
+          <MenuItem onClick={() => go("/checkpoint/admin")}>
             <ListItemIcon>
               <AdminPanelSettingsIcon fontSize="small" />
             </ListItemIcon>

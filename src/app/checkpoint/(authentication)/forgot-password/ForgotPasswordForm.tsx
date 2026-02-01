@@ -20,16 +20,19 @@ export default function ForgotPasswordForm(): JSX.Element {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
-    const [showPw, setShowPw] = useState(false);
+  const [showPw, setShowPw] = useState(false);
 
   const [sendMail, { loading }] = useMutation(SEND_PASSWORD_RESET_EMAIL, {
     onError: (apolloError) => {
       const message = handleGraphQLError(
         apolloError,
-        "Something went wrong. Please try again later."
+        "Something went wrong. Please try again later.",
       );
-      
-      if (message === "User not found") { setError(`No account found for email "${email}".`); return}
+
+      if (message === "User not found") {
+        setError(`No account found for email "${email}".`);
+        return;
+      }
 
       setError("Something went wrong. Please try again later.");
     },
@@ -64,13 +67,12 @@ export default function ForgotPasswordForm(): JSX.Element {
       {submitted ? (
         <Stack spacing={3}>
           <Alert severity="success">
-            A password reset link was sent.
-            Please check your inbox.
+            A password reset link was sent. Please check your inbox.
           </Alert>
 
           <Button
             variant="text"
-            onClick={() => router.push("/login")}
+            onClick={() => router.push("/checkpoint/login")}
           >
             ← Back to login
           </Button>
@@ -97,7 +99,7 @@ export default function ForgotPasswordForm(): JSX.Element {
 
           <Button
             variant="text"
-            onClick={() => router.push("/login")}
+            onClick={() => router.push("/checkpoint/login")}
           >
             ← Back to login
           </Button>

@@ -23,7 +23,7 @@ import { useRouter } from "next/navigation";
 
 type Props = {
   onSuccess: () => void;
-  setId: (id: string) => void
+  setId: (id: string) => void;
 };
 
 const shakeAnimation = {
@@ -33,7 +33,6 @@ const shakeAnimation = {
     transition: { duration: 0.45 },
   },
 };
-
 
 export function getResetToken(): string | null {
   if (typeof window === "undefined") return null;
@@ -47,35 +46,35 @@ export default function SecurityQuestionStep({
   setId,
 }: Props): JSX.Element {
   const router = useRouter();
-    const [submitted, setSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
-      const [showPw, setShowPw] = useState(false);
-  
+  const [showPw, setShowPw] = useState(false);
+
   const { data, loading } = useQuery(GET_SECURITY_QUESTIONS);
   const [verify, { loading: verifying }] = useMutation(
-    VERIFY_SECURITY_QUESTIONS, {
-        onError: (apolloError) => {
-          const message = handleGraphQLError(
-            apolloError,
-            "Something went wrong. Please try again later."
-          );
-          
-          if (message === "Exactly 3 answers required") {
-            setError(`You have to answer all Questions!.`);
-            return;
-          }
-    
-          setError("Something went wrong. Please try again later.");
-        },
-        onCompleted: () => {
-          setSubmitted(true);
-        },
-      });
+    VERIFY_SECURITY_QUESTIONS,
+    {
+      onError: (apolloError) => {
+        const message = handleGraphQLError(
+          apolloError,
+          "Something went wrong. Please try again later.",
+        );
 
+        if (message === "Exactly 3 answers required") {
+          setError(`You have to answer all Questions!.`);
+          return;
+        }
+
+        setError("Something went wrong. Please try again later.");
+      },
+      onCompleted: () => {
+        setSubmitted(true);
+      },
+    },
+  );
 
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [lockedUntil, setLockedUntil] = useState<Date | null>(null);
-
 
   if (loading) {
     return <CircularProgress />;
@@ -93,32 +92,29 @@ export default function SecurityQuestionStep({
 
     const result = res.data?.verifySecurityQuestionsAndResetPassword;
 
-     if (!result) {
-       setError("Something went wrong. Please try again.");
-       return;
-     }
+    if (!result) {
+      setError("Something went wrong. Please try again.");
+      return;
+    }
 
-     if (!result.success) {
-       if (result.lockedUntil) {
-         setLockedUntil(new Date(result.lockedUntil));
-         setError(
-           "Too many failed attempts. Your account is temporarily locked."
-         );
-         return;
-       }
+    if (!result.success) {
+      if (result.lockedUntil) {
+        setLockedUntil(new Date(result.lockedUntil));
+        setError(
+          "Too many failed attempts. Your account is temporarily locked.",
+        );
+        return;
+      }
 
-       setError("One or more answers were incorrect. Please try again.");
-       return;
-     }
+      setError("One or more answers were incorrect. Please try again.");
+      return;
+    }
 
     if (result?.success && result.userId) {
       setId(result.userId);
       onSuccess();
     }
-    
   };
-
-
 
   return (
     <Box maxWidth={480} mx="auto">
@@ -210,7 +206,7 @@ export default function SecurityQuestionStep({
           </Button>
           <Button
             variant="text"
-            onClick={() => router.push("/login")}
+            onClick={() => router.push("/checkpoint/login")}
           >
             ← Back to login
           </Button>

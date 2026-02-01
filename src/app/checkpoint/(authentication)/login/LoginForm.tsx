@@ -123,7 +123,7 @@ export default function LoginForm(): JSX.Element {
               fontSize: "0.85rem",
               mt: -2,
             }}
-            onClick={() => router.push("/forgot-password")}
+            onClick={() => router.push("/checkpoint/forgot-password")}
           >
             Passwort vergessen?
           </Button>

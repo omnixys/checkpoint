@@ -98,7 +98,7 @@ export default function NewPasswordStep({ id }: Props): JSX.Element {
 
     setSuccess(true);
     setTimeout(() => {
-      router.replace("/login");
+      router.replace("/checkpoint/login");
     }, 1400);
   };
 
@@ -226,8 +226,8 @@ export default function NewPasswordStep({ id }: Props): JSX.Element {
                       strength.score <= 1
                         ? "#FF453A"
                         : strength.score === 2
-                        ? "#FF9F0A"
-                        : "#34C759",
+                          ? "#FF9F0A"
+                          : "#34C759",
                   },
                 }}
               />
@@ -305,7 +305,7 @@ export default function NewPasswordStep({ id }: Props): JSX.Element {
 
           <Button
             variant="text"
-            onClick={() => router.push("/login")}
+            onClick={() => router.replace("/checkpoint/login")}
           >
             ← Back to login
           </Button>
