@@ -1,0 +1,11 @@
+{
+  "name": "Checkpoint",
+  "short_name": "Checkpoint",
+  "description": "QR Event & Ticketing – iOS-inspired.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "orientation": "portrait",
+  "scope": "/"
+}
