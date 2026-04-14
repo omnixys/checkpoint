@@ -1,0 +1,13 @@
+mutation BulkRenameSections($input: [RenameSectionInput!]!) {
+  bulkRenameSections(inputs: $input) {
+    success
+    affectedSeats
+    affectedSections
+    affectedTables
+    conflicts {
+      type
+      id
+      name
+    }
+  }
+}

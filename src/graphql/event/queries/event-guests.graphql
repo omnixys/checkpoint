@@ -1,0 +1,3 @@
+query EventGuests($id: ID!) {
+  eventGuests(eventId: $id)
+}

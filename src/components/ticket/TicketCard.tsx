@@ -1,365 +1,131 @@
 "use client";
 
-import { useMutation, useQuery } from "@apollo/client/react";
-import {
-  Box,
-  Button,
-  Chip,
-  CircularProgress,
-  Stack,
-  Typography,
-  useTheme,
-} from "@mui/material";
-import { AnimatePresence, motion } from "framer-motion";
-import { QRCodeCanvas } from "qrcode.react";
-import { useState } from "react";
-
-import ActivateTicketButton from "@/components/myQr/ActivateTicketButton";
-import { hapticRotate } from "@/components/myQr/haptics";
-import { qrBeatAnimation } from "@/components/myQr/qr-beat";
-import QrCountdownRings from "@/components/myQr/QrCountdownRings";
-import QrRingLegend from "@/components/myQr/QrRingLegend";
-import { useAutoRotateQr } from "@/components/myQr/useAutoRotateQr";
-import { useCriticalPhaseHaptic } from "@/components/myQr/useCriticalPhaseHaptic";
-import { useQrActiveState } from "@/components/myQr/useQrActiveState";
-import { CREATE_TOKEN, ROTATE_TOKEN } from "@/graphql/ticket/ticket.mutation";
-import { GET_TICKET_BY_ID_2 } from "@/graphql/ticket/ticket.query";
-import {
-  CreateTokenRequest,
-  CreateTokenResult,
-} from "@/types/ticket/ticket-graphql-mutation.type";
-import {
-  GetTicketById2Request,
-  GetTicketById2Result,
-} from "@/types/ticket/ticket-graphql-query.type";
-import { getDeviceHash } from "@/utils/device-hash";
-import TicketCardSkeleton from "./TicketCardSkeleton";
-
-const RING_SIZE = 360;
-const QR_SIZE = 260;
-const QR_INSET = (RING_SIZE - QR_SIZE) / 2; // = 50
+import { Box, Stack, Typography, Chip, IconButton, useTheme, alpha } from "@mui/material";
+import { motion } from "framer-motion";
+import QrCode2RoundedIcon from "@mui/icons-material/QrCode2Rounded";
+import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
+import { PresenceState } from "@/checkpoint/generated/graphql";
 
 type Props = {
-  ticketId: string;
+  code: string;
+  status: "ACTIVE" | "PENDING" | "REVOKED";
+  seatLabel?: string;
+  presence?: PresenceState;
+  onDelete: () => void;
+  onOpen: () => void;
 };
 
-export default function TicketCard({ ticketId }: Props) {
+export default function TicketCard({ code, status, seatLabel, presence, onDelete, onOpen }: Props) {
   const theme = useTheme();
 
-  const omni = theme.palette.omnixys;
-  const apple = theme.palette.apple;
+  const rawStatus = status || "UNKNOWN";
 
-  const [token, setToken] = useState<string | null>(null);
-  const [cycleKey, setCycleKey] = useState(0);
+  // Mapping aller möglichen Werte
+  const statusCfgMap: Record<string, { label: string; color: string }> = {
+    ACTIVE: {
+      label: "Aktiv",
+      color: theme.palette.success.main,
+    },
+    PENDING: {
+      label: "Nicht aktiviert",
+      color: theme.palette.warning.main,
+    },
+    REVOKED: {
+      label: "Gesperrt",
+      color: theme.palette.error.main,
+    },
 
-  const { data: ticketDate, loading: loadingTicket } = useQuery<
-    GetTicketById2Result,
-    GetTicketById2Request
-  >(GET_TICKET_BY_ID_2, {
-    variables: { ticketId },
-    skip: !ticketId,
-  });
+    // Falls dein Backend currentState liefert:
+    INSIDE: {
+      label: "Im Event",
+      color: theme.palette.info.main,
+    },
+    OUTSIDE: {
+      label: "Draußen",
+      color: theme.palette.secondary.main,
+    },
 
-  const ticket = ticketDate?.ticketById2;
-
-  /* ---------------- Hooks IMMER hier ---------------- */
-
-  const [generateToken, { loading: loadingToken }] = useMutation<
-    CreateTokenResult,
-    CreateTokenRequest
-  >(CREATE_TOKEN, {
-    onCompleted: (data) => setToken(data?.generateToken ?? null),
-  });
-
-  const [rotateNonce, { loading: loadingRotate }] = useMutation(ROTATE_TOKEN);
-
-  /* -------------------------------------------------------------
-   * States
-   * ----------------------------------------------------------- */
-  const isDeviceActivated =
-    !!ticket?.deviceHash &&
-    !!ticket?.devicePublicKey &&
-    !!ticket?.deviceActivationAt &&
-    !!ticket?.deviceActivationIP;
-
-  const isRevoked = ticket?.revoked;
-
-  const presenceColor =
-    ticket?.currentState === "INSIDE" ? omni.success : omni.error;
-
-  const handleRotate = async () => {
-    if (isRevoked || !isDeviceActivated) return;
-
-    await rotateNonce({ variables: { input: { ticketId: ticket.id } } });
-    const deviceHash = await getDeviceHash();
-    const res = await generateToken({
-      variables: {
-        input: {
-          ticketId: ticket.id,
-          deviceHash,
-        },
-      },
-    });
-    setToken(res?.data?.generateToken ?? null);
-
-    setCycleKey((k) => k + 1); // restart countdown arc
-    // Haptic feedback
-    hapticRotate();
+    // Fallback
+    UNKNOWN: {
+      label: "Unbekannt",
+      color: theme.palette.grey[500],
+    },
   };
 
-  useCriticalPhaseHaptic(ticket?.rotationSeconds ?? 0, 5, cycleKey);
+  const statusCfg = statusCfgMap[rawStatus] ?? statusCfgMap["UNKNOWN"];
 
-  useAutoRotateQr({
-    rotationSeconds: ticket?.rotationSeconds ?? 0,
-    enabled: !!ticket && !isRevoked && isDeviceActivated,
-    cycleKey,
-    onRotate: handleRotate,
-  });
-
-  const isActive = useQrActiveState({
-    rotationSeconds: ticket?.rotationSeconds ?? 0,
-    cycleKey,
-    enabled: !!ticket && !isRevoked && isDeviceActivated,
-  });
-
-  /* ---------------- ERST JETZT render decisions ---------------- */
-
-  /* ---------------- Loading ---------------- */
-  if (loadingTicket) {
-    return <TicketCardSkeleton />;
-  }
-
-  if (!ticket) {
-    return (
-      <Box
-        sx={{
-          p: 4,
-          borderRadius: 4,
-          textAlign: "center",
-          border: `1px solid ${omni.error}44`,
-          bgcolor: omni.error + "11",
-        }}
-      >
-        <Typography fontWeight={700} sx={{ color: omni.error }}>
-          Ticket nicht gefunden
-        </Typography>
-        <Typography sx={{ opacity: 0.75, mt: 1 }}>
-          Bitte überprüfe den Link oder wende dich an den Veranstalter.
-        </Typography>
-      </Box>
-    );
-  }
-
-  /* =============================================================
-   * UI
-   * ============================================================ */
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 32 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ type: "spring", stiffness: 160, damping: 22 }}
+    <Box
+      component={motion.div}
+      whileHover={{ y: -3, scale: 1.015 }}
+      transition={{ type: "spring", stiffness: 240, damping: 20 }}
+      onClick={onOpen}
+      sx={{
+        p: 2.4,
+        borderRadius: 4,
+        cursor: "pointer",
+        bgcolor: alpha(theme.palette.background.paper, 0.55),
+        backdropFilter: "blur(22px)",
+        border: `1px solid ${alpha(theme.palette.divider, 0.4)}`,
+        boxShadow: theme.shadows[1],
+      }}
     >
-      <Box
-        sx={{
-          p: 4,
-          borderRadius: 4,
-          backdropFilter: "blur(36px)",
-          WebkitBackdropFilter: "blur(36px)",
-          bgcolor:
-            theme.palette.mode === "light"
-              ? apple.systemBackground + "CC"
-              : apple.secondarySystemBackground + "CC",
-          border: `1px solid ${apple.separator}`,
-        }}
-      >
-        <Stack spacing={3}>
-          {/* -------------------------------------------------- */}
-          {/* Header */}
-          {/* -------------------------------------------------- */}
-          <Box>
-            {/* <Typography
-              variant="h5"
-              fontWeight={700}
-              sx={{ color: omni.textPrimary }}
-            >
-              {event.name}
-            </Typography>
+      <Stack spacing={2}>
+        <Stack
+          direction="row"
+          sx={{
+            justifyContent: "space-between",
+          }}
+        >
+          <QrCode2RoundedIcon sx={{ fontSize: 44 }} />
 
-            <Typography sx={{ color: omni.textSecondary, opacity: 0.75 }}>
-              {new Date(event.startsAt).toLocaleString()}
-            </Typography> */}
-
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={ticket.currentState}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.25 }}
-              >
-                <Chip
-                  label={isRevoked ? "REVOKED" : ticket.currentState}
-                  sx={{
-                    mt: 1.5,
-                    fontWeight: 700,
-                    bgcolor: isRevoked
-                      ? omni.error + "22"
-                      : presenceColor + "22",
-                    color: isRevoked ? omni.error : presenceColor,
-                    border: `1px solid ${
-                      isRevoked ? omni.error : presenceColor
-                    }55`,
-                  }}
-                />
-              </motion.div>
-            </AnimatePresence>
-          </Box>
-
-          {/* -------------------------------------------------- */}
-          {/* REVOKED STATE */}
-          {/* -------------------------------------------------- */}
-          {isRevoked && (
-            <Box
-              sx={{
-                p: 3,
-                borderRadius: 3,
-                bgcolor: omni.error + "11",
-                border: `1px solid ${omni.error}44`,
-                textAlign: "center",
-              }}
-            >
-              <Typography fontWeight={700} sx={{ color: omni.error }}>
-                Ticket wurde deaktiviert
-              </Typography>
-              <Typography sx={{ color: omni.textSecondary, mt: 1 }}>
-                Bitte wende dich an den Veranstalter.
-              </Typography>
-            </Box>
-          )}
-
-          {/* -------------------------------------------------- */}
-          {/* ACTIVATE OR QR */}
-          {/* -------------------------------------------------- */}
-          {!isRevoked && !isDeviceActivated && (
-            <ActivateTicketButton ticketId={ticket.id} />
-          )}
-
-          {!isRevoked && isDeviceActivated && (
-            <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
-              <Box
-                sx={{
-                  position: "relative",
-                  p: 2.5,
-                  borderRadius: 3,
-                  bgcolor:
-                    theme.palette.mode === "light"
-                      ? apple.systemBackground
-                      : apple.gray6,
-                }}
-              >
-                <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
-                  <motion.div
-                    {...qrBeatAnimation(ticket.rotationSeconds)}
-                    style={{
-                      position: "relative",
-                      width: RING_SIZE,
-                      height: RING_SIZE,
-                    }}
-                  >
-                    <QrCountdownRings
-                      nonceSeconds={ticket.rotationSeconds}
-                      signatureSeconds={Math.min(8, ticket.rotationSeconds)}
-                      size={RING_SIZE}
-                      outerStroke={7}
-                      innerStroke={5}
-                      cycleKey={cycleKey}
-                      criticalThresholdSeconds={5}
-                    />
-
-                    <Box
-                      sx={{
-                        position: "absolute",
-                        inset: QR_INSET,
-                        borderRadius: 3,
-                        bgcolor:
-                          theme.palette.mode === "light"
-                            ? apple.systemBackground
-                            : apple.gray6,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        boxShadow: `0 12px 32px rgba(0,0,0,0.25)`,
-                      }}
-                    >
-                      {/* VisionOS Accent Pulse */}
-                      <Box
-                        sx={{
-                          width: QR_SIZE,
-                          height: QR_SIZE,
-                          borderRadius: 4,
-                          overflow: "hidden",
-                          backgroundColor: apple.systemBackground,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      />
-
-                      <QRCodeCanvas
-                        value={token ?? "NO_TOKEN"}
-                        size={260}
-                        marginSize={3}
-                        fgColor={omni.primary}
-                        // bgColor={apple.systemBackground}
-                      />
-
-                      {/* {ticket.seatId && <QrSeatOverlay seat={ticket.seatId} />} */}
-                    </Box>
-                  </motion.div>
-                </Box>
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    mt: 1,
-                  }}
-                >
-                  <QrRingLegend />
-                </Box>
-              </Box>
-            </Box>
-          )}
-
-          {/* -------------------------------------------------- */}
-          {/* ROTATE */}
-          {/* -------------------------------------------------- */}
-          {!isRevoked && isDeviceActivated && (
-            <Button
-              fullWidth
-              onClick={handleRotate}
-              disabled={loadingRotate || loadingToken || isActive}
-              sx={{
-                borderRadius: 3,
-                py: 1.2,
-                color: omni.primary,
-                border: `1px solid ${omni.primary}66`,
-                "&:hover": {
-                  bgcolor: omni.primary + "11",
-                },
-              }}
-            >
-              {loadingRotate || loadingToken ? (
-                <CircularProgress size={22} sx={{ color: omni.primary }} />
-              ) : isActive ? (
-                "QR aktiv"
-              ) : (
-                "QR neu generieren"
-              )}
-            </Button>
-          )}
+          <IconButton
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            sx={{ color: theme.palette.error.main }}
+          >
+            <DeleteRoundedIcon />
+          </IconButton>
         </Stack>
-      </Box>
-    </motion.div>
+
+        <Typography
+          variant="subtitle1"
+          sx={{
+            fontWeight: 600,
+          }}
+        >
+          {code}
+        </Typography>
+
+        <Chip
+          label={statusCfg?.label}
+          sx={{
+            bgcolor: alpha(statusCfg?.color ?? "#fff", 0.15),
+            color: statusCfg?.color,
+            fontWeight: 600,
+            width: "fit-content",
+          }}
+        />
+
+        {seatLabel && (
+          <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+            Platz: {seatLabel}
+          </Typography>
+        )}
+
+        {presence && (
+          <Typography
+            variant="body2"
+            sx={{
+              color: presence === "INSIDE" ? theme.palette.info.main : theme.palette.secondary.main,
+            }}
+          >
+            Status: {presence === "INSIDE" ? "Im Event" : "Draußen"}
+          </Typography>
+        )}
+      </Stack>
+    </Box>
   );
 }

@@ -1,9 +1,9 @@
 "use client";
 
-import { useActiveEvent } from "@/components/../providers/ActiveEventProvider";
 import { Box, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import HistoryItemCard, { HistoryEntry } from "./HistoryItemCard";
+import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 
 /* ---------------------------------------------------------------------
  * WebSocket Feed
@@ -13,9 +13,7 @@ export default function HistoryFeed() {
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
 
   useEffect(() => {
-    const ws = new WebSocket(
-      `wss://your-gateway/ws/scan-history?event=${activeEventId}`
-    );
+    const ws = new WebSocket(`wss://your-gateway/ws/scan-history?event=${activeEventId}`);
 
     ws.onmessage = (msg) => {
       const data: HistoryEntry = JSON.parse(msg.data);

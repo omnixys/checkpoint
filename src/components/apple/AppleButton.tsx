@@ -24,8 +24,6 @@ export interface AppleButtonProps extends Omit<ButtonProps, "variant"> {
   iconPosition?: AppleButtonIconPosition;
 }
 
-
-
 /* ----------------------------------------------------------
  * Base Styles
  * ---------------------------------------------------------- */
@@ -82,10 +80,7 @@ const GhostButton = styled(BaseButton)(({ theme }) => ({
   padding: "6px 8px",
   boxShadow: "none",
   "&:hover": {
-    backgroundColor:
-      theme.palette.mode === "light"
-        ? "rgba(0,0,0,0.05)"
-        : "rgba(255,255,255,0.08)",
+    backgroundColor: theme.palette.mode === "light" ? "rgba(0,0,0,0.05)" : "rgba(255,255,255,0.08)",
   },
 }));
 
@@ -111,7 +106,7 @@ const SuccessButton = styled(BaseButton)(() => ({
  * RENDER: Supports left/right icons
  * ---------------------------------------------------------- */
 
-export const AppleButton: React.FC<AppleButtonProps>  = ({
+export const AppleButton: React.FC<AppleButtonProps> = ({
   children,
   variant = "accent",
   icon,

@@ -1,0 +1,7 @@
+# import InvitationFull from "../fragments/invitation.fragment.graphql"
+
+mutation CreateInvitationFromRsvp($input: PublicRsvpInput!) {
+  createInvitationFromRsvp(input: $input) {
+    ...InvitationFull
+  }
+}

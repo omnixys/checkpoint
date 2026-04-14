@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 
@@ -32,7 +31,13 @@ export default function SecurityQuickToolsPanel({
         borderRadius: "24px",
       }}
     >
-      <Typography fontSize="1.1rem" fontWeight={600} sx={{ mb: 2 }}>
+      <Typography
+        sx={{
+          mb: 2,
+          fontWeight: 600,
+          fontSize: "1.1rem",
+        }}
+      >
         Security Tools
       </Typography>
 
@@ -47,13 +52,7 @@ export default function SecurityQuickToolsPanel({
   );
 }
 
-function ToolButton({
-  label,
-  onClick,
-}: {
-  label: string;
-  onClick: () => void;
-}) {
+function ToolButton({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <motion.div whileTap={{ scale: 0.97 }}>
       <Button

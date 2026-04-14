@@ -4,11 +4,7 @@ import React from "react";
 import { Box } from "@mui/material";
 import NavigationDesktop from "./navigation/Navigation.desktop";
 
-export default function AppShellDesktop({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AppShellDesktop({ children }: { children: React.ReactNode }) {
   return (
     <Box
       sx={{

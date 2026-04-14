@@ -1,6 +1,6 @@
 "use client";
 
-import { useActiveEvent } from "@/components/../providers/ActiveEventProvider";
+import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { Box, Chip, Stack, Typography, useTheme } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
@@ -41,12 +41,15 @@ export default function LiveHeader() {
             exit={{ opacity: 0, y: -14 }}
             transition={{ duration: 0.35 }}
           >
-            <Typography variant="h5" fontWeight={700}>
+            <Typography
+              variant="h5"
+              sx={{
+                fontWeight: 700,
+              }}
+            >
               Live Scan Verlauf
             </Typography>
-            <Typography sx={{ opacity: 0.7 }}>
-              Event: {activeEvent?.name}
-            </Typography>
+            <Typography sx={{ opacity: 0.7 }}>Event: {activeEvent?.name}</Typography>
           </motion.div>
         ) : (
           <motion.div

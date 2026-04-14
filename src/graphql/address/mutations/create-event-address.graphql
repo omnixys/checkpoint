@@ -1,0 +1,13 @@
+mutation CreateEventAddress($input: CreateEventAddressInput!) {
+  createEventAddress(input: $input) {
+    additionalInfo
+    city
+    country
+    eventId
+    houseNumber
+    id
+    postalCode
+    state
+    street
+  }
+}

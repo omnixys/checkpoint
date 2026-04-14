@@ -1,43 +1,127 @@
 "use client";
 
-import React, { useRef } from "react";
+import React from "react";
 import { useRouter } from "next/navigation";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 
-export default function SwipeBackProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+/**
+ * SwipeBackProvider
+ *
+ * Goals:
+ * - Hydration-safe rendering
+ * - Stable hook order
+ * - Mobile swipe-back gesture from the left screen edge
+ *
+ * Important:
+ * - Hooks must always be called in the same order
+ * - We therefore initialize all hooks first
+ * - Before mount, we render a plain wrapper to keep SSR and first client render identical
+ */
+export default function SwipeBackProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
-  // Swipe tracking
+  /**
+   * Tracks whether the component has mounted on the client.
+   *
+   * Why:
+   * - Prevents hydration mismatch caused by Framer Motion markup/styles
+   * - Ensures server HTML matches the first client render
+   */
+  const [mounted, setMounted] = React.useState(false);
+
+  /**
+   * Stores the initial touch X coordinate across renders.
+   *
+   * Why:
+   * - A ref is stable and does not trigger re-renders
+   * - Avoids incorrect gesture state during touch interaction
+   */
+  const startXRef = React.useRef(0);
+
+  /**
+   * Motion values must be created unconditionally.
+   *
+   * Why:
+   * - React hooks must never be called conditionally
+   * - This keeps hook order stable between renders
+   */
   const x = useMotionValue(0);
   const opacity = useTransform(x, [0, 120], [1, 0.5]);
   const scale = useTransform(x, [0, 120], [1, 0.98]);
 
-  let startX = 0;
+  /**
+   * Marks the component as mounted after hydration.
+   */
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  function onTouchStart(e: React.TouchEvent) {
-    startX = e.touches[0].clientX;
-  }
+  /**
+   * Handles touch start and records the initial X position.
+   */
+  const onTouchStart = React.useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    startXRef.current = e.touches[0]?.clientX ?? 0;
+  }, []);
 
-  function onTouchMove(e: React.TouchEvent) {
-    const delta = e.touches[0].clientX - startX;
+  /**
+   * Updates the swipe distance while the user moves the finger.
+   *
+   * Rules:
+   * - Only allow right-swipe
+   * - Only allow swipe starting from the left edge
+   */
+  const onTouchMove = React.useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      const currentX = e.touches[0]?.clientX ?? 0;
+      const delta = currentX - startXRef.current;
 
-    // Only right-swipe and only from screen edge (< 32px)
-    if (startX < 32 && delta > 0) {
-      x.set(delta);
-    }
-  }
+      if (startXRef.current < 32 && delta > 0) {
+        x.set(delta);
+      }
+    },
+    [x],
+  );
 
-  function onTouchEnd() {
+  /**
+   * Finishes the gesture.
+   *
+   * Behavior:
+   * - If swipe passes threshold, navigate back
+   * - Always reset motion value afterwards
+   */
+  const onTouchEnd = React.useCallback(() => {
     if (x.get() > 80) {
       router.back();
     }
-    x.set(0); // Reset
+
+    x.set(0);
+    startXRef.current = 0;
+  }, [router, x]);
+
+  /**
+   * Hydration-safe fallback.
+   *
+   * Why:
+   * - Server render and first client render must match
+   * - A plain div avoids Framer Motion SSR/client markup differences
+   */
+  if (!mounted) {
+    return (
+      <div
+        style={{
+          height: "100%",
+          width: "100%",
+          touchAction: "pan-y",
+        }}
+      >
+        {children}
+      </div>
+    );
   }
 
+  /**
+   * After mount, enable motion-based interactions.
+   */
   return (
     <motion.div
       onTouchStart={onTouchStart}

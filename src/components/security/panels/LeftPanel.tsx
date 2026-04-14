@@ -1,11 +1,12 @@
 "use client";
 
+import GateOverviewHeatmap from "@/checkpoint/components/security/GateOverviewHeatmap";
+import SecurityQuickToolsPanel from "@/checkpoint/components/security/SecurityQuickToolsPanel";
+import TicketVerificationTool from "@/checkpoint/components/security/TicketVerificationTool";
+import { GateTrendType, VerdictType } from "@/checkpoint/types/security.typa";
 import { Stack } from "@mui/material";
 
 // Imported components (from previous phases)
-import GateOverviewHeatmap from "@/components/security/GateOverviewHeatmap";
-import SecurityQuickToolsPanel from "@/components/security/SecurityQuickToolsPanel";
-import TicketVerificationTool from "@/components/security/TicketVerificationTool";
 
 /* -----------------------------------------------------------------------
  * LeftPanel
@@ -24,11 +25,11 @@ export default function LeftPanel({
     name: string;
     scans: number;
     warnings: number;
-    trend: "low" | "medium" | "high";
+    trend: GateTrendType;
   }[];
 
   onTicketVerify: (ticketId: string) => Promise<{
-    verdict: "OK" | "WARNING" | "DENIED";
+    verdict: VerdictType;
     message: string;
   }>;
 

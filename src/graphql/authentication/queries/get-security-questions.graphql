@@ -1,0 +1,7 @@
+query GetSecurityQuestions {
+  getSecurityQuestions {
+    id
+    question
+    key
+  }
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActiveEvent } from "@/providers/ActiveEventProvider";
+import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { Box, Chip, Stack, Typography, useTheme } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
@@ -44,11 +44,7 @@ export default function StatusHeader() {
             exit={{ opacity: 0, y: -14 }}
             transition={{ duration: 0.35 }}
           >
-            <Typography
-              variant="h5"
-              fontWeight={700}
-              sx={{ whiteSpace: "nowrap" }}
-            >
+            <Typography variant="h5" sx={{ whiteSpace: "nowrap",fontWeight:700  }}>
               {activeEvent?.name}
             </Typography>
           </motion.div>

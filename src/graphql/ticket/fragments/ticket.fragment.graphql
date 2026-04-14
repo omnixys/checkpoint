@@ -1,0 +1,6 @@
+# import TicketSecurity from "./ticket-security.fragment.graphql"
+
+fragment TicketFull on TicketPayload {
+  ...TicketBasic
+  ...TicketSecurity
+}

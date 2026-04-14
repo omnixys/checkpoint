@@ -1,0 +1,6 @@
+fragment EventUserRole on UserRolePayload {
+  id
+  eventId
+  userId
+  role
+}

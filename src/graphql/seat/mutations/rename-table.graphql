@@ -1,0 +1,6 @@
+mutation RenameTable($input: RenameTableInput!) {
+  renameTable(input: $input) {
+    success
+    affectedSeats
+  }
+}

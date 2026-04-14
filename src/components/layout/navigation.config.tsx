@@ -7,11 +7,14 @@ import {
   Home as HomeIcon,
   QrCodeScanner as QrCodeScannerIcon,
   Event as EventIcon,
-  MailOutline as MailOutlineIcon,
+  MailOutlined as MailOutlineIcon,
   Groups as GroupsIcon,
   ConfirmationNumberOutlined as ConfirmationNumberOutlinedIcon,
 } from "@mui/icons-material";
-import { EventRole } from "@/types/event/event-enum.type";
+import { env } from "@/checkpoint/lib/env";
+import { UserRoleType } from "@/checkpoint/generated/graphql";
+
+const basePath = env.CHECKPOINT_BASE_PATH;
 
 export type NavItem = {
   label: string;
@@ -20,84 +23,81 @@ export type NavItem = {
   disabled?: boolean;
 };
 
-export function createNavigation(
-  role: EventRole,
-  activeEventId?: string
-): NavItem[] {
+export function createNavigation(role: UserRoleType, activeEventId?: string): NavItem[] {
   const hasEvent = Boolean(activeEventId);
 
-  const NAV: Record<EventRole, NavItem[]> = {
+  const NAV: Record<UserRoleType, NavItem[]> = {
     ADMIN: [
-      { label: "Home", icon: <DashboardIcon />, path: "checkpoint/" },
+      { label: "Home", icon: <DashboardIcon />, path: `${basePath}` },
       {
         label: "Scanner",
         icon: <QrCodeScannerIcon />,
-        path: "checkpoint/scan",
+        path: `${basePath}scan`,
       },
       {
         label: "Active Event",
         icon: <EventIcon />,
-        path: `checkpoint/event/${activeEventId}`,
+        path: `${basePath}event/${activeEventId}`,
         disabled: !hasEvent,
       },
       {
         label: "Invitations",
         icon: <MailOutlineIcon />,
-        path: `checkpoint/event/${activeEventId}/invitation`,
+        path: `${basePath}event/${activeEventId}/invitation`,
         disabled: !hasEvent,
       },
       {
         label: "Seats",
         icon: <EventSeatIcon />,
-        path: `checkpoint/event/${activeEventId}/seat`,
+        path: `${basePath}event/${activeEventId}/seat`,
         disabled: !hasEvent,
       },
       {
         label: "Guests",
         icon: <GroupsIcon />,
-        path: `checkpoint/event/${activeEventId}/guest`,
+        path: `${basePath}event/${activeEventId}/guest`,
         disabled: !hasEvent,
       },
       {
         label: "Tickets",
         icon: <ConfirmationNumberOutlinedIcon />,
-        path: `checkpoint/event/${activeEventId}/ticket`,
+        path: `${basePath}event/${activeEventId}/ticket`,
         disabled: !hasEvent,
       },
-      { label: "Profil", icon: <AccountCircleIcon />, path: "checkpoint/me" },
+      { label: "Profil", icon: <AccountCircleIcon />, path: `${basePath}me` },
     ],
 
     SECURITY: [
-      { label: "Home", icon: <DashboardIcon />, path: "checkpoint/" },
+      { label: "Home", icon: <DashboardIcon />, path: `${basePath}` },
       {
         label: "Scanner",
         icon: <QrCodeScannerIcon />,
-        path: "checkpoint/scan",
+        path: `${basePath}scan`,
       },
       {
         label: "Guests",
         icon: <GroupsIcon />,
-        path: `checkpoint/event/${activeEventId}/guest`,
+        path: `${basePath}event/${activeEventId}/guest`,
         disabled: !hasEvent,
       },
-      { label: "Profil", icon: <AccountCircleIcon />, path: "checkpoint/me" },
+      { label: "Profil", icon: <AccountCircleIcon />, path: `${basePath}me` },
     ],
 
     GUEST: [
-      { label: "Home", icon: <HomeIcon />, path: "checkpoint/" },
-      { label: "Mein Ticket", icon: <BadgeIcon />, path: "checkpoint/my-qr" },
+      { label: "Home", icon: <HomeIcon />, path: `${basePath}` },
+      { label: "Mein Ticket", icon: <BadgeIcon />, path: `${basePath}my-qr` },
       {
         label: "Mein Sitzplatz",
         icon: <EventSeatIcon />,
-        path: "checkpoint/my-seat",
+        path: `${basePath}my-seat`,
       },
       {
         label: "Plus-Ones",
         icon: <GroupsIcon />,
-        path: "checkpoint/my-plus-ones",
+        path: `${basePath}my-plus-ones`,
         disabled: true,
       },
-      { label: "Profil", icon: <AccountCircleIcon />, path: "checkpoint/me" },
+      { label: "Profil", icon: <AccountCircleIcon />, path: `${basePath}me` },
     ],
   };
 

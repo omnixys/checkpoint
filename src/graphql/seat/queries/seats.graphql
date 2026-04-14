@@ -1,0 +1,5 @@
+query Seats($id: ID!) {
+  seats(eventId: $id) {
+    ...SeatFull
+  }
+}

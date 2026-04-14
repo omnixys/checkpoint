@@ -1,0 +1,12 @@
+mutation BulkRenameTables($input: [RenameTableInput!]!) {
+  bulkRenameTables(inputs: $input) {
+    success
+    affectedTables
+    affectedSeats
+    conflicts {
+      type
+      id
+      name
+    }
+  }
+}

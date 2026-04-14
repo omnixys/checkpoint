@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import FlashOffIcon from "@mui/icons-material/FlashOff";
 import FlashOnIcon from "@mui/icons-material/FlashOn";
-import { BrowserQRCodeReader } from "@zxing/browser";
+import { BrowserQRCodeReader, IScannerControls } from "@zxing/browser";
 
 /* ---------------------------------------------------------------------------
  * Types
@@ -22,6 +22,10 @@ type Props = {
   onDetect: (qrText: string) => Promise<boolean>;
 };
 
+type TorchConstraintSet = MediaTrackConstraintSet & {
+  torch?: boolean;
+};
+
 /* ---------------------------------------------------------------------------
  * BarcodeDetector typings
  * ------------------------------------------------------------------------- */
@@ -29,25 +33,30 @@ declare global {
   interface BarcodeDetectorOptions {
     formats?: string[];
   }
+
   interface DetectedBarcode {
     rawValue: string;
   }
+
   interface BarcodeDetector {
     detect(
       source:
         | HTMLVideoElement
         | HTMLImageElement
         | ImageBitmap
-        | HTMLCanvasElement
+        | HTMLCanvasElement,
     ): Promise<DetectedBarcode[]>;
   }
+
   interface BarcodeDetectorConstructor {
     new (options?: BarcodeDetectorOptions): BarcodeDetector;
     getSupportedFormats(): Promise<string[]>;
   }
+
   interface Window {
     BarcodeDetector?: BarcodeDetectorConstructor;
   }
+
   interface MediaTrackCapabilities {
     torch?: boolean;
   }
@@ -72,7 +81,7 @@ function playBeep(type: "success" | "error") {
     osc.start();
     osc.stop(ctx.currentTime + 0.12);
   } catch {
-    /* ignore */
+    // Ignore audio failures silently.
   }
 }
 
@@ -83,19 +92,20 @@ export default function WebCameraScanner({ onDetect }: Props) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const rafRef = useRef<number | null>(null);
-  const scanningRef = useRef(true);
-  const zxingRef = useRef<BrowserQRCodeReader | null>(null);
+  const scanningRef = useRef<boolean>(true);
+  const controlsRef = useRef<IScannerControls | null>(null);
 
   const [state, setState] = useState<ScannerState>("IDLE");
   const [verdict, setVerdict] = useState<Verdict>(null);
-  const [loading, setLoading] = useState(true);
-  const [torchSupported, setTorchSupported] = useState(false);
-  const [torchOn, setTorchOn] = useState(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [torchSupported, setTorchSupported] = useState<boolean>(false);
+  const [torchOn, setTorchOn] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const supportsNativeBarcode =
     typeof window !== "undefined" &&
-    "BarcodeDetector" in window &&
+    typeof window.BarcodeDetector !== "undefined" &&
+    typeof navigator !== "undefined" &&
     !!navigator.mediaDevices;
 
   const isSafari =
@@ -106,16 +116,20 @@ export default function WebCameraScanner({ onDetect }: Props) {
    * Stop everything
    * --------------------------------------------------------------------- */
   const stop = () => {
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    rafRef.current = null;
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
 
+    controlsRef.current?.stop();
+    controlsRef.current = null;
 
-    zxingRef.current = null;
-
-    streamRef.current?.getTracks().forEach((t) => {
+    streamRef.current?.getTracks().forEach((track) => {
       try {
-        t.stop();
-      } catch {}
+        track.stop();
+      } catch {
+        // Ignore track stop errors.
+      }
     });
 
     streamRef.current = null;
@@ -133,15 +147,17 @@ export default function WebCameraScanner({ onDetect }: Props) {
         setState("SCANNING");
 
         const video = videoRef.current;
-        if (!video) throw new Error("Video missing");
+        if (!video) {
+          throw new Error("Video element missing.");
+        }
 
         /* --------------------------------------------------------------
          * Safari / Fallback → ZXing
          * ------------------------------------------------------------ */
         if (!supportsNativeBarcode) {
-          zxingRef.current = new BrowserQRCodeReader();
+          const reader = new BrowserQRCodeReader();
 
-          await zxingRef.current.decodeFromVideoDevice(
+          const controls = await reader.decodeFromVideoDevice(
             undefined,
             video,
             async (result) => {
@@ -154,9 +170,10 @@ export default function WebCameraScanner({ onDetect }: Props) {
               setVerdict(ok ? "success" : "error");
               playBeep(ok ? "success" : "error");
               setState("RESULT");
-            }
+            },
           );
 
+          controlsRef.current = controls;
           return;
         }
 
@@ -168,20 +185,35 @@ export default function WebCameraScanner({ onDetect }: Props) {
           audio: false,
         });
 
-        if (!active) return;
+        if (!active) {
+          stream.getTracks().forEach((track) => {
+            track.stop();
+          });
+          return;
+        }
 
         streamRef.current = stream;
         video.srcObject = stream;
         await video.play();
 
         const track = stream.getVideoTracks()[0];
-        const caps = track.getCapabilities?.();
-        setTorchSupported(!!caps?.torch && !isSafari);
+        if (!track) {
+          throw new Error("No video track available.");
+        }
 
-        const formats = await window.BarcodeDetector!.getSupportedFormats();
-        const detector = new window.BarcodeDetector({
-          formats: formats.includes("qr_code") ? ["qr_code"] : undefined,
-        });
+        const caps = track.getCapabilities?.();
+        setTorchSupported(Boolean(caps?.torch) && !isSafari);
+
+        const BarcodeDetectorCtor = window.BarcodeDetector;
+        if (!BarcodeDetectorCtor) {
+          throw new Error("BarcodeDetector is not available.");
+        }
+
+        const formats = await BarcodeDetectorCtor.getSupportedFormats();
+
+        const detector = formats.includes("qr_code")
+          ? new BarcodeDetectorCtor({ formats: ["qr_code"] })
+          : new BarcodeDetectorCtor();
 
         scanningRef.current = true;
 
@@ -189,31 +221,49 @@ export default function WebCameraScanner({ onDetect }: Props) {
           if (!scanningRef.current || !active) return;
 
           try {
-            const result = await detector.detect(video);
-            if (result.length > 0) {
+            const detections = await detector.detect(video);
+
+            if (detections.length > 0) {
+              const first = detections[0];
+              if (!first?.rawValue) {
+                rafRef.current = requestAnimationFrame(() => {
+                  void loop();
+                });
+                return;
+              }
+
               stop();
               setState("VERIFYING");
 
-              const ok = await onDetect(result[0].rawValue);
+              const ok = await onDetect(first.rawValue);
               setVerdict(ok ? "success" : "error");
               playBeep(ok ? "success" : "error");
               setState("RESULT");
               return;
             }
-          } catch {}
+          } catch {
+            // Ignore detection-frame errors and continue scanning.
+          }
 
-          rafRef.current = requestAnimationFrame(loop);
+          rafRef.current = requestAnimationFrame(() => {
+            void loop();
+          });
         };
 
-        loop();
+        await loop();
       } catch {
-        setError("Kamera konnte nicht gestartet werden.");
+        if (active) {
+          setError("Kamera konnte nicht gestartet werden.");
+        }
       } finally {
-        setLoading(false);
+        if (active) {
+          setLoading(false);
+        }
       }
     }
 
-    start();
+    void start();
+
     return () => {
       active = false;
       stop();
@@ -229,9 +279,9 @@ export default function WebCameraScanner({ onDetect }: Props) {
 
     try {
       await track.applyConstraints({
-        advanced: [{ torch: !torchOn }],
+        advanced: [{ torch: !torchOn } as TorchConstraintSet],
       });
-      setTorchOn((v) => !v);
+      setTorchOn((prev) => !prev);
     } catch {
       setTorchOn(false);
     }
@@ -252,8 +302,8 @@ export default function WebCameraScanner({ onDetect }: Props) {
     verdict === "success"
       ? "rgba(0,255,140,0.35)"
       : verdict === "error"
-      ? "rgba(255,60,60,0.35)"
-      : "rgba(255,255,255,0.15)";
+        ? "rgba(255,60,60,0.35)"
+        : "rgba(255,255,255,0.15)";
 
   return (
     <Box
@@ -264,15 +314,19 @@ export default function WebCameraScanner({ onDetect }: Props) {
         backgroundColor: "#000",
       }}
     >
-      {loading && (
+      {loading ? (
         <Box sx={{ p: 3, textAlign: "center" }}>
           <CircularProgress />
         </Box>
-      )}
+      ) : null}
 
-      <video ref={videoRef} playsInline muted style={{ width: "100%" }} />
+      <video
+        ref={videoRef}
+        playsInline
+        muted
+        style={{ width: "100%", display: "block" }}
+      />
 
-      {/* VisionOS-style overlay */}
       <Box
         sx={{
           pointerEvents: "none",
@@ -296,7 +350,7 @@ export default function WebCameraScanner({ onDetect }: Props) {
         />
       </Box>
 
-      {torchSupported && state === "SCANNING" && (
+      {torchSupported && state === "SCANNING" ? (
         <Tooltip title={torchOn ? "Licht aus" : "Licht an"}>
           <IconButton
             onClick={toggleTorch}
@@ -310,9 +364,9 @@ export default function WebCameraScanner({ onDetect }: Props) {
             {torchOn ? <FlashOffIcon /> : <FlashOnIcon />}
           </IconButton>
         </Tooltip>
-      )}
+      ) : null}
 
-      {state === "VERIFYING" && (
+      {state === "VERIFYING" ? (
         <Typography
           sx={{
             position: "absolute",
@@ -325,7 +379,7 @@ export default function WebCameraScanner({ onDetect }: Props) {
         >
           Überprüfe Ticket …
         </Typography>
-      )}
+      ) : null}
     </Box>
   );
 }

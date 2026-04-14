@@ -2,14 +2,7 @@
 
 import React from "react";
 import { Box, Typography } from "@mui/material";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
 /* -------------------------------------------------------------------
  * SecurityAnalyticsCharts
@@ -33,7 +26,7 @@ export default function SecurityAnalyticsCharts({
         background: "rgba(255,255,255,0.18)",
       }}
     >
-      <Typography variant="h6" fontWeight={600} sx={{ mb: 2 }}>
+      <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
         Analytics
       </Typography>
 
@@ -46,24 +39,12 @@ export default function SecurityAnalyticsCharts({
   );
 }
 
-function ChartBlock({
-  data,
-  color,
-}: {
-  data: { time: string; value: number }[];
-  color: string;
-}) {
+function ChartBlock({ data, color }: { data: { time: string; value: number }[]; color: string }) {
   return (
     <Box sx={{ width: "100%", height: 200 }}>
       <ResponsiveContainer>
         <LineChart data={data}>
-          <Line
-            type="monotone"
-            dataKey="value"
-            stroke={color}
-            strokeWidth={3}
-            dot={false}
-          />
+          <Line type="monotone" dataKey="value" stroke={color} strokeWidth={3} dot={false} />
           <XAxis dataKey="time" hide />
           <YAxis hide />
           <Tooltip />

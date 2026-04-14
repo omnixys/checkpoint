@@ -1,0 +1,7 @@
+# import AuthToken from "../fragments/auth-token.fragment.graphql"
+
+mutation Refresh {
+  refresh {
+    ...AuthToken
+  }
+}

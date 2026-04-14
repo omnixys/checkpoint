@@ -1,0 +1,13 @@
+fragment EventSettings on SettingsPayload {
+  id
+  allowReEntry
+  rotateSeconds
+  maxSeats
+  dressCode
+  description
+  isActive
+  startsAt
+  endsAt
+  createdAt
+  updatedAt
+}

@@ -1,0 +1,7 @@
+# import ScanResult from "../fragments/scan-result.fragment.graphql"
+
+mutation ScanToken($input: ScanInput!) {
+  scanToken(input: $input) {
+    ...ScanResult
+  }
+}

@@ -14,8 +14,6 @@ import {
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { motion } from "framer-motion";
 
-import WhatsappInviteDialog from "./WhatsappInviteDialog";
-
 /**
  * FinalScreens
  * - type="accepted": showing plusOnes & share links
@@ -66,32 +64,38 @@ export default function FinalScreens({
           <Stack spacing={3}>
             <Typography
               variant={isMobile ? "h6" : "h5"}
-              fontWeight={700}
-              textAlign="center"
+              sx={{
+                fontWeight: 700,
+
+                alignItems: "center",
+              }}
             >
               Danke {firstName}!
             </Typography>
 
-            <Typography textAlign="center" sx={{ opacity: 0.85 }}>
+            <Typography sx={{ opacity: 0.85, textAlign: "center" }}>
               Wir haben deine Zusage gespeichert.
               <br />
               {invitation?.approved === false && (
                 <>
                   <br />
-                  Bitte beachte: Dein Ticket wird erst nach Freigabe durch das
-                  Event-Team erstellt.
+                  Bitte beachte: Dein Ticket wird erst nach Freigabe durch das Event-Team erstellt.
                 </>
               )}
             </Typography>
 
             {/* PlusOnes Section */}
             {plusOnes && plusOnes.length > 0 && (
-              <Stack spacing={2} mt={2}>
-                <Typography
-                  variant="subtitle1"
-                  fontWeight={700}
-                  sx={{ opacity: 0.85 }}
-                >
+              <Stack
+                spacing={2}
+                sx={{
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  mt: 2,
+                  flexWrap: "wrap",
+                }}
+              >
+                <Typography variant="subtitle1" sx={{ opacity: 0.85, fontWeight: 700 }}>
                   Deine eingeladenen Personen
                 </Typography>
 
@@ -123,7 +127,11 @@ export default function FinalScreens({
                         }}
                       >
                         <Stack spacing={0.5}>
-                          <Typography fontWeight={600}>
+                          <Typography
+                            sx={{
+                              fontWeight: 600,
+                            }}
+                          >
                             {p.firstName} {p.lastName}
                           </Typography>
                           <Typography variant="body2" sx={{ opacity: 0.6 }}>
@@ -142,10 +150,7 @@ export default function FinalScreens({
                         </Stack>
 
                         <Tooltip title="Kopieren">
-                          <IconButton
-                            onClick={() => copyToClipboard(link)}
-                            sx={{ opacity: 0.7 }}
-                          >
+                          <IconButton onClick={() => copyToClipboard(link)} sx={{ opacity: 0.7 }}>
                             <ContentCopyIcon />
                           </IconButton>
                         </Tooltip>
@@ -176,12 +181,12 @@ export default function FinalScreens({
         </Box>
 
         {/* WhatsApp Invite Dialog */}
-        <WhatsappInviteDialog
+        {/* <WhatsappInviteDialog
           open={whDialogOpen}
           onClose={() => setWhDialogOpen(false)}
           invitation={invitation}
           plusOnes={plusOnes ?? []}
-        />
+        /> */}
       </motion.div>
     );
   }
@@ -203,20 +208,27 @@ export default function FinalScreens({
           boxShadow: theme.shadows[3],
         }}
       >
-        <Stack spacing={3} alignItems="center">
+        <Stack
+          spacing={3}
+          sx={{
+            alignItems: "center",
+          }}
+        >
           <Typography
             variant={isMobile ? "h6" : "h5"}
-            fontWeight={700}
-            textAlign="center"
+            sx={{
+              fontWeight: 700,
+
+              alignItems: "center",
+            }}
           >
             Schade, dass du nicht kommen kannst
           </Typography>
 
-          <Typography textAlign="center" sx={{ opacity: 0.85 }}>
-            {firstName} {lastName}, deine Absage wurde gespeichert.
+          <Typography sx={{ opacity: 0.85, textAlign: "center" }}>
+            {firstName}, deine Absage wurde gespeichert.
             <br />
-            Wenn du dich umentscheiden möchtest, wende dich bitte direkt an das
-            Event-Team.
+            Wenn du dich umentscheiden möchtest, wende dich bitte direkt an das Event-Team.
           </Typography>
 
           <Button

@@ -1,0 +1,8 @@
+fragment AuthToken on TokenPayload {
+  accessToken
+  expiresIn
+  refreshToken
+  refreshExpiresIn
+  idToken
+  scope
+}

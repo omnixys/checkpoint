@@ -3,26 +3,24 @@
 import { JSX } from "react";
 import { Box, IconButton, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import type { Event } from "@/types/event/event.type";
-import { useEventReminder } from "./useEventReminder";
+import { EventPayload } from "@/checkpoint/generated/graphql";
+import { useEventReminder } from "@/checkpoint/hooks/calendar/useEventReminder";
 import NotificationsActiveRoundedIcon from "@mui/icons-material/NotificationsActiveRounded";
 
-
 type Props = {
-  event: Event;
+  event: EventPayload;
 };
 
 export default function CalendarEventCard({ event }: Props): JSX.Element {
   const theme = useTheme();
   const { scheduleReminder } = useEventReminder();
 
-
-  const start = new Date(event.startsAt).toLocaleTimeString("de-DE", {
+  const start = new Date(event.settings.startsAt).toLocaleTimeString("de-DE", {
     hour: "2-digit",
     minute: "2-digit",
   });
 
-  const end = new Date(event.endsAt).toLocaleTimeString("de-DE", {
+  const end = new Date(event.settings.endsAt).toLocaleTimeString("de-DE", {
     hour: "2-digit",
     minute: "2-digit",
   });

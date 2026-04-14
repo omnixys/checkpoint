@@ -1,73 +1,130 @@
 "use client";
 
-import { JSX, useState } from "react";
-import { Box } from "@mui/material";
-import type { Event } from "@/types/event/event.type";
-import AppleMonthGrid from "./AppleMonthGrid";
-import AppleYearGrid from "./AppleYearGrid";
-import { addMonths, addYears } from "./calendar-date.util";
-import { CalendarGridViewMode } from "./calendar-view.type";
-import CalendarGridModeSwitch from "./CalendarGridModeSwitch";
-import CalendarNavigationHeader from "./CalendarNavigationHeader";
+import { EventPayload } from "@/checkpoint/generated/graphql";
+import { getEventsForDay } from "@/checkpoint/utils/calendar/calendar.utils";
+import { Box, Typography } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
 type Props = {
-  events: readonly Event[];
-  visibleDate: Date;
-  onChangeDate: (date: Date) => void;
-  onSelectDay?: (date: Date) => void;
+  date: Date;
+  mode: "month" | "year";
+  events: readonly EventPayload[];
+  onSelectDay: (date: Date) => void;
+  onSelectMonth: (month: number) => void;
 };
 
 export default function CalendarGridView({
+  date,
+  mode,
   events,
-  visibleDate,
-  onChangeDate,
   onSelectDay,
-}: Props): JSX.Element {
-  const [mode, setMode] = useState<CalendarGridViewMode>("month");
+  onSelectMonth,
+}: Props) {
+  const theme = useTheme();
 
-  const handleNavigate = (dir: "prev" | "next") => {
-    if (mode === "month") {
-      onChangeDate(addMonths(visibleDate, dir === "next" ? 1 : -1));
-    } else {
-      onChangeDate(addYears(visibleDate, dir === "next" ? 1 : -1));
-    }
-  };
+  if (mode === "year") {
+    return (
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "repeat(2, 1fr)",
+            md: "repeat(4, 1fr)",
+          },
+          gap: 2,
+        }}
+      >
+        {Array.from({ length: 12 }).map((_, m) => {
+          const monthDate = new Date(date.getFullYear(), m, 1);
 
-  const handleSelectMonth = (month: number) => {
-    onChangeDate(new Date(visibleDate.getFullYear(), month, 1));
-    setMode("month");
-  };
+          const monthEvents = events.filter(
+            (e) =>
+              new Date(e.settings.startsAt).getMonth() === m &&
+              new Date(e.settings.startsAt).getFullYear() === date.getFullYear(),
+          );
 
+          return (
+            <Box
+              key={m}
+              onClick={() => onSelectMonth(m)}
+              sx={{
+                p: 2,
+                borderRadius: 4,
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+                backgroundColor: theme.palette.apple.tertiarySystemBackground,
+
+                "&:hover": {
+                  transform: "translateY(-4px)",
+                  boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
+                },
+              }}
+            >
+              <Typography sx={{ fontWeight: 700, mb: 1 }}>
+                {monthDate.toLocaleString("de-DE", { month: "long" })}
+              </Typography>
+
+              {/* Event Preview Dots */}
+              <Box sx={{ display: "flex", gap: 0.5, flexWrap: "wrap" }}>
+                {monthEvents.slice(0, 6).map((e) => (
+                  <Box
+                    key={e.id}
+                    sx={{
+                      width: 6,
+                      height: 6,
+                      borderRadius: "50%",
+                      backgroundColor: theme.palette.omnixys.primary,
+                    }}
+                  />
+                ))}
+              </Box>
+
+              {/* Count */}
+              {monthEvents.length > 0 && (
+                <Typography
+                  sx={{
+                    mt: 1,
+                    fontSize: 12,
+                    color: theme.palette.omnixys.textSecondary,
+                  }}
+                >
+                  {monthEvents.length} Events
+                </Typography>
+              )}
+            </Box>
+          );
+        })}
+      </Box>
+    );
+  }
+
+  const days = Array.from(
+    { length: new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate() },
+    (_, i) => new Date(date.getFullYear(), date.getMonth(), i + 1),
+  );
 
   return (
-    <Box>
-      {/* Header */}
-      <CalendarNavigationHeader
-        date={visibleDate}
-        unit={mode}
-        onNavigate={handleNavigate}
-      />
+    <Box sx={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 1 }}>
+      {days.map((d) => {
+        const hasEvents = getEventsForDay(events, d).length > 0;
 
-      {/* Month / Year Switch */}
-      <CalendarGridModeSwitch value={mode} onChange={setMode} />
-
-      <Box sx={{ mt: 3 }}>
-        {mode === "month" ? (
-          <AppleMonthGrid
-            year={visibleDate.getFullYear()}
-            month={visibleDate.getMonth()}
-            events={events}
-            onSelectDay={onSelectDay}
-          />
-        ) : (
-          <AppleYearGrid
-            year={visibleDate.getFullYear()}
-            events={events}
-            onSelectDay={onSelectDay}
-            onSelectMonth={handleSelectMonth}
-          />
-        )}
-      </Box>
+        return (
+          <Box
+            key={d.toISOString()}
+            onClick={() => onSelectDay(d)}
+            sx={{
+              p: 1,
+              borderRadius: 3,
+              cursor: "pointer",
+              backgroundColor: hasEvents
+                ? `${theme.palette.omnixys.primary}18`
+                : theme.palette.apple.tertiarySystemBackground,
+            }}
+          >
+            {d.getDate()}
+          </Box>
+        );
+      })}
     </Box>
   );
 }

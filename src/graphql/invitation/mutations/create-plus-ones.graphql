@@ -1,0 +1,7 @@
+# import InvitationFull from "../fragments/invitation.fragment.graphql"
+
+mutation CreatePlusOnesInvitation($input: CreatePlusOneInput!) {
+  createPlusOnesInvitation(input: $input) {
+    ...InvitationFull
+  }
+}

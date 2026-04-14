@@ -1,0 +1,5 @@
+query GetFullEventInvitation($eventIds: [ID!]!) {
+  getFullByEventIds(eventIds: $eventIds) {
+    ...InvitationFull
+  }
+}

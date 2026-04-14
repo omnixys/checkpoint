@@ -1,0 +1,7 @@
+# import EventFull from "../fragments/event.fragment.graphql"
+
+query EventTree($id: ID!) {
+  eventTree(eventId: $id) {
+    ...EventFull
+  }
+}

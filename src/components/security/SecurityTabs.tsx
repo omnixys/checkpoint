@@ -9,11 +9,7 @@ import { mockConnectivity } from "./mock/mockConnectivity";
 /* --------------------------------------------------------------
  * VisionOS Premium Sticky Tabbar for Tablet & Mobile
  * -------------------------------------------------------------- */
-export default function SecurityTabs({
-  onChange,
-}: {
-  onChange: (tab: string) => void;
-}) {
+export default function SecurityTabs({ onChange }: { onChange: (tab: string) => void }) {
   const [value, setValue] = useState("overview");
 
   function handleChange(_: any, v: string) {
@@ -32,7 +28,7 @@ export default function SecurityTabs({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25 }}
     >
-              <VisionOSCompactHeader connectivity={mockConnectivity} />
+      <VisionOSCompactHeader connectivity={mockConnectivity} />
       <Box
         sx={{
           background: "rgba(255,255,255,0.18)",
@@ -48,26 +44,20 @@ export default function SecurityTabs({
           onChange={handleChange}
           centered
           textColor="inherit"
-          TabIndicatorProps={{
-            sx: {
-              height: "4px",
-              borderRadius: "4px",
-              background: "#007AFF",
+          slotProps={{
+            indicator: {
+              sx: {
+                height: "4px",
+                borderRadius: "4px",
+                background: "#007AFF",
+              },
             },
           }}
         >
-          <Tab
-            label="Overview"
-            value="overview"
-            sx={{ textTransform: "none" }}
-          />
+          <Tab label="Overview" value="overview" sx={{ textTransform: "none" }} />
           <Tab label="Gates" value="gates" sx={{ textTransform: "none" }} />
           <Tab label="Guests" value="guests" sx={{ textTransform: "none" }} />
-          <Tab
-            label="Analytics"
-            value="analytics"
-            sx={{ textTransform: "none" }}
-          />
+          <Tab label="Analytics" value="analytics" sx={{ textTransform: "none" }} />
         </Tabs>
       </Box>
     </motion.div>

@@ -1,0 +1,17 @@
+# import AuthToken from "../fragments/auth-token.fragment.graphql"
+# import AuthUser from "../fragments/user.fragment.graphql"
+
+mutation VerifySignUp($token: String!) {
+  verifySignUp(token: $token) {
+    message
+    username
+    token {
+      ...AuthToken
+    }
+    userId
+    user {
+      ...AuthUser
+    }
+    password
+  }
+}

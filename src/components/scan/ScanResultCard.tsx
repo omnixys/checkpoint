@@ -1,15 +1,7 @@
 "use client";
 
-import { ScanResult } from "@/types/scan/scan.type";
-import {
-  Alert,
-  Box,
-  Chip,
-  Divider,
-  Stack,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { ScanResult } from "@/checkpoint/types/scan.type";
+import { Alert, Box, Chip, Divider, Stack, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
 
 const REASON_LABEL: Record<NonNullable<ScanResult["reason"]>, string> = {
@@ -23,14 +15,13 @@ const REASON_LABEL: Record<NonNullable<ScanResult["reason"]>, string> = {
 
 export default function ScanResultCard({ result }: { result: ScanResult }) {
   const theme = useTheme();
-  
 
   const color =
     result.status === "SUCCESS"
       ? theme.palette.success.main
       : result.status === "ERROR"
-      ? theme.palette.error.main
-      : theme.palette.warning.main;
+        ? theme.palette.error.main
+        : theme.palette.warning.main;
 
   return (
     <motion.div
@@ -54,7 +45,14 @@ export default function ScanResultCard({ result }: { result: ScanResult }) {
           />
 
           {/* MESSAGE */}
-          <Typography variant="h6" fontWeight={700}>
+          <Typography
+            variant="h6"
+
+            sx={{
+              fontWeight: 700,
+
+            }}
+          >
             {result.message}
           </Typography>
 
@@ -115,14 +113,19 @@ export default function ScanResultCard({ result }: { result: ScanResult }) {
               {result.device && (
                 <>
                   <Divider />
-                  <Typography variant="subtitle2" fontWeight={700}>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{
+                      fontWeight: 700,
+                    }}
+                  >
                     Gerätebindung
                   </Typography>
 
                   <Typography variant="caption">
                     <b>Hash(ticket):</b> {result.device.hash}
                   </Typography>
-   
+
                   <Typography variant="caption">
                     <b>Aktiviert:</b>
                     {new Date(result.device.activatedAt).toLocaleString()}

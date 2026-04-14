@@ -42,12 +42,7 @@ function FeedItem({
     time: string;
   };
 }) {
-  const color =
-    f.verdict === "OK"
-      ? "#34c759"
-      : f.verdict === "WARNING"
-      ? "#ffcc00"
-      : "#ff3b30";
+  const color = f.verdict === "OK" ? "#34c759" : f.verdict === "WARNING" ? "#ffcc00" : "#ff3b30";
 
   return (
     <motion.div
@@ -66,7 +61,12 @@ function FeedItem({
           boxShadow: `0 6px 22px ${color}33`,
         }}
       >
-        <Stack direction="row" justifyContent="space-between">
+        <Stack
+          direction="row"
+          sx={{
+            justifyContent: "space-between",
+          }}
+        >
           <Stack>
             <Typography sx={{ fontSize: "1rem", fontWeight: 600 }}>
               {f.name}
@@ -76,7 +76,11 @@ function FeedItem({
             </Typography>
           </Stack>
 
-          <Stack alignItems="flex-end">
+          <Stack
+            sx={{
+              alignItems: "flex-end"
+            }}
+          >
             <Typography
               sx={{
                 fontWeight: 600,

@@ -1,0 +1,16 @@
+fragment TicketSecurity on TicketPayload {
+  deviceId
+  devicePublicKey
+  deviceActivationAt
+  deviceActivationIP
+
+  lastNonce
+  nextNonce
+
+  checkedInAt
+
+  revoked
+  revokedAt
+  revokedBy
+  revokedReason
+}

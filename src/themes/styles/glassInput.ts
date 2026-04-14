@@ -5,9 +5,7 @@ export const glassInputSx = (theme: Theme) => {
 
   return {
     "& .MuiOutlinedInput-root": {
-      backgroundColor: isDark
-        ? "rgba(255,255,255,0.08)"
-        : "rgba(255,255,255,0.65)",
+      backgroundColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.65)",
 
       backdropFilter: "blur(8px)",
       WebkitBackdropFilter: "blur(8px)",

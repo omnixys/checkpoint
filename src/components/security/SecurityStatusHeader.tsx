@@ -36,7 +36,13 @@ export default function SecurityStatusHeader({
           boxShadow: "0 12px 32px rgba(0,0,0,0.08)",
         }}
       >
-        <Stack direction="row" spacing={4} justifyContent="space-between">
+        <Stack
+          direction="row"
+          spacing={4}
+          sx={{
+            justifyContent: "space-between",
+          }}
+        >
           <StatusItem label="Inside" value={inside} />
           <StatusItem label="Outside" value={outside} />
           <StatusItem label="Scans" value={scans} />
@@ -57,7 +63,12 @@ function StatusItem({
   glow?: boolean;
 }) {
   return (
-    <Stack spacing={0.4} alignItems="center">
+    <Stack
+      spacing={0.4}
+      sx={{
+        alignItems: "center",
+      }}
+    >
       <Typography
         sx={{
           fontSize: "0.78rem",

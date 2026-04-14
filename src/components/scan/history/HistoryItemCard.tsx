@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Box, Typography, Chip, Stack, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
 
@@ -26,8 +25,8 @@ export default function HistoryItemCard({ entry }: { entry: HistoryEntry }) {
     entry.verdict === "SUCCESS"
       ? theme.palette.success.main
       : entry.verdict === "REVOKED"
-      ? theme.palette.error.main
-      : theme.palette.warning.main;
+        ? theme.palette.error.main
+        : theme.palette.warning.main;
 
   return (
     <motion.div

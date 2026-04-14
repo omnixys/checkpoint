@@ -1,0 +1,8 @@
+fragment AuthUser on KcUser {
+  id
+  username
+  firstName
+  lastName
+  email
+  roles
+}

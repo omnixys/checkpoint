@@ -1,0 +1,7 @@
+# import InvitationFull from "../fragments/invitation.fragment.graphql"
+
+mutation ApproveInvitation($input: ApproveInvitationInput!) {
+  approveInvitation(input: $input) {
+    ...InvitationFull
+  }
+}

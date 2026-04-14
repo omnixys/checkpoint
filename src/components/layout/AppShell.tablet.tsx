@@ -1,17 +1,13 @@
 "use client";
 
-import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
 import { Box } from "@mui/material";
 import React from "react";
-import UserMenu from "@/components/ui/UserMenu";
 import NavigationTablet from "./navigation/Navigation.tablet";
-import ColorBubbleSwitcher from "../ui/ColorBubbleSwitcher";
+import ColorBubbleSwitcher from "@/checkpoint/components/ColorBubbleSwitcher";
+import ThemeToggleButton from "@/checkpoint/components/ThemeToggleButton";
+import UserMenu from "@/checkpoint/components/UserMenu";
 
-export default function AppShellTablet({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AppShellTablet({ children }: { children: React.ReactNode }) {
   return (
     <Box
       sx={{
@@ -59,7 +55,7 @@ export default function AppShellTablet({
           }}
         >
           <ThemeToggleButton />
-                <ColorBubbleSwitcher />
+          <ColorBubbleSwitcher />
           <UserMenu />
         </Box>
 

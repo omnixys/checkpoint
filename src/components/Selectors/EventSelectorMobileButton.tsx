@@ -3,7 +3,7 @@
 import React from "react";
 import { Button } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { useActiveEvent } from "@/providers/ActiveEventProvider";
+import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 
 interface Props {
   onOpen: () => void;

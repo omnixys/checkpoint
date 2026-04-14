@@ -1,0 +1,9 @@
+fragment UserBase on UserPayload {
+  id
+  username
+  userType
+  status
+  createdAt
+  updatedAt
+  role
+}

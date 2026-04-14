@@ -1,0 +1,15 @@
+fragment ScanLog on ScanLogPayload {
+  id
+  ticketId
+  eventId
+  actorId
+
+  direction
+  gate
+
+  verdict
+  nonce
+  deviceId
+
+  createdAt
+}

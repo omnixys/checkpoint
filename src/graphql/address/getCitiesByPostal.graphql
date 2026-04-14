@@ -1,0 +1,6 @@
+query GetCitiesByPostalCode($postalCodeId: ID!) {
+  getCitiesByPostalCode(postalCodeId: $postalCodeId) {
+    id
+    name
+  }
+}

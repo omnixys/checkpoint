@@ -1,11 +1,11 @@
 "use client";
 
+import EntryExitHistory from "@/checkpoint/components/security/EntryExitHistory";
+import GuestsInsideList from "@/checkpoint/components/security/GuestsInsideList";
+import SecurityAnalyticsCharts from "@/checkpoint/components/security/SecurityAnalyticsCharts";
 import { Stack } from "@mui/material";
 
 // Phase 3 components
-import EntryExitHistory from "@/components/security/EntryExitHistory";
-import GuestsInsideList from "@/components/security/GuestsInsideList";
-import SecurityAnalyticsCharts from "@/components/security/SecurityAnalyticsCharts";
 
 /* -----------------------------------------------------------------------
  * RightPanel
@@ -43,10 +43,7 @@ export default function RightPanel({
       <EntryExitHistory entries={entries} exits={exits} />
 
       {/* Charts */}
-      <SecurityAnalyticsCharts
-        scans={analytics.scans}
-        warnings={analytics.warnings}
-      />
+      <SecurityAnalyticsCharts scans={analytics.scans} warnings={analytics.warnings} />
     </Stack>
   );
 }

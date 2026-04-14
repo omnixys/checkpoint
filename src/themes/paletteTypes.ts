@@ -17,9 +17,4 @@ export type ColorPreset = {
   dark: ColorScale;
 };
 
-export type OmnixysColorScheme =
-  | "original"
-  | "red"
-  | "green"
-  | "yellow"
-  | "blue";
+export type OmnixysColorScheme = "original" | "red" | "green" | "yellow" | "blue";

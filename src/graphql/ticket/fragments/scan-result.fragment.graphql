@@ -1,0 +1,12 @@
+fragment ScanResult on ScanPayload {
+  verdict
+  message
+
+  ticket {
+    ...TicketFull
+  }
+
+  log {
+    ...ScanLog
+  }
+}

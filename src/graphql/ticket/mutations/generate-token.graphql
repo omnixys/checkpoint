@@ -1,0 +1,3 @@
+mutation GenerateToken($ticketId: ID!) {
+  generateToken(ticketId: $ticketId)
+}

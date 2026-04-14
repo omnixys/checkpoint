@@ -46,9 +46,7 @@ const colorfulReporter = {
     const time = chalk.gray(
       `${now.getDate().toString().padStart(2, "0")}.${(now.getMonth() + 1)
         .toString()
-        .padStart(2, "0")}.${now.getFullYear()} ${
-        now.toTimeString().split(" ")[0]
-      }`
+        .padStart(2, "0")}.${now.getFullYear()} ${now.toTimeString().split(" ")[0]}`,
     );
 
     const tag = chalk.bold(`[${logObj.tag}]`);
@@ -105,7 +103,7 @@ function jsonReporter() {
           tag,
           level,
           args,
-        })
+        }),
       );
     },
   };
@@ -114,8 +112,7 @@ function jsonReporter() {
 export const logger = consola;
 
 export const getLogger = (context: string | { name?: string }) => {
-  const name =
-    typeof context === "string" ? context : context?.name || "unknown";
+  const name = typeof context === "string" ? context : context?.name || "unknown";
   const tag = name;
   return logger.withTag(tag);
 };

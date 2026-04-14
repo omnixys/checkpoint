@@ -1,0 +1,7 @@
+# import InvitationFull from "../fragments/invitation.fragment.graphql"
+
+mutation RemovePlusOneInvitation($id: ID!) {
+  removePlusOneInvitation(id: $id) {
+    ...InvitationFull
+  }
+}

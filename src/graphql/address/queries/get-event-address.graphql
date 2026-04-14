@@ -1,0 +1,14 @@
+query GetEventAddressesByEventId($eventId: ID!) {
+  getEventAddressByEventId(eventId: $eventId) {
+    additionalInfo
+    city
+    country
+    houseNumber
+    id
+    postalCode
+    state
+    street
+    lat
+    lon
+  }
+}

@@ -1,0 +1,10 @@
+query ValidateAddress($input: AddressValidationInput!) {
+  validateAddress(input: $input) {
+    valid
+    reason
+    confidence
+    formatted
+    lon
+    lat
+  }
+}

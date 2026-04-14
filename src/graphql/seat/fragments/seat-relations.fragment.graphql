@@ -1,0 +1,14 @@
+# import Section from "./section.fragment.graphql"
+# import Table from "./table.fragment.graphql"
+
+fragment SeatWithRelations on SeatPayload {
+  ...SeatBasic
+
+  section {
+    ...SectionFull
+  }
+
+  table {
+    ...TableFull
+  }
+}

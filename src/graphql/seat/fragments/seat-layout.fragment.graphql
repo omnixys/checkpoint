@@ -1,0 +1,40 @@
+fragment SeatLayoutSection on SectionPayload {
+  id
+  name
+  x
+  y
+  meta
+
+  tables {
+    id
+    name
+    x
+    y
+    meta
+    sectionId
+
+    seats {
+      id
+      x
+      y
+      rotation
+      number
+      status
+      meta
+      sectionId
+      tableId
+    }
+  }
+
+  seats {
+    id
+    x
+    y
+    rotation
+    number
+    status
+    meta
+    sectionId
+    tableId
+  }
+}

@@ -1,41 +1,36 @@
 "use client";
 
-import { JSX, useMemo } from "react";
-import type { Event } from "@/types/event/event.type";
-import CalendarAgendaDay from "./CalendarAgendaDay";
+import CalendarEventCard from "@/checkpoint/components/calendar/CalendarEventCard";
+import { EventPayload } from "@/checkpoint/generated/graphql";
+import { Box, Typography } from "@mui/material";
 
 type Props = {
-  events: readonly Event[];
-  onSelectDay?: (date: Date) => void;
-  visibleDate: Date;
+  grouped: Map<string, EventPayload[]>;
+  onSelectDay: (date: Date) => void;
 };
 
-
-export default function CalendarAgendaView({ events, onSelectDay }: Props): JSX.Element {
-  const grouped = useMemo(() => {
-    const map = new Map<string, Event[]>();
-
-    for (const event of events) {
-      const key = new Date(event.startsAt).toDateString();
-      if (!map.has(key)) map.set(key, []);
-      map.get(key)!.push(event);
-    }
-
-    return [...map.entries()].sort(
-      (a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime()
-    );
-  }, [events]);
-
+export default function CalendarAgendaView({ grouped, onSelectDay }: Props) {
   return (
     <>
-      {grouped.map(([date, dayEvents]) => (
-        <CalendarAgendaDay
-          key={date}
-          date={new Date(date)}
-          events={dayEvents}
-          onSelectDay={onSelectDay}
-        />
-      ))}
+      {[...grouped.entries()].map(([date, events]) => {
+        const d = new Date(date);
+
+        return (
+          <Box key={date} sx={{ mb: 3 }}>
+            <Typography sx={{ fontWeight: 700 }} onClick={() => onSelectDay(d)}>
+              {d.toLocaleDateString("de-DE", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+              })}
+            </Typography>
+
+            {events.map((event) => (
+              <CalendarEventCard key={event.id} event={event} />
+            ))}
+          </Box>
+        );
+      })}
     </>
   );
 }

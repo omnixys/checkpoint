@@ -1,0 +1,5 @@
+query GetUserList($guesIdList: [ID!]!) {
+  getUserList(userIds: $guesIdList) {
+    ...UserFull
+  }
+}

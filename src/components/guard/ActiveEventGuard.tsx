@@ -1,6 +1,6 @@
 "use client";
 
-import { useActiveEvent } from "@/providers/ActiveEventProvider";
+import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { Box, Button, Modal, Stack, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
 import React from "react";
@@ -12,11 +12,7 @@ import React from "react";
  *  - Premium VisionOS Empty State
  *  - Modal (first reminder)
  * ------------------------------------------------------------------ */
-export default function ActiveEventGuard({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ActiveEventGuard({ children }: { children: React.ReactNode }) {
   const theme = useTheme();
   const { activeEventId, loading } = useActiveEvent();
 
@@ -51,11 +47,7 @@ export default function ActiveEventGuard({
   return (
     <>
       {/* Modal Reminder */}
-      <Modal
-        open={open}
-        onClose={() => setOpen(false)}
-        sx={{ backdropFilter: "blur(12px)" }}
-      >
+      <Modal open={open} onClose={() => setOpen(false)} sx={{ backdropFilter: "blur(12px)" }}>
         <motion.div
           initial={{ opacity: 0, scale: 0.8, y: 40 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -68,24 +60,22 @@ export default function ActiveEventGuard({
             padding: "28px 32px",
           }}
         >
-          <Typography variant="h6" fontWeight={700} textAlign="center">
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 700,
+              textAlign: "center",
+            }}
+          >
             Aktives Event auswählen
           </Typography>
 
-          <Typography
-            variant="body1"
-            sx={{ mt: 1.5, textAlign: "center", opacity: 0.75 }}
-          >
+          <Typography variant="body1" sx={{ mt: 1.5, textAlign: "center", opacity: 0.75 }}>
             Um diese Seite zu nutzen, musst du zuerst ein Event auswählen.
           </Typography>
 
           <Stack direction="row" spacing={2} sx={{ mt: 3 }}>
-            <Button
-              variant="contained"
-              fullWidth
-              href="/event"
-              sx={{ borderRadius: 2 }}
-            >
+            <Button variant="contained" fullWidth href="/event" sx={{ borderRadius: 2 }}>
               Event auswählen
             </Button>
 
@@ -140,7 +130,12 @@ export default function ActiveEventGuard({
               🎟️
             </Typography>
 
-            <Typography variant="h6" fontWeight={700}>
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 700,
+              }}
+            >
               Kein aktives Event ausgewählt
             </Typography>
 
@@ -148,11 +143,7 @@ export default function ActiveEventGuard({
               Wähle eines deiner Events aus, um fortzufahren.
             </Typography>
 
-            <Button
-              variant="contained"
-              sx={{ mt: 3, borderRadius: 2 }}
-              href="/event"
-            >
+            <Button variant="contained" sx={{ mt: 3, borderRadius: 2 }} href="/event">
               Event auswählen
             </Button>
           </Box>

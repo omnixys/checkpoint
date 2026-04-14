@@ -1,87 +1,220 @@
-// /providers/AuthProvider.tsx
 "use client";
 
-import { ApolloProvider, useQuery } from "@apollo/client/react";
-import React, {
-  createContext,
-  JSX,
-  useContext,
-  useEffect,
-  useMemo,
-} from "react";
-import { ME } from "@/graphql/user/user-query.graphql";
-import { createCombinedApolloClient } from "@/lib/client/combined-client";
-import { EventRole } from "@/types/event/event-enum.type";
-import type { MeResult } from "@/types/user/user-graphql.type";
-import { User } from "@/types/user/user.type";
-import { AuthEventsBus, AuthManager } from "@/utils/AuthManager";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 
-export interface AuthContextType {
-  user?: User;
-  isAdmin: boolean;
+import { useApolloClient } from "@apollo/client/react";
+import { UserPayload } from "@/checkpoint/generated/graphql";
+import { useMe } from "@/checkpoint/hooks/user/useMe";
+import { setCurrentUser } from "@/checkpoint/lib/apollo/auth-context";
+import { AuthManager, AuthEventsBus } from "@/checkpoint/lib/auth/AuthManager";
+import { CurrentUser } from "@/checkpoint/lib/auth/auth.types";
+
+/* -------------------------------------------------------------------------- */
+/* Types                                                                      */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Auth context value exposed to the application.
+ *
+ * This is the single source of truth for:
+ * - authenticated user
+ * - auth state
+ * - auth actions
+ */
+interface AuthContextValue {
+  user?: UserPayload | null;
   isAuthenticated: boolean;
   loading: boolean;
   logout: () => Promise<void>;
-  refetchMe: () => Promise<any>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+/* -------------------------------------------------------------------------- */
+/* Context                                                                    */
+/* -------------------------------------------------------------------------- */
 
-export function AuthProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}): JSX.Element {
-  const client = useMemo(() => createCombinedApolloClient(), []);
-  const { data, loading, refetch } = useQuery<MeResult>(ME, {
-    client,
-    fetchPolicy: "cache-and-network",
-    context: { fetchOptions: { credentials: "include" } },
-  });
+const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-  const user = data?.me;
-  const isAdmin = user?.roles?.includes(EventRole.ADMIN) ?? false;
-  const isAuthenticated = !!user;
+/* -------------------------------------------------------------------------- */
+/* Provider                                                                   */
+/* -------------------------------------------------------------------------- */
 
-  /* Initialize AuthManager */
+/**
+ * AuthProvider
+ *
+ * Responsibilities:
+ * - Initializes AuthManager with global Apollo Client
+ * - Keeps user state in sync with backend (via useMe)
+ * - Propagates user into Apollo header layer (actorId)
+ * - Handles auth lifecycle events (login/logout/user changes)
+ *
+ * Important:
+ * This provider ensures that EVERY GraphQL request contains:
+ * - x-tenant-id
+ * - x-actor-id
+ */
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const client = useApolloClient();
+
+  /**
+   * Fetch authenticated user
+   *
+   * fetchPolicy:
+   * - cache-first prevents duplicate requests
+   * - still allows refetch on login/logout
+   */
+  const { user, loading, refetch } = useMe();
+
+  /**
+   * Derived authentication state
+   */
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+
+  /* ------------------------------------------------------------------------ */
+  /* Initialize AuthManager                                                   */
+  /* ------------------------------------------------------------------------ */
+
   useEffect(() => {
+    /**
+     * AuthManager needs Apollo client for:
+     * - login mutations
+     * - logout mutations
+     */
     AuthManager.init(client);
   }, [client]);
 
-  /* Re-fetch user on events */
+  /* ------------------------------------------------------------------------ */
+  /* Sync authentication state                                                */
+  /* ------------------------------------------------------------------------ */
+
   useEffect(() => {
-    const refetchUser = (): void => {
-      void refetch();
+    setIsAuthenticated(Boolean(user));
+  }, [user]);
+
+  /* ------------------------------------------------------------------------ */
+  /* CRITICAL: Sync user to Apollo header layer                               */
+  /* ------------------------------------------------------------------------ */
+
+  useEffect(() => {
+    if (!user) return;
+
+    const currentUser: CurrentUser = {
+      id: user.id,
+      username: user.username,
+      email: user.personalInfo?.email,
+      role: user.role ?? undefined
+    };
+    
+    /**
+     * This is REQUIRED for:
+     * - x-actor-id header
+     * - Kafka context propagation
+     * - audit logging
+     */
+    setCurrentUser(currentUser ?? null);
+  }, [user]);
+
+  /* ------------------------------------------------------------------------ */
+  /* Auth event handling                                                      */
+  /* ------------------------------------------------------------------------ */
+
+  useEffect(() => {
+    /**
+     * On login:
+     * - refetch user from backend
+     * - ensures fresh user data
+     */
+    const handleLogin = async (): Promise<void> => {
+      await refetch();
     };
 
-    AuthEventsBus.on("login", refetchUser);
-    AuthEventsBus.on("refresh", refetchUser);
-    AuthEventsBus.on("signup", refetchUser);
-    AuthEventsBus.on("logout", refetchUser);
+    /**
+     * On logout:
+     * - reset local state
+     */
+    const handleLogout = (): void => {
+      setIsAuthenticated(false);
+      setCurrentUser(null);
+    };
 
-    return () => {};
+    /**
+     * On user change:
+     * - refresh user data (e.g. profile update)
+     */
+    const handleUserChanged = async (): Promise<void> => {
+      await refetch();
+    };
+
+    AuthEventsBus.on("auth:login", handleLogin);
+    AuthEventsBus.on("auth:logout", handleLogout);
+    AuthEventsBus.on("user:changed", handleUserChanged);
+
+    return () => {
+      AuthEventsBus.off("auth:login", handleLogin);
+      AuthEventsBus.off("auth:logout", handleLogout);
+      AuthEventsBus.off("user:changed", handleUserChanged);
+    };
   }, [refetch]);
 
-  return (
-    <ApolloProvider client={client}>
-      <AuthContext.Provider
-        value={{
-          user,
-          isAdmin,
-          isAuthenticated,
-          loading,
-          logout: () => AuthManager.logout(),
-          refetchMe: () => refetch(),
-        }}
-      >
-        {children}
-      </AuthContext.Provider>
-    </ApolloProvider>
-  );
+  /* ------------------------------------------------------------------------ */
+  /* Actions                                                                  */
+  /* ------------------------------------------------------------------------ */
+
+  /**
+   * Logout action
+   *
+   * Responsibilities:
+   * - Invalidate backend session
+   * - Clear Apollo cache
+   * - Reset user context
+   */
+  const logout = async (): Promise<void> => {
+    await AuthManager.logout();
+
+    /**
+     * Reset header context immediately
+     */
+    setCurrentUser(null);
+
+    /**
+     * Clear Apollo cache to avoid stale data
+     */
+    await client.clearStore();
+  };
+
+  /* ------------------------------------------------------------------------ */
+  /* Context Value                                                            */
+  /* ------------------------------------------------------------------------ */
+
+const value = useMemo<AuthContextValue>(
+  () => ({
+    ...(user !== undefined ? { user } : {}),
+    isAuthenticated,
+    loading,
+    logout,
+  }),
+  [user, isAuthenticated, loading],
+);
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-export function useAuth(): AuthContextType {
+/* -------------------------------------------------------------------------- */
+/* Hook                                                                       */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * useAuth
+ *
+ * Provides access to authentication state and actions.
+ *
+ * Throws if used outside AuthProvider to prevent silent bugs.
+ */
+export function useAuth(): AuthContextValue {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
+
+  if (!ctx) {
+    throw new Error("useAuth must be used inside AuthProvider");
+  }
+
   return ctx;
 }

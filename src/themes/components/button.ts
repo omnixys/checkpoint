@@ -8,8 +8,7 @@ export const buttonComponents = (theme: Theme): Components["MuiButton"] => ({
       fontWeight: 600,
       textTransform: "none",
 
-      transition:
-        "transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease",
+      transition: "transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease",
 
       "&:active": {
         transform: "scale(0.96)",
@@ -34,9 +33,7 @@ export const buttonComponents = (theme: Theme): Components["MuiButton"] => ({
       borderColor: theme.palette.divider,
       "&:hover": {
         backgroundColor:
-          theme.palette.mode === "dark"
-            ? "rgba(255,255,255,0.04)"
-            : "rgba(0,0,0,0.04)",
+          theme.palette.mode === "dark" ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)",
       },
     },
   },

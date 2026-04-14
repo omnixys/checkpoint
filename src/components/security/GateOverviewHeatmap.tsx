@@ -44,8 +44,8 @@ function GateCard({
     g.trend === "low"
       ? "rgba(52,199,89,0.45)"
       : g.trend === "medium"
-      ? "rgba(255,204,0,0.45)"
-      : "rgba(255,59,48,0.45)";
+        ? "rgba(255,204,0,0.45)"
+        : "rgba(255,59,48,0.45)";
 
   return (
     <motion.div
@@ -63,9 +63,7 @@ function GateCard({
           borderLeft: `6px solid ${color}`,
         }}
       >
-        <Typography sx={{ fontWeight: 600, fontSize: "1.1rem" }}>
-          {g.name}
-        </Typography>
+        <Typography sx={{ fontWeight: 600, fontSize: "1.1rem" }}>{g.name}</Typography>
 
         <Typography sx={{ mt: 0.5, opacity: 0.75 }}>
           {g.scans} scans · {g.warnings} warnings

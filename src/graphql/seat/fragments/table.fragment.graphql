@@ -1,0 +1,15 @@
+fragment TableFull on TablePayload {
+  id
+  eventId
+  sectionId
+  name
+  order
+  capacity
+  shape
+  x
+  y
+  rotation
+  meta
+  createdAt
+  updatedAt
+}

@@ -1,0 +1,7 @@
+mutation AddTimeLines($eventId: ID!, $input: [CreateTimelineInput!]!) {
+  addTimeLines(eventId: $eventId, input: $input) {
+    timeline {
+      ...EventTimeline
+    }
+  }
+}

@@ -1,0 +1,12 @@
+fragment Contact on ContactPayload {
+  id
+  userId
+  contactId
+  relationship
+  withdrawalLimit
+  emergency
+  startDate
+  endDate
+  createdAt
+  updatedAt
+}

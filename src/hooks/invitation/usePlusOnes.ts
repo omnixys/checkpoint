@@ -1,0 +1,164 @@
+"use client";
+
+import { useCallback, useMemo, useState } from "react";
+import type { PublicPlusOneInput, PhoneNumberInput } from "@/checkpoint/generated/graphql";
+
+/**
+ * Domain model for PlusOne (UI layer)
+ */
+export interface PlusOneModel {
+  firstName: string;
+  lastName: string;
+  email?: string | null;
+  phoneNumbers: PhoneNumberInput[];
+}
+
+/**
+ * Strongly typed handler contracts
+ * This prevents accidental mixing with invitee handlers
+ */
+export interface PlusOnePhoneHandlers {
+  addPhone: (plusOneIndex: number) => void;
+  updatePhone: <K extends keyof PhoneNumberInput>(
+    plusOneIndex: number,
+    phoneIndex: number,
+    field: K,
+    value: PhoneNumberInput[K],
+  ) => void;
+  removePhone: (plusOneIndex: number, phoneIndex: number) => void;
+}
+
+export function usePlusOnes() {
+  const [plusOnes, setPlusOnes] = useState<PlusOneModel[]>([]);
+
+  const add = useCallback(() => {
+    setPlusOnes((prev) => [
+      ...prev,
+      {
+        firstName: "",
+        lastName: "",
+        email: null,
+        phoneNumbers: [],
+      },
+    ]);
+  }, []);
+
+  const remove = useCallback((index: number) => {
+    setPlusOnes((prev) => prev.filter((_, i) => i !== index));
+  }, []);
+
+  const update = useCallback(
+    <K extends keyof PlusOneModel>(index: number, field: K, value: PlusOneModel[K]) => {
+      setPlusOnes((prev) => prev.map((p, i) => (i === index ? { ...p, [field]: value } : p)));
+    },
+    [],
+  );
+
+  /**
+   * 🔒 Phone handlers are FULLY isolated from invitee state
+   */
+  const addPhone = useCallback((plusOneIndex: number) => {
+    setPlusOnes((prev) =>
+      prev.map((p, i) =>
+        i === plusOneIndex
+          ? {
+              ...p,
+              phoneNumbers: [
+                ...p.phoneNumbers,
+                {
+                  type: "WHATSAPP",
+                  number: "",
+                  label: "",
+                  countryCode: "+49",
+                  isPrimary: p.phoneNumbers.length === 0,
+                },
+              ],
+            }
+          : p,
+      ),
+    );
+  }, []);
+
+  const updatePhone = useCallback(
+    <K extends keyof PhoneNumberInput>(
+      plusOneIndex: number,
+      phoneIndex: number,
+      field: K,
+      value: PhoneNumberInput[K],
+    ) => {
+      setPlusOnes((prev) =>
+        prev.map((p, i) => {
+          if (i !== plusOneIndex) {
+            return p;
+          }
+
+          const phones = [...p.phoneNumbers];
+          const currentPhone = phones[phoneIndex];
+
+          if (!currentPhone) {
+            return p;
+          }
+
+          phones[phoneIndex] = {
+            ...currentPhone,
+            [field]: value,
+          };
+
+          return {
+            ...p,
+            phoneNumbers: phones,
+          };
+        }),
+      );
+    },
+    [],
+  );
+  const removePhone = useCallback((plusOneIndex: number, phoneIndex: number) => {
+    setPlusOnes((prev) =>
+      prev.map((p, i) =>
+        i === plusOneIndex
+          ? {
+              ...p,
+              phoneNumbers: p.phoneNumbers.filter((_, pi) => pi !== phoneIndex),
+            }
+          : p,
+      ),
+    );
+  }, []);
+
+  /**
+   * Validation layer
+   */
+  const valid = useMemo(() => {
+    return plusOnes.filter((p) => p.firstName.trim() && p.lastName.trim());
+  }, [plusOnes]);
+
+  /**
+   * GraphQL mapping (safe + normalized)
+   */
+  const toGraphQL = useCallback((): PublicPlusOneInput[] => {
+    return valid.map((p) => ({
+      firstName: p.firstName.trim(),
+      lastName: p.lastName.trim(),
+      email: p.email?.trim() || null,
+      phoneNumbers: p.phoneNumbers.length ? p.phoneNumbers : null,
+    }));
+  }, [valid]);
+
+  return {
+    plusOnes,
+
+    // plusOne core
+    add,
+    remove,
+    update,
+
+    // 🔒 isolated phone handlers
+    addPhone,
+    updatePhone,
+    removePhone,
+
+    // mapping
+    toGraphQL,
+  };
+}

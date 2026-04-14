@@ -1,0 +1,9 @@
+mutation ImportInvitations($input: ImportInvitationsInput!) {
+  importInvitations(input: $input) {
+    total
+    imported
+    skipped
+    duplicates
+    errors
+  }
+}

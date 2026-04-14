@@ -1,0 +1,14 @@
+query AutocompleteAddress($text: String!) {
+  addressAutocomplete(text: $text) {
+    formatted
+    street
+    houseNumber
+    postalCode
+    city
+    state
+    country
+    confidence
+    lat
+    lon
+  }
+}

@@ -1,0 +1,18 @@
+// src/checkpoint/mappers/plus-one.mapper.ts
+
+import { PublicPlusOneInput } from "@/checkpoint/generated/graphql";
+
+/**
+ * Ensures backend-safe payload
+ * Removes empty fields and normalizes structure
+ */
+export function mapPlusOnes(plusOnes: PublicPlusOneInput[]): PublicPlusOneInput[] {
+  return plusOnes
+    .filter((p) => p.firstName && p.lastName)
+    .map((p) => ({
+      firstName: p.firstName.trim(),
+      lastName: p.lastName.trim(),
+      email: p.email ?? null,
+      phoneNumbers: p.phoneNumbers ?? null,
+    }));
+}

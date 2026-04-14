@@ -1,0 +1,18 @@
+fragment SeatBasic on SeatPayload {
+  id
+  status
+  eventId
+  number
+  label
+  note
+
+  section {
+    name
+    id
+  }
+
+  table {
+    name
+    id
+  }
+}

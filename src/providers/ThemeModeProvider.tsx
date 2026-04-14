@@ -3,11 +3,10 @@
 import React from "react";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import type { PaletteMode } from "@mui/material";
-
-import { triggerAccentPulse } from "@/lib/accent-animation";
-import { createAppTheme } from "@/themes/createAppTheme";
-import type { OmnixysColorScheme } from "@/themes/paletteTypes";
-import { STORAGE_MODE, STORAGE_SCHEME } from "../constants/storage/color";
+import { STORAGE_MODE, STORAGE_SCHEME } from "@/checkpoint/constants/color";
+import { triggerAccentPulse } from "@/checkpoint/themes/accent-animation";
+import { createAppTheme } from "@/checkpoint/themes/createAppTheme";
+import { OmnixysColorScheme } from "@/checkpoint/themes/paletteTypes";
 
 // -------------------------------------------------------------
 // Context Types
@@ -23,14 +22,9 @@ type ThemeModeContextValue = {
 // -------------------------------------------------------------
 // React Context
 // -------------------------------------------------------------
-export const ThemeModeContext =
-  React.createContext<ThemeModeContextValue | null>(null);
+export const ThemeModeContext = React.createContext<ThemeModeContextValue | null>(null);
 
-export default function ThemeModeProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ThemeModeProvider({ children }: { children: React.ReactNode }) {
   // -------------------------------------------------------------
   // State
   // -------------------------------------------------------------
@@ -41,17 +35,11 @@ export default function ThemeModeProvider({
   // Load mode + scheme from localStorage
   // -------------------------------------------------------------
   React.useEffect(() => {
-    const savedMode = window.localStorage.getItem(
-      STORAGE_MODE,
-    ) as PaletteMode | null;
+    const savedMode = window.localStorage.getItem(STORAGE_MODE) as PaletteMode | null;
 
-    const savedScheme = window.localStorage.getItem(
-      STORAGE_SCHEME,
-    ) as OmnixysColorScheme | null;
+    const savedScheme = window.localStorage.getItem(STORAGE_SCHEME) as OmnixysColorScheme | null;
 
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)",
-    ).matches;
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
     setMode(savedMode ?? (prefersDark ? "dark" : "light"));
     setScheme(savedScheme ?? "original");
@@ -64,9 +52,7 @@ export default function ThemeModeProvider({
     const root = document.documentElement;
     root.classList.add("theme-transition");
 
-    const accent = getComputedStyle(root)
-      .getPropertyValue("--mui-palette-primary-main")
-      .trim();
+    const accent = getComputedStyle(root).getPropertyValue("--mui-palette-primary-main").trim();
 
     if (accent) {
       triggerAccentPulse(accent);
@@ -109,10 +95,7 @@ export default function ThemeModeProvider({
   // -------------------------------------------------------------
   // Theme creation
   // -------------------------------------------------------------
-  const theme = React.useMemo(
-    () => createAppTheme(mode, scheme),
-    [mode, scheme],
-  );
+  const theme = React.useMemo(() => createAppTheme(mode, scheme), [mode, scheme]);
 
   return (
     <ThemeModeContext.Provider value={value}>

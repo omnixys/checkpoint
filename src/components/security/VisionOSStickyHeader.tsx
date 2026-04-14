@@ -35,26 +35,27 @@ export default function VisionOSStickyHeader({
           px: 3,
           py: 1.8,
           mb: 2,
-          boxShadow:
-            "inset 0 0 0 0.6px rgba(255,255,255,0.35), 0 8px 30px rgba(0,0,0,0.18)",
+          boxShadow: "inset 0 0 0 0.6px rgba(255,255,255,0.35), 0 8px 30px rgba(0,0,0,0.18)",
           border: "1px solid rgba(255,255,255,0.22)",
         }}
       >
         <Stack
           direction="row"
-          alignItems="center"
-          justifyContent="space-between"
           spacing={2}
+          sx={{
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
         >
           {/* ---------- Title ---------- */}
           <Typography
             variant="h5"
-            fontWeight={600}
             sx={{
               background: "linear-gradient(90deg,#000,#555)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               letterSpacing: "-0.5px",
+              fontWeight: 600,
             }}
           >
             Security Dashboard
@@ -80,12 +81,12 @@ function StatusDot({ label, active }: { label: string; active: boolean }) {
     <Stack
       direction="row"
       spacing={1}
-      alignItems="center"
       sx={{
         px: 1.6,
         py: 0.6,
         borderRadius: "14px",
         background: active ? "rgba(52,199,89,0.25)" : "rgba(255,69,58,0.25)",
+        alignItems: "center",
       }}
     >
       <Box
@@ -96,11 +97,7 @@ function StatusDot({ label, active }: { label: string; active: boolean }) {
           background: active ? "#34C759" : "#FF453A",
         }}
       />
-      <Typography
-        fontSize={"0.75rem"}
-        fontWeight={500}
-        sx={{ color: active ? "#34C759" : "#FF453A" }}
-      >
+      <Typography sx={{ color: active ? "#34C759" : "#FF453A", fontWeight: 500, fontSize: 0.75 }}>
         {label}
       </Typography>
     </Stack>

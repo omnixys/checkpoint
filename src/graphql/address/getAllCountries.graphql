@@ -1,0 +1,24 @@
+query GetAllCountries {
+  getAllCountries {
+    id
+    name
+    flagSvg
+    flagPng
+    iso2
+    callingCode {
+      id
+      code
+    }
+  }
+}
+
+query GetAllCallingCodes {
+  getAllCountries {
+    name
+    flagSvg
+    iso2
+    callingCode {
+      code
+    }
+  }
+}

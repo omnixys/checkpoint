@@ -1,0 +1,7 @@
+# import InvitationFull from "../fragments/invitation.fragment.graphql"
+
+query Invitation($invitationId: ID!) {
+  invitation(id: $invitationId) {
+    ...InvitationFull
+  }
+}

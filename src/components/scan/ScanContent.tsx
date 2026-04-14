@@ -3,22 +3,19 @@
 import { Capacitor } from "@capacitor/core";
 import { Box, Card, CardActions, CardContent, Typography } from "@mui/material";
 import { useState } from "react";
-
-import { ScanResult } from "@/types/scan/scan.type";
-import { getDeviceHash } from "@/utils/device-hash";
-import { playScanFeedback } from "@/utils/scan-feedback";
-import { useScanTicket } from "./hooks/useScanTicket";
+import { useScanTicket } from "../../hooks/scan/useScanTicket";
 import NativeScanner from "./NativeScanner";
 import ScanResultCard from "./ScanResultCard";
 import StatusHeader from "./StatusHeader";
 import WebCameraScanner from "./WebCameraScanner";
+import { ScanResult } from "@/checkpoint/types/scan.type";
+import { playScanFeedback } from "@/checkpoint/utils/scan-feedback";
 
 export default function ScanContent() {
   const scanTicket = useScanTicket();
   const [result, setResult] = useState<ScanResult | null>(null);
 
   const handleWebDetect = async (qrText: string) => {
-    
     const res = await scanTicket(qrText);
     await playScanFeedback(res);
     setResult(res);
@@ -55,11 +52,7 @@ export default function ScanContent() {
               QR-Scanner
             </Typography>
 
-            {isNative ? (
-              <NativeScanner />
-            ) : (
-              <WebCameraScanner onDetect={handleWebDetect} />
-            )}
+            {isNative ? <NativeScanner /> : <WebCameraScanner onDetect={handleWebDetect} />}
 
             {result && (
               <Box sx={{ mt: 2 }}>
@@ -70,9 +63,7 @@ export default function ScanContent() {
 
           <CardActions>
             <Typography variant="caption" color="text.secondary">
-              {isNative
-                ? "Nativer ML-Kit-Scanner"
-                : "Browser-Scanner (BarcodeDetector)"}
+              {isNative ? "Nativer ML-Kit-Scanner" : "Browser-Scanner (BarcodeDetector)"}
             </Typography>
           </CardActions>
         </Card>

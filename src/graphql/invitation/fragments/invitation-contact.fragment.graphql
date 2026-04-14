@@ -1,0 +1,5 @@
+fragment InvitationContact on InvitationPayload {
+  phoneNumbers {
+    ...PhoneNumber
+  }
+}

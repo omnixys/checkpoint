@@ -5,11 +5,6 @@ import { useCallback, useState } from "react";
 
 import { Haptics, ImpactStyle } from "@capacitor/haptics";
 
-import { useActiveEvent } from "@/providers/ActiveEventProvider";
-import { ScanResult } from "@/types/scan/scan.type";
-import { getDeviceHash } from "@/utils/device-hash";
-import { getLogger } from "@/utils/logger";
-import { playScanFeedback } from "@/utils/scan-feedback";
 import {
   BarcodeFormat,
   // LensFacing, // optional
@@ -17,8 +12,12 @@ import {
   type ScanResult as MLKitScanResult,
 } from "@capacitor-mlkit/barcode-scanning";
 import { Capacitor } from "@capacitor/core";
-import { useScanTicket } from "./hooks/useScanTicket";
+import { useScanTicket } from "../../hooks/scan/useScanTicket";
 import ScanResultCard from "./ScanResultCard";
+import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
+import { getLogger } from "@/checkpoint/utils/logger";
+import { playScanFeedback } from "@/checkpoint/utils/scan-feedback";
+import { ScanResult } from "@/checkpoint/types/scan.type";
 
 /* ──────────────────────────────────────────────────────────────────────────────
    Zusätzliche DOM/Media-Typen (ohne any)
@@ -32,11 +31,7 @@ declare global {
   }
   interface BarcodeDetector {
     detect(
-      source:
-        | HTMLVideoElement
-        | HTMLImageElement
-        | ImageBitmap
-        | HTMLCanvasElement
+      source: HTMLVideoElement | HTMLImageElement | ImageBitmap | HTMLCanvasElement,
     ): Promise<DetectedBarcode[]>;
   }
   interface BarcodeDetectorConstructor {
@@ -83,9 +78,7 @@ export default function NativeScanner() {
 
       await Haptics.impact({ style: ImpactStyle.Medium });
 
-      const deviceHash = await getDeviceHash();
-
-      const scanResult = await scanTicket(token, deviceHash, "MAIN_GATE");
+      const scanResult = await scanTicket(token);
       await playScanFeedback(scanResult);
       setResult(scanResult);
     } catch (e) {

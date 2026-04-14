@@ -1,0 +1,13 @@
+fragment TicketBasic on TicketPayload {
+  id
+  eventId
+  invitationId
+  seatId
+  guestProfileId
+
+  currentState
+  revoked
+
+  createdAt
+  updatedAt
+}

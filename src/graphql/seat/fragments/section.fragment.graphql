@@ -1,0 +1,16 @@
+fragment SectionFull on SectionPayload {
+  id
+  eventId
+  name
+  order
+  capacity
+  shape
+  x
+  y
+  width
+  height
+  rotation
+  meta
+  createdAt
+  updatedAt
+}

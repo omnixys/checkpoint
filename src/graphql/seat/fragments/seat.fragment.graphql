@@ -1,0 +1,34 @@
+fragment SeatFull on SeatPayload {
+  ...SeatBasic
+
+  seatType
+  shape
+
+  x
+  y
+  width
+  height
+  radius
+  rotation
+  zIndex
+
+  locked
+  hidden
+
+  guestId
+  invitationId
+
+  meta
+  createdAt
+  updatedAt
+
+  section {
+    name
+    id
+  }
+
+  table {
+    name
+    id
+  }
+}

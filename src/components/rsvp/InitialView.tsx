@@ -1,16 +1,9 @@
 "use client";
 
 import React from "react";
-import {
-  Box,
-  Stack,
-  Typography,
-  Button,
-  useTheme,
-  useMediaQuery,
-} from "@mui/material";
+import { Box, Stack, Typography, Button, useTheme, useMediaQuery } from "@mui/material";
 import { motion } from "framer-motion";
-import ParallaxBanner from "./ParallaxBanner";
+import ParallaxBanner from "@/checkpoint/components/ParallaxBanner";
 
 /**
  * InitialView
@@ -70,25 +63,20 @@ export default function InitialView({
           <Stack spacing={2}>
             <Typography
               variant={isMobile ? "h6" : "h5"}
-              fontWeight={700}
-              textAlign="center"
+              sx={{
+                fontWeight: 700,
+                fontSize: 12,
+                alignItems: "center",
+              }}
             >
               Hallo {firstName} {lastName},
             </Typography>
 
-            <Typography
-              variant="body1"
-              textAlign="center"
-              sx={{ opacity: 0.85 }}
-            >
+            <Typography variant="body1" sx={{ opacity: 0.85, textAlign: "center" }}>
               {eventTitle} wartet auf deine Antwort.
             </Typography>
 
-            <Typography
-              variant="body2"
-              textAlign="center"
-              sx={{ opacity: 0.65, mt: 1 }}
-            >
+            <Typography variant="body2" sx={{ opacity: 0.65, mt: 1, textAlign: "center" }}>
               Deine Entscheidung ist endgültig – außer „Vielleicht“.
             </Typography>
 

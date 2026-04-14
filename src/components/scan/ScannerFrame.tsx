@@ -1,115 +1,166 @@
 "use client";
 
-import { useActiveEvent } from "@/providers/ActiveEventProvider";
-import { ScanResult } from "@/types/scan/scan.type";
 import { Box, useTheme } from "@mui/material";
+import { BrowserMultiFormatReader, IScannerControls } from "@zxing/browser";
+import { NotFoundException } from "@zxing/library";
 import { motion } from "framer-motion";
-import jsQR from "jsqr";
 import { useCallback, useEffect, useRef, useState } from "react";
 import ScanResultCard from "./ScanResultCard";
+import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
+import { ScanResult } from "@/checkpoint/types/scan.type";
 
 /* ---------------------------------------------------------------------
- * VisionOS Scanner Frame with WebRTC
+ * VisionOS Scanner Frame with ZXing WebRTC
  * ------------------------------------------------------------------- */
 export default function ScannerFrame() {
   const theme = useTheme();
   const { activeEventId } = useActiveEvent();
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const controlsRef = useRef<IScannerControls | null>(null);
+  const readerRef = useRef<BrowserMultiFormatReader | null>(null);
+  const mountedRef = useRef<boolean>(false);
+  const lockedRef = useRef<boolean>(false);
+  const unlockTimeoutRef = useRef<number | null>(null);
 
   const [result, setResult] = useState<ScanResult | null>(null);
-  const [locked, setLocked] = useState(false); // temporary lock after scan
+  const [locked, setLocked] = useState<boolean>(false);
 
-  /* ---------------------------------------------------------
-   * Initialize WebRTC camera
-   * ------------------------------------------------------- */
-  useEffect(() => {
-    (async () => {
-      if (!videoRef.current) return;
-
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
-      });
-
-      videoRef.current.srcObject = stream;
-      await videoRef.current.play();
-    })();
+  const clearUnlockTimeout = useCallback(() => {
+    if (unlockTimeoutRef.current !== null) {
+      window.clearTimeout(unlockTimeoutRef.current);
+      unlockTimeoutRef.current = null;
+    }
   }, []);
 
-  /* ---------------------------------------------------------
-   * Continuous scanning loop
-   * ------------------------------------------------------- */
-  const scanLoop = useCallback(() => {
-    if (!videoRef.current || !canvasRef.current) return;
-    if (locked) return; // Prevent spam-scanning
+  const stopScanner = useCallback(() => {
+    clearUnlockTimeout();
 
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    controlsRef.current?.stop();
+    controlsRef.current = null;
 
-    const w = video.videoWidth;
-    const h = video.videoHeight;
+    if (videoRef.current) {
+      const mediaStream = videoRef.current.srcObject;
+      if (mediaStream instanceof MediaStream) {
+        mediaStream.getTracks().forEach((track) => {
+          track.stop();
+        });
+      }
 
-    canvas.width = w;
-    canvas.height = h;
-
-    ctx.drawImage(video, 0, 0, w, h);
-
-    const imageData = ctx.getImageData(0, 0, w, h);
-    const code = jsQR(imageData.data, w, h);
-
-    if (code?.data) {
-      handleScan(code.data);
+      videoRef.current.pause();
+      videoRef.current.srcObject = null;
     }
 
-    requestAnimationFrame(scanLoop);
-  }, [locked]);
+    readerRef.current = null;
+    lockedRef.current = false;
+  }, [clearUnlockTimeout]);
 
-  /* ---------------------------------------------------------
-   * Start scanning
-   * ------------------------------------------------------- */
+  const handleScan = useCallback(
+    async (qr: string) => {
+      if (lockedRef.current) return;
+      if (!activeEventId) return;
+
+      lockedRef.current = true;
+      setLocked(true);
+
+      try {
+        const response = await fetch("/api/scan", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            qrCode: qr,
+            eventId: activeEventId,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Scan request failed with status ${response.status}`);
+        }
+
+        const payload = (await response.json()) as ScanResult;
+
+        if (!mountedRef.current) return;
+        setResult(payload);
+      } catch (error) {
+        console.error(error);
+
+        if (!mountedRef.current) return;
+
+        setResult({
+          status: "ERROR",
+          message: "Scan fehlgeschlagen",
+          deviceMatched: false,
+          valid: false,
+        });
+      } finally {
+        if (!mountedRef.current) return;
+
+        clearUnlockTimeout();
+
+        unlockTimeoutRef.current = window.setTimeout(() => {
+          lockedRef.current = false;
+          setLocked(false);
+        }, 1500);
+      }
+    },
+    [activeEventId, clearUnlockTimeout],
+  );
+
   useEffect(() => {
-    requestAnimationFrame(scanLoop);
-  }, [scanLoop]);
+    mountedRef.current = true;
 
-  /* ---------------------------------------------------------
-   * Handle QR result
-   * ------------------------------------------------------- */
-  const handleScan = async (qr: string) => {
-    setLocked(true);
+    const startScanner = async () => {
+      if (!videoRef.current) return;
 
-    try {
-      const res = await fetch("/api/scan", {
-        method: "POST",
-        body: JSON.stringify({
-          qrCode: qr,
-          eventId: activeEventId,
-        }),
-        headers: { "Content-Type": "application/json" },
-      });
+      try {
+        const reader = new BrowserMultiFormatReader();
+        readerRef.current = reader;
 
-      const json = await res.json();
-      setResult(json);
-    } catch (e) {
-      setResult({
-        status: "ERROR",
-        message: "Scan fehlgeschlagen",
-      });
-    }
+        const controls = await reader.decodeFromVideoDevice(
+          undefined,
+          videoRef.current,
+          (decodeResult, error) => {
+            if (!mountedRef.current) return;
+            if (lockedRef.current) return;
 
-    setTimeout(() => {
-      setLocked(false);
-    }, 1500);
-  };
+            if (decodeResult?.getText()) {
+              void handleScan(decodeResult.getText());
+              return;
+            }
 
-  /* ---------------------------------------------------------
-   * UI
-   * ------------------------------------------------------- */
+            if (error && !(error instanceof NotFoundException)) {
+              console.error(error);
+            }
+          },
+        );
+
+        controlsRef.current = controls;
+      } catch (error) {
+        console.error(error);
+
+        if (!mountedRef.current) return;
+
+        setResult({
+          status: "ERROR",
+          message: "Kamera konnte nicht gestartet werden",
+          deviceMatched: false,
+          valid: false,
+        });
+      }
+    };
+
+    void startScanner();
+
+    return () => {
+      mountedRef.current = false;
+      stopScanner();
+    };
+  }, [handleScan, stopScanner]);
+
   return (
     <Box sx={{ position: "relative" }}>
-      {/* Scanner Frame */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
@@ -124,19 +175,22 @@ export default function ScannerFrame() {
       >
         <video
           ref={videoRef}
+          muted
+          playsInline
+          autoPlay
           style={{
             width: "80vw",
             maxWidth: 480,
             height: "auto",
             display: "block",
+            objectFit: "cover",
+            opacity: locked ? 0.92 : 1,
+            transition: "opacity 0.2s ease",
           }}
         />
-
-        <canvas ref={canvasRef} style={{ display: "none" }} />
       </motion.div>
 
-      {/* Result card overlay */}
-      {result && (
+      {result ? (
         <Box
           sx={{
             position: "absolute",
@@ -149,7 +203,7 @@ export default function ScannerFrame() {
         >
           <ScanResultCard result={result} />
         </Box>
-      )}
+      ) : null}
     </Box>
   );
 }

@@ -1,0 +1,7 @@
+# import InvitationPlusOne from "../fragments/invitation-plusone.fragment.graphql"
+
+query GetPlusOnesByInvitation($invitationId: ID!) {
+  getPlusOnesByInvitation(invitationId: $invitationId) {
+    ...InvitationPlusOne
+  }
+}

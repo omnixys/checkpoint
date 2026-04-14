@@ -1,0 +1,5 @@
+query getEventByIdRsvp($id: ID!) {
+  eventRsvp(id: $id) {
+    ...EventBase
+  }
+}

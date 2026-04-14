@@ -1,0 +1,11 @@
+fragment Employee on EmployeePayload {
+  id
+  department
+  position
+  role
+  salary
+  hireDate
+  isExternal
+  createdAt
+  updatedAt
+}

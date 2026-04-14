@@ -1,0 +1,11 @@
+fragment PhoneNumber on PhoneNumberPayload {
+  id
+  number
+  type
+  label
+  infoId
+  isPrimary
+  countryCode
+  createdAt
+  updatedAt
+}

@@ -1,0 +1,27 @@
+fragment InvitationBase on InvitationPayload {
+  id
+  type
+  firstName
+  lastName
+  eventId
+  guestProfileId
+  email
+
+  status
+  createdAt
+  updatedAt
+
+  pendingContactId
+  phoneNumber
+
+  rsvpChoice
+  rsvpAt
+
+  approvedAt
+  approvedByUserId
+
+  maxInvitees
+
+  invitedByInvitationId
+  invitedByUserId
+}

@@ -1,0 +1,7 @@
+# import AuthUser from "../fragments/user.fragment.graphql"
+
+query MeAuth {
+  meAuth {
+    ...AuthUser
+  }
+}

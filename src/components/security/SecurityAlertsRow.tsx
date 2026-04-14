@@ -27,11 +27,7 @@ export default function SecurityAlertsRow({
   );
 }
 
-function AlertCard({
-  a,
-}: {
-  a: { id: string; message: string; severity: "warn" | "critical" };
-}) {
+function AlertCard({ a }: { a: { id: string; message: string; severity: "warn" | "critical" } }) {
   const color = a.severity === "critical" ? "#ff3b30" : "#ffcc00";
 
   return (

@@ -1,0 +1,11 @@
+fragment EventBase on EventPayload {
+  id
+  name
+  owner
+  parentId
+  path
+  depth
+  createdAt
+  updatedAt
+  myRole
+}

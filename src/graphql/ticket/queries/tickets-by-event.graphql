@@ -1,0 +1,7 @@
+# import TicketBasic from "../fragments/ticket-basic.fragment.graphql"
+
+query TicketsByEvent($eventId: ID!) {
+  ticketsByEvent(eventId: $eventId) {
+    ...TicketBasic
+  }
+}

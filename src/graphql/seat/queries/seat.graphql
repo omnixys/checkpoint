@@ -1,0 +1,7 @@
+# import SeatFull from "../fragments/seat.fragment.graphql"
+
+query Seat($seatId: ID!) {
+  seat(id: $seatId) {
+    ...SeatFull
+  }
+}

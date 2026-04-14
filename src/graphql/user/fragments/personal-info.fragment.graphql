@@ -1,0 +1,11 @@
+fragment PersonalInfo on PersonalInfoPayload {
+  id
+  email
+  firstName
+  lastName
+  birthDate
+  gender
+  maritalStatus
+  createdAt
+  updatedAt
+}

@@ -17,6 +17,10 @@ export const appleLight = {
 
   separator: "rgba(60,60,67,0.36)",
   opaqueSeparator: "#C6C6C8",
+
+  systemFill: "rgba(120,120,128,0.20)",
+  secondarySystemFill: "rgba(120,120,128,0.16)",
+  tertiarySystemFill: "rgba(120,120,128,0.12)",
 };
 
 export const appleDark = {
@@ -38,4 +42,8 @@ export const appleDark = {
 
   separator: "rgba(84,84,88,0.65)",
   opaqueSeparator: "#38383A",
+
+  systemFill: "rgba(120,120,128,0.36)",
+  secondarySystemFill: "rgba(120,120,128,0.32)",
+  tertiarySystemFill: "rgba(120,120,128,0.24)",
 };

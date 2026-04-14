@@ -29,7 +29,7 @@ export default function GuestsInsideList({
         background: "rgba(255,255,255,0.18)",
       }}
     >
-      <Typography variant="h6" fontWeight={600} sx={{ mb: 2 }}>
+      <Typography variant="h6"sx={{ mb: 2, fontWeight: 600 }}>
         Guests Inside
       </Typography>
 
@@ -42,22 +42,31 @@ export default function GuestsInsideList({
   );
 }
 
-function GuestRow({
-  g,
-}: {
-  g: { id: string; name: string; seat?: string; timeIn: string };
-}) {
+function GuestRow({ g }: { g: { id: string; name: string; seat?: string; timeIn: string } }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 4 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.22 }}
     >
-      <Stack direction="row" alignItems="center" spacing={2}>
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{
+          alignItems: "center",
+        }}
+      >
         <Avatar sx={{ width: 36, height: 36 }}>{g.name.substring(0, 1)}</Avatar>
 
         <Stack>
-          <Typography fontWeight={600}>{g.name}</Typography>
+          <Typography
+           
+            sx={{
+               fontWeight: 600
+            }}
+          >
+            {g.name}
+          </Typography>
           <Typography sx={{ opacity: 0.6, fontSize: "0.8rem" }}>
             Seat {g.seat ?? "-"} · In: {g.timeIn}
           </Typography>

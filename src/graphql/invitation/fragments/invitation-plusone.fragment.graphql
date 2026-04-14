@@ -1,0 +1,24 @@
+fragment InvitationPlusOne on InvitationPayload {
+  id
+  firstName
+  lastName
+  email
+
+  status
+  guestProfileId
+
+  pendingContactId
+
+  rsvpChoice
+  rsvpAt
+
+  approvedAt
+  approvedByUserId
+
+  invitedByInvitationId
+  invitedByUserId
+
+  phoneNumbers {
+    ...PhoneNumber
+  }
+}

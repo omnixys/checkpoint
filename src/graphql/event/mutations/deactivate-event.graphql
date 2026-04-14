@@ -1,0 +1,3 @@
+mutation DeactivateEvent($id: ID!) {
+  deactivateEvent(eventId: $id)
+}

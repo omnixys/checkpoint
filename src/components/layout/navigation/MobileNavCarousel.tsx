@@ -7,7 +7,7 @@ import { JSX, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { NavItem } from "../navigation.config";
 import { isActiveNavItem } from "./navigation.util";
-
+import { env } from "@/checkpoint/lib/env";
 
 type Props = {
   items: NavItem[];
@@ -32,8 +32,8 @@ export function MobileNavCarousel({ items, eventId }: Props) {
       isActiveNavItem(
         pathname,
         i.path,
-        items.map((i) => i.path)
-      )
+        items.map((i) => i.path),
+      ),
     );
     if (index >= 0) emblaApi.scrollTo(index);
   }, [pathname, emblaApi, items]);
@@ -55,12 +55,16 @@ export function MobileNavCarousel({ items, eventId }: Props) {
       <Box ref={emblaRef} sx={{ overflow: "hidden" }}>
         <Box sx={{ display: "flex" }}>
           {items.map((item) => {
-            const active = isActiveNavItem(pathname, item.path, items.map(i => i.path));
+            const active = isActiveNavItem(
+              pathname,
+              item.path,
+              items.map((i) => i.path),
+            );
 
             return (
               <Box
                 key={item.path}
-                onClick={() => !item.disabled && router.push("/checkpoint/" + item.path)}
+                onClick={() => !item.disabled && router.push(env.CHECKPOINT_BASE_PATH + item.path)}
                 sx={{
                   flex: "0 0 25%", // 👈 max 4 sichtbar
                   py: 1,
@@ -81,8 +85,7 @@ export function MobileNavCarousel({ items, eventId }: Props) {
                     backgroundColor: "primary.main",
                     opacity: active ? 1 : 0,
                     scaleX: active ? 1 : 0,
-                    transition:
-                      "opacity 200ms ease, transform 260ms cubic-bezier(.4,0,.2,1)",
+                    transition: "opacity 200ms ease, transform 260ms cubic-bezier(.4,0,.2,1)",
                   }}
                 />
 
@@ -107,9 +110,11 @@ export function MobileNavCarousel({ items, eventId }: Props) {
                   </motion.div>
 
                   <Typography
-                    fontSize={11}
-                    fontWeight={active ? 700 : 500}
                     noWrap
+                    sx={{
+                      fontSize: 1,
+                      fontWeight: active ? 700 : 500,
+                    }}
                   >
                     {item.label}
                   </Typography>

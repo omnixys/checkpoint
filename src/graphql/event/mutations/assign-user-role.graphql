@@ -1,0 +1,3 @@
+mutation AssignUserRoleToEvent($input: AssignUserRoleInput!) {
+  assignUserToEvent(input: $input)
+}

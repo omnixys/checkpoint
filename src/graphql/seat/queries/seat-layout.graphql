@@ -1,0 +1,7 @@
+# import SeatLayoutSection from "../fragments/seat-layout.fragment.graphql"
+
+query SeatLayout($id: ID!) {
+  seatLayout(eventId: $id) {
+    ...SeatLayoutSection
+  }
+}

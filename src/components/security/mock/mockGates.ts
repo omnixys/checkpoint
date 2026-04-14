@@ -1,4 +1,12 @@
-export const mockGates = [
+import { GateTrendType } from "@/checkpoint/types/security.typa";
+
+export const mockGates: {
+  id: string;
+  name: string;
+  scans: number;
+  warnings: number;
+  trend: GateTrendType;
+}[] = [
   {
     id: "gate-1",
     name: "Main Entrance",

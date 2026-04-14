@@ -10,26 +10,24 @@ import {
   Typography,
 } from "@mui/material";
 import { JSX, useState } from "react";
-
-import { useAuth } from "@/providers/AuthProvider";
-import EventSelector from "@/components/Selectors/EventSelector";
-import { useActiveEvent } from "@/providers/ActiveEventProvider";
 import { usePathname, useRouter } from "next/navigation";
 import { createNavigation } from "../navigation.config";
-import { EventRole } from "@/types/event/event-enum.type";
 import { motion } from "framer-motion";
 import { getRoleColor, isActiveNavItem } from "./navigation.util";
-
+import { useAuth } from "@/checkpoint/providers/AuthProvider";
+import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
+import EventSelector from "@/checkpoint/components/Selectors/EventSelector";
+import { env } from "@/checkpoint/lib/env";
 
 export default function NavigationTablet(): JSX.Element {
-    const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const { isAuthenticated } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const { activeEvent } = useActiveEvent();
-  const role: EventRole = activeEvent?.myRole ?? EventRole.GUEST;
+  const role = activeEvent?.myRole ?? "GUEST";
 
-const items = createNavigation(role, activeEvent?.id);
+  const items = createNavigation(role, activeEvent?.id);
 
   return (
     <Box
@@ -41,7 +39,14 @@ const items = createNavigation(role, activeEvent?.id);
         p: 2,
       }}
     >
-      <Typography variant="h5" fontWeight={700} mb={2}>
+      <Typography
+        variant="h5"
+        sx={{
+          fontWeight: 700,
+          fontSize: 12,
+          mb: 2,
+        }}
+      >
         Checkpoint
       </Typography>
 
@@ -62,9 +67,9 @@ const items = createNavigation(role, activeEvent?.id);
                 selected={isActiveNavItem(
                   pathname,
                   item.path,
-                  items.map((i) => i.path)
+                  items.map((i) => i.path),
                 )}
-                onClick={() => router.push("/checkpoint/" + item.path)}
+                onClick={() => router.push(env.CHECKPOINT_BASE_PATH + item.path)}
                 sx={{
                   position: "relative",
                   borderRadius: 2,
@@ -82,7 +87,7 @@ const items = createNavigation(role, activeEvent?.id);
                     backgroundColor: isActiveNavItem(
                       pathname,
                       item.path,
-                      items.map((i) => i.path)
+                      items.map((i) => i.path),
                     )
                       ? "primary.main"
                       : "transparent",
@@ -94,7 +99,7 @@ const items = createNavigation(role, activeEvent?.id);
                     transform: isActiveNavItem(
                       pathname,
                       item.path,
-                      items.map((i) => i.path)
+                      items.map((i) => i.path),
                     )
                       ? "translateY(-50%) scaleY(1)"
                       : "translateY(-50%) scaleY(0)",
@@ -118,7 +123,7 @@ const items = createNavigation(role, activeEvent?.id);
                     color: isActiveNavItem(
                       pathname,
                       item.path,
-                      items.map((i) => i.path)
+                      items.map((i) => i.path),
                     )
                       ? getRoleColor(role)
                       : "text.secondary",
@@ -130,7 +135,7 @@ const items = createNavigation(role, activeEvent?.id);
                       isActiveNavItem(
                         pathname,
                         item.path,
-                        items.map((i) => i.path)
+                        items.map((i) => i.path),
                       )
                         ? "active"
                         : "inactive"
@@ -140,7 +145,7 @@ const items = createNavigation(role, activeEvent?.id);
                       isActiveNavItem(
                         pathname,
                         item.path,
-                        items.map((i) => i.path)
+                        items.map((i) => i.path),
                       )
                         ? { scale: [1, 1.15, 1] }
                         : { scale: 1 }

@@ -1,0 +1,3 @@
+mutation TransferEventOwnership($input: TransferInput!) {
+  transferEventOwnership(input: $input)
+}

@@ -1,0 +1,17 @@
+# import AuthToken from "../fragments/auth-token.fragment.graphql"
+
+mutation GenerateWebAuthnAuthOptions {
+  generateWebAuthnAuthOptions
+}
+
+mutation VerifyWebAuthnAuthentication($response: JSON!) {
+  verifyWebAuthnAuthentication(response: $response) {
+    ...AuthToken
+  }
+}
+
+mutation VerifyPasswordlessAuthentication($response: JSON!) {
+  verifyPasswordlessAuthentication(response: $response) {
+    ...AuthToken
+  }
+}

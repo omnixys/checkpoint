@@ -26,7 +26,7 @@ export default function VisionOSCompactHeader({
         top: 0,
         zIndex: 200,
         px: 2,
-           py: 1.8,
+        py: 1.8,
         pt: 1,
       }}
     >
@@ -37,8 +37,7 @@ export default function VisionOSCompactHeader({
           borderRadius: "18px",
           px: 2,
           py: 1,
-          boxShadow:
-            "inset 0 0 0 0.6px rgba(255,255,255,0.4), 0 6px 22px rgba(0,0,0,0.16)",
+          boxShadow: "inset 0 0 0 0.6px rgba(255,255,255,0.4), 0 6px 22px rgba(0,0,0,0.16)",
           border: "1px solid rgba(255,255,255,0.22)",
         }}
       >
@@ -62,13 +61,13 @@ export default function VisionOSCompactHeader({
               >
                 <Typography
                   variant="h6"
-                  fontWeight={600}
                   sx={{
                     letterSpacing: "-0.4px",
                     background: "linear-gradient(90deg,#000,#555)",
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",
                     whiteSpace: "nowrap",
+                    fontWeight: 600,
                   }}
                 >
                   Security Dashboard
@@ -103,7 +102,7 @@ function CompactIndicators({
   connectivity: { ws: boolean; kafka: boolean; api: boolean };
 }) {
   return (
-    <Stack direction="row" spacing={1.5} alignItems="center">
+    <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
       <Dot label="WS" active={connectivity.ws} />
       <Dot label="Kafka" active={connectivity.kafka} />
       <Dot label="API" active={connectivity.api} />
@@ -113,7 +112,7 @@ function CompactIndicators({
 
 function Dot({ label, active }: { label: string; active: boolean }) {
   return (
-    <Stack direction="row" spacing={0.6} alignItems="center">
+    <Stack direction="row" spacing={0.6} sx={{ alignItems: "center" }}>
       <Box
         sx={{
           width: 8,
@@ -123,11 +122,11 @@ function Dot({ label, active }: { label: string; active: boolean }) {
         }}
       />
       <Typography
-        fontSize={"0.72rem"}
-        fontWeight={600}
         sx={{
           color: active ? "#34C759" : "#FF453A",
           whiteSpace: "nowrap",
+          fontWeight: 600,
+          fontSize: 0.72,
         }}
       >
         {label}

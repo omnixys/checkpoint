@@ -1,23 +1,20 @@
 "use client";
 
+import {
+  GetMyTicketsQuery,
+  GetMyTicketsQueryVariables,
+  GetMyTicketsDocument,
+  TicketPayload,
+  SeatQuery,
+  SeatQueryVariables,
+  SeatDocument,
+} from "@/checkpoint/generated/graphql";
+import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { useQuery } from "@apollo/client/react";
 import EventSeatIcon from "@mui/icons-material/EventSeat";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { Box, Card, CardContent, Stack, Typography } from "@mui/material";
 import { JSX } from "react";
-
-import { useActiveEvent } from "@/providers/ActiveEventProvider";
-
-import { GET_SEAT_BY_ID } from "@/graphql/seat/seat-query.graphql";
-import { GET_MY_TICKETS } from "@/graphql/ticket/ticket.query";
-
-import { GetMyTicketsResult } from "@/types/ticket/ticket-graphql-query.type";
-
-import {
-  GetSeatByIdRequest,
-  GetSeatByIdResult,
-} from "@/types/seat/seat-query-graphql.type";
-import { Ticket } from "@/types/ticket/ticket.type";
 
 /**
  * Displays seat information for the current guest
@@ -29,12 +26,14 @@ export default function MySeatContent(): JSX.Element {
    * ----------------------------------------------------- */
   const { activeEvent } = useActiveEvent();
 
-  const { data: ticketData, loading: ticketLoading } =
-    useQuery<GetMyTicketsResult>(GET_MY_TICKETS);
+  const { data: ticketData, loading: ticketLoading } = useQuery<
+    GetMyTicketsQuery,
+    GetMyTicketsQueryVariables
+  >(GetMyTicketsDocument);
 
-  const tickets: readonly Ticket[] = ticketData?.getMyTickets ?? [];
+  const tickets: readonly TicketPayload[] = ticketData?.getMyTickets ?? [];
 
-  const ticket: Ticket | undefined = activeEvent
+  const ticket: TicketPayload | undefined = activeEvent
     ? tickets.find((t) => t.eventId === activeEvent.id)
     : undefined;
 
@@ -44,7 +43,7 @@ export default function MySeatContent(): JSX.Element {
     data: seatData,
     loading: seatLoading,
     error: seatError,
-  } = useQuery<GetSeatByIdResult, GetSeatByIdRequest>(GET_SEAT_BY_ID, {
+  } = useQuery<SeatQuery, SeatQueryVariables>(SeatDocument, {
     variables: seatId ? { seatId } : { seatId: "undefined " },
     skip: !seatId,
   });
@@ -117,16 +116,27 @@ export default function MySeatContent(): JSX.Element {
           <Stack spacing={2}>
             <Typography variant="h6">Dein Sitzplatz</Typography>
 
-            <Stack direction="row" spacing={1} alignItems="center">
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{
+                alignItems: "center",
+              }}
+            >
               <EventSeatIcon />
               <Typography>
-                Bereich {seat?.section?.name} · Tisch {seat.table?.name} · Sitz{" "}
-                {seat.number}
+                Bereich {seat?.section?.name} · Tisch {seat.table?.name} · Sitz {seat.number}
               </Typography>
             </Stack>
 
             {seat.label && (
-              <Stack direction="row" spacing={1} alignItems="center">
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{
+                  alignItems: "center",
+                }}
+              >
                 <LocationOnIcon />
                 <Typography>{seat.label}</Typography>
               </Stack>

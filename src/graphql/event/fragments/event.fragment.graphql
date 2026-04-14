@@ -1,0 +1,20 @@
+# import EventSettings from "./event-settings.fragment.graphql"
+# import EventTimeline from "./event-timeline.fragment.graphql"
+# import EventUserRole from "./event-user-role.fragment.graphql"
+# import EventBase from "./event-base.fragment.graphql"
+
+fragment EventFull on EventPayload {
+  ...EventBase
+
+  settings {
+    ...EventSettings
+  }
+
+  timeline {
+    ...EventTimeline
+  }
+
+  userRoles {
+    ...EventUserRole
+  }
+}

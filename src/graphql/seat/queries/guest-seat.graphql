@@ -1,0 +1,7 @@
+# import SeatBasic from "../fragments/seat-basic.fragment.graphql"
+
+query GetSeatByGuestAndEvent($input: GuestEventSeatInput!) {
+  getSeatByGuestAndEvent(input: $input) {
+    ...SeatBasic
+  }
+}

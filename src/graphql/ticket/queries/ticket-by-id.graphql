@@ -1,0 +1,7 @@
+# import TicketFull from "../fragments/ticket.fragment.graphql"
+
+query TicketById($ticketId: ID!) {
+  ticketById(id: $ticketId) {
+    ...TicketFull
+  }
+}

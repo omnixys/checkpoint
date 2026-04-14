@@ -1,0 +1,3 @@
+mutation SendBulkInvitations($input: SendInvitationsInput!) {
+  sendInvitations(input: $input)
+}

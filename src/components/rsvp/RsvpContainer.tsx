@@ -1,27 +1,27 @@
 "use client";
 
-import {
-  GET_INVITATION_BY_ID,
-  GET_PLUS_ONES_BY_INVITATION,
-} from "@/graphql/invitation/invitation.query";
-import {
-  GetInvitationByIdRequest,
-  GetInvitationByIdResult,
-  GetPlusOnesByInvitationRequest,
-  GetPlusOnesByInvitationResult,
-} from "@/types/invitation/invitation-query.graphql.type";
-import { getLogger } from "@/utils/logger";
 import { useQuery } from "@apollo/client/react";
 import { Box, CircularProgress, Stack, useTheme } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
-import AcceptForm from "./AcceptForm";
-import DeclineDialog from "./DeclineDialog";
-import FinalScreens from "./FinalScreens";
-import InitialView from "./InitialView";
-import InvalidInvitationDialog from "./InvalidInvitationDialog";
-import InvitationAlreadyAcceptedDialog from "./InvitationAlreadyAcceptedDialog";
-import InvitationAlreadyDeclinedDialog from "./InvitationAlreadyDeclinedDialog";
-import MaybeDialog from "./MaybeDialog";
+import {
+  Country,
+  GetPlusOnesByInvitationDocument,
+  GetPlusOnesByInvitationQuery,
+  GetPlusOnesByInvitationQueryVariables,
+  InvitationDocument,
+  InvitationQuery,
+  InvitationQueryVariables,
+} from "@/checkpoint/generated/graphql";
+import { getLogger } from "@/checkpoint/utils/logger";
+import InvalidInvitationDialog from "@/checkpoint/components/rsvp/dialog/InvalidInvitationDialog";
+import InitialView from "@/checkpoint/components/rsvp/InitialView";
+import AcceptForm from "@/checkpoint/components/rsvp/AcceptForm";
+import FinalScreens from "@/checkpoint/components/rsvp/FinalScreens";
+import MaybeDialog from "@/checkpoint/components/rsvp/dialog/MaybeDialog";
+import DeclineDialog from "@/checkpoint/components/rsvp/dialog/DeclineDialog";
+import InvitationAlreadyAcceptedDialog from "@/checkpoint/components/rsvp/dialog/InvitationAlreadyAcceptedDialog";
+import InvitationAlreadyDeclinedDialog from "@/checkpoint/components/rsvp/dialog/InvitationAlreadyDeclinedDialog";
+import { CallingCodeCountry } from "@/checkpoint/types/country.type";
 
 /**
  * RSVP State Machine
@@ -41,8 +41,10 @@ type RsvpScreen =
  */
 export default function RsvpContainer({
   invitationId,
+  callingCodeCountry,
 }: {
   invitationId: string;
+  callingCodeCountry: CallingCodeCountry[];
 }) {
   const logger = getLogger("RsvpContainer");
   const theme = useTheme();
@@ -57,35 +59,26 @@ export default function RsvpContainer({
     loading: invitationLoading,
     error: invitationError,
     refetch: refetchInvitation,
-  } = useQuery<GetInvitationByIdResult, GetInvitationByIdRequest>(
-    GET_INVITATION_BY_ID,
-    {
-      variables: { invitationId },
-      fetchPolicy: "network-only",
-    }
-  );
+  } = useQuery<InvitationQuery, InvitationQueryVariables>(InvitationDocument, {
+    variables: { invitationId },
+    fetchPolicy: "network-only",
+  });
 
   const {
     data: plusOnesData,
     loading: plusOnesLoading,
     refetch: refetchPlusOnes,
-  } = useQuery<GetPlusOnesByInvitationResult, GetPlusOnesByInvitationRequest>(
-    GET_PLUS_ONES_BY_INVITATION,
+  } = useQuery<GetPlusOnesByInvitationQuery, GetPlusOnesByInvitationQueryVariables>(
+    GetPlusOnesByInvitationDocument,
     {
       variables: { invitationId },
       fetchPolicy: "network-only",
-    }
+    },
   );
 
   // Derived data
-  const invitation = useMemo(
-    () => invitationData?.invitation ?? null,
-    [invitationData]
-  );
-  const plusOnes = useMemo(
-    () => plusOnesData?.getPlusOnesByInvitation ?? [],
-    [plusOnesData]
-  );
+  const invitation = useMemo(() => invitationData?.invitation, [invitationData]);
+  const plusOnes = useMemo(() => plusOnesData?.getPlusOnesByInvitation ?? [], [plusOnesData]);
 
   /**
    * Validate invitation when loaded.
@@ -174,12 +167,14 @@ export default function RsvpContainer({
   /**
    * Loading state
    */
-  if (invitationLoading || plusOnesLoading) {
+  if (invitationLoading || plusOnesLoading || !invitation) {
     return (
       <Stack
-        alignItems="center"
-        justifyContent="center"
-        sx={{ minHeight: "60vh" }}
+        sx={{
+          minHeight: "60vh",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
       >
         <CircularProgress />
       </Stack>
@@ -210,26 +205,17 @@ export default function RsvpContainer({
       {screen === "accept-form" && (
         <AcceptForm
           invitation={invitation}
-          plusOnes={plusOnes}
-          refetchPlusOnes={refetchPlusOnes}
           onAccepted={handleAccepted}
-          onBack={() => setScreen("initial")}
+          countries={callingCodeCountry}
         />
       )}
 
       {screen === "accepted" && (
-        <FinalScreens
-          type="accepted"
-          invitation={invitation}
-          plusOnes={plusOnes}
-        />
+        <FinalScreens type="accepted" invitation={invitation} plusOnes={plusOnes} />
       )}
 
       {screen === "maybe" && (
-        <MaybeDialog
-          invitation={invitation}
-          onBack={() => setScreen("initial")}
-        />
+        <MaybeDialog invitationId={invitation.id} onBack={() => setScreen("initial")} />
       )}
 
       {screen === "decline-confirm" && (
@@ -240,16 +226,10 @@ export default function RsvpContainer({
         />
       )}
 
-      {screen === "declined" && (
-        <FinalScreens type="declined" invitation={invitation} />
-      )}
+      {screen === "declined" && <FinalScreens type="declined" invitation={invitation} />}
 
-      {screen === "already-accepted" && (
-        <InvitationAlreadyAcceptedDialog open={true} />
-      )}
-      {screen === "already-declined" && (
-        <InvitationAlreadyDeclinedDialog open={true} />
-      )}
+      {screen === "already-accepted" && <InvitationAlreadyAcceptedDialog open={true} />}
+      {screen === "already-declined" && <InvitationAlreadyDeclinedDialog open={true} />}
     </Box>
   );
 }

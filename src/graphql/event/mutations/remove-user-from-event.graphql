@@ -1,0 +1,3 @@
+mutation RemoveUserFromEvent($input: RemoveUserFromEventInput!) {
+  removeUserFromEvent(input: $input)
+}

@@ -1,0 +1,7 @@
+fragment EventTimeline on EventTimelinePayload {
+  id
+  eventId
+  type
+  timestamp
+  label
+}

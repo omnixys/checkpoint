@@ -1,0 +1,11 @@
+mutation VerifyGuestSignUp($token: String!) {
+  verifyGuestSignUp(token: $token) {
+    message
+    results {
+      userId
+      username
+      password
+      email
+    }
+  }
+}

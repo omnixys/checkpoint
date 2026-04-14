@@ -1,0 +1,6 @@
+mutation RenameSection($input: RenameSectionInput!) {
+  renameSection(input: $input) {
+    success
+    affectedSeats
+  }
+}

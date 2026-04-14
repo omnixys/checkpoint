@@ -1,0 +1,22 @@
+fragment UserFull on UserPayload {
+  ...UserBase
+
+  personalInfo {
+    ...PersonalInfo
+    phoneNumbers {
+      ...PhoneNumber
+    }
+  }
+
+  contacts {
+    ...Contact
+  }
+
+  customer {
+    ...Customer
+  }
+
+  employee {
+    ...Employee
+  }
+}

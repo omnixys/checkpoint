@@ -1,0 +1,7 @@
+mutation BulkApproveInvitations($input: BulkApproveInvitationInput!) {
+  bulkApproveInvitations(input: $input) {
+    id
+    status
+    approvedAt
+  }
+}

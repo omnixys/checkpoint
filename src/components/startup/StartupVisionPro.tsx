@@ -1,13 +1,13 @@
 "use client";
 
 import { Box } from "@mui/material";
-import { motion, useMotionValue, useTransform } from "framer-motion";
+import {
+  motion,
+  useMotionValue,
+  useTransform,
+  type MotionValue,
+} from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-
-/* -------------------------------------------------------
- * SSR Guards
- * ----------------------------------------------------- */
-const isClient = typeof window !== "undefined";
 
 /* -------------------------------------------------------
  * Device Tilt Parallax Hook
@@ -17,8 +17,10 @@ function useParallax(maxTilt = 18) {
   const tiltY = useMotionValue(0);
 
   useEffect(() => {
-    function handleOrientation(e: DeviceOrientationEvent) {
-      const { beta, gamma } = e;
+    if (typeof window === "undefined") return;
+
+    function handleOrientation(event: DeviceOrientationEvent) {
+      const { beta, gamma } = event;
       if (beta == null || gamma == null) return;
 
       const x = (gamma / 45) * maxTilt;
@@ -28,29 +30,28 @@ function useParallax(maxTilt = 18) {
       tiltY.set(y);
     }
 
-    window.addEventListener("deviceorientation", handleOrientation, true);
-
-    function handleMouse(e: MouseEvent) {
-      const x = (e.clientX / window.innerWidth - 0.5) * maxTilt * 2;
-      const y = (e.clientY / window.innerHeight - 0.5) * maxTilt * 2;
+    function handleMouse(event: MouseEvent) {
+      const x = (event.clientX / window.innerWidth - 0.5) * maxTilt * 2;
+      const y = (event.clientY / window.innerHeight - 0.5) * maxTilt * 2;
 
       tiltX.set(x);
       tiltY.set(y);
     }
 
+    window.addEventListener("deviceorientation", handleOrientation, true);
     window.addEventListener("mousemove", handleMouse);
 
     return () => {
-      window.removeEventListener("deviceorientation", handleOrientation);
+      window.removeEventListener("deviceorientation", handleOrientation, true);
       window.removeEventListener("mousemove", handleMouse);
     };
-  }, []);
+  }, [maxTilt, tiltX, tiltY]);
 
   return { tiltX, tiltY };
 }
 
 /* -------------------------------------------------------
- * Space Warp Shader (WebGL)
+ * Space Warp Shader
  * ----------------------------------------------------- */
 const fragShader = `
 precision highp float;
@@ -86,25 +87,20 @@ void main() {
   vec2 centered = (uv - 0.5) * 2.0;
 
   float t = u_time * 0.35;
-
-  // Dynamic warp influenced by tilt
   float tiltWarp = (u_tiltX + u_tiltY) * 0.02;
 
-  // Liquid distortion field
   float n1 = noise(uv * 6.0 + t * 0.4);
   float n2 = noise(uv * 10.0 - t * 0.3);
   float n3 = noise(uv * 3.0 + t * 0.2);
 
   float liquid = n1 * 0.6 + n2 * 0.3 + n3 * 0.25;
-
-  // Light bending effect
   vec2 bend = centered * (0.12 + liquid * 0.18 + tiltWarp);
 
   float brightness = mix(0.3, 0.75, u_theme);
 
   vec3 col = vec3(
-    brightness * (0.25 + liquid * 1.2),
-    brightness * (0.18 + liquid * 0.8),
+    brightness * (0.25 + liquid * 1.2 + bend.x * 0.04),
+    brightness * (0.18 + liquid * 0.8 + bend.y * 0.03),
     brightness * (0.35 + liquid * 0.9)
   );
 
@@ -112,41 +108,96 @@ void main() {
 }
 `;
 
+function createShader(
+  gl: WebGLRenderingContext,
+  type: number,
+  source: string,
+): WebGLShader | null {
+  const shader = gl.createShader(type);
+  if (!shader) return null;
+
+  gl.shaderSource(shader, source);
+  gl.compileShader(shader);
+
+  const compiled = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+  if (!compiled) {
+    gl.deleteShader(shader);
+    return null;
+  }
+
+  return shader;
+}
+
+function createProgram(
+  gl: WebGLRenderingContext,
+  vertexShader: WebGLShader,
+  fragmentShader: WebGLShader,
+): WebGLProgram | null {
+  const program = gl.createProgram();
+  if (!program) return null;
+
+  gl.attachShader(program, vertexShader);
+  gl.attachShader(program, fragmentShader);
+  gl.linkProgram(program);
+
+  const linked = gl.getProgramParameter(program, gl.LINK_STATUS);
+  if (!linked) {
+    gl.deleteProgram(program);
+    return null;
+  }
+
+  return program;
+}
+
 function useSpaceWarpShader(
-  canvasRef: any,
-  tiltX: any,
-  tiltY: any,
+  canvasRef: React.RefObject<HTMLCanvasElement | null>,
+  tiltX: MotionValue<number>,
+  tiltY: MotionValue<number>,
   isDarkMode: boolean,
 ) {
   useEffect(() => {
-    if (!isClient) return;
-    const canvas: HTMLCanvasElement = canvasRef.current;
+    if (typeof window === "undefined") return;
+
+    const canvas = canvasRef.current;
     if (!canvas) return;
 
     const gl = canvas.getContext("webgl");
     if (!gl) return;
 
-    const vertexShader = gl.createShader(gl.VERTEX_SHADER)!;
-    gl.shaderSource(
-      vertexShader,
+    const vertexShader = createShader(
+      gl,
+      gl.VERTEX_SHADER,
       `
-      attribute vec4 position;
-      void main() { gl_Position = position; }
-    `,
+        attribute vec4 position;
+        void main() {
+          gl_Position = position;
+        }
+      `,
     );
-    gl.compileShader(vertexShader);
 
-    const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER)!;
-    gl.shaderSource(fragmentShader, fragShader);
-    gl.compileShader(fragmentShader);
+    const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragShader);
 
-    const program = gl.createProgram()!;
-    gl.attachShader(program, vertexShader);
-    gl.attachShader(program, fragmentShader);
-    gl.linkProgram(program);
+    if (!vertexShader || !fragmentShader) {
+      return;
+    }
+
+    const program = createProgram(gl, vertexShader, fragmentShader);
+    if (!program) {
+      gl.deleteShader(vertexShader);
+      gl.deleteShader(fragmentShader);
+      return;
+    }
+
     gl.useProgram(program);
 
-    const buffer = gl.createBuffer()!;
+    const buffer = gl.createBuffer();
+    if (!buffer) {
+      gl.deleteProgram(program);
+      gl.deleteShader(vertexShader);
+      gl.deleteShader(fragmentShader);
+      return;
+    }
+
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(
       gl.ARRAY_BUFFER,
@@ -155,31 +206,53 @@ function useSpaceWarpShader(
     );
 
     const position = gl.getAttribLocation(program, "position");
-    gl.enableVertexAttribArray(position);
-    gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+    if (position >= 0) {
+      gl.enableVertexAttribArray(position);
+      gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+    }
 
-    const u_time = gl.getUniformLocation(program, "u_time");
-    const u_res = gl.getUniformLocation(program, "u_res");
-    const u_tiltX = gl.getUniformLocation(program, "u_tiltX");
-    const u_tiltY = gl.getUniformLocation(program, "u_tiltY");
-    const u_theme = gl.getUniformLocation(program, "u_theme");
+    const uTime = gl.getUniformLocation(program, "u_time");
+    const uRes = gl.getUniformLocation(program, "u_res");
+    const uTiltX = gl.getUniformLocation(program, "u_tiltX");
+    const uTiltY = gl.getUniformLocation(program, "u_tiltY");
+    const uTheme = gl.getUniformLocation(program, "u_theme");
 
-    function render(time: number) {
+    let frameId: number | null = null;
+    let disposed = false;
+
+    const render = (time: number) => {
+      if (disposed) return;
+
       const tx = tiltX.get();
       const ty = tiltY.get();
 
-      gl.uniform1f(u_time, time * 0.001);
-      gl.uniform2f(u_res, canvas.width, canvas.height);
-      gl.uniform1f(u_tiltX, tx);
-      gl.uniform1f(u_tiltY, ty);
-      gl.uniform1f(u_theme, isDarkMode ? 0.0 : 1.0);
+      gl.viewport(0, 0, canvas.width, canvas.height);
+
+      if (uTime) gl.uniform1f(uTime, time * 0.001);
+      if (uRes) gl.uniform2f(uRes, canvas.width, canvas.height);
+      if (uTiltX) gl.uniform1f(uTiltX, tx);
+      if (uTiltY) gl.uniform1f(uTiltY, ty);
+      if (uTheme) gl.uniform1f(uTheme, isDarkMode ? 0.0 : 1.0);
 
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
-      requestAnimationFrame(render);
-    }
+      frameId = window.requestAnimationFrame(render);
+    };
 
-    render(0);
+    frameId = window.requestAnimationFrame(render);
+
+    return () => {
+      disposed = true;
+
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId);
+      }
+
+      gl.deleteBuffer(buffer);
+      gl.deleteProgram(program);
+      gl.deleteShader(vertexShader);
+      gl.deleteShader(fragmentShader);
+    };
   }, [canvasRef, tiltX, tiltY, isDarkMode]);
 }
 
@@ -188,33 +261,47 @@ function useSpaceWarpShader(
  * ----------------------------------------------------- */
 export default function StartupVisionPro() {
   const [show, setShow] = useState(true);
-
-  // SSR-safe hydration state
-  const [clientReady, setClientReady] = useState(false);
   const [canvasSize, setCanvasSize] = useState({ w: 1, h: 1 });
 
-  useEffect(() => {
-    if (!isClient) return;
-    setClientReady(true);
-    setCanvasSize({ w: window.innerWidth, h: window.innerHeight });
-  }, []);
-
-  // DO NOT RENDER ANYTHING SSR
-  // if (!clientReady) return null;
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const isDarkMode = false;
 
   const { tiltX, tiltY } = useParallax(16);
 
-  const orbX = useTransform(tiltX, (v) => v * 0.8);
-  const orbY = useTransform(tiltY, (v) => v * 0.8);
+  const orbX = useTransform(tiltX, (value) => value * 0.8);
+  const orbY = useTransform(tiltY, (value) => value * 0.8);
 
-  const logoX = useTransform(tiltX, (v) => v * 0.3);
-  const logoY = useTransform(tiltY, (v) => v * 0.3);
+  const logoX = useTransform(tiltX, (value) => value * 0.3);
+  const logoY = useTransform(tiltY, (value) => value * 0.3);
 
-  const raysX = useTransform(tiltX, (v) => v * 0.4);
-  const raysY = useTransform(tiltY, (v) => v * 0.4);
+  const raysX = useTransform(tiltX, (value) => value * 0.4);
+  const raysY = useTransform(tiltY, (value) => value * 0.4);
+
+  const logoRotateX = useTransform(tiltY, (value) => value * 0.9);
+  const logoRotateY = useTransform(tiltX, (value) => value * -0.9);
+  const logoRotateZ = useTransform(tiltX, (value) => value * 0.15);
 
   useEffect(() => {
-    // Intro Sound
+    if (typeof window === "undefined") return;
+
+    const updateCanvasSize = () => {
+      setCanvasSize({
+        w: window.innerWidth,
+        h: window.innerHeight,
+      });
+    };
+
+    updateCanvasSize();
+    window.addEventListener("resize", updateCanvasSize);
+
+    return () => {
+      window.removeEventListener("resize", updateCanvasSize);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
     const sounds = [
       "/sounds/bright_variant.wav",
       "/sounds/intro.wav",
@@ -224,26 +311,26 @@ export default function StartupVisionPro() {
     ];
 
     const randomSound = sounds[Math.floor(Math.random() * sounds.length)];
-
     const audio = new Audio(randomSound);
-    audio.volume = 0.38;
 
-    // Optional: slight pitch variation for natural feeling
+    audio.volume = 0.38;
     audio.playbackRate = 0.95 + Math.random() * 0.1;
 
-    audio.play().catch(() => {});
+    void audio.play().catch(() => {});
 
-    if (navigator.vibrate) navigator.vibrate(30);
+    if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+      navigator.vibrate(30);
+    }
 
-    const timer = setTimeout(() => {
+    const timer = window.setTimeout(() => {
       setShow(false);
     }, 3500);
 
-    return () => clearTimeout(timer);
+    return () => {
+      window.clearTimeout(timer);
+    };
   }, []);
 
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const isDarkMode = false; // später dynamisch!
   useSpaceWarpShader(canvasRef, tiltX, tiltY, isDarkMode);
 
   return (
@@ -251,14 +338,12 @@ export default function StartupVisionPro() {
       animate={{ opacity: show ? 1 : 0 }}
       transition={{ duration: 0.5 }}
       style={{
-        pointerEvents: "none", // block UI after fade
+        pointerEvents: "none",
         position: "fixed",
         inset: 0,
         zIndex: 999999,
       }}
     >
-      {/* dein Shader + Logo + Text */}
-
       <Box
         sx={{
           position: "fixed",
@@ -272,7 +357,6 @@ export default function StartupVisionPro() {
           touchAction: "none",
         }}
       >
-        {/* Space Warp Shader */}
         <canvas
           ref={canvasRef}
           width={canvasSize.w}
@@ -285,7 +369,6 @@ export default function StartupVisionPro() {
           }}
         />
 
-        {/* Light Rays (Lens Flare) */}
         <motion.div
           style={{
             position: "absolute",
@@ -303,7 +386,6 @@ export default function StartupVisionPro() {
           transition={{ repeat: Infinity, duration: 9, ease: "linear" }}
         />
 
-        {/* Glow Orb */}
         <motion.div
           initial={{ scale: 0.5, opacity: 0, filter: "blur(22px)" }}
           animate={{
@@ -328,7 +410,6 @@ export default function StartupVisionPro() {
           }}
         />
 
-        {/* Logo */}
         <motion.img
           src="/logo/omnixys-original.png"
           alt="checkpoint"
@@ -342,7 +423,7 @@ export default function StartupVisionPro() {
             opacity: 1,
             scale: 1,
             filter: "blur(0px)",
-            rotateZ: [0, 0.5, -0.3, 0], // micro drift
+            rotateZ: [0, 0.5, -0.3, 0],
           }}
           transition={{
             duration: 1.3,
@@ -356,14 +437,13 @@ export default function StartupVisionPro() {
             width: 150,
             transformStyle: "preserve-3d",
             perspective: 1200,
-            rotateX: useTransform(tiltY, (v) => v * 0.9),
-            rotateY: useTransform(tiltX, (v) => v * -0.9),
-            rotateZ: useTransform(tiltX, (v) => v * 0.15),
+            rotateX: logoRotateX,
+            rotateY: logoRotateY,
+            rotateZ: logoRotateZ,
             filter: "drop-shadow(0 0 25px rgba(255,255,255,0.35))",
           }}
         />
 
-        {/* Text */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 0.5, y: 0 }}

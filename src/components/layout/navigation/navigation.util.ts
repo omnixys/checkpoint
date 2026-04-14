@@ -1,28 +1,20 @@
-import { EventRole } from "@/types/event/event-enum.type";
-
 /* ------------------------------------------------------------------ */
 /* Active Navigation Logic */
 /* ------------------------------------------------------------------ */
+
+import { UserRoleType } from "@/checkpoint/generated/graphql";
 
 /**
  * Determines the single active navigation path using
  * a "longest match wins" strategy.
  */
-export function getActiveNavPath(
-  pathname: string,
-  itemPaths: string[],
-): string | undefined {
-  const normalizedPathname = pathname.endsWith("/")
-    ? pathname.slice(0, -1)
-    : pathname;
+export function getActiveNavPath(pathname: string, itemPaths: string[]): string | undefined {
+  const normalizedPathname = pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
 
   const matches = itemPaths
     .filter((path) => {
       const fullPath = "/" + path;
-      return (
-        normalizedPathname === fullPath ||
-        normalizedPathname.startsWith(fullPath + "/")
-      );
+      return normalizedPathname === fullPath || normalizedPathname.startsWith(fullPath + "/");
     })
     .sort((a, b) => b.length - a.length);
 
@@ -48,13 +40,13 @@ export function isActiveNavItem(
  * Returns the primary accent color for a given event role.
  * Used for active icons, pills, highlights.
  */
-export function getRoleColor(role: EventRole): string {
+export function getRoleColor(role: UserRoleType): string {
   switch (role) {
-    case EventRole.ADMIN:
+    case "ADMIN":
       return "primary.main";
-    case EventRole.SECURITY:
+    case "SECURITY":
       return "warning.main";
-    case EventRole.GUEST:
+    case "GUEST":
     default:
       return "text.secondary";
   }

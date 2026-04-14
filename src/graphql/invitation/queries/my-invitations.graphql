@@ -1,0 +1,7 @@
+# import InvitationBase from "../fragments/invitation-basic.fragment.graphql"
+
+query MyInvitations {
+  myInvitations {
+    ...InvitationBase
+  }
+}

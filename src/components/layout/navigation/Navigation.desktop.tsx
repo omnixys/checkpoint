@@ -11,20 +11,18 @@ import {
   Typography,
 } from "@mui/material";
 import { JSX, useMemo, useState } from "react";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { useActiveEvent } from "@/providers/ActiveEventProvider";
 import { usePathname, useRouter } from "next/navigation";
-import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
-import { useAuth } from "@/providers/AuthProvider";
-import EventSelector from "@/components/Selectors/EventSelector";
-import ColorBubbleSwitcher from "@/components/ui/ColorBubbleSwitcher";
-import UserMenu from "@/components/ui/UserMenu";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { createNavigation } from "../navigation.config";
-import { EventRole } from "@/types/event/event-enum.type";
 import { getRoleColor, isActiveNavItem } from "./navigation.util";
-
+import ColorBubbleSwitcher from "@/checkpoint/components/ColorBubbleSwitcher";
+import ThemeToggleButton from "@/checkpoint/components/ThemeToggleButton";
+import UserMenu from "@/checkpoint/components/UserMenu";
+import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
+import { useAuth } from "@/checkpoint/providers/AuthProvider";
+import { env } from "@/checkpoint/lib/env";
+import EventSelector from "@/checkpoint/components/Selectors/EventSelector";
 
 export default function NavigationDesktop(): JSX.Element {
   const [collapsed, setCollapsed] = useState(false);
@@ -34,9 +32,9 @@ export default function NavigationDesktop(): JSX.Element {
   const pathname = usePathname();
 
   const { activeEvent } = useActiveEvent();
-  const role: EventRole = activeEvent?.myRole ?? EventRole.GUEST;
+  const role = activeEvent?.myRole ?? "GUEST";
 
-const items = createNavigation(role, activeEvent?.id);
+  const items = createNavigation(role, activeEvent?.id);
 
   return (
     <Box
@@ -54,11 +52,11 @@ const items = createNavigation(role, activeEvent?.id);
     >
       <Typography
         variant="h5"
-        fontWeight={700}
-        mb={2}
         component={Link}
-        href="/checkpoint/"
+        href={env.CHECKPOINT_BASE_PATH}
         sx={{
+          mb: 2,
+          fontWeight: 700,
           cursor: "pointer",
           textDecoration: "none",
           transition: "opacity 0.2s ease, transform 0.2s ease",
@@ -84,8 +82,12 @@ const items = createNavigation(role, activeEvent?.id);
                 title={collapsed ? item.label : undefined}
                 key={item.path}
                 disabled={item.disabled}
-                selected={isActiveNavItem(pathname, item.path, items.map(i => i.path))}
-                onClick={() => router.push("/" + item.path)}
+                selected={isActiveNavItem(
+                  pathname,
+                  item.path,
+                  items.map((i) => i.path),
+                )}
+                onClick={() => router.push(item.path)}
                 sx={{
                   position: "relative",
                   borderRadius: 2,
@@ -100,7 +102,11 @@ const items = createNavigation(role, activeEvent?.id);
                     width: 4,
                     height: "60%",
                     borderRadius: 999,
-                    backgroundColor: isActiveNavItem(pathname, item.path, items.map(i => i.path))
+                    backgroundColor: isActiveNavItem(
+                      pathname,
+                      item.path,
+                      items.map((i) => i.path),
+                    )
                       ? "primary.main"
                       : "transparent",
                     // transition:
@@ -108,7 +114,11 @@ const items = createNavigation(role, activeEvent?.id);
 
                     transition: "transform 260ms cubic-bezier(.4,0,.2,1)",
                     transformOrigin: "center",
-                    transform: isActiveNavItem(pathname, item.path, items.map(i => i.path))
+                    transform: isActiveNavItem(
+                      pathname,
+                      item.path,
+                      items.map((i) => i.path),
+                    )
                       ? "translateY(-50%) scaleY(1)"
                       : "translateY(-50%) scaleY(0)",
                   },
@@ -128,17 +138,33 @@ const items = createNavigation(role, activeEvent?.id);
                 <ListItemIcon
                   sx={{
                     minWidth: 36,
-                    color: isActiveNavItem(pathname, item.path, items.map(i => i.path))
+                    color: isActiveNavItem(
+                      pathname,
+                      item.path,
+                      items.map((i) => i.path),
+                    )
                       ? getRoleColor(role)
                       : "text.secondary",
                     transition: "color 0.25s ease",
                   }}
                 >
                   <motion.div
-                    key={isActiveNavItem(pathname, item.path, items.map(i => i.path)) ? "active" : "inactive"}
+                    key={
+                      isActiveNavItem(
+                        pathname,
+                        item.path,
+                        items.map((i) => i.path),
+                      )
+                        ? "active"
+                        : "inactive"
+                    }
                     initial={{ scale: 1 }}
                     animate={
-                      isActiveNavItem(pathname, item.path, items.map(i => i.path))
+                      isActiveNavItem(
+                        pathname,
+                        item.path,
+                        items.map((i) => i.path),
+                      )
                         ? { scale: [1, 1.15, 1] }
                         : { scale: 1 }
                     }

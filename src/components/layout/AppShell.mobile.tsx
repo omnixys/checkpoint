@@ -1,20 +1,16 @@
 "use client";
 
-import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
+import ThemeToggleButton from "@/checkpoint/components/ThemeToggleButton";
+import UserMenu from "@/checkpoint/components/UserMenu";
+import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { Box } from "@mui/material";
-import React, { useState } from "react";
-import { useAuth } from "@/providers/AuthProvider";
-import { AppleNavBar } from "@/components/apple/AppleNavBar";
-import EventSelectorActionSheet from "@/components/Selectors/EventSelectorActionSheet";
-import EventSelectorMobileButton from "@/components/Selectors/EventSelectorMobileButton";
-import UserMenu from "@/components/ui/UserMenu";
+import { useState } from "react";
 import NavigationMobile from "./navigation/Navigation.mobile";
+import EventSelectorMobileButton from "@/checkpoint/components/Selectors/EventSelectorMobileButton";
+import { AppleNavBar } from "@/checkpoint/components/apple/AppleNavBar";
+import EventSelectorActionSheet from "@/checkpoint/components/Selectors/EventSelectorActionSheet";
 
-export default function AppShellMobile({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AppShellMobile({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const { isAuthenticated } = useAuth();
 
@@ -45,9 +41,7 @@ export default function AppShellMobile({
           // leftActions={<></>}
           rightActions={
             <>
-              {isAuthenticated && (
-                <EventSelectorMobileButton onOpen={() => setOpen(true)} />
-              )}
+              {isAuthenticated && <EventSelectorMobileButton onOpen={() => setOpen(true)} />}
               <ThemeToggleButton />
               <UserMenu />
             </>

@@ -1,0 +1,7 @@
+# import SeatFull from "../fragments/seat.fragment.graphql"
+
+mutation AssignSeat($input: AssignSeatInput!) {
+  assignSeat(input: $input) {
+    ...SeatFull
+  }
+}

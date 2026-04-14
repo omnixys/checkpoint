@@ -1,212 +1,139 @@
 "use client";
 
-import {
-  REMOVE_ALL_PLUS_ONE,
-  REPLY_INVITATION,
-} from "@/graphql/invitation/invitation.mutation";
-import { RsvpChoice } from "@/types/invitation/invitation-enum.type";
-import {
-  ReplyInvitationRequest,
-  ReplyInvitationResult,
-} from "@/types/invitation/invitation-mutation.graphql.type";
-import { PhoneNumberType } from "@/types/user/user-enum-type";
-import { useMutation } from "@apollo/client/react";
-import {
-  Box,
-  Button,
-  MenuItem,
-  Stack,
-  TextField,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
-import { motion } from "framer-motion";
-import { useState } from "react";
-import PlusOneEditor from "./PlusOneEditor";
+import { useMemo, useState } from "react";
+import { Alert, Box, Button, Stack, TextField, Typography, useTheme } from "@mui/material";
 
-/**
- * AcceptForm
- * - Collects phone & email
- * - Allows PlusOnes creation
- * - Uses RSVP mutation (YES)
- * - Triggers Valkey temporary plusOne creation
- */
-export default function AcceptForm({
-  invitation,
-  plusOnes,
-  refetchPlusOnes,
-  onAccepted,
-  onBack,
-}: {
+import PhoneNumberDialog from "@/checkpoint/components/common/phoneNumber/PhoneNumberDialog";
+import PhoneNumberListAccordion from "@/checkpoint/components/common/phoneNumber/PhoneNumberListAccordion";
+import PlusOneDialog from "@/checkpoint/components/common/plus-one/PlusOneDialog";
+import PlusOneListAccordion from "@/checkpoint/components/common/plus-one/PlusOneListAccordion";
+import { useRsvpForm } from "@/checkpoint/hooks/invitation/useRsvpForm";
+
+type AcceptFormProps = {
   invitation: any;
-  plusOnes: any[];
-  refetchPlusOnes: () => Promise<any>;
+  countries: any[];
   onAccepted: () => void;
-  onBack: () => void;
-}) {
+};
+
+export default function AcceptForm({ invitation, countries, onAccepted }: AcceptFormProps) {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const form = useRsvpForm(invitation);
 
-  // form fields
-  const [phoneType, setPhoneType] = useState<PhoneNumberType>(
-    PhoneNumberType.MOBILE
-  );
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [email, setEmail] = useState("");
+  const [phoneDialogIndex, setPhoneDialogIndex] = useState<number | null>(null);
+  const [plusOneDialogIndex, setPlusOneDialogIndex] = useState<number | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  // Mutations
-  const [replyInvitation, { loading: replying }] = useMutation<
-    ReplyInvitationResult,
-    ReplyInvitationRequest
-  >(REPLY_INVITATION);
-  const [removeAllPlusOnes] = useMutation(REMOVE_ALL_PLUS_ONE);
+  const selectedPhone = useMemo(() => {
+    if (phoneDialogIndex === null) {
+      return null;
+    }
 
-  /**
-   * Validation
-   */
-  const canSubmit = phoneNumber.trim().length > 3 && !replying;
+    return form.state.phoneNumbers[phoneDialogIndex] ?? null;
+  }, [phoneDialogIndex, form.state.phoneNumbers]);
 
-  /**
-   * Submit Accept RSVP
-   */
+  const selectedPlusOne = useMemo(() => {
+    if (plusOneDialogIndex === null) {
+      return null;
+    }
+
+    return form.state.plusOnes[plusOneDialogIndex] ?? null;
+  }, [plusOneDialogIndex, form.state.plusOnes]);
+
   const handleSubmit = async () => {
-    if (!canSubmit) return;
-
-    // 1. Clean temporary plusOnes in Valkey (start fresh)
-    await removeAllPlusOnes({
-      variables: { id: invitation.id },
-    });
-
-    // 2. Send RSVP YES mutation
-    await replyInvitation({
-      variables: {
-        input: {
-          invitationId: invitation.id,
-          choice: RsvpChoice.YES,
-          replyInput: {
-            email: email.trim() !== "" ? email.trim() : undefined,
-            phoneNumbers: [
-              {
-                type: phoneType,
-                number: phoneNumber,
-                isPrimary: true,
-              },
-            ],
-          },
-        },
-      },
-    });
-
-    // 3. Refetch invitation & plusOnes (temporary Valkey ones)
-    await refetchPlusOnes();
-
-    // 4. Notify parent → go to final accepted screen
-    onAccepted();
+    try {
+      setSubmitError(null);
+      await form.submit();
+      onAccepted();
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error ? error.message : "Teilnahme konnte nicht bestätigt werden.",
+      );
+    }
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 26 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ type: "spring", stiffness: 120, damping: 16 }}
+    <Box
+      sx={{
+        p: 4,
+        borderRadius: 4,
+        background: theme.palette.background.paper,
+      }}
     >
-      <Box
-        sx={{
-          backdropFilter: "blur(26px)",
-          WebkitBackdropFilter: "blur(26px)",
-          background: theme.palette.background.paper + "BB",
-          borderRadius: "24px",
-          boxShadow: theme.shadows[4],
-          p: isMobile ? 3 : 4,
-        }}
-      >
-        <Stack spacing={3}>
-          <Typography
-            variant={isMobile ? "h6" : "h5"}
-            fontWeight={700}
-            textAlign="center"
-          >
-            Teilnahme bestätigen
-          </Typography>
+      <Stack spacing={3}>
+        <Typography
+          variant="h5"
+          sx={{
+            fontWeight: 700,
+          }}
+        >
+          Teilnahme bestätigen
+        </Typography>
 
-          <Typography textAlign="center" sx={{ opacity: 0.7 }}>
-            Bitte gib deine Kontaktdaten an.
-          </Typography>
-
-          {/* Phone Number */}
-          <Stack direction="row" spacing={2}>
-            <TextField
-              select
-              fullWidth
-              label="Art"
-              value={phoneType}
-              onChange={(e) => setPhoneType(e.target.value as PhoneNumberType)}
-              sx={{
-                minWidth: 130,
-              }}
-            >
-              <MenuItem value={PhoneNumberType.WHATSAPP}>WhatsApp</MenuItem>
-              <MenuItem value={PhoneNumberType.MOBILE}>Mobil</MenuItem>
-              <MenuItem value={PhoneNumberType.PRIVATE}>Privat</MenuItem>
-              <MenuItem value={PhoneNumberType.WORK}>Arbeit</MenuItem>
-              <MenuItem value={PhoneNumberType.HOME}>Festnetz</MenuItem>
-              <MenuItem value={PhoneNumberType.OTHER}>Andere</MenuItem>
-            </TextField>
-
-            <TextField
-              fullWidth
-              label="Telefonnummer"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-            />
-          </Stack>
-
-          {/* Email */}
+        <Stack direction="row" spacing={2}>
           <TextField
             fullWidth
-            label="E-Mail (optional)"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            label="Vorname"
+            value={form.state.firstName}
+            onChange={(e) => form.update("firstName", e.target.value)}
           />
 
-          {/* PlusOnes */}
-          <PlusOneEditor
-            invitation={invitation}
-            plusOnes={plusOnes}
-            refetchPlusOnes={refetchPlusOnes}
+          <TextField
+            fullWidth
+            label="Nachname"
+            value={form.state.lastName}
+            onChange={(e) => form.update("lastName", e.target.value)}
           />
-
-          {/* Submit */}
-          <Stack spacing={2} mt={2}>
-            <Button
-              variant="contained"
-              disabled={!canSubmit}
-              onClick={handleSubmit}
-              sx={{
-                py: 1.6,
-                borderRadius: "14px",
-                fontSize: "1.05rem",
-                fontWeight: 600,
-              }}
-            >
-              Teilnahme bestätigen
-            </Button>
-
-            <Button
-              variant="text"
-              onClick={onBack}
-              sx={{
-                py: 1.2,
-                borderRadius: "14px",
-                opacity: 0.7,
-              }}
-            >
-              Zurück
-            </Button>
-          </Stack>
         </Stack>
-      </Box>
-    </motion.div>
+
+        <TextField
+          fullWidth
+          label="E-Mail"
+          value={form.state.email}
+          onChange={(e) => form.update("email", e.target.value)}
+        />
+
+        <PhoneNumberListAccordion
+          values={form.state.phoneNumbers}
+          onAdd={form.addPhone}
+          onEdit={setPhoneDialogIndex}
+          onRemove={form.removePhone}
+        />
+
+        <PlusOneListAccordion
+          values={form.state.plusOnes}
+          onAdd={form.addPlusOne}
+          onEdit={setPlusOneDialogIndex}
+          onRemove={form.removePlusOne}
+        />
+
+        {submitError && <Alert severity="error">{submitError}</Alert>}
+
+        <Button variant="contained" disabled={!form.isValid} onClick={handleSubmit}>
+          Teilnahme bestätigen
+        </Button>
+      </Stack>
+
+      <PhoneNumberDialog
+        open={phoneDialogIndex !== null}
+        index={phoneDialogIndex}
+        value={selectedPhone}
+        countries={countries ?? []}
+        onClose={() => setPhoneDialogIndex(null)}
+        onChange={form.updatePhone}
+      />
+
+      <PlusOneDialog
+        open={plusOneDialogIndex !== null}
+        index={plusOneDialogIndex}
+        value={selectedPlusOne}
+        countries={countries ?? []}
+        onClose={() => setPlusOneDialogIndex(null)}
+        onChange={form.updatePlusOne}
+        onAddPhone={form.addPlusOnePhone}
+        onUpdatePhone={form.updatePlusOnePhone}
+        onRemovePhone={form.removePlusOnePhone}
+        onRemove={form.removePlusOne}
+      />
+    </Box>
   );
 }

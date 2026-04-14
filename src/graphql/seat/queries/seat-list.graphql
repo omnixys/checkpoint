@@ -1,0 +1,5 @@
+query GetSeatList($seatIdList: [ID!]!) {
+  getSeatList(seatIds: $seatIdList) {
+    ...SeatBasic
+  }
+}

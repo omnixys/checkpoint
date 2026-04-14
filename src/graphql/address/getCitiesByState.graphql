@@ -1,0 +1,6 @@
+query GetCitiesByState($stateId: ID!) {
+  getCitiesByState(stateId: $stateId) {
+    id
+    name
+  }
+}

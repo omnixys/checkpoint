@@ -27,7 +27,15 @@ export default function SecurityConnectivityBadge({
         py: 1.4,
       }}
     >
-      <Stack direction="row" spacing={3} alignItems="center">
+      <Stack
+        direction="row"
+        spacing={3}
+
+        sx={{
+          alignItems: "center",
+  
+        }}
+      >
         <Dot label="WS" active={ws} />
         <Dot label="Kafka" active={kafka} />
         <Dot label="API" active={api} />
@@ -38,7 +46,15 @@ export default function SecurityConnectivityBadge({
 
 function Dot({ label, active }: { label: string; active: boolean }) {
   return (
-    <Stack direction="row" spacing={1} alignItems="center">
+    <Stack
+      direction="row"
+      spacing={1}
+  
+      sx={{
+        alignItems: "center",
+
+      }}
+    >
       <Box
         sx={{
           width: 10,

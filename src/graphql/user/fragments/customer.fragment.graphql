@@ -1,0 +1,34 @@
+fragment Interest on InterestPayload {
+  id
+  key
+  name
+  categoryId
+  icon
+  createdAt
+  updatedAt
+}
+
+fragment CustomerInterest on CustomerInterestPayload {
+  id
+  customerId
+  interestId
+  level
+  isPrimary
+  createdAt
+  interest {
+    ...Interest
+  }
+}
+
+fragment Customer on CustomerPayload {
+  id
+  subscribed
+  state
+  contactOptions
+  createdAt
+  updatedAt
+
+  customerInterest {
+    ...CustomerInterest
+  }
+}

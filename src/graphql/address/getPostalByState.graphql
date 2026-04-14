@@ -1,0 +1,6 @@
+query GetPostalCodesByState($stateId: ID!) {
+  getPostalCodesByState(stateId: $stateId) {
+    id
+    code
+  }
+}

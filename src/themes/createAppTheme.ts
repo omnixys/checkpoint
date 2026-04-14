@@ -4,10 +4,7 @@ import { omnixysPresets } from "./colors/omnixysPresets";
 import { appleDark, appleLight } from "./colors/appleColors";
 import { createComponentOverrides } from "./components";
 
-export const createAppTheme = (
-  mode: PaletteMode,
-  scheme: OmnixysColorScheme = "original",
-) => {
+export const createAppTheme = (mode: PaletteMode, scheme: OmnixysColorScheme = "original") => {
   const apple = mode === "light" ? appleLight : appleDark;
   const omni = omnixysPresets[scheme][mode];
 

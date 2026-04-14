@@ -1,0 +1,11 @@
+query ListWebAuthnDevices {
+  listWebAuthnDevices {
+    credentialId
+    nickname
+    deviceType
+    backedUp
+    createdAt
+    lastUsedAt
+    revokedAt
+  }
+}

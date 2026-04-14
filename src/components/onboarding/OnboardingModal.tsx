@@ -3,17 +3,25 @@
 import React, { JSX } from "react";
 import { Box, Fade, Button } from "@mui/material";
 import OnboardingSlide from "./OnboardingSlide";
+import { ONBOARDING } from "@/checkpoint/constants/cookie";
 
 interface Props {
   onFinish: () => void;
 }
 
+type SlideItem = {
+  title: string;
+  text: string;
+  icon: string;
+  action: JSX.Element;
+};
+
 export default function OnboardingModal({ onFinish }: Props): JSX.Element {
-  const [step, setStep] = React.useState(0);
+  const [step, setStep] = React.useState<number>(0);
   const total = 4;
 
   React.useEffect(() => {
-    // Lock scroll while onboarding visible
+    // Lock scroll while onboarding is visible
     document.body.style.overflow = "hidden";
 
     return () => {
@@ -21,16 +29,22 @@ export default function OnboardingModal({ onFinish }: Props): JSX.Element {
     };
   }, []);
 
-  const next = () => {
-    if (step < total - 1) setStep(step + 1);
+  const next = (): void => {
+    setStep((prev) => {
+      if (prev < total - 1) {
+        return prev + 1;
+      }
+
+      return prev;
+    });
   };
 
-  const finish = () => {
-    localStorage.setItem("checkpoint.onboardingDone", "1");
-    onFinish(); // VERY IMPORTANT – closes the modal
+  const finish = (): void => {
+    localStorage.setItem(ONBOARDING, "1");
+    onFinish();
   };
 
-  const slides = [
+  const slides: SlideItem[] = [
     {
       title: "Willkommen bei Checkpoint",
       text: "Die moderne Art, Einladungen, Tickets und Events zu verwalten.",
@@ -74,6 +88,10 @@ export default function OnboardingModal({ onFinish }: Props): JSX.Element {
   ];
 
   const slide = slides[step];
+
+  if (!slide) {
+    return <></>;
+  }
 
   return (
     <Fade in>

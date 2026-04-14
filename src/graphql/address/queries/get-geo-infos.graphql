@@ -1,0 +1,12 @@
+query GetGeoLocationInfo($countryCode: String, $limit: Int, $text: String!) {
+  getGeoLocationInfo(text: $text, countryCode: $countryCode, limit: $limit) {
+    lat
+    lon
+    cityId
+    countryId
+    houseNumberId
+    postalCodeId
+    stateId
+    streetId
+  }
+}

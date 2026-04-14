@@ -26,7 +26,14 @@ export default function EntryExitHistory({
         background: "rgba(255,255,255,0.18)",
       }}
     >
-      <Typography variant="h6" fontWeight={600} sx={{ mb: 2 }}>
+      <Typography
+        variant="h6"
+
+        sx={{
+          fontWeight: 600,
+          mb:2
+        }}
+      >
         Entry / Exit History
       </Typography>
 
@@ -50,8 +57,13 @@ function HistoryGroup({
   return (
     <Box>
       <Typography
-        fontWeight={600}
-        sx={{ color, display: "block", mb: 1, fontSize: "0.95rem" }}
+        sx={{
+          color,
+          display: "block",
+          mb: 1,
+          fontSize: "0.95rem",
+          fontWeight: 600,
+        }}
       >
         {label}
       </Typography>

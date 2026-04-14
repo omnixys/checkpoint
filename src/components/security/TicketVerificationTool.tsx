@@ -40,7 +40,7 @@ export default function TicketVerificationTool({
           borderRadius: "24px",
         }}
       >
-        <Typography fontSize="1.1rem" fontWeight={600} sx={{ mb: 2 }}>
+        <Typography sx={{ mb: 2, fontWeight: 600, fontSize: "1.1rem" }}>
           Ticket Verification
         </Typography>
 
@@ -85,12 +85,7 @@ function VerdictPanel({
   verdict: "OK" | "WARNING" | "DENIED";
   message: string;
 }) {
-  const color =
-    verdict === "OK"
-      ? "#34c759"
-      : verdict === "WARNING"
-      ? "#ffcc00"
-      : "#ff3b30";
+  const color = verdict === "OK" ? "#34c759" : verdict === "WARNING" ? "#ffcc00" : "#ff3b30";
 
   return (
     <motion.div
@@ -109,9 +104,7 @@ function VerdictPanel({
           boxShadow: `0 0 20px ${color}55`,
         }}
       >
-        <Typography fontWeight={600} sx={{ color }}>
-          {verdict}
-        </Typography>
+        <Typography sx={{ color, fontWeight: 600 }}>{verdict}</Typography>
         <Typography sx={{ opacity: 0.7, mt: 0.5 }}>{message}</Typography>
       </Box>
     </motion.div>
