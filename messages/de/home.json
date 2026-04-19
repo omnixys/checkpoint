@@ -1,0 +1,21 @@
+{
+  "brand": {
+    "title": "Checkpoint",
+    "subtitle": "Premium-Einladungen, QR-Tickets und Event-Zugänge. Entwickelt für Fokus, Sicherheit und Eleganz."
+  },
+  "auth": {
+    "login": "Anmelden",
+    "redeem": "Einladung einlösen"
+  },
+  "header": {
+    "welcome": "Willkommen, {name}",
+    "activeEvent": "Aktives Event: {event}",
+    "noEvent": "Kein aktives Event ausgewählt"
+  },
+  "actions": {
+    "primaryDescription": "Zentrale Aktion für deinen aktuellen Kontext",
+    "events": "Meine Events",
+    "tickets": "Meine Tickets",
+    "scan": "Scanner starten"
+  }
+}

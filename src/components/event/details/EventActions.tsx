@@ -175,6 +175,16 @@ export default function EventActions({ ev }: EventHeaderProps) {
           >
             Event Einstellungen
           </Button>
+
+          <Button
+            fullWidth
+            variant="outlined"
+            component={Link}
+            href={`${basePath}event/${ev.id}/notification`}
+            sx={{ borderRadius: 3 }}
+          >
+            Event Notifications
+          </Button>
         </>
       )}
     </Stack>

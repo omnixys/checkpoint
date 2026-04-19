@@ -7,8 +7,13 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { triggerAccentPulse } from "@/checkpoint/themes/accent-animation";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { env } from "@/checkpoint/lib/env";
 
 export default function RSVPSuccessPage() {
+    const t = useTypedTranslations("rsvp");
+  
+  
   const theme = useTheme();
   const [width, height] = useWindowSize();
   const [run, setRun] = useState(true);
@@ -42,7 +47,10 @@ export default function RSVPSuccessPage() {
       )}
 
       <Container maxWidth="sm">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
           <Box
             sx={{
               p: 4,
@@ -58,7 +66,7 @@ export default function RSVPSuccessPage() {
                 fontWeight: 700,
               }}
             >
-              🎉 RSVP erfolgreich
+              🎉 {t("success.title")}
             </Typography>
 
             <Typography
@@ -68,11 +76,16 @@ export default function RSVPSuccessPage() {
                 mt: 2,
               }}
             >
-              Deine Teilnahme wurde gespeichert.
+              {t("success.description")}
             </Typography>
 
-            <Button component={Link} href="/" variant="contained" sx={{ mt: 4 }}>
-              Zurück
+            <Button
+              component={Link}
+              href={env.CHECKPOINT_BASE_PATH}
+              variant="contained"
+              sx={{ mt: 4 }}
+            >
+              {t("success.back")}
             </Button>
           </Box>
         </motion.div>

@@ -1,0 +1,34 @@
+{
+  "notFound": {
+    "title": "Page not found",
+    "message": "The requested page does not exist or has been moved.",
+    "actions": {
+      "home": "Back to home"
+    }
+  },
+
+  "forbidden": {
+    "title": "Access denied",
+    "message": "You do not have permission to perform this action.",
+    "actions": {
+      "home": "Back to home"
+    }
+  },
+
+  "network": {
+    "title": "Connection failed",
+    "message": "The server is currently unreachable. Please check your internet connection or try again.",
+    "actions": {
+      "retry": "Retry",
+      "home": "Back to home"
+    }
+  },
+
+  "rateLimit": {
+    "title": "Too many requests",
+    "message": "Please wait a moment and try again.",
+    "actions": {
+      "retry": "Retry"
+    }
+  }
+}

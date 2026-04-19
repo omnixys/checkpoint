@@ -1,0 +1,108 @@
+{
+  "invalidLink": "Invalid link",
+  "error": "Error",
+  "notFound": "Not found",
+
+  "eventLoadFailed": "Event could not be loaded.",
+  "eventTreeLoadFailed": "Event structure could not be loaded.",
+  "eventNotAvailable": "Event is not available.",
+
+  "firstName": "First name",
+  "lastName": "Last name",
+  "emailOptional": "Email (optional)",
+  "submit": "Submit",
+
+  "validation": {
+    "firstNameRequired": "First name is required.",
+    "lastNameRequired": "Last name is required.",
+    "contactRequired": "Please provide at least an email address or phone number.",
+    "eventRequired": "Please select at least one event you want to attend.",
+    "multiEventNotSupported": "Selecting multiple sub-events is currently not supported."
+  },
+
+  "success": {
+    "title": "RSVP successful",
+    "description": "Your participation has been saved.",
+    "back": "Back"
+  },
+
+  "invalidInvitationLink": "Invalid link – no invitationId was provided.",
+
+  "invalidInvitation": {
+    "titleDesktop": "Invitation not available",
+    "descriptionDesktop": "This invitation does not exist, has expired, or has not yet been approved.",
+    "titleMobile": "Invalid invitation",
+    "descriptionMobile": "This invitation is currently not available. Please contact the person who invited you."
+  },
+  "common": {
+    "ok": "OK",
+    "copy": "Copy",
+    "cancel": "Cancel"
+  },
+
+  "eventFallback": "Event",
+
+  "initial": {
+    "greeting": "Hello {firstName} {lastName},",
+    "waitingForResponse": "{eventTitle} is waiting for your response.",
+    "finalDecisionHint": "Your decision is final — except for \"Maybe\".",
+    "accept": "Accept",
+    "maybe": "Maybe",
+    "decline": "Decline"
+  },
+
+  "acceptForm": {
+    "title": "Confirm participation",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "submit": "Confirm participation",
+    "submitError": "Participation could not be confirmed."
+  },
+
+  "final": {
+    "accepted": {
+      "thanks": "Thank you {firstName}!",
+      "saved": "Your participation has been recorded.",
+      "approvalHint": "Please note: Your ticket will only be created after approval by the event team.",
+      "plusOnesTitle": "Your invited guests",
+      "personalLink": "Personal invitation link:",
+      "invitePlusOne": "Invite plus one (WhatsApp)"
+    },
+
+    "declined": {
+      "title": "Sorry you can't make it",
+      "saved": "{firstName}, your decline has been recorded.",
+      "contactHint": "If you change your mind, please contact the event team directly.",
+      "backHome": "Back to home"
+    }
+  },
+
+  "maybe": {
+    "title": "Decision saved",
+    "description": "Got it! Your \"Maybe\" choice has been saved. You can change your decision at any time later."
+  },
+
+  "decline": {
+    "title": "Decline invitation?",
+    "descriptionDesktop": "{firstName} {lastName}, are you sure you don't want to attend? This decision is final.",
+    "descriptionMobile": "{firstName} {lastName}, do you really want to decline? This decision cannot be undone.",
+    "confirm": "Yes, decline",
+    "confirmMobile": "Yes, I decline"
+  },
+
+  "alreadyAccepted": {
+    "titleDesktop": "Invitation already accepted",
+    "descriptionDesktop": "You have already accepted this invitation. If you have any questions, please contact the host.",
+    "titleMobile": "Already accepted",
+    "descriptionMobile": "This invitation has already been accepted. If something has changed, please contact the host."
+  },
+
+  "alreadyDeclined": {
+    "titleDesktop": "Invitation already declined",
+    "descriptionDesktop": "You have already declined this invitation. If you want to change your decision, ask the host to invite you again.",
+    "titleMobile": "Already declined",
+    "descriptionMobile": "This invitation has already been declined. If you want to participate again, please contact the host."
+  }
+}
+

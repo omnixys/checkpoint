@@ -3,6 +3,7 @@
 import React from "react";
 import { Box, Stack, Typography, Button, useTheme, useMediaQuery } from "@mui/material";
 import { motion } from "framer-motion";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 /**
  * InvalidInvitationDialog
@@ -10,6 +11,8 @@ import { motion } from "framer-motion";
  * - Mobile: fullscreen panel (iOS style)
  */
 export default function InvalidInvitationDialog({ open }: { open: boolean }) {
+  const t = useTypedTranslations("rsvp");
+  
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -50,11 +53,15 @@ export default function InvalidInvitationDialog({ open }: { open: boolean }) {
             alignItems: "center",
           }}
         >
-          Einladung nicht verfügbar
+          {t("invalidInvitation.titleDesktop")}
         </Typography>
 
-        <Typography variant="body1" sx={{ opacity: 0.8, mt: 1, textAlign: "center" }}>
-          Diese Einladung existiert nicht, ist abgelaufen oder wurde noch nicht freigegeben.
+        <Typography
+          variant="body1"
+          sx={{ opacity: 0.8, mt: 1, textAlign: "center" }}
+        >
+          {t("invalidInvitation.descriptionDesktop")}
+          freigegeben.
         </Typography>
 
         <Button
@@ -67,7 +74,7 @@ export default function InvalidInvitationDialog({ open }: { open: boolean }) {
             borderRadius: "14px",
           }}
         >
-          OK
+          {t("common.ok")}
         </Button>
       </Stack>
     </motion.div>
@@ -106,12 +113,11 @@ export default function InvalidInvitationDialog({ open }: { open: boolean }) {
             alignItems: "center",
           }}
         >
-          Einladung ungültig
+          {t("invalidInvitation.titleMobile")}
         </Typography>
 
         <Typography variant="body1" sx={{ opacity: 0.85, textAlign: "center" }}>
-          Diese Einladung ist momentan nicht verfügbar. Bitte kontaktiere die Person, die dich
-          eingeladen hat.
+          {t("invalidInvitation.descriptionMobile")}
         </Typography>
 
         <Button
@@ -125,7 +131,7 @@ export default function InvalidInvitationDialog({ open }: { open: boolean }) {
             fontWeight: 600,
           }}
         >
-          OK
+          {t("common.ok")}
         </Button>
       </Stack>
     </motion.div>

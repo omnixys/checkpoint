@@ -5,27 +5,14 @@ import { motion } from "framer-motion";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import WifiOffIcon from "@mui/icons-material/WifiOff";
 import { useRouter } from "next/navigation";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { env } from "@/checkpoint/lib/env";
 
-/**
- * Network Error Page
- *
- * Purpose:
- * - Display when backend is unreachable
- * - Provide clear UX feedback
- * - Offer retry mechanism
- *
- * UX Principles:
- * - Clear message (no technical jargon)
- * - Large touch targets (mobile-first)
- * - Immediate recovery action
- */
 export default function NetworkErrorPage() {
   const theme = useTheme();
   const router = useRouter();
+  const t = useTypedTranslations("error");
 
-  /**
-   * Reloads the application to retry connection.
-   */
   const handleRetry = () => {
     router.refresh();
     window.location.reload();
@@ -39,10 +26,7 @@ export default function NetworkErrorPage() {
         alignItems: "center",
         justifyContent: "center",
         px: 2,
-        background:
-          theme.palette.mode === "dark"
-            ? theme.palette.background.default
-            : theme.palette.background.default,
+        background: theme.palette.background.default,
       }}
     >
       <motion.div
@@ -93,7 +77,7 @@ export default function NetworkErrorPage() {
               letterSpacing: "-0.02em",
             }}
           >
-            Verbindung fehlgeschlagen
+            {t("network.title")}
           </Typography>
 
           {/* Description */}
@@ -104,8 +88,7 @@ export default function NetworkErrorPage() {
               maxWidth: 320,
             }}
           >
-            Der Server ist aktuell nicht erreichbar. Bitte überprüfe deine Internetverbindung oder
-            versuche es erneut.
+            {t("network.message")}
           </Typography>
 
           {/* Actions */}
@@ -115,22 +98,18 @@ export default function NetworkErrorPage() {
               fullWidth
               startIcon={<RefreshIcon />}
               onClick={handleRetry}
-              sx={{
-                height: 48,
-              }}
+              sx={{ height: 48 }}
             >
-              Erneut versuchen
+              {t("network.actions.retry")}
             </Button>
 
             <Button
               variant="outlined"
               fullWidth
-              onClick={() => router.push("/")}
-              sx={{
-                height: 48,
-              }}
+              onClick={() => router.push(env.CHECKPOINT_BASE_PATH)}
+              sx={{ height: 48 }}
             >
-              Zur Startseite
+              {t("network.actions.home")}
             </Button>
           </Stack>
         </Stack>

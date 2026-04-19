@@ -3,10 +3,13 @@
 import { Box, Button, Stack, Typography, useTheme, alpha } from "@mui/material";
 import { useRouter } from "next/navigation";
 import BlockIcon from "@mui/icons-material/Block";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { env } from "@/checkpoint/lib/env";
 
 export default function ForbiddenPage() {
   const theme = useTheme();
   const router = useRouter();
+  const t = useTypedTranslations("error");
 
   return (
     <Box
@@ -28,12 +31,12 @@ export default function ForbiddenPage() {
       >
         <BlockIcon sx={{ fontSize: 48, color: theme.palette.error.main }} />
 
-        <Typography variant="h5">Zugriff verweigert</Typography>
+        <Typography variant="h5">{t("forbidden.title")}</Typography>
 
-        <Typography color="text.secondary">Du hast keine Berechtigung für diese Aktion.</Typography>
+        <Typography color="text.secondary">{t("forbidden.message")}</Typography>
 
-        <Button variant="contained" onClick={() => router.push("/")}>
-          Zur Startseite
+        <Button variant="contained" onClick={() => router.push(env.CHECKPOINT_BASE_PATH || "/")}>
+          {t("forbidden.actions.home")}
         </Button>
       </Stack>
     </Box>

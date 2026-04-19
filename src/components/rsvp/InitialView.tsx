@@ -4,6 +4,7 @@ import React from "react";
 import { Box, Stack, Typography, Button, useTheme, useMediaQuery } from "@mui/material";
 import { motion } from "framer-motion";
 import ParallaxBanner from "@/checkpoint/components/ParallaxBanner";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 /**
  * InitialView
@@ -22,14 +23,16 @@ export default function InitialView({
   onAccept: () => void;
   onMaybe: () => void;
   onDecline: () => void;
-}) {
+  }) {
+  const t = useTypedTranslations("rsvp");
+  
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const firstName = invitation?.firstName ?? "";
   const lastName = invitation?.lastName ?? "";
 
-  const eventTitle = invitation?.event?.title ?? "Event";
+const eventTitle = invitation?.event?.title ?? t("eventFallback");
   const bannerUrl = invitation?.event?.bannerUrl ?? null;
 
   return (
@@ -69,15 +72,21 @@ export default function InitialView({
                 alignItems: "center",
               }}
             >
-              Hallo {firstName} {lastName},
+              {t("initial.greeting", { firstName, lastName })}
             </Typography>
 
-            <Typography variant="body1" sx={{ opacity: 0.85, textAlign: "center" }}>
-              {eventTitle} wartet auf deine Antwort.
+            <Typography
+              variant="body1"
+              sx={{ opacity: 0.85, textAlign: "center" }}
+            >
+              {t("initial.waitingForResponse", { eventTitle })}
             </Typography>
 
-            <Typography variant="body2" sx={{ opacity: 0.65, mt: 1, textAlign: "center" }}>
-              Deine Entscheidung ist endgültig – außer „Vielleicht“.
+            <Typography
+              variant="body2"
+              sx={{ opacity: 0.65, mt: 1, textAlign: "center" }}
+            >
+              {t("initial.finalDecisionHint")}
             </Typography>
 
             {/* Buttons */}
@@ -92,7 +101,7 @@ export default function InitialView({
                   fontWeight: 600,
                 }}
               >
-                Zusagen
+                {t("initial.accept")}
               </Button>
 
               <Button
@@ -104,7 +113,7 @@ export default function InitialView({
                   fontSize: "1.05rem",
                 }}
               >
-                Vielleicht
+                {t("initial.maybe")}
               </Button>
 
               <Button
@@ -117,7 +126,7 @@ export default function InitialView({
                   opacity: 0.7,
                 }}
               >
-                Ablehnen
+                {t("initial.decline")}
               </Button>
             </Stack>
           </Stack>

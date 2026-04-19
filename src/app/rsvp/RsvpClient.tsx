@@ -29,9 +29,7 @@ import {
   GetEventByIdRsvpQueryVariables,
 } from "@/checkpoint/generated/graphql";
 
-import PhoneNumberAccordion from "@/checkpoint/components/common/phoneNumber/PhoneNumberAccordion";
 import PhoneNumberDialog from "@/checkpoint/components/common/phoneNumber/PhoneNumberDialog";
-import PlusOneAccordion from "@/checkpoint/components/common/plus-one/PlusOneAccordion";
 import EventParticipationField from "@/checkpoint/components/EventParticipationField";
 import { usePhoneNumbers } from "@/checkpoint/hooks/common/usePhoneNumbers";
 import { EventSelectionNode, useEventSelection } from "@/checkpoint/hooks/events/useEventSelection";
@@ -41,6 +39,7 @@ import PlusOneListAccordion from "@/checkpoint/components/common/plus-one/PlusOn
 import PlusOneDialog from "@/checkpoint/components/common/plus-one/PlusOneDialog";
 import RSVPSuccess from "@/checkpoint/app/rsvp/success/RSVPSuccess";
 import { CallingCodeCountry } from "@/checkpoint/types/country.type";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 /* ------------------------------------------------------------------ */
 /* Shared UI */
@@ -98,7 +97,9 @@ export default function RsvpClient({
   callingCodeCountry,
 }: {
   callingCodeCountry: CallingCodeCountry[];
-}) {
+  }) {
+  const t = useTypedTranslations("rsvp");
+  
   const searchParams = useSearchParams();
   const eventId = searchParams.get("eventId");
 
@@ -181,7 +182,7 @@ export default function RsvpClient({
   /* ---------------- Guards ---------------- */
 
   if (!eventId) {
-    return <ErrorState title="Ungültiger Link" message="Missing eventId." />;
+    return <ErrorState title={t("invalidLink")} message="Missing eventId." />;
   }
 
   if (loadingEvent || loadingTree) {
@@ -189,15 +190,15 @@ export default function RsvpClient({
   }
 
   if (eventError) {
-    return <ErrorState title="Fehler" message="Event konnte nicht geladen werden." />;
+   return <ErrorState title={t("error")} message={t("eventLoadFailed")} />;
   }
 
   if (treeError) {
-    return <ErrorState title="Fehler" message="Event-Struktur konnte nicht geladen werden." />;
+    return <ErrorState title={t("error")} message={t("eventTreeLoadFailed")} />;
   }
 
   if (!event) {
-    return <ErrorState title="Nicht gefunden" message="Event ist nicht verfügbar." />;
+   return <ErrorState title={t("notFound")} message={t("eventNotAvailable")} />;
   }
 
   if (submitted) {
@@ -210,30 +211,21 @@ export default function RsvpClient({
 
     const nextValidationMessages: string[] = [];
 
-    if (!firstName.trim()) {
-      nextValidationMessages.push("Vorname ist erforderlich.");
-    }
+if (!firstName.trim()) {
+  nextValidationMessages.push(t("validation.firstNameRequired"));
+}
 
-    if (!lastName.trim()) {
-      nextValidationMessages.push("Nachname ist erforderlich.");
-    }
+if (!lastName.trim()) {
+  nextValidationMessages.push(t("validation.lastNameRequired"));
+}
 
-    if (!email.trim() && validPhones.length === 0) {
-      nextValidationMessages.push(
-        "Bitte gib mindestens eine E-Mail-Adresse oder Telefonnummer an.",
-      );
-    }
+if (!email.trim() && validPhones.length === 0) {
+  nextValidationMessages.push(t("validation.contactRequired"));
+}
 
-    /**
-     * Future-ready event selection:
-     * selectedEventIds is already available here for the future backend contract.
-     * Current PublicRsvpInput does not yet expose event selection IDs.
-     */
-    if (childEvents.length > 0 && selectedEventIds.length === 0) {
-      nextValidationMessages.push(
-        "Bitte wähle mindestens ein Event aus, an dem du teilnehmen möchtest.",
-      );
-    }
+if (childEvents.length > 0 && selectedEventIds.length === 0) {
+  nextValidationMessages.push(t("validation.eventRequired"));
+}
 
     setValidationMessages(nextValidationMessages);
 
@@ -247,9 +239,7 @@ export default function RsvpClient({
         : null;
 
     if (!effectiveEventId) {
-      setValidationMessages([
-        "Mehrfachauswahl von Teil-Events wird aktuell noch nicht unterstützt.",
-      ]);
+setValidationMessages([t("validation.multiEventNotSupported")]);
       return;
     }
 
@@ -293,7 +283,7 @@ export default function RsvpClient({
               />
 
               <TextField
-                label="Vorname"
+                label={t("firstName")}
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 fullWidth
@@ -301,7 +291,7 @@ export default function RsvpClient({
               />
 
               <TextField
-                label="Nachname"
+                label={t("lastName")}
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 fullWidth
@@ -309,7 +299,7 @@ export default function RsvpClient({
               />
 
               <TextField
-                label="E-Mail (optional)"
+                label={t("emailOptional")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 fullWidth
@@ -343,8 +333,12 @@ export default function RsvpClient({
 
               {error && <Alert severity="error">{error.message}</Alert>}
 
-              <Button variant="contained" onClick={handleSubmit} disabled={loading}>
-                Absenden
+              <Button
+                variant="contained"
+                onClick={handleSubmit}
+                disabled={loading}
+              >
+                {t("submit")}
               </Button>
             </Stack>
           </CardContent>

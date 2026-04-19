@@ -1,12 +1,19 @@
 import { PaletteMode, ThemeOptions, createTheme } from "@mui/material";
-import { OmnixysColorScheme } from "./paletteTypes";
+import { OmnixysColorScheme, OmnixysPresetExtended } from "./paletteTypes";
 import { omnixysPresets } from "./colors/omnixysPresets";
 import { appleDark, appleLight } from "./colors/appleColors";
 import { createComponentOverrides } from "./components";
+import { buildExtendedPalette } from "@/checkpoint/themes/buildExtendedPalette";
+import { buildVisualTokens } from "@/checkpoint/themes/buildVisualTokens";
 
 export const createAppTheme = (mode: PaletteMode, scheme: OmnixysColorScheme = "original") => {
   const apple = mode === "light" ? appleLight : appleDark;
-  const omni = omnixysPresets[scheme][mode];
+  const omnixys = omnixysPresets[scheme];
+  const omni = omnixys[mode];
+    const visual = buildVisualTokens(mode, scheme);
+
+
+    const extended = buildExtendedPalette(mode, omni);
 
   const baseTheme = createTheme({
     palette: {
@@ -26,9 +33,11 @@ export const createAppTheme = (mode: PaletteMode, scheme: OmnixysColorScheme = "
         secondary: omni.textSecondary,
       },
 
-      divider: apple.separator,
+      divider: extended.border.subtle,
+
       apple,
-      omnixys: omni,
+      omnixys,
+      extended,
     },
 
     typography: {
@@ -39,6 +48,11 @@ export const createAppTheme = (mode: PaletteMode, scheme: OmnixysColorScheme = "
 
     shape: { borderRadius: 16 },
     spacing: 8,
+
+    omnixys: {
+      scheme,
+      visual,
+    },
   });
 
   baseTheme.components = createComponentOverrides(baseTheme);

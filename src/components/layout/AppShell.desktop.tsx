@@ -22,7 +22,7 @@ export default function AppShellDesktop({ children }: { children: React.ReactNod
           top: 0,
           alignSelf: "flex-start",
           maxHeight: "100vh",
-          overflowY: "auto",
+   
           bgcolor: (t) => t.palette.background.paper,
         }}
       >

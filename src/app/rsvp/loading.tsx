@@ -1,7 +1,7 @@
 import { Box, Skeleton, Stack } from "@mui/material";
 import { JSX } from "react";
 
-export default function RsvpLoading(): JSX.Element {
+export default async function RsvpLoading(): Promise<JSX.Element> {
   return (
     <Stack
       spacing={2}

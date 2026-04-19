@@ -5,6 +5,7 @@ import {
   ReplyInvitationMutationVariables,
   ReplyInvitationDocument,
 } from "@/checkpoint/generated/graphql";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { useMutation } from "@apollo/client/react";
 import { Button, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
@@ -23,7 +24,9 @@ export default function DeclineDialog({
   invitation: any;
   onConfirm: () => void;
   onCancel: () => void;
-}) {
+  }) {
+  const t = useTypedTranslations("rsvp");
+  
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -88,12 +91,11 @@ export default function DeclineDialog({
             textAlign: "center",
           }}
         >
-          Einladung ablehnen?
+          {t("decline.title")}
         </Typography>
 
         <Typography variant="body1" sx={{ opacity: 0.85, textAlign: "center" }}>
-          {firstName} {lastName}, bist du sicher, dass du nicht teilnehmen möchtest? Diese
-          Entscheidung ist endgültig.
+          {t("decline.descriptionDesktop", { firstName, lastName })}
         </Typography>
 
         <Stack
@@ -113,11 +115,11 @@ export default function DeclineDialog({
               fontWeight: 600,
             }}
           >
-            Ja, absagen
+            {t("decline.confirm")}
           </Button>
 
           <Button variant="text" onClick={onCancel} sx={{ opacity: 0.7 }}>
-            Abbrechen
+            {t("common.cancel")}
           </Button>
         </Stack>
       </Stack>
@@ -156,12 +158,11 @@ export default function DeclineDialog({
             textAlign: "center",
           }}
         >
-          Einladung ablehnen?
+          {t("decline.title")}
         </Typography>
 
         <Typography sx={{ opacity: 0.8, textAlign: "center" }}>
-          {firstName} {lastName}, möchtest du wirklich absagen? Diese Entscheidung kann nicht
-          rückgängig gemacht werden.
+          {t("decline.descriptionMobile", { firstName, lastName })}
         </Typography>
 
         <Button
@@ -177,7 +178,7 @@ export default function DeclineDialog({
             fontWeight: 600,
           }}
         >
-          Ja, ich sage ab
+          {t("decline.confirmMobile")}
         </Button>
 
         <Button
@@ -190,7 +191,7 @@ export default function DeclineDialog({
             py: 1.2,
           }}
         >
-          Abbrechen
+          {t("common.cancel")}
         </Button>
       </Stack>
     </motion.div>

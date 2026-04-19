@@ -10,6 +10,7 @@ import {
   MailOutlined as MailOutlineIcon,
   Groups as GroupsIcon,
   ConfirmationNumberOutlined as ConfirmationNumberOutlinedIcon,
+  Notifications as NotificationsIcon,
 } from "@mui/icons-material";
 import { env } from "@/checkpoint/lib/env";
 import { UserRoleType } from "@/checkpoint/generated/graphql";
@@ -29,6 +30,12 @@ export function createNavigation(role: UserRoleType, activeEventId?: string): Na
   const NAV: Record<UserRoleType, NavItem[]> = {
     ADMIN: [
       { label: "Home", icon: <DashboardIcon />, path: `${basePath}` },
+      {
+        label: "Notifications",
+        icon: <NotificationsIcon />,
+        path: `${basePath}event/${activeEventId}/notification`,
+        disabled: !hasEvent,
+      },
       {
         label: "Scanner",
         icon: <QrCodeScannerIcon />,

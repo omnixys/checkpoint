@@ -1,0 +1,34 @@
+{
+  "notFound": {
+    "title": "Seite nicht gefunden",
+    "message": "Die angeforderte Seite existiert nicht oder wurde verschoben.",
+    "actions": {
+      "home": "Zur Startseite"
+    }
+  },
+
+  "forbidden": {
+    "title": "Zugriff verweigert",
+    "message": "Du hast keine Berechtigung für diese Aktion.",
+    "actions": {
+      "home": "Zur Startseite"
+    }
+  },
+
+  "network": {
+    "title": "Verbindung fehlgeschlagen",
+    "message": "Der Server ist aktuell nicht erreichbar. Bitte überprüfe deine Internetverbindung oder versuche es erneut.",
+    "actions": {
+      "retry": "Erneut versuchen",
+      "home": "Zur Startseite"
+    }
+  },
+
+  "rateLimit": {
+      "title": "Zu viele Anfragen",
+      "message": "Bitte warte einen Moment und versuche es erneut.",
+      "actions": {
+        "retry": "Erneut versuchen"
+      }
+    }
+}

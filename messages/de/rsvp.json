@@ -1,0 +1,107 @@
+{
+  "invalidLink": "Ungültiger Link",
+  "error": "Fehler",
+  "notFound": "Nicht gefunden",
+
+  "eventLoadFailed": "Event konnte nicht geladen werden.",
+  "eventTreeLoadFailed": "Event-Struktur konnte nicht geladen werden.",
+  "eventNotAvailable": "Event ist nicht verfügbar.",
+
+  "firstName": "Vorname",
+  "lastName": "Nachname",
+  "emailOptional": "E-Mail (optional)",
+  "submit": "Absenden",
+
+  "validation": {
+    "firstNameRequired": "Vorname ist erforderlich.",
+    "lastNameRequired": "Nachname ist erforderlich.",
+    "contactRequired": "Bitte gib mindestens eine E-Mail-Adresse oder Telefonnummer an.",
+    "eventRequired": "Bitte wähle mindestens ein Event aus, an dem du teilnehmen möchtest.",
+    "multiEventNotSupported": "Mehrfachauswahl von Teil-Events wird aktuell noch nicht unterstützt."
+  },
+
+  "success": {
+    "title": "RSVP erfolgreich",
+    "description": "Deine Teilnahme wurde gespeichert.",
+    "back": "Zurück"
+  },
+
+  "invalidInvitationLink": "Ungültiger Link – es wurde keine invitationId übergeben.",
+
+  "invalidInvitation": {
+    "titleDesktop": "Einladung nicht verfügbar",
+    "descriptionDesktop": "Diese Einladung existiert nicht, ist abgelaufen oder wurde noch nicht freigegeben.",
+    "titleMobile": "Einladung ungültig",
+    "descriptionMobile": "Diese Einladung ist momentan nicht verfügbar. Bitte kontaktiere die Person, die dich eingeladen hat."
+  },
+  "common": {
+    "ok": "OK",
+    "copy": "Kopieren",
+    "cancel": "Abbrechen"
+  },
+
+  "eventFallback": "Event",
+
+  "initial": {
+    "greeting": "Hallo {firstName} {lastName},",
+    "waitingForResponse": "{eventTitle} wartet auf deine Antwort.",
+    "finalDecisionHint": "Deine Entscheidung ist endgültig – außer „Vielleicht“.",
+    "accept": "Zusagen",
+    "maybe": "Vielleicht",
+    "decline": "Ablehnen"
+  },
+
+  "acceptForm": {
+    "title": "Teilnahme bestätigen",
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "email": "E-Mail",
+    "submit": "Teilnahme bestätigen",
+    "submitError": "Teilnahme konnte nicht bestätigt werden."
+  },
+
+  "final": {
+    "accepted": {
+      "thanks": "Danke {firstName}!",
+      "saved": "Wir haben deine Zusage gespeichert.",
+      "approvalHint": "Bitte beachte: Dein Ticket wird erst nach Freigabe durch das Event-Team erstellt.",
+      "plusOnesTitle": "Deine eingeladenen Personen",
+      "personalLink": "Persönlicher Einladungslink:",
+      "invitePlusOne": "PlusOne einladen (WhatsApp)"
+    },
+
+    "declined": {
+      "title": "Schade, dass du nicht kommen kannst",
+      "saved": "{firstName}, deine Absage wurde gespeichert.",
+      "contactHint": "Wenn du dich umentscheiden möchtest, wende dich bitte direkt an das Event-Team.",
+      "backHome": "Zur Startseite"
+    }
+  },
+
+  "maybe": {
+    "title": "Entscheidung gespeichert",
+    "description": "Alles klar! Deine Auswahl „Vielleicht“ wurde gespeichert. Du kannst deine Entscheidung später jederzeit ändern."
+  },
+
+  "decline": {
+    "title": "Einladung ablehnen?",
+    "descriptionDesktop": "{firstName} {lastName}, bist du sicher, dass du nicht teilnehmen möchtest? Diese Entscheidung ist endgültig.",
+    "descriptionMobile": "{firstName} {lastName}, möchtest du wirklich absagen? Diese Entscheidung kann nicht rückgängig gemacht werden.",
+    "confirm": "Ja, absagen",
+    "confirmMobile": "Ja, ich sage ab"
+  },
+
+  "alreadyAccepted": {
+    "titleDesktop": "Einladung bereits angenommen",
+    "descriptionDesktop": "Du hast diese Einladung bereits angenommen. Bei Fragen kontaktiere bitte den Gastgeber.",
+    "titleMobile": "Bereits angenommen",
+    "descriptionMobile": "Diese Einladung wurde schon akzeptiert. Falls sich etwas geändert hat, wende dich an den Gastgeber."
+  },
+
+  "alreadyDeclined": {
+    "titleDesktop": "Einladung bereits abgelehnt",
+    "descriptionDesktop": "Du hast diese Einladung bereits abgelehnt. Falls du deine Entscheidung ändern möchtest, bitte den Gastgeber, dich erneut einzuladen.",
+    "titleMobile": "Bereits abgelehnt",
+    "descriptionMobile": "Diese Einladung wurde schon abgelehnt. Falls du erneut teilnehmen möchtest, kontaktiere den Gastgeber."
+  }
+}

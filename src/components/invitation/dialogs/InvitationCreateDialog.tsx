@@ -1,34 +1,84 @@
 "use client";
 
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogActions,
+  Button,
+  Stack,
+  Typography,
+  TextField,
+  Box,
+  MenuItem,
+  useTheme,
+} from "@mui/material";
+import { useParams } from "next/navigation";
+
 import DialogTransition from "@/checkpoint/components/DialogTransition";
-import PhoneNumberField from "@/checkpoint/components/common/phoneNumber/PhoneNumberField";
+import PhoneNumberListAccordion from "@/checkpoint/components/common/phoneNumber/PhoneNumberListAccordion";
+
 import { useInvitationForm } from "@/checkpoint/hooks/invitation/useInvitationForm";
 import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
 import { CallingCodeCountry } from "@/checkpoint/types/country.type";
 import { EventListItem } from "@/checkpoint/types/event.type";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Divider,
-  MenuItem,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { useParams } from "next/navigation";
 
+/**
+ * Props for InvitationCreateDialog
+ */
 type Props = {
   logic: InvitationLogic;
   callingCodeCountries: CallingCodeCountry[];
 };
 
-export default function InvitationCreateDialog({ logic, callingCodeCountries }: Props) {
+/**
+ * Reusable section container for dialog layout
+ * Provides consistent spacing, background and borders
+ */
+function Section({
+  title,
+  children,
+}: {
+  title?: string | undefined;
+  children: React.ReactNode;
+}) {
+  return (
+    <Box
+      sx={{
+        p: 2.5,
+        borderRadius: 3,
+        background: "rgba(255,255,255,0.02)",
+        border: "1px solid rgba(255,255,255,0.05)",
+      }}
+    >
+      <Stack spacing={2}>
+        {title && (
+          <Typography sx={{ fontWeight: 600 }}>{title}</Typography>
+        )}
+        {children}
+      </Stack>
+    </Box>
+  );
+}
+
+/**
+ * InvitationCreateDialog
+ *
+ * Responsibilities:
+ * - Manage invitation creation UI
+ * - Handle form state
+ * - Submit data via InvitationLogic
+ */
+export default function InvitationCreateDialog({
+  logic,
+  callingCodeCountries,
+}: Props) {
+  const theme = useTheme();
   const params = useParams();
   const eventId = String(params.id);
+
+  const [loading, setLoading] = useState(false);
 
   const {
     values,
@@ -46,20 +96,36 @@ export default function InvitationCreateDialog({ logic, callingCodeCountries }: 
     autoCreateFirstPhone: true,
   });
 
+  /**
+   * Close dialog and reset form state
+   */
   const handleClose = () => {
     logic.setCreateOpen(false);
     resetForm();
   };
 
+  /**
+   * Handles invitation creation
+   */
   const handleCreate = async () => {
-    await logic.createInvitation({
-      variables: {
-        input: buildCreateInput(),
-      },
-    });
+    if (!isValid || loading) return;
 
-    handleClose();
-    await logic.refetch();
+    try {
+      setLoading(true);
+
+      await logic.createInvitation({
+        variables: {
+          input: buildCreateInput(),
+        },
+      });
+
+      await logic.refetch();
+      handleClose();
+    } catch (error) {
+      console.error("Failed to create invitation", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -68,28 +134,51 @@ export default function InvitationCreateDialog({ logic, callingCodeCountries }: 
       onClose={handleClose}
       maxWidth="md"
       fullWidth
-      slotProps={{
+      slots={{
         transition: DialogTransition,
       }}
+      slotProps={{
+        paper: {
+          sx: {
+            borderRadius: "20px",
+            overflow: "hidden",
+            backdropFilter: "blur(30px)",
+            background: "rgba(20,20,20,0.75)",
+            border: "1px solid rgba(255,255,255,0.08)",
+            boxShadow: "0 40px 120px rgba(0,0,0,0.6)",
+          },
+        },
+      }}
     >
-      <DialogTitle sx={{ fontWeight: 700 }}>Neue Einladung erstellen</DialogTitle>
+      {/* -------------------------------- HEADER -------------------------------- */}
+      <DialogTitle sx={{ px: 3, pt: 3, pb: 2 }}>
+        <Stack spacing={0.5}>
+          <Typography
+            variant="h5"
+            sx={{
+              color: theme.palette.primary.main,
+              fontWeight: 700,
+            }}
+          >
+            Neue Einladung
+          </Typography>
 
+          <Typography variant="body2" color="text.secondary">
+            Erstelle einen neuen Gast und verwalte seine Einladung
+          </Typography>
+        </Stack>
+      </DialogTitle>
+
+      {/* -------------------------------- CONTENT -------------------------------- */}
       <DialogContent>
         <Stack spacing={3} sx={{ mt: 1 }}>
-          <Stack spacing={2}>
-            <Typography
-              variant="subtitle2"
-              sx={{
-                fontWeight: 700,
-              }}
-            >
-              Person
-            </Typography>
-
+          {/* PERSON SECTION */}
+          <Section title="Person">
             <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
               <TextField
                 label="Vorname"
                 fullWidth
+                autoFocus
                 value={values.firstName}
                 onChange={(e) => setField("firstName", e.target.value)}
               />
@@ -108,74 +197,33 @@ export default function InvitationCreateDialog({ logic, callingCodeCountries }: 
               value={values.email}
               onChange={(e) => setField("email", e.target.value)}
             />
-          </Stack>
+          </Section>
 
-          <Divider />
-
-          <Stack spacing={2}>
-            <Typography
-              variant="subtitle2"
-              sx={{
-                fontWeight: 700,
+          <Section>
+            <PhoneNumberListAccordion
+              values={phoneNumbers}
+              onAdd={addPhone}
+              onEdit={(index) => {
+                // Editing logic can open a modal or inline edit
+                console.log("Edit phone index:", index);
               }}
-            >
-              Telefonnummern
-            </Typography>
+              onRemove={removePhone}
+            />
+          </Section>
 
-            <Stack
-              spacing={2}
-              sx={{
-                mt: 2,
-              }}
-            >
-              {phoneNumbers.map((phoneNumber, index) => (
-                <PhoneNumberField
-                  key={`${index}`}
-                  value={phoneNumber}
-                  index={index}
-                  countries={callingCodeCountries}
-                  onChange={updatePhone}
-                  onRemove={removePhone}
-                />
-              ))}
-            </Stack>
-
-            <Button
-              variant="outlined"
-              startIcon={<AddRoundedIcon />}
-              onClick={addPhone}
-              sx={{
-                alignSelf: "flex-start",
-                borderStyle: "dashed",
-              }}
-            >
-              Telefonnummer hinzufügen
-            </Button>
-          </Stack>
-
-          <Divider />
-
-          <Stack spacing={2}>
-            <Typography
-              variant="subtitle2"
-              sx={{
-                fontWeight: 700,
-              }}
-            >
-              Einladung
-            </Typography>
-
+          {/* INVITATION SECTION */}
+          <Section title="Einladung">
             <TextField
               type="number"
               label="Max. Begleitpersonen"
               fullWidth
               value={values.maxInvitees}
-              onChange={(e) => setField("maxInvitees", Math.max(0, Number(e.target.value) || 0))}
-              slotProps={{
-                input: {
-                  minRows: 0,
-                },
-              }}
+              onChange={(e) =>
+                setField(
+                  "maxInvitees",
+                  Math.max(0, Number(e.target.value) || 0),
+                )
+              }
             />
 
             <TextField
@@ -186,42 +234,60 @@ export default function InvitationCreateDialog({ logic, callingCodeCountries }: 
               onChange={(e) => setField("eventId", e.target.value)}
               helperText="Optional: Wer hat diese Person eingeladen?"
             >
-              {/* NONE OPTION */}
               <MenuItem value="">
                 <em>Keine Zuordnung</em>
               </MenuItem>
 
               {logic.events?.map((event: EventListItem) => {
-                const name = `${event.name ?? ""}`.trim() || "Unbekannt";
-
-                const eventName = event.id;
+                const name = event.name?.trim() || "Unbekannt";
 
                 return (
                   <MenuItem key={event.id} value={event.id}>
                     <Stack
                       direction="row"
                       sx={{
-                        justifyContent: "space-between",
                         width: "100%",
+                        justifyContent: "space-between",
                       }}
                     >
                       <span>{name}</span>
+
                       <Typography variant="caption" color="text.secondary">
-                        {eventName}
+                        {event.id}
                       </Typography>
                     </Stack>
                   </MenuItem>
                 );
               })}
             </TextField>
-          </Stack>
+          </Section>
         </Stack>
       </DialogContent>
 
-      <DialogActions sx={{ px: 3, pb: 2 }}>
+      {/* -------------------------------- ACTIONS -------------------------------- */}
+      <DialogActions
+        sx={{
+          px: 3,
+          py: 2,
+          position: "sticky",
+          bottom: 0,
+          backdropFilter: "blur(20px)",
+          background: "rgba(0,0,0,0.6)",
+          borderTop: "1px solid rgba(255,255,255,0.05)",
+        }}
+      >
         <Button onClick={handleClose}>Abbrechen</Button>
-        <Button variant="contained" onClick={handleCreate} disabled={!isValid}>
-          Einladung erstellen
+
+        <Button
+          variant="contained"
+          onClick={handleCreate}
+          disabled={!isValid || loading}
+          sx={{
+            borderRadius: "12px",
+            px: 3,
+          }}
+        >
+          {loading ? "Erstellen..." : "Einladung erstellen"}
         </Button>
       </DialogActions>
     </Dialog>

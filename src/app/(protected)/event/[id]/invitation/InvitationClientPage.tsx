@@ -44,6 +44,7 @@ export default function InvitationClientPage({ countries }: { countries: Calling
         height: "100vh",
         overflowY: "auto",
         position: "relative",
+        width: "100%",
         background: theme.palette.background.default,
       }}
     >

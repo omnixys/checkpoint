@@ -71,7 +71,7 @@ export default function EventsNavBar() {
       <Stack direction="row" spacing={2}>
         {!isMobile && (
           <>
-            <Typography variant="h5" sx={{ fontWeight: 800 }}>
+            <Typography variant="h5" sx={{ fontWeight: 800, color: theme.palette.text.primary }}>
               Events
             </Typography>
 

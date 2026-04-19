@@ -1,8 +1,34 @@
 "use client";
 
-import ActiveEventGuard from "@/checkpoint/components/guard/ActiveEventGuard";
-import MySeatContent from "@/checkpoint/components/mySeat/MySeatContent";
-import { JSX } from "react";
+import MySeatClientPage from "@/checkpoint/app/(protected)/my-seat/MySeatPageClient";
+import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
+import { Box, Skeleton } from "@mui/material";
+import { Metadata } from "next";
+import { JSX, Suspense } from "react";
+
+export const metadata: Metadata = buildMetadata({
+  title: "My Seat",
+  description: "View your assigned seat for the event.",
+
+  page: "my-seat",
+
+  /**
+   * CRITICAL:
+   * Prevent indexing and crawling
+   */
+  robots: {
+    index: false,
+    follow: false,
+    noarchive: true,
+    nosnippet: true,
+  },
+
+  /**
+   * Disable OpenGraph completely
+   * → prevents accidental sharing previews
+   */
+  disableOpenGraph: true,
+});
 
 /**
  * Guest-facing page that shows the assigned seat
@@ -12,8 +38,19 @@ import { JSX } from "react";
  */
 export default function MySeatPage(): JSX.Element {
   return (
-    <ActiveEventGuard>
-      <MySeatContent />
-    </ActiveEventGuard>
+        <Box
+          style={{
+            flexGrow: 1,
+            display: "flex",
+            justifyContent: "center",
+            paddingTop: "2rem",
+          }}
+        >
+          <Suspense
+            fallback={<Skeleton variant="rectangular" width={210} height={118} />}
+          >
+            <MySeatClientPage />
+          </Suspense>
+        </Box>
   );
 }

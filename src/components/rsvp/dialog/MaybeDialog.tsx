@@ -7,6 +7,7 @@ import {
   InvitationPayload,
 } from "@/checkpoint/generated/graphql";
 import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { useMutation } from "@apollo/client/react";
 import { Box, Button, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
@@ -23,7 +24,9 @@ export default function MaybeDialog({
 }: {
   invitationId: string;
   onBack: () => void;
-}) {
+  }) {
+  const t = useTypedTranslations("rsvp");
+  
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -73,12 +76,14 @@ export default function MaybeDialog({
               textAlign: "center",
             }}
           >
-            Entscheidung gespeichert
+            {t("maybe.title")}
           </Typography>
 
-          <Typography variant="body1" sx={{ opacity: 0.8, mt: 1, textAlign: "center" }}>
-            Alles klar! Deine Auswahl „Vielleicht“ wurde gespeichert. Du kannst deine Entscheidung
-            später jederzeit ändern.
+          <Typography
+            variant="body1"
+            sx={{ opacity: 0.8, mt: 1, textAlign: "center" }}
+          >
+            {t("maybe.description")}
           </Typography>
 
           <Button
@@ -97,7 +102,7 @@ export default function MaybeDialog({
               fontWeight: 600,
             }}
           >
-            OK
+            {t("common.ok")}
           </Button>
         </Stack>
       </Box>

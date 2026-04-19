@@ -1,71 +1,105 @@
-"use client";
+import { Suspense } from "react";
+import EventClientPage from "./EventClientPage";
+import { Skeleton } from "@mui/material";
+import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
+import { Metadata } from "next";
 
-import { Box, Stack } from "@mui/material";
-import { useParams } from "next/navigation";
 
-import EventActions from "@/checkpoint/components/event/details/EventActions";
-import EventHeaderFactory from "@/checkpoint/components/event/details/EventHeaderFactory";
-import EventTabs from "@/checkpoint/components/event/details/EventTabs";
-import EventVariantToggle from "@/checkpoint/components/event/details/EventVariantToggle";
-import EventTabContent from "@/checkpoint/components/event/EventTabContent";
-import { useEventPage } from "@/checkpoint/hooks/events/useEventPage";
-import { useAuth } from "@/checkpoint/providers/AuthProvider";
-import { useQuery } from "@apollo/client/react";
-import { EventDocument, EventQuery, EventQueryVariables } from "@/checkpoint/generated/graphql";
-
-export default function EventPage() {
-  const { id } = useParams<{ id: string }>();
-  const { isAuthenticated } = useAuth();
-
-  const { data, loading, error } = useQuery<EventQuery, EventQueryVariables>(EventDocument, {
-    variables: { id },
-    fetchPolicy: "cache-and-network",
-    skip: !isAuthenticated,
-  });
-
-  const ev = data?.event;
+/**
+ * -------------------------------------------------------------
+ * Event Page Metadata (Dynamic SEO Core)
+ * -------------------------------------------------------------
+ * WHY:
+ * - Public event page
+ * - Needs SEO + Social Sharing
+ * - Fully dynamic per event
+ * -------------------------------------------------------------
+ */
+export async function generateMetadata({
+  params,
+}: {
+  params: { id: string };
+}): Promise<Metadata> {
+  const eventId = params.id;
 
   /**
-   * Centralized page logic
+   * -------------------------------------------------------------
+   * Fetch Event Data (SSR)
+   * -------------------------------------------------------------
    */
-  const { activeTab, changeTab, variant, changeVariant, handleDescriptionChange } = useEventPage(
-    ev ??
-      ({
-        id: "",
-        timeline: [],
-        createdAt: new Date().toISOString(),
-      } as any), // später sauber typisieren
-  );
+  const event = await getEventMetadata(eventId);
 
   /**
-   * AFTER hooks → conditional rendering
+   * Fallback (event not found)
    */
-  if (!isAuthenticated) return null;
+  if (!event) {
+    return buildMetadata({
+      title: "Event not found",
+      description: "This event does not exist or is no longer available.",
+      page: "event-detail",
 
-  if (loading) return <div>Loading...</div>;
-
-  if (error || !ev) {
-    return <div>Event not found</div>;
+      robots: {
+        index: false,
+        follow: false,
+      },
+    });
   }
 
+  /**
+   * -------------------------------------------------------------
+   * SEO + OG
+   * -------------------------------------------------------------
+   */
+  return buildMetadata({
+    title: event.name,
+    description:
+      event.description ??
+      `Join ${event.name} and secure your access.`,
+
+    page: "event-detail",
+
+    /**
+     * PUBLIC → index allowed
+     */
+    robots: {
+      index: true,
+      follow: true,
+    },
+
+    /**
+     * OpenGraph → CRITICAL
+     */
+    openGraph: {
+      title: event.name,
+      description:
+        event.description ??
+        "Join this event now.",
+      image: event.ogImage,
+    },
+  });
+}
+
+/**
+ * -------------------------------------------------------------
+ * Replace with real data source
+ * -------------------------------------------------------------
+ */
+async function getEventMetadata(eventId: string) {
+  // TODO: Prisma / GraphQL call
+
+  return {
+    name: "Summer Gala 2026",
+    description:
+      "An exclusive evening event with VIP access, live music, and premium experience.",
+    ogImage: `/api/og?eventId=${eventId}`,
+  };
+}
+export default function EventPage() { 
   return (
-    <Box sx={{ px: { xs: 2, md: 4 }, py: 3 }}>
-      <Stack spacing={3} sx={{ pb: 5 }}>
-        {/* Header Variant Toggle */}
-        <EventVariantToggle variant={variant} onChange={changeVariant} />
-
-        {/* Dynamic Header */}
-        <EventHeaderFactory ev={ev} variant={variant} />
-
-        {/* Tabs */}
-        <EventTabs active={activeTab} onChange={changeTab} />
-
-        {/* Content */}
-        <EventTabContent ev={ev} active={activeTab} onDescriptionChange={handleDescriptionChange} />
-      </Stack>
-
-      {/* Actions */}
-      <EventActions ev={ev} />
-    </Box>
+    <Suspense
+      fallback={<Skeleton variant="rectangular" width="100%" height="100vh" />}
+    >
+      <EventClientPage />
+    </Suspense>
   );
 }

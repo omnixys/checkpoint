@@ -1,15 +1,20 @@
 "use client";
 
-import { Box, Stack, Typography, alpha, useTheme } from "@mui/material";
-import { motion } from "framer-motion";
-import InvitationHeaderBar from "@/checkpoint/components/invitation/InvitationHeaderBar";
-import { BackButtonBase } from "@/checkpoint/components/utils/back-button-base";
-import { env } from "@/checkpoint/lib/env";
-import { useParams } from "next/navigation";
+import { Box, useTheme } from "@mui/material";
+import { motion, AnimatePresence } from "framer-motion";
+import { InvitationHeaderBar }  from "./InvitationHeaderBar";
+import { useHeaderCollapse } from "@/checkpoint/components/invitation/useHeaderCollapse";
 import InvitationFilters from "@/checkpoint/components/invitation/InvitationFilters";
 import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
-import { BackToEventDetailButton } from "@/checkpoint/components/utils/back-to-event-detail-button";
+import { omnixysPresets } from '../../themes/colors/omnixysPresets';
 
+/**
+ * Smart Header
+ *
+ * - Collapsible
+ * - Scroll aware
+ * - Motion driven
+ */
 export interface InvitationHeaderProp {
   logic: InvitationLogic;
   scroll: {
@@ -22,56 +27,58 @@ export interface InvitationHeaderProp {
 /* ---------------------------------------------------------------------------
  * Header Factory (scroll reactive)
  * ------------------------------------------------------------------------- */
-export default function InvitationHeader({ logic, scroll }: InvitationHeaderProp) {
+export default function InvitationHeader({
+  logic,
+  scroll,
+}: InvitationHeaderProp) {
   const theme = useTheme();
-  const { id } = useParams();
+  const { collapsed, setCollapsed } = useHeaderCollapse();
 
   return (
-    <motion.div
-      animate={{
-        y: scroll?.visible ? 0 : -80,
-      }}
-      transition={{ duration: 0.25 }}
-      style={{
+    <Box
+      sx={{
         position: "sticky",
         top: 0,
-        zIndex: 50,
+        zIndex: 20,
+
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+
+        borderRadius: "16px",
+        overflow: "hidden",
+
+        background:
+          theme.palette.mode === "dark"
+            ? "rgba(0,0,0,0.6)"
+            : "rgba(255,255,255,0.7)",
+
+        border: `1px solid ${theme.palette.divider}`,
       }}
     >
-      <Box
-        sx={{
-          backdropFilter: "blur(20px)",
-          background: alpha(theme.palette.background.paper, scroll.glassOpacity),
-          borderBottom: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
-          px: 2,
-          pt: 2,
-          pb: scroll.collapsed ? 1 : 2,
-          transition: "all 0.25s ease",
-        }}
-      >
-        <Stack spacing={2}>
-          {/* TOP BAR */}
-          <Stack
-            direction="row"
-            sx={{
-              justifyContent: "space-between",
+      {/* Top Bar (always visible) */}
+      <InvitationHeaderBar
+        collapsed={collapsed}
+        onToggle={() => setCollapsed((p) => !p)}
+        logic={logic}
+      />
+
+      {/* Collapsible Filters */}
+      <AnimatePresence initial={false}>
+        {!collapsed && (
+          <motion.div
+            key="filters"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            style={{
+              overflow: "hidden",
             }}
           >
-            <BackToEventDetailButton />
-            <InvitationHeaderBar logic={logic} />
-          </Stack>
-
-          {/* TITLE */}
-          {!scroll.collapsed && (
-            <Typography variant="h5" sx={{ fontWeight: 700 }}>
-              Einladungen
-            </Typography>
-          )}
-
-          {/* FILTERS */}
-          <InvitationFilters logic={logic} />
-        </Stack>
-      </Box>
-    </motion.div>
+            <InvitationFilters logic={logic} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </Box>
   );
 }

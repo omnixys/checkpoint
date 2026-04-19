@@ -1,7 +1,23 @@
-"use client";
-
+import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
 import { Box, Stack } from "@mui/material";
+import { Metadata } from "next";
 import { ReactNode } from "react";
+
+export const metadata: Metadata = buildMetadata({
+  title: "My Account",
+  description: "Manage your personal account information.",
+
+  page: "me",
+
+  robots: {
+    index: false,
+    follow: false,
+    noarchive: true,
+    nosnippet: true,
+  },
+
+  disableOpenGraph: true,
+});
 
 export default function MeLayout({ children }: { children: ReactNode }) {
   return (

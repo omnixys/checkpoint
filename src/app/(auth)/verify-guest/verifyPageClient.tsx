@@ -22,6 +22,7 @@ import {
   VerifyGuestSignUpMutationVariables,
   VerifyGuestSignUpDocument,
 } from "@/checkpoint/generated/graphql";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 /* -------------------------------------------------------------------------- */
 /* Helper: Message Mapping                                                    */
@@ -34,7 +35,10 @@ import {
  * - Decouples backend enums from UI wording
  * - Allows flexible UX changes without backend impact
  */
-function mapVerifyMessage(message: string): {
+function mapVerifyMessage(
+  message: string,
+  t: (key: any) => any,
+): {
   severity: "success" | "error";
   text: string;
 } {
@@ -42,25 +46,25 @@ function mapVerifyMessage(message: string): {
     case "SUCCESS":
       return {
         severity: "success",
-        text: "Your access has been successfully activated.",
+        text: t("verify.success"),
       };
 
     case "ALREADY_CONSUMED_OR_EXPIRED":
       return {
         severity: "error",
-        text: "This link is no longer valid. Please request a new invitation.",
+        text: t("verify.expired"),
       };
 
     case "INVALID_TOKEN":
       return {
         severity: "error",
-        text: "Invalid verification link.",
+        text: t("verify.invalid"),
       };
 
     default:
       return {
         severity: "error",
-        text: "Verification failed. Please try again.",
+        text: t("verify.failed"),
       };
   }
 }
@@ -69,20 +73,9 @@ function mapVerifyMessage(message: string): {
 /* Main Page                                                                  */
 /* -------------------------------------------------------------------------- */
 
-/**
- * Verify Guest Page
- *
- * FLOW:
- * 1. Extract token from URL
- * 2. Execute verification mutation exactly once
- * 3. Display result
- * 4. Allow PDF download of credentials
- *
- * IMPORTANT:
- * - useRef guard prevents duplicate execution (React StrictMode safe)
- * - No mutation dependency → prevents re-trigger
- */
 export default function VerifyPageClient() {
+    const t = useTypedTranslations("auth");
+
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
 
@@ -93,14 +86,7 @@ export default function VerifyPageClient() {
     VerifyGuestSignUpMutationVariables
   >(VerifyGuestSignUpDocument);
 
-  /**
-   * Prevent duplicate execution
-   */
   const executedRef = useRef(false);
-
-  /**
-   * Reference to the content that will be exported as PDF
-   */
   const pdfRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -119,14 +105,6 @@ export default function VerifyPageClient() {
   /* PDF Download Logic                                                       */
   /* ------------------------------------------------------------------------ */
 
-  /**
-   * Generates a PDF from the credential content.
-   *
-   * WHY:
-   * - Uses html2canvas to capture styled UI
-   * - Converts into PDF via jsPDF
-   * - No backend dependency required
-   */
   const handleDownload = async () => {
     if (!pdfRef.current) return;
 
@@ -158,9 +136,7 @@ export default function VerifyPageClient() {
   if (!token) {
     return (
       <CenteredContainer>
-        <Alert severity="error">
-          Missing verification token. Please use the correct link.
-        </Alert>
+        <Alert severity="error">{t("verify.missingToken")}</Alert>
       </CenteredContainer>
     );
   }
@@ -175,7 +151,7 @@ export default function VerifyPageClient() {
           }}
         >
           <CircularProgress />
-          <Typography variant="body1">Verifying your access...</Typography>
+          <Typography>{t("verify.loading")}</Typography>{" "}
         </Stack>
       </CenteredContainer>
     );
@@ -188,7 +164,7 @@ export default function VerifyPageClient() {
           <Alert severity="error">{errorMessage}</Alert>
 
           <Button variant="contained" onClick={() => window.location.reload()}>
-            Retry
+            {t("verify.retry")}
           </Button>
         </Stack>
       </CenteredContainer>
@@ -200,12 +176,12 @@ export default function VerifyPageClient() {
   if (!result) {
     return (
       <CenteredContainer>
-        <Alert severity="error">Unexpected response from server.</Alert>
+        <Alert severity="error">{t("verify.unexpected")}</Alert>
       </CenteredContainer>
     );
   }
 
-  const mapped = mapVerifyMessage(result.message ?? "SUCCESS");
+  const mapped = mapVerifyMessage(result.message ?? "SUCCESS", t);
 
   /* ------------------------------------------------------------------------ */
   /* Render                                                                   */
@@ -225,7 +201,7 @@ export default function VerifyPageClient() {
             <Alert severity={mapped.severity}>{mapped.text}</Alert>
 
             {result.results?.map((user) => (
-              <CredentialCard key={user.userId} user={user} />
+              <CredentialCard key={user.userId} user={user} t={t} />
             ))}
           </Stack>
         </div>
@@ -233,7 +209,7 @@ export default function VerifyPageClient() {
         {/* Download Button */}
         {mapped.severity === "success" && (
           <Button variant="contained" onClick={handleDownload}>
-            Download as PDF
+            {t("verify.download")}
           </Button>
         )}
       </Stack>
@@ -282,6 +258,7 @@ function CenteredContainer({ children }: { children: React.ReactNode }) {
  */
 function CredentialCard({
   user,
+  t
 }: {
   user: {
     userId: string;
@@ -289,6 +266,7 @@ function CredentialCard({
     password: string;
     email?: string | null;
   };
+  t: (key: any) => any;
 }) {
   return (
     <Card
@@ -306,13 +284,21 @@ function CredentialCard({
               fontWeight: 600,
             }}
           >
-            Access Credentials
+            {t("verify.credentials.title")}
           </Typography>
 
-          <Field label="Username" value={user.username} />
-          <Field label="Password" value={user.password} />
+          <Field
+            label={t("verify.credentials.username")}
+            value={user.username}
+          />
+          <Field
+            label={t("verify.credentials.password")}
+            value={user.password}
+          />
 
-          {user.email && <Field label="Email" value={user.email} />}
+          {user.email && (
+            <Field label={t("verify.credentials.email")} value={user.email} />
+          )}
         </Stack>
       </CardContent>
     </Card>

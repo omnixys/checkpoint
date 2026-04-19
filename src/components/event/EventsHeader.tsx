@@ -59,7 +59,7 @@ export default function EventsHeader({
       {/* TITLE */}
       <Stack direction="row" spacing={1}>
         <Typography variant="h4" sx={{ fontWeight: 800 }}>
-          Events
+          My Events
         </Typography>
 
         <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>

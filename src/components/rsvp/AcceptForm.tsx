@@ -8,6 +8,7 @@ import PhoneNumberListAccordion from "@/checkpoint/components/common/phoneNumber
 import PlusOneDialog from "@/checkpoint/components/common/plus-one/PlusOneDialog";
 import PlusOneListAccordion from "@/checkpoint/components/common/plus-one/PlusOneListAccordion";
 import { useRsvpForm } from "@/checkpoint/hooks/invitation/useRsvpForm";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 type AcceptFormProps = {
   invitation: any;
@@ -16,6 +17,8 @@ type AcceptFormProps = {
 };
 
 export default function AcceptForm({ invitation, countries, onAccepted }: AcceptFormProps) {
+  const t = useTypedTranslations("rsvp");
+  
   const theme = useTheme();
   const form = useRsvpForm(invitation);
 
@@ -46,7 +49,7 @@ export default function AcceptForm({ invitation, countries, onAccepted }: Accept
       onAccepted();
     } catch (error) {
       setSubmitError(
-        error instanceof Error ? error.message : "Teilnahme konnte nicht bestätigt werden.",
+        error instanceof Error ? error.message : t("acceptForm.submitError"),
       );
     }
   };
@@ -66,20 +69,20 @@ export default function AcceptForm({ invitation, countries, onAccepted }: Accept
             fontWeight: 700,
           }}
         >
-          Teilnahme bestätigen
+          {t("acceptForm.title")}
         </Typography>
 
         <Stack direction="row" spacing={2}>
           <TextField
             fullWidth
-            label="Vorname"
+            label={t("acceptForm.firstName")}
             value={form.state.firstName}
             onChange={(e) => form.update("firstName", e.target.value)}
           />
 
           <TextField
             fullWidth
-            label="Nachname"
+            label={t("acceptForm.lastName")}
             value={form.state.lastName}
             onChange={(e) => form.update("lastName", e.target.value)}
           />
@@ -87,7 +90,7 @@ export default function AcceptForm({ invitation, countries, onAccepted }: Accept
 
         <TextField
           fullWidth
-          label="E-Mail"
+          label={t("acceptForm.email")}
           value={form.state.email}
           onChange={(e) => form.update("email", e.target.value)}
         />
@@ -108,8 +111,12 @@ export default function AcceptForm({ invitation, countries, onAccepted }: Accept
 
         {submitError && <Alert severity="error">{submitError}</Alert>}
 
-        <Button variant="contained" disabled={!form.isValid} onClick={handleSubmit}>
-          Teilnahme bestätigen
+        <Button
+          variant="contained"
+          disabled={!form.isValid}
+          onClick={handleSubmit}
+        >
+          {t("acceptForm.submit")}
         </Button>
       </Stack>
 

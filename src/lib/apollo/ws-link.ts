@@ -3,67 +3,97 @@ import { env } from "@/checkpoint/lib/env";
 import { getLogger } from "@/checkpoint/utils/logger";
 import { ApolloLink, Observable } from "@apollo/client";
 import { Client, createClient } from "graphql-ws";
+import { print } from "graphql";
 
-/**
- * WebSocket link for GraphQL subscriptions.
- */
-export function createWsLinkWithAuth(getToken: () => string | null): ApolloLink | null {
-  if (typeof window === "undefined") {
-    return null;
-  }
+export function createWsLinkWithAuth(
+  getToken: () => string | null,
+): ApolloLink | null {
+  if (typeof window === "undefined") return null;
 
   const logger = getLogger("ApolloWS");
-  const wsUrl = env.BACKEND_WS_URL;
 
   const client: Client = createClient({
-    url: wsUrl,
+    url: env.BACKEND_WS_URL,
     lazy: true,
     retryAttempts: Infinity,
 
-    /**
-     * Correct type: must return Promise<void>
-     */
-    retryWait: async (retries: number) => {
+    retryWait: async (retries) => {
       const delay = Math.min(1000 * retries, 5000);
-      await new Promise((resolve) => setTimeout(resolve, delay));
+      logger.debug("WS retry wait", { retries, delay });
+
+      await new Promise((r) => setTimeout(r, delay));
     },
 
-    /**
-     * Inject token manually (cookies are not sent automatically)
-     */
     connectionParams: () => {
       const token = getToken();
-      const context = getAuthContext();
+      const ctx = getAuthContext();
 
-      return {
+      const params = {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        "x-tenant-id": context.tenantId,
-        ...(context.actorId ? { "x-actor-id": context.actorId } : {}),
+        "x-tenant-id": ctx.tenantId,
+        ...(ctx.actorId ? { "x-actor-id": ctx.actorId } : {}),
       };
+
+      logger.debug("WS connectionParams", params);
+
+      return params;
     },
 
     on: {
       connected: () => logger.debug("WS connected"),
-      closed: (event) => logger.warn("WS closed", event),
-      error: (err) => logger.error("WS error", err),
+      closed: (e) => logger.warn("WS closed", e),
+      error: (e) => logger.error("WS error", e),
     },
   });
 
   return new ApolloLink((operation) => {
     return new Observable((sink) => {
+      logger.debug("WS SUBSCRIBE START", {
+        operationName: operation.operationName,
+        variables: operation.variables,
+      });
+
       const dispose = client.subscribe(
         {
-          ...operation,
-          query: operation.query.loc?.source.body ?? "",
+          query: print(operation.query),
+          variables: operation.variables,
         },
         {
-          next: sink.next.bind(sink),
-          error: sink.error.bind(sink),
-          complete: sink.complete.bind(sink),
+          next: (value) => {
+            /**
+             * 🔥 LOG RAW EVENT
+             */
+            logger.debug("WS RAW EVENT", value);
+
+            /**
+             * 🔥 FIX TYPES (exactOptionalPropertyTypes)
+             */
+            const normalized = {
+              ...value,
+              errors: value.errors ?? [], // ✅ ensure always array
+            };
+
+            logger.debug("WS NORMALIZED EVENT", normalized);
+
+            sink.next(normalized as any);
+          },
+
+          error: (err) => {
+            logger.error("WS SUB ERROR", err);
+            sink.error(err);
+          },
+
+          complete: () => {
+            logger.debug("WS COMPLETE");
+            sink.complete();
+          },
         },
       );
 
-      return () => dispose();
+      return () => {
+        logger.debug("WS UNSUBSCRIBE");
+        dispose();
+      };
     });
   });
 }

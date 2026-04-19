@@ -1,6 +1,14 @@
 "use client";
 
-import { Box, Button, Card, CardActionArea, Stack, Typography, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  CardActionArea,
+  Stack,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import Link from "next/link";
 import { JSX } from "react";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
@@ -9,6 +17,7 @@ import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 import { env } from "@/checkpoint/lib/env";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 const basePath = env.CHECKPOINT_BASE_PATH;
 const EVENT_ID = env.NEXT_PUBLIC_EVENT_ID;
@@ -17,11 +26,12 @@ export default function HomePage(): JSX.Element {
   const theme = useTheme();
   const { isAuthenticated, user } = useAuth();
   const { activeEvent } = useActiveEvent();
+  const t = useTypedTranslations("home");
 
   const role = activeEvent?.myRole ?? "GUEST";
 
   /* ------------------------------------------------------------------
-   * NOT AUTHENTICATED – BRAND-FOCUSED ENTRY
+   * NOT AUTHENTICATED
    * ------------------------------------------------------------------ */
   if (!isAuthenticated) {
     return (
@@ -40,79 +50,56 @@ export default function HomePage(): JSX.Element {
           variant="h2"
           sx={{
             fontWeight: 700,
-            color: theme.palette.omnixys.textPrimary,
+            color: theme.palette.text.primary,
           }}
         >
-          Checkpoint
+          {t("brand.title")}
         </Typography>
 
-        <Typography variant="body1" sx={{ color: theme.palette.omnixys.textSecondary }}>
-          Premium-Einladungen, QR-Tickets und Event-Zugänge. Entwickelt für Fokus, Sicherheit und
-          Eleganz.
+        <Typography
+          variant="body1"
+          sx={{ color: theme.palette.text.secondary }}
+        >
+          {t("brand.subtitle")}
         </Typography>
 
         <Stack spacing={2}>
           <Link href={`${basePath}login`}>
             <Button size="large" variant="contained" fullWidth>
-              Anmelden
+              {t("auth.login")}
             </Button>
           </Link>
 
           <Link href={`${basePath}rsvp?eventId=${EVENT_ID}`}>
             <Button size="large" variant="text" fullWidth>
-              Einladung einlösen
+              {t("auth.redeem")}
             </Button>
           </Link>
-
-          {/* UNLOCK → new feature */}
-          {/* <Link href={`${basePath}unlock`} style={{ textDecoration: "none" }}>
-            <Button
-              fullWidth
-              variant="text"
-              sx={{
-                py: 1.4,
-                fontSize: 15,
-                color: "primary.main",
-                textDecoration: "underline",
-                mt: 1,
-              }}
-            >
-              Ticket / Einladung / Token ohne Login anzeigen
-            </Button>
-          </Link> */}
         </Stack>
       </Stack>
     );
   }
 
   /* ------------------------------------------------------------------
-   * LOGGED IN – VISIONOS-STYLE HOME
+   * LOGGED IN
    * ------------------------------------------------------------------ */
 
-  const primaryAction =
-    // role === "SECURITY"
-    //   ? {
-    //       label: "Scanner starten",
-    //       href: `${basePath}scan",
-    //       icon: <QrCodeScannerIcon sx={{ fontSize: 44 }} />,
-    //     }
-    // :
-    {
-      label: "Meine Events",
-      href: `${basePath}event`,
-      icon: <EventIcon sx={{ fontSize: 44 }} />,
-    };
+  const primaryAction = {
+    label: t("actions.events"),
+    href: `${basePath}event`,
+    icon: <EventIcon sx={{ fontSize: 44 }} />,
+  };
 
   const secondaryAction =
     role === "GUEST"
       ? {
-          label: "Meine Tickets",
+          label: t("actions.tickets"),
           href: `${basePath}my-qr`,
           icon: <ConfirmationNumberIcon />,
         }
       : role === "SECURITY"
         ? {
-            label: "Scanner starten",
+            label: t("actions.scan"),
             href: `${basePath}scan`,
             icon: <QrCodeScannerIcon />,
           }
@@ -126,18 +113,26 @@ export default function HomePage(): JSX.Element {
           variant="h3"
           sx={{
             fontWeight: 600,
-            color: theme.palette.omnixys.textPrimary,
+            color: theme.palette.text.primary,
           }}
         >
-          Willkommen, {user?.personalInfo?.firstName}
+          {t("header.welcome").replace(
+            "{name}",
+            user?.personalInfo?.firstName ?? "",
+          )}
         </Typography>
 
-        <Typography variant="body2" sx={{ color: theme.palette.omnixys.textSecondary }}>
-          {activeEvent ? `Aktives Event: ${activeEvent.name}` : "Kein aktives Event ausgewählt"}
+        <Typography
+          variant="body2"
+          sx={{ color: theme.palette.text.secondary }}
+        >
+          {activeEvent
+            ? t("header.activeEvent").replace("{event}", activeEvent.name)
+            : t("header.noEvent")}
         </Typography>
       </Stack>
 
-      {/* PRIMARY FOCUS SURFACE */}
+      {/* PRIMARY */}
       <Link href={primaryAction.href} style={{ textDecoration: "none" }}>
         <Card
           sx={{
@@ -153,7 +148,7 @@ export default function HomePage(): JSX.Element {
                 variant="h4"
                 sx={{
                   fontWeight: 600,
-                  color: theme.palette.omnixys.textPrimary,
+                  color: theme.palette.text.primary,
                 }}
               >
                 {primaryAction.label}
@@ -162,19 +157,19 @@ export default function HomePage(): JSX.Element {
               <Typography
                 variant="body2"
                 sx={{
-                  color: theme.palette.omnixys.textSecondary,
+                  color: theme.palette.text.secondary,
                   textAlign: "center",
                   maxWidth: 360,
                 }}
               >
-                Zentrale Aktion für deinen aktuellen Kontext
+                {t("actions.primaryDescription")}
               </Typography>
             </Stack>
           </CardActionArea>
         </Card>
       </Link>
 
-      {/* SECONDARY ACTION – SUBTLE */}
+      {/* SECONDARY */}
       {secondaryAction && (
         <Link href={secondaryAction.href} style={{ textDecoration: "none" }}>
           <Card
@@ -188,7 +183,7 @@ export default function HomePage(): JSX.Element {
                 <Typography
                   sx={{
                     fontWeight: 500,
-                    color: theme.palette.omnixys.textPrimary,
+                    color: theme.palette.text.primary,
                   }}
                 >
                   {secondaryAction.label}

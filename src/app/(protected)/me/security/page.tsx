@@ -1,118 +1,50 @@
 "use client";
 
-import {
-  ChangeMyPasswordMutation,
-  ChangeMyPasswordMutationVariables,
-  ChangeMyPasswordDocument,
-} from "@/checkpoint/generated/graphql";
-import { useMutation } from "@apollo/client/react";
-import {
-  Alert,
-  Button,
-  Card,
-  CardContent,
-  Snackbar,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import ChangePasswordClient from "@/checkpoint/app/(protected)/me/security/ChangePasswordClient";
+import MySeatClientPage from "@/checkpoint/app/(protected)/my-seat/MySeatPageClient";
+import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
+import { Box, Skeleton } from "@mui/material";
+import { Metadata } from "next";
+import { JSX, Suspense } from "react";
 
-export default function ChangePasswordCard() {
-  const router = useRouter();
 
-  const [form, setForm] = useState({
-    oldPassword: "",
-    newPassword: "",
-    confirm: "",
-  });
+export const metadata: Metadata = buildMetadata({
+  title: "Security Settings",
+  description: "Manage your account security and password.",
 
-  const [feedback, setFeedback] = useState<{
-    type: "success" | "error";
-    message: string;
-  } | null>(null);
+  page: "me-security",
 
-  const [changePassword, { loading }] = useMutation<
-    ChangeMyPasswordMutation,
-    ChangeMyPasswordMutationVariables
-  >(ChangeMyPasswordDocument, {
-    onCompleted() {
-      setFeedback({
-        type: "success",
-        message: "Password updated successfully",
-      });
+  robots: {
+    index: false,
+    follow: false,
+    noarchive: true,
+    nosnippet: true,
+  },
 
-      // Clear sensitive fields
-      setForm({ oldPassword: "", newPassword: "", confirm: "" });
+  disableOpenGraph: true,
+});
 
-      // Redirect after short delay
-      setTimeout(() => {
-        router.push("/me");
-      }, 1000);
-    },
-    onError(error) {
-      setFeedback({
-        type: "error",
-        message: error.message ?? "Password update failed",
-      });
-    },
-  });
-
-  const disabled = !form.oldPassword || !form.newPassword || form.newPassword !== form.confirm;
-
+/**
+ * Guest-facing page that shows the assigned seat
+ * for the currently active event.
+ *
+ * Event context is resolved via ActiveEventProvider.
+ */
+export default function SecurityPage(): JSX.Element {
   return (
-    <>
-      <Card>
-        <CardContent>
-          <Stack spacing={3}>
-            <Typography variant="h6">Change Password</Typography>
-
-            <TextField
-              label="Current password"
-              type="password"
-              value={form.oldPassword}
-              onChange={(e) => setForm({ ...form, oldPassword: e.target.value })}
-            />
-
-            <TextField
-              label="New password"
-              type="password"
-              value={form.newPassword}
-              onChange={(e) => setForm({ ...form, newPassword: e.target.value })}
-            />
-
-            <TextField
-              label="Confirm new password"
-              type="password"
-              error={form.confirm !== "" && form.confirm !== form.newPassword}
-              value={form.confirm}
-              onChange={(e) => setForm({ ...form, confirm: e.target.value })}
-            />
-
-            <Button
-              variant="contained"
-              disabled={disabled || loading}
-              onClick={() =>
-                changePassword({
-                  variables: {
-                    input: {
-                      oldPassword: form.oldPassword,
-                      newPassword: form.newPassword,
-                    },
-                  },
-                })
-              }
-            >
-              {loading ? "Updating…" : "Update password"}
-            </Button>
-          </Stack>
-        </CardContent>
-      </Card>
-
-      <Snackbar open={!!feedback} autoHideDuration={3000} onClose={() => setFeedback(null)}>
-        <Alert severity={feedback?.type}>{feedback?.message}</Alert>
-      </Snackbar>
-    </>
+    <Box
+      style={{
+        flexGrow: 1,
+        display: "flex",
+        justifyContent: "center",
+        paddingTop: "2rem",
+      }}
+    >
+      <Suspense
+        fallback={<Skeleton variant="rectangular" width={210} height={118} />}
+      >
+        <ChangePasswordClient />
+      </Suspense>
+    </Box>
   );
 }

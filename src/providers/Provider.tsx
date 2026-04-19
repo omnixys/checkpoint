@@ -14,6 +14,7 @@ import OnboardingModal from "@/checkpoint/components/onboarding/OnboardingModal"
 import { ApolloRootProvider } from "@/checkpoint/providers/ApolloProvider";
 import AppShell from "@/checkpoint/components/layout/AppShell";
 import { env } from "@/checkpoint/lib/env";
+import ThemeRegistry from "@/checkpoint/lib/mui/ThemeRegistry";
 
 type ProviderProps = { children: React.ReactNode };
 
@@ -52,24 +53,28 @@ export default function Provider({ children }: ProviderProps) {
   return (
     <DeviceProvider>
       <ThemeModeProvider>
-        <ApolloRootProvider>
-          <AuthProvider>
-            <ActiveEventProvider>
-              <DateProvider>
-                {/* ALWAYS keep hook tree alive */}
-                {showOnboarding && <OnboardingModal onFinish={finishOnboarding} />}
+        <ThemeRegistry>
+          <ApolloRootProvider>
+            <AuthProvider>
+              <ActiveEventProvider>
+                <DateProvider>
+                  {/* ALWAYS keep hook tree alive */}
+                  {showOnboarding && (
+                    <OnboardingModal onFinish={finishOnboarding} />
+                  )}
 
-                {isAuthRoute ? (
-                  children
-                ) : (
-                  <SwipeBackProvider>
-                    <AppShell>{children}</AppShell>
-                  </SwipeBackProvider>
-                )}
-              </DateProvider>
-            </ActiveEventProvider>
-          </AuthProvider>
-        </ApolloRootProvider>
+                  {isAuthRoute ? (
+                    children
+                  ) : (
+                    <SwipeBackProvider>
+                      <AppShell>{children}</AppShell>
+                    </SwipeBackProvider>
+                  )}
+                </DateProvider>
+              </ActiveEventProvider>
+            </AuthProvider>
+          </ApolloRootProvider>
+        </ThemeRegistry>
       </ThemeModeProvider>
     </DeviceProvider>
   );

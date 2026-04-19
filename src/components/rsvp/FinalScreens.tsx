@@ -13,6 +13,8 @@ import {
 } from "@mui/material";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { motion } from "framer-motion";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { env } from "@/checkpoint/lib/env";
 
 /**
  * FinalScreens
@@ -27,7 +29,9 @@ export default function FinalScreens({
   type: "accepted" | "declined";
   invitation: any;
   plusOnes?: any[];
-}) {
+  }) {
+  const t = useTypedTranslations("rsvp");
+  
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -70,7 +74,7 @@ export default function FinalScreens({
                 alignItems: "center",
               }}
             >
-              Danke {firstName}!
+              {t("final.accepted.thanks", { firstName })}
             </Typography>
 
             <Typography sx={{ opacity: 0.85, textAlign: "center" }}>
@@ -79,7 +83,7 @@ export default function FinalScreens({
               {invitation?.approved === false && (
                 <>
                   <br />
-                  Bitte beachte: Dein Ticket wird erst nach Freigabe durch das Event-Team erstellt.
+                  {t("final.accepted.approvalHint")}
                 </>
               )}
             </Typography>
@@ -95,8 +99,11 @@ export default function FinalScreens({
                   flexWrap: "wrap",
                 }}
               >
-                <Typography variant="subtitle1" sx={{ opacity: 0.85, fontWeight: 700 }}>
-                  Deine eingeladenen Personen
+                <Typography
+                  variant="subtitle1"
+                  sx={{ opacity: 0.85, fontWeight: 700 }}
+                >
+                  {t("final.accepted.plusOnesTitle")}
                 </Typography>
 
                 {plusOnes.map((p: any) => {
@@ -135,7 +142,7 @@ export default function FinalScreens({
                             {p.firstName} {p.lastName}
                           </Typography>
                           <Typography variant="body2" sx={{ opacity: 0.6 }}>
-                            Persönlicher Einladungslink:
+                            {t("final.accepted.personalLink")}
                           </Typography>
                           <Typography
                             variant="body2"
@@ -149,8 +156,11 @@ export default function FinalScreens({
                           </Typography>
                         </Stack>
 
-                        <Tooltip title="Kopieren">
-                          <IconButton onClick={() => copyToClipboard(link)} sx={{ opacity: 0.7 }}>
+                        <Tooltip title={t("common.copy")}>
+                          <IconButton
+                            onClick={() => copyToClipboard(link)}
+                            sx={{ opacity: 0.7 }}
+                          >
                             <ContentCopyIcon />
                           </IconButton>
                         </Tooltip>
@@ -174,7 +184,7 @@ export default function FinalScreens({
                   fontWeight: 600,
                 }}
               >
-                PlusOne einladen (WhatsApp)
+                {t("final.accepted.invitePlusOne")}
               </Button>
             )}
           </Stack>
@@ -222,18 +232,18 @@ export default function FinalScreens({
               alignItems: "center",
             }}
           >
-            Schade, dass du nicht kommen kannst
+            {t("final.declined.title")}
           </Typography>
 
           <Typography sx={{ opacity: 0.85, textAlign: "center" }}>
-            {firstName}, deine Absage wurde gespeichert.
+            {t("final.declined.saved", { firstName })}
             <br />
-            Wenn du dich umentscheiden möchtest, wende dich bitte direkt an das Event-Team.
+            {t("final.declined.contactHint")}
           </Typography>
 
           <Button
             variant="contained"
-            onClick={() => (window.location.href = "/checkpoint/")}
+            onClick={() => (window.location.href = env.CHECKPOINT_BASE_PATH)}
             sx={{
               mt: 2,
               px: 4,
@@ -242,7 +252,7 @@ export default function FinalScreens({
               fontSize: "1.05rem",
             }}
           >
-            Zur Startseite
+            {t("final.declined.backHome")}
           </Button>
         </Stack>
       </Box>

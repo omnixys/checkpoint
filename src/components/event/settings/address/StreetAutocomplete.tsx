@@ -159,12 +159,14 @@ export default function StreetAutocomplete({ value, onChange }: Props) {
           placeholder="Start typing address..."
           helperText="Select a suggestion"
           slotProps={{
+            ...params.slotProps,
+
             input: {
-              ...params.slotProps.input,
+              ...params.slotProps?.input,
               endAdornment: (
                 <>
                   {loading ? <CircularProgress size={18} /> : null}
-                  {params.slotProps.input?.endAdornment}
+                  {params.slotProps?.input?.endAdornment}
                 </>
               ),
             },

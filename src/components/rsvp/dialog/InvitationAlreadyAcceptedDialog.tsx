@@ -1,9 +1,12 @@
 "use client";
 
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { Button, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
 
 export default function InvitationAlreadyAcceptedDialog({ open }: { open: boolean }) {
+  const t = useTypedTranslations("rsvp");
+  
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -45,11 +48,11 @@ export default function InvitationAlreadyAcceptedDialog({ open }: { open: boolea
             alignItems: "center",
           }}
         >
-          Einladung bereits angenommen
+          {t("alreadyAccepted.titleDesktop")}
         </Typography>
 
         <Typography variant="body1" sx={{ opacity: 0.8, textAlign: "center" }}>
-          Du hast diese Einladung bereits angenommen. Bei Fragen kontaktiere bitte den Gastgeber.
+          {t("alreadyAccepted.descriptionDesktop")}
         </Typography>
 
         <Button
@@ -57,7 +60,7 @@ export default function InvitationAlreadyAcceptedDialog({ open }: { open: boolea
           onClick={() => (window.location.href = "/checkpoint/")}
           sx={{ mt: 2, px: 4, py: 1, borderRadius: "14px" }}
         >
-          OK
+          {t("common.ok")}
         </Button>
       </Stack>
     </motion.div>
@@ -96,12 +99,11 @@ export default function InvitationAlreadyAcceptedDialog({ open }: { open: boolea
             alignItems: "center",
           }}
         >
-          Bereits angenommen
+          {t("alreadyAccepted.titleMobile")}
         </Typography>
 
         <Typography variant="body1" sx={{ opacity: 0.85, textAlign: "center" }}>
-          Diese Einladung wurde schon akzeptiert. Falls sich etwas geändert hat, wende dich an den
-          Gastgeber.
+          {t("alreadyAccepted.descriptionMobile")}
         </Typography>
 
         <Button
@@ -115,7 +117,7 @@ export default function InvitationAlreadyAcceptedDialog({ open }: { open: boolea
             fontWeight: 600,
           }}
         >
-          OK
+          {t("common.ok")}
         </Button>
       </Stack>
     </motion.div>

@@ -14,7 +14,7 @@
 # ---------------------------------------------------------------------------------------
 # Build arguments (via docker-bake.hcl)
 # ---------------------------------------------------------------------------------------
-ARG NODE_VERSION=24.10.0
+ARG NODE_VERSION=25.8.2
 ARG APP_NAME=checkpoint-ui
 ARG APP_VERSION=0.0.0-dev
 ARG CREATED

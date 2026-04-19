@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { IconButton } from "@mui/material";
+import { alpha, IconButton, useTheme } from "@mui/material";
 import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
 import { motion } from "framer-motion";
 
 export default function RefreshArcButton({ onReload }: { onReload: any }) {
   const [spin, setSpin] = useState(false);
+    const theme = useTheme();
+  
 
   const trigger = async () => {
     setSpin(true);
@@ -47,9 +49,13 @@ export default function RefreshArcButton({ onReload }: { onReload: any }) {
         sx={{
           width: 42,
           height: 42,
-          backdropFilter: "blur(12px)",
-          borderRadius: "50%",
-          border: "1px solid rgba(255,255,255,0.3)",
+                    backdropFilter: "blur(12px)",
+                    background: alpha(theme.palette.primary.main, 0.15),
+                    border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
+                    boxShadow: theme.shadows[3],
+                    "&:hover": {
+                      background: alpha(theme.palette.primary.main, 0.25),
+                    },
         }}
       >
         <RefreshRoundedIcon />

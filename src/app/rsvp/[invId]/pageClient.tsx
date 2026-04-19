@@ -1,6 +1,7 @@
 "use client";
 
 import RsvpContainer from "@/checkpoint/components/rsvp/RsvpContainer";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { CallingCodeCountry } from "@/checkpoint/types/country.type";
 import { getLogger } from "@/checkpoint/utils/logger";
 import { useParams } from "next/navigation";
@@ -14,7 +15,8 @@ export default function RsvpPageClient({
   callingCodeCountry,
 }: {
   callingCodeCountry: CallingCodeCountry[];
-}) {
+  }) {
+  const t = useTypedTranslations("rsvp");
   const logger = getLogger("RsvpPage");
 
   const { invId } = useParams<{ invId: string }>();
@@ -28,7 +30,7 @@ export default function RsvpPageClient({
           fontSize: "1.2rem",
         }}
       >
-        Ungültiger Link – es wurde keine invitationId übergeben.
+        {t("invalidInvitationLink")}
       </div>
     );
   }

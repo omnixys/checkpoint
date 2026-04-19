@@ -116,13 +116,13 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
       <Dialog
         open
         onClose={logic.closeInvitation}
-        slotProps={{
+        slots={{
           transition: MotionDialogTransition,
         }}
         maxWidth="sm"
         fullWidth
       >
-        <DialogContent>
+        <DialogContent tabIndex={-1}>
           <Stack spacing={3}>
             {/* ACTIONS */}
             <Box>
@@ -137,6 +137,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                 }}
               >
                 <Button
+                  autoFocus
                   variant="contained"
                   onClick={() =>
                     logic
@@ -216,12 +217,17 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
 
                 <Button
                   startIcon={<WhatsAppIcon />}
-                  onClick={() => openWhatsapp(whatsappInviteText, inv.phoneNumber ?? null)}
+                  onClick={() =>
+                    openWhatsapp(whatsappInviteText, inv.phoneNumber ?? null)
+                  }
                 >
                   WhatsApp Einladung senden
                 </Button>
 
-                <Tooltip title={copied ? "Kopiert!" : "RSVP-Link kopieren"} open={copied}>
+                <Tooltip
+                  title={copied ? "Kopiert!" : "RSVP-Link kopieren"}
+                  open={copied}
+                >
                   <Button
                     startIcon={<ContentCopyRoundedIcon />}
                     onClick={async () => {
@@ -345,7 +351,10 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                     }}
                   >
                     <Divider sx={{ flex: 1 }} />
-                    <Typography variant="caption" sx={{ opacity: 0.6, letterSpacing: 1 }}>
+                    <Typography
+                      variant="caption"
+                      sx={{ opacity: 0.6, letterSpacing: 1 }}
+                    >
                       {section.toUpperCase()}
                     </Typography>
                     <Divider sx={{ flex: 1 }} />
@@ -394,7 +403,10 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                             </Typography>
 
                             {selected && (
-                              <Typography variant="caption" sx={{ color: "#7ecbff" }}>
+                              <Typography
+                                variant="caption"
+                                sx={{ color: "#7ecbff" }}
+                              >
                                 Ausgewählt
                               </Typography>
                             )}

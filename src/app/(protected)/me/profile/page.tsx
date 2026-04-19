@@ -1,154 +1,51 @@
 "use client";
 
-import {
-  MeQuery,
-  MeQueryVariables,
-  MeDocument,
-  UpdateMyProfileMutation,
-  UpdateMyProfileMutationVariables,
-  UpdateMyProfileDocument,
-} from "@/checkpoint/generated/graphql";
-import { useMutation, useQuery } from "@apollo/client/react";
-import { Alert, Button, Card, CardContent, Snackbar, Stack, TextField } from "@mui/material";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import ProfileClientPage from "@/checkpoint/app/(protected)/me/profile/ProfilePage";
+import ChangePasswordClient from "@/checkpoint/app/(protected)/me/security/ChangePasswordClient";
+import MySeatClientPage from "@/checkpoint/app/(protected)/my-seat/MySeatPageClient";
+import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
+import { Box, Skeleton } from "@mui/material";
+import { Metadata } from "next";
+import { JSX, Suspense } from "react";
 
-export default function ProfilePage() {
-  const router = useRouter();
 
-  /* ------------------------------------------------------------
-   * Load current user
-   * ------------------------------------------------------------ */
-  const { data, loading: meLoading } = useQuery<MeQuery, MeQueryVariables>(MeDocument);
+export const metadata: Metadata = buildMetadata({
+  title: "Profile Settings",
+  description: "Update your personal profile information.",
 
-  /* ------------------------------------------------------------
-   * Form state
-   * ------------------------------------------------------------ */
-  const [form, setForm] = useState<{
-    username: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-  }>({
-    username: "",
-    firstName: "",
-    lastName: "",
-    email: "",
-  });
+  page: "me-profile",
 
-  /* ------------------------------------------------------------
-   * Feedback state
-   * ------------------------------------------------------------ */
-  const [feedback, setFeedback] = useState<{
-    type: "success" | "error";
-    message: string;
-  } | null>(null);
+  robots: {
+    index: false,
+    follow: false,
+    noarchive: true,
+    nosnippet: true,
+  },
 
-  /* ------------------------------------------------------------
-   * Sync form once ME is loaded
-   * ------------------------------------------------------------ */
-  useEffect(() => {
-    if (data?.me) {
-      setForm({
-        username: data.me.username,
-        firstName: data.me.personalInfo?.firstName ?? "",
-        lastName: data.me.personalInfo?.lastName ?? "",
-        email: data.me.personalInfo?.email ?? "",
-      });
-    }
-  }, [data]);
+  disableOpenGraph: true,
+});
 
-  /* ------------------------------------------------------------
-   * Mutation
-   * ------------------------------------------------------------ */
-  const [updateProfile, { loading: saving }] = useMutation<
-    UpdateMyProfileMutation,
-    UpdateMyProfileMutationVariables
-  >(UpdateMyProfileDocument, {
-    onCompleted(result) {
-      const payload = result.updateMyProfile;
-
-      if (!payload.ok) {
-        setFeedback({
-          type: "error",
-          message: payload.message || "Profile update failed",
-        });
-        return;
-      }
-
-      setFeedback({
-        type: "success",
-        message: payload.message || "Profile updated successfully",
-      });
-
-      // Redirect after short confirmation
-      setTimeout(() => {
-        router.push("/me");
-      }, 1500);
-    },
-
-    onError(error) {
-      setFeedback({
-        type: "error",
-        message: error.message ?? "Profile update failed",
-      });
-    },
-
-    refetchQueries: [MeDocument],
-  });
-
-  /* ------------------------------------------------------------
-   * Loading guard
-   * ------------------------------------------------------------ */
-  if (meLoading) {
-    return null;
-  }
-
-  /* ------------------------------------------------------------
-   * Render
-   * ------------------------------------------------------------ */
+/**
+ * Guest-facing page that shows the assigned seat
+ * for the currently active event.
+ *
+ * Event context is resolved via ActiveEventProvider.
+ */
+export default function SecurityPage(): JSX.Element {
   return (
-    <>
-      <Card>
-        <CardContent>
-          <Stack spacing={3}>
-            <TextField
-              label="First Name"
-              value={form.firstName}
-              onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-            />
-
-            <TextField
-              label="Last Name"
-              value={form.lastName}
-              onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-            />
-
-            <TextField
-              label="Email"
-              type="email"
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-            />
-
-            <Button
-              variant="contained"
-              disabled={saving}
-              onClick={() =>
-                updateProfile({
-                  variables: { input: form },
-                })
-              }
-            >
-              {saving ? "Saving…" : "Save Changes"}
-            </Button>
-          </Stack>
-        </CardContent>
-      </Card>
-
-      <Snackbar open={!!feedback} autoHideDuration={3000} onClose={() => setFeedback(null)}>
-        <Alert severity={feedback?.type}>{feedback?.message}</Alert>
-      </Snackbar>
-    </>
+    <Box
+      style={{
+        flexGrow: 1,
+        display: "flex",
+        justifyContent: "center",
+        paddingTop: "2rem",
+      }}
+    >
+      <Suspense
+        fallback={<Skeleton variant="rectangular" width={210} height={118} />}
+      >
+        <ProfileClientPage />
+      </Suspense>
+    </Box>
   );
 }

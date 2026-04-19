@@ -90,9 +90,11 @@ export default function SeatMapRegular({
               onClick={() => onSectionClick?.(sectionKey, sectionSeats)}
               sx={{ cursor: "pointer" }}
               title={`Section ${sectionKey}`}
-              titleTypographyProps={{
-                variant: "subtitle1",
-                sx: { fontWeight: 800 },
+              slotProps={{
+                title: {
+                  variant: "subtitle1",
+                  sx: { fontWeight: 800 },
+                },
               }}
             />
 
@@ -115,9 +117,7 @@ export default function SeatMapRegular({
                         seatGuestMap={seatGuestMap}
                         getSeatHolderLabel={getSeatHolderLabel}
                         onSeatClick={onSelect}
-                        {...(onTableClick
-                          ? { onTableClick }
-                          : {})}
+                        {...(onTableClick ? { onTableClick } : {})}
                       />
                     </VisionStripItem>
                   );

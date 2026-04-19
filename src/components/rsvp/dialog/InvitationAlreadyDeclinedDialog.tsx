@@ -1,9 +1,13 @@
 "use client";
 
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { Button, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
 
 export default function InvitationAlreadyDeclinedDialog({ open }: { open: boolean }) {
+  const t = useTypedTranslations("rsvp");
+
+  
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -45,12 +49,11 @@ export default function InvitationAlreadyDeclinedDialog({ open }: { open: boolea
             alignItems: "center",
           }}
         >
-          Einladung bereits abgelehnt
+          {t("alreadyDeclined.titleDesktop")}
         </Typography>
 
         <Typography variant="body1" sx={{ opacity: 0.8, textAlign: "center" }}>
-          Du hast diese Einladung bereits abgelehnt. Falls du deine Entscheidung ändern möchtest,
-          bitte den Gastgeber, dich erneut einzuladen.
+          {t("alreadyDeclined.descriptionDesktop")}
         </Typography>
 
         <Button
@@ -58,7 +61,7 @@ export default function InvitationAlreadyDeclinedDialog({ open }: { open: boolea
           onClick={() => (window.location.href = "/checkpoint/")}
           sx={{ mt: 2, px: 4, py: 1, borderRadius: "14px" }}
         >
-          OK
+          {t("common.ok")}
         </Button>
       </Stack>
     </motion.div>
@@ -97,12 +100,11 @@ export default function InvitationAlreadyDeclinedDialog({ open }: { open: boolea
             alignItems: "center",
           }}
         >
-          Bereits abgelehnt
+          {t("alreadyDeclined.titleMobile")}
         </Typography>
 
         <Typography variant="body1" sx={{ opacity: 0.85, textAlign: "center" }}>
-          Diese Einladung wurde schon abgelehnt. Falls du erneut teilnehmen möchtest, kontaktiere
-          den Gastgeber.
+          {t("alreadyDeclined.descriptionMobile")}
         </Typography>
 
         <Button
@@ -116,7 +118,7 @@ export default function InvitationAlreadyDeclinedDialog({ open }: { open: boolea
             fontWeight: 600,
           }}
         >
-          OK
+          {t("common.ok")}
         </Button>
       </Stack>
     </motion.div>

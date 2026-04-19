@@ -1,12 +1,38 @@
-"use client";
+import QrClientPage from "@/checkpoint/app/(protected)/my-qr/QrClientPage";
+import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
+import { Skeleton } from "@mui/material";
+import type { Metadata } from "next";
+import { Suspense } from "react";
 
-import ActiveEventGuard from "@/checkpoint/components/guard/ActiveEventGuard";
-import MyQrContent from "@/checkpoint/components/qr/MyQrContent";
+export const metadata = buildMetadata({
+  title: "My Ticket",
+  description: "Your secure access pass for the event.",
 
-export default function Page() {
-  return (
-    <ActiveEventGuard>
-      <MyQrContent />
-    </ActiveEventGuard>
-  );
+  page: "my-qr",
+
+  /**
+   * CRITICAL:
+   * Completely block indexing & caching
+   */
+  robots: {
+    index: false,
+    follow: false,
+    noarchive: true,
+    nosnippet: true,
+  },
+
+  /**
+   * Disable OpenGraph entirely
+   */
+  disableOpenGraph: true,
+});
+
+export default function QRPage() {
+    return (
+      <Suspense
+        fallback={<Skeleton variant="rectangular" width="100%" height="100vh" />}
+      >
+        <QrClientPage />
+      </Suspense>
+    );
 }
