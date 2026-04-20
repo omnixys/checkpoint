@@ -12,8 +12,12 @@ import { useEventPage } from "@/checkpoint/hooks/events/useEventPage";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { useQuery } from "@apollo/client/react";
 import { EventDocument, EventQuery, EventQueryVariables } from "@/checkpoint/generated/graphql";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 export default function EventPage() {
+  const tCommon = useTypedTranslations("common");
+  const tErrors = useTypedTranslations("error");
+  
   const { id } = useParams<{ id: string }>();
   const { isAuthenticated } = useAuth();
 
@@ -42,10 +46,12 @@ export default function EventPage() {
    */
   if (!isAuthenticated) return null;
 
-  if (loading) return <div>Loading...</div>;
+if (loading) return <div>{tCommon("loading")}</div>;
 
   if (error || !ev) {
-    return <div>Event not found</div>;
+if (error || !ev) {
+  return <div>{tErrors("eventNotFound")}</div>;
+}
   }
 
   return (

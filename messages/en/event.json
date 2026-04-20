@@ -1,0 +1,144 @@
+{
+  "title": "Events",
+  "overview": "Overview",
+  "calendar": "Calendar",
+  "stats": "Statistics",
+
+  "search": {
+    "title": "Search",
+    "placeholder": "Search events…",
+    "placeholder2": "Search by name or seat…"
+  },
+
+  "header": {
+    "title": "My Events",
+    "search": "Search…",
+    "create": "New",
+    "count": "{count} found",
+    "filter": {
+      "all": "All events",
+      "upcoming": "Upcoming",
+      "now": "Ongoing",
+      "past": "Past"
+    },
+
+    "start": "Start",
+    "end": "End",
+    "until": "until",
+
+    "role": {
+      "ADMIN": "Admin",
+      "SECURITY": "Security",
+      "GUEST": "Guest"
+    }
+  },
+
+  "view": {
+    "mode": {
+      "list": {
+        "label": "List",
+        "tooltip": "List view"
+      },
+      "grid": {
+        "label": "Grid",
+        "tooltip": "Grid view"
+      }
+    },
+    "visual": {
+      "auto": "Automatic",
+      "image": "Show image",
+      "banner": "Show banner",
+      "none": "No preview"
+    }
+  },
+
+  "variant": {
+    "A": "A – Calendar",
+    "B": "B – Hero",
+    "C": "C – Dashboard",
+    "D": "D – Vision Pro"
+  },
+
+  "tabs": {
+    "timeline": "Timeline",
+    "settings": "Details",
+    "location": "Map",
+    "notImplemented": "Content for tab \"{tab}\" is not implemented yet."
+  },
+
+  "timeline": {
+    "title": "Timeline",
+    "event-created": "Event created",
+    "invitation-sent": "Invitation sent",
+    "rsvp": "RSVP received",
+    "ticket-created": "Ticket created",
+    "ticket-activated": "Ticket activated",
+    "scan": "Scan performed"
+  },
+
+  "details": {
+    "dresscode": "Dresscode",
+    "description": "Description",
+    "maxSeats": "Max {count}",
+    "reEntryOn": "Re-entry enabled",
+    "reEntryOff": "Re-entry disabled"
+  },
+
+  "actions": {
+    "description": "Description",
+    "myTicket": "My Ticket (QR)",
+    "mySeat": "My Seat",
+    "scanner": "Start Scanner",
+    "scanLogs": "Scan Logs",
+    "guestList": "Guest List",
+    "seats": "Seats",
+    "manageInvitations": "Manage Invitations",
+    "manageSeats": "Manage Seats",
+    "manageTickets": "Manage Tickets",
+    "securityDashboard": "Security Dashboard",
+    "settings": "Event Settings",
+    "notifications": "Event Notifications",
+
+    "details": "Details",
+    "setActive": "Set active"
+  },
+
+  "status": {
+    "running": "Running",
+    "upcoming": "Upcoming",
+    "past": "Past",
+    "active": "Active"
+  },
+
+  "guests": {
+    "title": "Guests",
+    "securityTitle": "Guest List – Security",
+    "subtitle": "Live overview of guests, seats, and presence status",
+
+    "total": "Total",
+    "checkedIn": "Checked in",
+    "inside": "Inside",
+    "outside": "Outside",
+    "notArrived": "Not arrived",
+
+    "totalWithCount": "Total: {count}",
+    "checkedInWithCount": "Checked in: {count}",
+    "insideWithCount": "Inside: {count}",
+    "outsideWithCount": "Outside: {count}",
+    "notArrivedWithCount": "Not arrived: {count}"
+  },
+  "filter": {
+    "all": "All",
+    "allGuests": "All guests",
+    "checkedIn": "Checked in",
+    "inside": "Inside",
+    "outside": "Outside",
+    "notArrived": "Not arrived"
+  },
+
+  "ui": {
+    "highContrast": "High contrast",
+    "largeText": "Large text",
+    "display": "Display"
+  }
+}

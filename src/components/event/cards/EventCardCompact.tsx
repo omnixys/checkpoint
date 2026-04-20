@@ -1,6 +1,7 @@
 "use client";
 
 import { EventPayload } from "@/checkpoint/generated/graphql";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
 import {
   alpha,
@@ -23,22 +24,25 @@ type Props = {
   isActive: boolean;
   onSetActive: () => void;
 };
+type EventStatus = "running" | "upcoming" | "past";
+
+const STATUS_COLOR: Record<EventStatus, "success" | "warning" | "default"> = {
+  running: "success",
+  upcoming: "warning",
+  past: "default",
+};
 
 export default function EventCardCompact({ ev, toLocal, isActive, onSetActive }: Props) {
   const theme = useTheme();
+  const t = useTypedTranslations("event");
 
   const now = Date.now();
   const start = new Date(ev.settings.startsAt).getTime();
   const end = new Date(ev.settings.endsAt).getTime();
 
-  const status =
-    start <= now && end >= now
-      ? ("Läuft" as const)
-      : start > now
-        ? ("Kommend" as const)
-        : ("Vergangen" as const);
+const status: EventStatus =
+  start <= now && end >= now ? "running" : start > now ? "upcoming" : "past";
 
-  const statusColor = status === "Läuft" ? "success" : status === "Kommend" ? "warning" : "default";
 
   return (
     <motion.div
@@ -51,7 +55,9 @@ export default function EventCardCompact({ ev, toLocal, isActive, onSetActive }:
         variant="outlined"
         sx={{
           borderRadius: 5,
-          bgcolor: isActive ? alpha(theme.palette.primary.main, 0.08) : "background.paper",
+          bgcolor: isActive
+            ? alpha(theme.palette.primary.main, 0.08)
+            : "background.paper",
           boxShadow: isActive
             ? `
                 0 0 0 2px ${theme.palette.primary.main},
@@ -69,12 +75,21 @@ export default function EventCardCompact({ ev, toLocal, isActive, onSetActive }:
             </Typography>
 
             {isActive && (
-              <Chip label="Aktiv" color="primary" size="small" sx={{ fontWeight: 700 }} />
+              <Chip
+                label={t("status.active")}
+                color="primary"
+                size="small"
+                sx={{ fontWeight: 700 }}
+              />
             )}
 
             <Box sx={{ flex: 1 }} />
 
-            <Chip label={status} size="small" color={statusColor} />
+            <Chip
+              label={t(`status.${status}`)}
+              size="small"
+              color={STATUS_COLOR[status]}
+            />
           </Stack>
 
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
@@ -97,12 +112,15 @@ export default function EventCardCompact({ ev, toLocal, isActive, onSetActive }:
             variant="contained"
             sx={{ borderRadius: 3, fontWeight: 600 }}
           >
-            Details
+            {t("actions.details")}
           </Button>
 
           {!isActive && (
-            <Button sx={{ fontWeight: 700, borderRadius: 3 }} onClick={onSetActive}>
-              Als aktiv setzen
+            <Button
+              sx={{ fontWeight: 700, borderRadius: 3 }}
+              onClick={onSetActive}
+            >
+              {t("actions.setActive")}
             </Button>
           )}
         </CardActions>

@@ -1,4 +1,5 @@
 {
+  "missingEventId": "Event-ID fehlt.",
   "invalidLink": "Ungültiger Link",
   "error": "Fehler",
   "notFound": "Nicht gefunden",
@@ -11,6 +12,7 @@
   "lastName": "Nachname",
   "emailOptional": "E-Mail (optional)",
   "submit": "Absenden",
+  "submitFailed": "Teilnahme konnte nicht gesendet werden. Bitte erneut versuchen.",
 
   "validation": {
     "firstNameRequired": "Vorname ist erforderlich.",
@@ -103,5 +105,13 @@
     "descriptionDesktop": "Du hast diese Einladung bereits abgelehnt. Falls du deine Entscheidung ändern möchtest, bitte den Gastgeber, dich erneut einzuladen.",
     "titleMobile": "Bereits abgelehnt",
     "descriptionMobile": "Diese Einladung wurde schon abgelehnt. Falls du erneut teilnehmen möchtest, kontaktiere den Gastgeber."
+  },
+
+  "public": {
+    "participationConfirm": "Teilnahme bestätigen",
+    "participation": "Teilnahme",
+    "allEvents": "Alle Events",
+    "noSelection": "Keine Auswahl",
+    "rootWithAll": "{name} (alle)"
   }
 }

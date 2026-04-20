@@ -1,6 +1,7 @@
 "use client";
 
 import { EventFullFragment } from "@/checkpoint/generated/graphql";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
 import { getLogger } from "@/checkpoint/utils/logger";
 import { Button, Stack } from "@mui/material";
@@ -13,6 +14,8 @@ export type EventHeaderProps = {
 const basePath = env.CHECKPOINT_BASE_PATH;
 
 export default function EventActions({ ev }: EventHeaderProps) {
+  const t = useTypedTranslations("event");
+  
   const logger = getLogger("EventActions");
   logger.debug({ ev });
   return (
@@ -30,7 +33,7 @@ export default function EventActions({ ev }: EventHeaderProps) {
         href={"https://cgr.omnixys.com"}
         sx={{ borderRadius: 3, fontWeight: 600 }}
       >
-        Description
+        {t("actions.description")}
       </Button>
       {/* Guest */}
       {ev.myRole === "GUEST" && (
@@ -42,7 +45,7 @@ export default function EventActions({ ev }: EventHeaderProps) {
             href={`${basePath}my-qr?eventId=${ev.id}`}
             sx={{ borderRadius: 3, fontWeight: 600 }}
           >
-            My Ticket (QR)
+            {t("actions.myTicket")}
           </Button>
 
           <Button
@@ -52,7 +55,7 @@ export default function EventActions({ ev }: EventHeaderProps) {
             href={`${basePath}my-seat?eventId=${ev.id}`}
             sx={{ borderRadius: 3 }}
           >
-            My seat
+            {t("actions.mySeat")}
           </Button>
         </>
       )}
@@ -67,7 +70,7 @@ export default function EventActions({ ev }: EventHeaderProps) {
             href={`${basePath}scan?eventId=${ev.id}`}
             sx={{ borderRadius: 3 }}
           >
-            Scanner starten
+            {t("actions.scanner")}
           </Button>
 
           <Button
@@ -77,7 +80,7 @@ export default function EventActions({ ev }: EventHeaderProps) {
             variant="outlined"
             sx={{ borderRadius: 3 }}
           >
-            Scan Logs
+            {t("actions.scanLogs")}
           </Button>
 
           <Button
@@ -87,7 +90,7 @@ export default function EventActions({ ev }: EventHeaderProps) {
             href={`${basePath}event/${ev.id}/guest`}
             sx={{ borderRadius: 3 }}
           >
-            Gästeliste
+            {t("actions.guestList")}
           </Button>
 
           <Button
@@ -97,7 +100,7 @@ export default function EventActions({ ev }: EventHeaderProps) {
             href={`${basePath}event/${ev.id}/seat`}
             sx={{ borderRadius: 3 }}
           >
-            Sitzplätze
+            {t("actions.seats")}
           </Button>
         </>
       )}
@@ -112,7 +115,7 @@ export default function EventActions({ ev }: EventHeaderProps) {
             href={`${basePath}event/${ev.id}/invitation`}
             sx={{ borderRadius: 3 }}
           >
-            Einladungen verwalten
+            {t("actions.manageInvitations")}
           </Button>
 
           <Button
@@ -122,7 +125,7 @@ export default function EventActions({ ev }: EventHeaderProps) {
             href={`${basePath}event/${ev.id}/seat`}
             sx={{ borderRadius: 3 }}
           >
-            Sitzplätze verwalten
+            {t("actions.manageSeats")}
           </Button>
 
           <Button
@@ -132,7 +135,7 @@ export default function EventActions({ ev }: EventHeaderProps) {
             href={`${basePath}event/${ev.id}/ticket`}
             sx={{ borderRadius: 3 }}
           >
-            Tickets verwalten
+            {t("actions.manageTickets")}
           </Button>
 
           <Button
@@ -142,7 +145,7 @@ export default function EventActions({ ev }: EventHeaderProps) {
             href={`${basePath}event/${ev.id}/security`}
             sx={{ borderRadius: 3 }}
           >
-            Security Dashboard
+            {t("actions.securityDashboard")}
           </Button>
 
           <Button
@@ -153,7 +156,7 @@ export default function EventActions({ ev }: EventHeaderProps) {
             sx={{ borderRadius: 3 }}
             disabled
           >
-            Scan Logs
+            {t("actions.scanLogs")}
           </Button>
 
           <Button
@@ -163,7 +166,7 @@ export default function EventActions({ ev }: EventHeaderProps) {
             href={`${basePath}event/${ev.id}/guest`}
             sx={{ borderRadius: 3 }}
           >
-            Gästeliste
+            {t("actions.guestList")}
           </Button>
 
           <Button
@@ -173,7 +176,7 @@ export default function EventActions({ ev }: EventHeaderProps) {
             href={`${basePath}event/${ev.id}/settings`}
             sx={{ borderRadius: 3 }}
           >
-            Event Einstellungen
+            {t("actions.settings")}
           </Button>
 
           <Button
@@ -183,7 +186,7 @@ export default function EventActions({ ev }: EventHeaderProps) {
             href={`${basePath}event/${ev.id}/notification`}
             sx={{ borderRadius: 3 }}
           >
-            Event Notifications
+            {t("actions.notifications")}
           </Button>
         </>
       )}

@@ -45,7 +45,7 @@ export default function CalendarEventCard({ event }: Props): JSX.Element {
           width: 4,
           alignSelf: "stretch",
           borderRadius: 2,
-          backgroundColor: theme.palette.omnixys.primary,
+          backgroundColor: theme.palette.primary.main,
         }}
       />
 
@@ -57,7 +57,7 @@ export default function CalendarEventCard({ event }: Props): JSX.Element {
         <Typography
           sx={{
             fontWeight: 600,
-            color: theme.palette.omnixys.textPrimary,
+            color: theme.palette.text.primary,
           }}
         >
           {event.name}
@@ -66,7 +66,7 @@ export default function CalendarEventCard({ event }: Props): JSX.Element {
         <Typography
           sx={{
             fontSize: 13,
-            color: theme.palette.omnixys.textSecondary,
+            color: theme.palette.text.secondary,
           }}
         >
           {start} – {end}

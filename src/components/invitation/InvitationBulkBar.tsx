@@ -1,6 +1,7 @@
 "use client";
 
 import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { Box, Button, Stack, useTheme } from "@mui/material";
 
 /* ---------------------------------------------------------------------------
@@ -11,6 +12,8 @@ export interface InvitationBulkBarProps {
 }
 
 export default function InvitationBulkBar({ logic }: InvitationBulkBarProps) {
+    const t = useTypedTranslations("invitation");
+  
   const theme = useTheme();
   const selected = logic.selected;
 
@@ -47,15 +50,18 @@ export default function InvitationBulkBar({ logic }: InvitationBulkBarProps) {
             void logic.openBulkApproveDialog(selected);
           }}
         >
-          Alle genehmigen ({selected.length})
+          {t("bulk.approve", { count: selected.length })}
         </Button>
 
-        <Button variant="outlined" onClick={() => logic.openBulkSendDialog(selected)}>
-          Einladungen verschicken
+        <Button
+          variant="outlined"
+          onClick={() => logic.openBulkSendDialog(selected)}
+        >
+          {t("bulk.send")}
         </Button>
 
         <Button variant="outlined" onClick={logic.clearSelection}>
-          Auswahl löschen
+          {t("bulk.clear")}
         </Button>
       </Stack>
     </Box>

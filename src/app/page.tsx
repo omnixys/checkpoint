@@ -116,10 +116,9 @@ export default function HomePage(): JSX.Element {
             color: theme.palette.text.primary,
           }}
         >
-          {t("header.welcome").replace(
-            "{name}",
-            user?.personalInfo?.firstName ?? "",
-          )}
+          {t("header.welcome", {
+            name: user?.personalInfo?.firstName ?? "",
+          })}
         </Typography>
 
         <Typography
@@ -127,7 +126,7 @@ export default function HomePage(): JSX.Element {
           sx={{ color: theme.palette.text.secondary }}
         >
           {activeEvent
-            ? t("header.activeEvent").replace("{event}", activeEvent.name)
+            ? t("header.activeEvent", { event: activeEvent.name})
             : t("header.noEvent")}
         </Typography>
       </Stack>

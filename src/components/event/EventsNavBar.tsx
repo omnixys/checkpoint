@@ -1,5 +1,6 @@
 "use client";
 
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
 import { useDevice } from "@/checkpoint/providers/DeviceProvider";
 import { alpha, AppBar, Box, Button, Stack, Typography, useTheme } from "@mui/material";
@@ -10,6 +11,8 @@ import { usePathname } from "next/navigation";
 const CHECKPOINT_BASE_PATH = env.CHECKPOINT_BASE_PATH;
 
 export default function EventsNavBar() {
+  const t = useTypedTranslations("event");
+  
   const theme = useTheme();
   const pathname = usePathname();
   const { isMobile } = useDevice();
@@ -71,8 +74,11 @@ export default function EventsNavBar() {
       <Stack direction="row" spacing={2}>
         {!isMobile && (
           <>
-            <Typography variant="h5" sx={{ fontWeight: 800, color: theme.palette.text.primary }}>
-              Events
+            <Typography
+              variant="h5"
+              sx={{ fontWeight: 800, color: theme.palette.text.primary }}
+            >
+              {t("title")}
             </Typography>
 
             <Box sx={{ flex: 1 }} />
@@ -86,11 +92,17 @@ export default function EventsNavBar() {
             px: { xs: 5, sm: 0 },
           }}
         >
-          <NavButton href={`${CHECKPOINT_BASE_PATH}event`} label="Übersicht" />
-          <NavButton href={`${CHECKPOINT_BASE_PATH}calendar`} label="Kalender" />
+          <NavButton
+            href={`${CHECKPOINT_BASE_PATH}event`}
+            label={t("overview")}
+          />
+          <NavButton
+            href={`${CHECKPOINT_BASE_PATH}calendar`}
+            label={t("calendar")}
+          />
           <NavButton
             href={`${CHECKPOINT_BASE_PATH}event/stats`}
-            label="Statistiken"
+            label={t("stats")}
             disabled={true}
           />
         </Stack>

@@ -12,15 +12,21 @@ import {
   MenuItem,
   Select,
   Box,
+  useTheme,
+  alpha,
 } from "@mui/material";
 import { InvitationPayload } from "@/checkpoint/generated/graphql";
 import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 /* ---------------------------------------------------------------------------
  * Bulk Send Dialog with Locale Selection
  * ------------------------------------------------------------------------- */
 export default function InvitationBulkSendDialog({ logic }: { logic: InvitationLogic }) {
+  const theme = useTheme()
   const open = logic.sendOpen;
+  const tInvitation = useTypedTranslations("invitation");
+    const tCommon = useTypedTranslations("common");
 
   if (!open) return null;
 
@@ -29,8 +35,13 @@ export default function InvitationBulkSendDialog({ logic }: { logic: InvitationL
   );
 
   return (
-    <Dialog open={open} onClose={logic.closeBulkSendDialog} maxWidth="sm" fullWidth>
-      <DialogTitle>Einladungen verschicken</DialogTitle>
+    <Dialog
+      open={open}
+      onClose={logic.closeBulkSendDialog}
+      maxWidth="sm"
+      fullWidth
+    >
+      <DialogTitle> {tInvitation("bulkSend.title")}</DialogTitle>
 
       <DialogContent>
         <Stack spacing={2}>
@@ -40,7 +51,7 @@ export default function InvitationBulkSendDialog({ logic }: { logic: InvitationL
               sx={{
                 p: 2,
                 borderRadius: 2,
-                border: "1px solid rgba(0,0,0,0.08)",
+             border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
               }}
             >
               <Stack spacing={1}>
@@ -54,7 +65,7 @@ export default function InvitationBulkSendDialog({ logic }: { logic: InvitationL
                 </Typography>
 
                 <Typography variant="body2" color="text.secondary">
-                  {inv.email ?? inv.phoneNumber ?? "—"}
+                  {inv.email ?? inv.phoneNumber ?? tCommon("empty")}
                 </Typography>
 
                 {/* 🔥 Locale Select */}
@@ -63,8 +74,8 @@ export default function InvitationBulkSendDialog({ logic }: { logic: InvitationL
                   value={logic.bulkLocales[inv.id] ?? "en-US"}
                   onChange={(e) => logic.setGuestLocale(inv.id, e.target.value)}
                 >
-                  <MenuItem value="en-US">English</MenuItem>
-                  <MenuItem value="de-DE">Deutsch</MenuItem>
+                  <MenuItem value="en-US">{tCommon("language.en-US")}</MenuItem>
+                  <MenuItem value="de-DE">{tCommon("language.de-DE")}</MenuItem>
                 </Select>
               </Stack>
             </Box>
@@ -73,14 +84,16 @@ export default function InvitationBulkSendDialog({ logic }: { logic: InvitationL
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={logic.closeBulkSendDialog}>Abbrechen</Button>
+        <Button onClick={logic.closeBulkSendDialog}>
+          {tCommon("cancel")}
+        </Button>
 
         <Button
           variant="contained"
           disabled={logic.sendingBulk}
           onClick={() => logic.sendBulkInvitations(logic.bulkSendIds ?? [])}
         >
-          Senden
+          {tInvitation("bulkSend.send")}
         </Button>
       </DialogActions>
     </Dialog>

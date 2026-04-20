@@ -20,6 +20,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { EventsFilter } from "@/checkpoint/types/event.type";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 type Props = {
   search: string;
@@ -45,6 +46,9 @@ export default function EventsHeader({
   onRefresh,
   onCreateHref,
 }: Props) {
+  const tEvent = useTypedTranslations("event");
+  const tCommon = useTypedTranslations("common");
+  
   const theme = useTheme();
   const { user } = useAuth();
 
@@ -59,16 +63,23 @@ export default function EventsHeader({
       {/* TITLE */}
       <Stack direction="row" spacing={1}>
         <Typography variant="h4" sx={{ fontWeight: 800 }}>
-          My Events
+          {tEvent("header.title")}
         </Typography>
 
-        <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-          {loading ? "lädt…" : `${count} gefunden`}
+        <Typography
+          variant="body2"
+          sx={{ color: theme.palette.text.secondary }}
+        >
+          {loading ? tCommon("loading") : tEvent("header.count", { count })}
         </Typography>
       </Stack>
 
       {/* TOOLBAR */}
-      <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ width: "100%" }}>
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        spacing={2}
+        sx={{ width: "100%" }}
+      >
         {/* Apple-like Glass Search Input */}
         <motion.div
           initial={{ opacity: 0, y: 6 }}
@@ -78,7 +89,7 @@ export default function EventsHeader({
         >
           <TextField
             fullWidth
-            placeholder="Suchen…"
+            placeholder={tEvent("header.search")}
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             size="small"
@@ -91,7 +102,10 @@ export default function EventsHeader({
                   backgroundColor: alpha(theme.palette.background.paper, 0.6),
                   transition: "background-color 0.2s ease",
                   "&:hover": {
-                    backgroundColor: alpha(theme.palette.background.paper, 0.85),
+                    backgroundColor: alpha(
+                      theme.palette.background.paper,
+                      0.85,
+                    ),
                   },
                 },
                 startAdornment: (
@@ -121,10 +135,12 @@ export default function EventsHeader({
                 borderRadius: "20px",
               }}
             >
-              <MenuItem value="all">Alle Events</MenuItem>
-              <MenuItem value="upcoming">Kommende</MenuItem>
-              <MenuItem value="now">Laufende</MenuItem>
-              <MenuItem value="past">Vergangene</MenuItem>
+              <MenuItem value="all">{tEvent("header.filter.all")}</MenuItem>
+              <MenuItem value="upcoming">
+                {tEvent("header.filter.upcoming")}
+              </MenuItem>
+              <MenuItem value="now">{tEvent("header.filter.now")}</MenuItem>
+              <MenuItem value="past">{tEvent("header.filter.past")}</MenuItem>
             </TextField>
           </motion.div>
 
@@ -168,7 +184,7 @@ export default function EventsHeader({
                 fontWeight: 600,
               }}
             >
-              Neu
+              {tEvent("header.create")}
             </Button>
           </motion.div>
         </Stack>

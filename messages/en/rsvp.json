@@ -1,4 +1,5 @@
 {
+  "missingEventId": "Missing event ID.",
   "invalidLink": "Invalid link",
   "error": "Error",
   "notFound": "Not found",
@@ -11,6 +12,7 @@
   "lastName": "Last name",
   "emailOptional": "Email (optional)",
   "submit": "Submit",
+  "submitFailed": "Failed to submit RSVP. Please try again.",
 
   "validation": {
     "firstNameRequired": "First name is required.",
@@ -103,6 +105,14 @@
     "descriptionDesktop": "You have already declined this invitation. If you want to change your decision, ask the host to invite you again.",
     "titleMobile": "Already declined",
     "descriptionMobile": "This invitation has already been declined. If you want to participate again, please contact the host."
+  },
+
+  "public": {
+    "participationConfirm": "Confirm participation",
+    "participation": "Participation",
+    "allEvents": "All events",
+    "noSelection": "No selection",
+    "rootWithAll": "{name} (all)"
   }
 }
 

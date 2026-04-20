@@ -8,15 +8,19 @@ import CalendarAgendaView from "./CalendarAgendaView";
 import CalendarDaySheet from "./CalendarDaySheet";
 import { useCalendar } from "@/checkpoint/hooks/calendar/useCalendar";
 import { useCalendarData } from "@/checkpoint/hooks/calendar/useCalendarData";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 export default function MyCalendarContent() {
   const theme = useTheme();
 
+  const tCommon = useTypedTranslations("common");
+  const tErrors = useTypedTranslations("error");
+
   const { events, loading, error } = useCalendarData();
   const calendar = useCalendar(events);
 
-  if (loading) return <Typography>Lädt…</Typography>;
-  if (error) return <Typography>Fehler</Typography>;
+if (loading) return <Typography>{tCommon("loading")}</Typography>;
+if (error) return <Typography>{tErrors("generic")}</Typography>;
 
   return (
     <Box sx={{ p: 2 }}>

@@ -1,0 +1,17 @@
+{
+  "sidebar": {
+    "home": "Home",
+    "notifications": "Notifications",
+    "scanner": "Scanner",
+    "activeEvent": "Active event",
+    "invitations": "Invitations",
+    "seats": "Seats",
+    "guests": "Guests",
+    "tickets": "Tickets",
+    "profile": "Profile",
+
+    "myTicket": "My ticket",
+    "mySeat": "My seat",
+    "plusOnes": "Plus-ones"
+  }
+}

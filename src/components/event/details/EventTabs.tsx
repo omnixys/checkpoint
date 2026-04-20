@@ -3,20 +3,22 @@
 import React from "react";
 import { Box, Stack, Typography, useTheme, alpha } from "@mui/material";
 import { motion } from "framer-motion";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 type Tab = {
   key: string;
-  label: string;
+  tKey: any;
 };
 
 const TABS: Tab[] = [
   // { key: "invitations", label: "Einladungen" },
   // { key: "tickets", label: "Tickets" },
   // { key: "logs", label: "Logs" },
-  { key: "timeline", label: "Timeline" },
   // { key: "security", label: "Security" },
-  { key: "settings", label: "Details" },
-  { key: "location", label: "Maps" },
+
+  { key: "timeline", tKey: "tabs.timeline" },
+  { key: "settings", tKey: "tabs.settings" },
+  { key: "location", tKey: "tabs.location" },
 ];
 
 type Props = {
@@ -26,6 +28,7 @@ type Props = {
 
 export default function EventTabs({ active, onChange }: Props) {
   const theme = useTheme();
+  const t = useTypedTranslations("event");
 
   return (
     <Box
@@ -56,11 +59,13 @@ export default function EventTabs({ active, onChange }: Props) {
                   px: 1,
                   py: 0.4,
                   fontWeight: selected ? 700 : 500,
-                  color: selected ? theme.palette.primary.main : theme.palette.text.secondary,
+                  color: selected
+                    ? theme.palette.primary.main
+                    : theme.palette.text.secondary,
                   transition: "0.25s ease",
                 }}
               >
-                {tab.label}
+                {t(tab.tKey)}
               </Typography>
 
               {selected && (

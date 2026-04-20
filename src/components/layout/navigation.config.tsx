@@ -14,6 +14,7 @@ import {
 } from "@mui/icons-material";
 import { env } from "@/checkpoint/lib/env";
 import { UserRoleType } from "@/checkpoint/generated/graphql";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 const basePath = env.CHECKPOINT_BASE_PATH;
 
@@ -23,88 +24,121 @@ export type NavItem = {
   path: string;
   disabled?: boolean;
 };
+/**
+ * Translation function contract.
+ * Ensures type-safe and framework-agnostic usage.
+ */
+type TFunction = (key: any) => string;
 
-export function createNavigation(role: UserRoleType, activeEventId?: string): NavItem[] {
+export function createNavigation(
+  role: UserRoleType,
+  t: TFunction,
+  activeEventId?: string,
+): NavItem[] {
   const hasEvent = Boolean(activeEventId);
 
   const NAV: Record<UserRoleType, NavItem[]> = {
     ADMIN: [
-      { label: "Home", icon: <DashboardIcon />, path: `${basePath}` },
       {
-        label: "Notifications",
+        label: t("sidebar.home"),
+        icon: <DashboardIcon />,
+        path: `${basePath}`,
+      },
+      {
+        label: t("sidebar.notifications"),
         icon: <NotificationsIcon />,
         path: `${basePath}event/${activeEventId}/notification`,
         disabled: !hasEvent,
       },
       {
-        label: "Scanner",
+        label: t("sidebar.scanner"),
         icon: <QrCodeScannerIcon />,
         path: `${basePath}scan`,
       },
       {
-        label: "Active Event",
+        label: t("sidebar.activeEvent"),
         icon: <EventIcon />,
         path: `${basePath}event/${activeEventId}`,
         disabled: !hasEvent,
       },
       {
-        label: "Invitations",
+        label: t("sidebar.invitations"),
         icon: <MailOutlineIcon />,
         path: `${basePath}event/${activeEventId}/invitation`,
         disabled: !hasEvent,
       },
       {
-        label: "Seats",
+        label: t("sidebar.seats"),
         icon: <EventSeatIcon />,
         path: `${basePath}event/${activeEventId}/seat`,
         disabled: !hasEvent,
       },
       {
-        label: "Guests",
+        label: t("sidebar.guests"),
         icon: <GroupsIcon />,
         path: `${basePath}event/${activeEventId}/guest`,
         disabled: !hasEvent,
       },
       {
-        label: "Tickets",
+        label: t("sidebar.tickets"),
         icon: <ConfirmationNumberOutlinedIcon />,
         path: `${basePath}event/${activeEventId}/ticket`,
         disabled: !hasEvent,
       },
-      { label: "Profil", icon: <AccountCircleIcon />, path: `${basePath}me` },
+      {
+        label: t("sidebar.profile"),
+        icon: <AccountCircleIcon />,
+        path: `${basePath}me`,
+      },
     ],
 
     SECURITY: [
-      { label: "Home", icon: <DashboardIcon />, path: `${basePath}` },
       {
-        label: "Scanner",
+        label: t("sidebar.home"),
+        icon: <DashboardIcon />,
+        path: `${basePath}`,
+      },
+      {
+        label: t("sidebar.scanner"),
         icon: <QrCodeScannerIcon />,
         path: `${basePath}scan`,
       },
       {
-        label: "Guests",
+        label: t("sidebar.guests"),
         icon: <GroupsIcon />,
         path: `${basePath}event/${activeEventId}/guest`,
         disabled: !hasEvent,
       },
-      { label: "Profil", icon: <AccountCircleIcon />, path: `${basePath}me` },
+      {
+        label: t("sidebar.profile"),
+        icon: <AccountCircleIcon />,
+        path: `${basePath}me`,
+      },
     ],
 
     GUEST: [
-      { label: "Home", icon: <HomeIcon />, path: `${basePath}` },
-      { label: "Mein Ticket", icon: <BadgeIcon />, path: `${basePath}my-qr` },
+      { label: t("sidebar.home"), icon: <HomeIcon />, path: `${basePath}` },
       {
-        label: "Mein Sitzplatz",
+        label: t("sidebar.myTicket"),
+        icon: <BadgeIcon />,
+        path: `${basePath}my-qr`,
+      },
+      {
+        label: t("sidebar.mySeat"),
         icon: <EventSeatIcon />,
         path: `${basePath}my-seat`,
       },
       {
-        label: "Plus-Ones",
+        label: t("sidebar.plusOnes"),
         icon: <GroupsIcon />,
         path: `${basePath}my-plus-ones`,
         disabled: true,
       },
-      { label: "Profil", icon: <AccountCircleIcon />, path: `${basePath}me` },
+      {
+        label: t("sidebar.profile"),
+        icon: <AccountCircleIcon />,
+        path: `${basePath}me`,
+      },
     ],
   };
 

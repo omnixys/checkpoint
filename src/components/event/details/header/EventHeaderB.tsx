@@ -3,8 +3,13 @@
 import { Box, Chip, Stack, Typography, useTheme } from "@mui/material";
 import Image from "next/image";
 import { EventHeaderProps } from "../EventActions";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 export default function EventHeaderB({ ev }: EventHeaderProps) {
+  const t = useTypedTranslations("event");
+  const tCommon = useTypedTranslations("common");
+
+  
   const theme = useTheme();
 
   const roleChipColor =
@@ -48,7 +53,7 @@ export default function EventHeaderB({ ev }: EventHeaderProps) {
         </Typography>
 
         <Chip
-          label={ev.myRole ?? "Guest"}
+          label={ev.myRole ? t(`header.role.${ev.myRole}`) : t("header.role.GUEST")}
           color={roleChipColor}
           variant={ev.myRole === "GUEST" ? "outlined" : "filled"}
           sx={{
@@ -58,14 +63,20 @@ export default function EventHeaderB({ ev }: EventHeaderProps) {
           }}
         />
 
-        <Typography variant="body1" sx={{ color: theme.palette.primary.contrastText }}>
+        <Typography
+          variant="body1"
+          sx={{ color: theme.palette.primary.contrastText }}
+        >
           {new Date(ev.settings.startsAt).toLocaleString("de-DE", {
             dateStyle: "medium",
             timeStyle: "short",
           })}
         </Typography>
 
-        <Typography variant="body2" sx={{ color: theme.palette.primary.contrastText }}>
+        <Typography
+          variant="body2"
+          sx={{ color: theme.palette.primary.contrastText }}
+        >
           bis{" "}
           {new Date(ev.settings.endsAt).toLocaleString("de-DE", {
             dateStyle: "medium",

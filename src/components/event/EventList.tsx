@@ -5,6 +5,7 @@ import EventCardCompact from "@/checkpoint/components/event/cards/EventCardCompa
 import EventCardPro from "@/checkpoint/components/event/cards/EventCardPro";
 import { useEventsQuery } from "@/checkpoint/hooks/events/useEventsQuery";
 import { useFilteredEvents } from "@/checkpoint/hooks/events/useFilteredEvents";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import {
   EventsFilter,
@@ -31,6 +32,7 @@ export default React.forwardRef<EventListHandle, Props>(function EventList(
   { toLocal, search, filter, viewMode, visualOverride, onCountChange, onLoadingChange },
   ref,
 ) {
+  const tErrors = useTypedTranslations("error");
   const { activeEvent, selectEvent } = useActiveEvent();
 
   const { events, loading, error, refetch } = useEventsQuery();
@@ -61,7 +63,7 @@ export default React.forwardRef<EventListHandle, Props>(function EventList(
       <CardContent sx={{ pt: 2 }}>
         {error && (
           <Alert severity="error" sx={{ mb: 2 }}>
-            {error.message}
+            {tErrors("generic")}
           </Alert>
         )}
 

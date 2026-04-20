@@ -1,6 +1,7 @@
 "use client";
 
 import { InvitationStatus, RsvpChoice } from "@/checkpoint/generated/graphql";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import BlockRoundedIcon from "@mui/icons-material/BlockRounded";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import ErrorOutlineRoundedIcon from "@mui/icons-material/ErrorOutlineRounded";
@@ -20,7 +21,9 @@ export default function InvitationStatusChip({
 }: {
   status: InvitationStatus;
   rsvp: RsvpChoice | undefined;
-}) {
+  }) {
+  const t = useTypedTranslations("invitation");
+
   let config: {
     label: string;
     icon: React.ReactElement | undefined;
@@ -38,7 +41,7 @@ export default function InvitationStatusChip({
   switch (status) {
     case "APPROVED":
       config = {
-        label: "Approved",
+        label: t("statusType.APPROVED"),
         icon: <VerifiedRoundedIcon />,
         color: "success",
         bg: "rgba(0,220,120,0.22)",
@@ -48,7 +51,7 @@ export default function InvitationStatusChip({
 
     case "ACCEPTED":
       config = {
-        label: "Accepted",
+        label: t("statusType.ACCEPTED"),
         icon: <CheckRoundedIcon />,
         color: "success",
         bg: "rgba(0,180,0,0.12)",
@@ -58,7 +61,7 @@ export default function InvitationStatusChip({
 
     case "PENDING":
       config = {
-        label: "Pending",
+        label: t("statusType.PENDING"),
         icon: <HourglassEmptyRoundedIcon />,
         color: "warning",
         bg: "rgba(255,200,0,0.2)",
@@ -69,7 +72,7 @@ export default function InvitationStatusChip({
     case "DECLINED":
     case "REJECTED":
       config = {
-        label: "Declined",
+        label: t("statusType.DECLINED"),
         icon: <BlockRoundedIcon />,
         color: "error",
         bg: "rgba(255,0,0,0.15)",
@@ -79,7 +82,7 @@ export default function InvitationStatusChip({
 
     case "CANCELED":
       config = {
-        label: "Canceled",
+        label: t("statusType.CANCELED"),
         icon: <RemoveCircleOutlineRoundedIcon />,
         color: "default",
         bg: "rgba(180,180,180,0.15)",

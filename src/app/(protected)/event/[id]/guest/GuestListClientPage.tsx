@@ -5,6 +5,7 @@ import RefreshArcButton from "@/checkpoint/components/RefreshArcButton";
 import { BackToEventDetailButton } from "@/checkpoint/components/utils/back-to-event-detail-button";
 import { VisionEmblaCarousel } from "@/checkpoint/components/vision/VisionCarousel";
 import { useSecurityGuests } from "@/checkpoint/hooks/user/useSecurityGuests";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { useDevice } from "@/checkpoint/providers/DeviceProvider";
@@ -42,6 +43,8 @@ import { useEffect, useMemo, useState } from "react";
 /* ------------------------------------------------------------------ */
 
 export default function GuestListClientPage() {
+  const t = useTypedTranslations("event");
+  
   const { isMobile, isTablet, isDesktop } = useDevice();
 
   const { isAuthenticated } = useAuth();
@@ -76,33 +79,33 @@ export default function GuestListClientPage() {
 
   const counters = useMemo(() => {
     return [
-      { key: "total", label: "Gesamt", value: guests.length },
+      { key: "total", label: t("guests.total"), value: guests.length },
       {
         key: "checked",
-        label: "Eingecheckt",
+        label: t("guests.checkedIn"),
         value: guests.filter((g) => g.checkedInAt).length,
         color: theme.palette.success.main,
       },
       {
         key: "inside",
-        label: "Drinnen",
+        label: t("guests.inside"),
         value: guests.filter((g) => g.presence === "INSIDE").length,
         color: theme.palette.primary.main,
       },
       {
         key: "outside",
-        label: "Draußen",
+        label: t("guests.outside"),
         value: guests.filter((g) => g.presence !== "INSIDE").length,
         color: apple.quaternaryLabel,
       },
       {
         key: "not arrived",
-        label: "Nicht da",
+        label: t("guests.notArrived"),
         value: guests.filter((g) => !g.checkedInAt).length,
         color: red[500],
       },
     ];
-  }, [guests, omni]);
+  }, [guests]);
 
   /* ------------------------------------------------------------------ */
   /* Adaptive Filter Options */
@@ -114,12 +117,12 @@ export default function GuestListClientPage() {
     const hasOutside = guests.some((g) => g.presence !== "INSIDE");
     const hasNotArrived = guests.some((g) => !g.checkedInAt);
 
-    return [
-      { key: "ALL", label: "Alle", visible: true },
-      { key: "CHECKED_IN", label: "Eingecheckt", visible: hasCheckedIn },
-      { key: "INSIDE", label: "Drinnen", visible: hasInside },
-      { key: "OUTSIDE", label: "Draußen", visible: hasOutside },
-      { key: "NOT_ARRIVED", label: "Nicht da", visible: hasNotArrived },
+return [
+  { key: "ALL", label: t("filter.all"), visible: true },
+  { key: "CHECKED_IN", label: t("filter.checkedIn"), visible: hasCheckedIn },
+  { key: "INSIDE", label: t("filter.inside"), visible: hasInside },
+  { key: "OUTSIDE", label: t("filter.outside"), visible: hasOutside },
+  { key: "NOT_ARRIVED", label: t("filter.notArrived"), visible: hasNotArrived },
     ].filter((f) => f.visible);
   }, [guests]);
 
@@ -270,18 +273,20 @@ export default function GuestListClientPage() {
                     fontWeight: 700,
                   }}
                 >
-                  Gäste
+                  {t("guests.title")}
                 </Typography>
 
                 <Divider orientation="vertical" flexItem />
 
                 <Chip
-                  label={`Gesamt: ${counters2.total}`}
+                  label={t("guests.totalWithCount", { count: counters2.total })}
                   sx={{ fontWeight: 700 }}
                 />
 
                 <Chip
-                  label={`Eingecheckt: ${counters2.checkedIn}`}
+                  label={t("guests.checkedInWithCount", {
+                    count: counters2.checkedIn,
+                  })}
                   sx={{
                     fontWeight: 700,
                     bgcolor: theme.palette.success.light + "22",
@@ -290,7 +295,9 @@ export default function GuestListClientPage() {
                 />
 
                 <Chip
-                  label={`Drinnen: ${counters2.inside}`}
+                  label={t("guests.insideWithCount", {
+                    count: counters2.inside,
+                  })}
                   sx={{
                     fontWeight: 700,
                     bgcolor: theme.palette.primary.light + "22",
@@ -299,7 +306,9 @@ export default function GuestListClientPage() {
                 />
 
                 <Chip
-                  label={`Draußen: ${counters2.outside}`}
+                  label={t("guests.outsideWithCount", {
+                    count: counters2.outside,
+                  })}
                   sx={{
                     fontWeight: 700,
                     bgcolor: apple.quaternaryLabel + "22",
@@ -308,7 +317,9 @@ export default function GuestListClientPage() {
                 />
 
                 <Chip
-                  label={`Nicht da: ${counters2.notArrived}`}
+                  label={t("guests.notArrivedWithCount", {
+                    count: counters2.notArrived,
+                  })}
                   sx={{
                     fontWeight: 700,
                     bgcolor: red[500] + "22",
@@ -341,7 +352,7 @@ export default function GuestListClientPage() {
             }}
           >
             <TextField
-              placeholder="Name oder Sitzplatz suchen …"
+              placeholder={t("search.placeholder2")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               fullWidth
@@ -352,11 +363,13 @@ export default function GuestListClientPage() {
                 value={filter}
                 onChange={(e) => setFilter(e.target.value as Filter)}
               >
-                <MenuItem value="ALL">Alle Gäste</MenuItem>
-                <MenuItem value="NOT_ARRIVED">Noch nicht angekommen</MenuItem>
-                <MenuItem value="CHECKED_IN">Eingecheckt</MenuItem>
-                <MenuItem value="INSIDE">Drinnen</MenuItem>
-                <MenuItem value="OUTSIDE">Draußen</MenuItem>
+                <MenuItem value="ALL">{t("filter.allGuests")}</MenuItem>
+                <MenuItem value="NOT_ARRIVED">
+                  {t("filter.notArrived")}
+                </MenuItem>
+                <MenuItem value="CHECKED_IN">{t("filter.checkedIn")}</MenuItem>
+                <MenuItem value="INSIDE">{t("filter.inside")}</MenuItem>
+                <MenuItem value="OUTSIDE">{t("filter.outside")}</MenuItem>
               </Select>
             </FormControl>
 
@@ -367,7 +380,7 @@ export default function GuestListClientPage() {
                   onChange={(e) => setHighContrast(e.target.checked)}
                 />
               }
-              label="High Contrast"
+              label={t("ui.highContrast")}
             />
 
             <FormControlLabel
@@ -377,7 +390,7 @@ export default function GuestListClientPage() {
                   onChange={(e) => setLargeText(e.target.checked)}
                 />
               }
-              label="Große Schrift"
+              label={t("ui.largeText")}
             />
           </Stack>
         )}
@@ -392,10 +405,10 @@ export default function GuestListClientPage() {
                   fontWeight: 700,
                 }}
               >
-                Gästeliste – Security
+                {t("guests.securityTitle")}
               </Typography>
               <Typography color={apple.secondaryLabel}>
-                Live-Übersicht über Gäste, Sitzplätze und Aufenthaltsstatus
+                {t("guests.subtitle")}{" "}
               </Typography>
             </Stack>
             <Stack
@@ -413,7 +426,7 @@ export default function GuestListClientPage() {
                     onChange={(e) => setHighContrast(e.target.checked)}
                   />
                 }
-                label="High Contrast"
+                label={t("ui.highContrast")}
               />
 
               <FormControlLabel
@@ -423,7 +436,7 @@ export default function GuestListClientPage() {
                     onChange={(e) => setLargeText(e.target.checked)}
                   />
                 }
-                label="Große Schrift"
+                label={t("ui.largeText")}
               />
               <RefreshArcButton onReload={reload} />
             </Stack>
@@ -442,7 +455,7 @@ export default function GuestListClientPage() {
             }}
           >
             <TextField
-              placeholder="Name oder Sitzplatz …"
+              placeholder={t("search.placeholder2")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               fullWidth
@@ -552,19 +565,29 @@ export default function GuestListClientPage() {
               >
                 <Chip
                   size="small"
-                  label={guest.checkedInAt ? "Eingecheckt" : "Nicht da"}
+                  label={
+                    guest.checkedInAt
+                      ? t("guests.checkedIn")
+                      : t("guests.notArrived")
+                  }
                   sx={{
                     bgcolor: guest.checkedInAt
                       ? theme.palette.success.light + "22"
                       : theme.palette.error.light + "22",
-                    color: guest.checkedInAt ? theme.palette.success.main : theme.palette.error.main,
+                    color: guest.checkedInAt
+                      ? theme.palette.success.main
+                      : theme.palette.error.main,
                     fontWeight: 700,
                   }}
                 />
 
                 <Chip
                   size="small"
-                  label={guest.presence === "INSIDE" ? "Drinnen" : "Draußen"}
+                  label={
+                    guest.presence === "INSIDE"
+                      ? t("guests.inside")
+                      : t("guests.outside")
+                  }
                 />
               </Stack>
             </Paper>
@@ -595,7 +618,7 @@ export default function GuestListClientPage() {
                 fontWeight: 800,
               }}
             >
-              Anzeige
+              {t("ui.display")}
             </Typography>
 
             <FormControlLabel
@@ -605,7 +628,7 @@ export default function GuestListClientPage() {
                   onChange={(e) => setHighContrast(e.target.checked)}
                 />
               }
-              label="High Contrast"
+              label={t("ui.highContrast")}
             />
 
             <FormControlLabel
@@ -615,7 +638,7 @@ export default function GuestListClientPage() {
                   onChange={(e) => setLargeText(e.target.checked)}
                 />
               }
-              label="Große Schrift"
+              label={t("ui.largeText")}
             />
           </Stack>
         </Popover>

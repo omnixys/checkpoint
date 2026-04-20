@@ -1,0 +1,144 @@
+{
+  "title": "Events",
+  "overview": "Übersicht",
+  "calendar": "Kalender",
+  "stats": "Statistiken",
+
+  "search": {
+    "title": "Suche",
+    "placeholder": "Events suchen…",
+    "placeholder2": "Name oder Sitzplatz suchen …"
+  },
+
+  "header": {
+    "title": "Meine Events",
+    "search": "Suchen…",
+    "create": "Neu",
+    "count": "{count} gefunden",
+    "filter": {
+      "all": "Alle Events",
+      "upcoming": "Kommende",
+      "now": "Laufende",
+      "past": "Vergangene"
+    },
+
+    "start": "Start",
+    "end": "Ende",
+    "until": "bis",
+
+    "role": {
+      "ADMIN": "Admin",
+      "SECURITY": "Security",
+      "GUEST": "Gast"
+    }
+  },
+
+  "view": {
+    "mode": {
+      "list": {
+        "label": "Liste",
+        "tooltip": "Listenansicht"
+      },
+      "grid": {
+        "label": "Grid",
+        "tooltip": "Rasteransicht"
+      }
+    },
+    "visual": {
+      "auto": "Automatisch",
+      "image": "Bild anzeigen",
+      "banner": "Banner anzeigen",
+      "none": "Ohne Vorschau"
+    }
+  },
+
+  "variant": {
+    "A": "A – Kalender",
+    "B": "B – Hero",
+    "C": "C – Dashboard",
+    "D": "D – Vision Pro"
+  },
+
+  "tabs": {
+    "timeline": "Timeline",
+    "settings": "Details",
+    "location": "Karte",
+    "notImplemented": "Inhalt für den Tab \"{tab}\" ist noch nicht implementiert."
+  },
+
+  "timeline": {
+    "title": "Timeline",
+    "event-created": "Event erstellt",
+    "invitation-sent": "Einladung versendet",
+    "rsvp": "RSVP erhalten",
+    "ticket-created": "Ticket erstellt",
+    "ticket-activated": "Ticket aktiviert",
+    "scan": "Scan durchgeführt"
+  },
+
+  "details": {
+    "dresscode": "Dresscode",
+    "description": "Beschreibung",
+    "maxSeats": "Max {count}",
+    "reEntryOn": "Re-Entry an",
+    "reEntryOff": "Re-Entry aus"
+  },
+
+  "actions": {
+    "description": "Beschreibung",
+    "myTicket": "Mein Ticket (QR)",
+    "mySeat": "Mein Sitzplatz",
+    "scanner": "Scanner starten",
+    "scanLogs": "Scan Logs",
+    "guestList": "Gästeliste",
+    "seats": "Sitzplätze",
+    "manageInvitations": "Einladungen verwalten",
+    "manageSeats": "Sitzplätze verwalten",
+    "manageTickets": "Tickets verwalten",
+    "securityDashboard": "Security Dashboard",
+    "settings": "Event Einstellungen",
+    "notifications": "Event Benachrichtigungen",
+
+    "details": "Details",
+    "setActive": "Als aktiv setzen"
+  },
+
+  "status": {
+    "running": "Läuft",
+    "upcoming": "Kommend",
+    "past": "Vergangen",
+    "active": "Aktiv"
+  },
+
+  "guests": {
+    "title": "Gäste",
+    "securityTitle": "Gästeliste – Security",
+    "subtitle": "Live-Übersicht über Gäste, Sitzplätze und Aufenthaltsstatus",
+
+    "total": "Gesamt",
+    "checkedIn": "Eingecheckt",
+    "inside": "Drinnen",
+    "outside": "Draußen",
+    "notArrived": "Nicht da",
+
+    "totalWithCount": "Gesamt: {count}",
+    "checkedInWithCount": "Eingecheckt: {count}",
+    "insideWithCount": "Drinnen: {count}",
+    "outsideWithCount": "Draußen: {count}",
+    "notArrivedWithCount": "Nicht da: {count}"
+  },
+  "filter": {
+    "all": "Alle",
+    "allGuests": "Alle Gäste",
+    "checkedIn": "Eingecheckt",
+    "inside": "Drinnen",
+    "outside": "Draußen",
+    "notArrived": "Nicht da"
+  },
+
+  "ui": {
+    "highContrast": "Hoher Kontrast",
+    "largeText": "Große Schrift",
+    "display": "Anzeige"
+  }
+}

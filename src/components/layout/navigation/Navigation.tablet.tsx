@@ -7,7 +7,9 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Stack,
   Typography,
+  useTheme,
 } from "@mui/material";
 import { JSX, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
@@ -18,8 +20,17 @@ import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import EventSelector from "@/checkpoint/components/Selectors/EventSelector";
 import { env } from "@/checkpoint/lib/env";
+import LanguageSwitcher from "@/checkpoint/components/LanguageSwitcher";
+import ColorBubbleSwitcher from "@/checkpoint/components/ColorBubbleSwitcher";
+import ThemeToggleButton from "@/checkpoint/components/ThemeToggleButton";
+import UserMenu from "@/checkpoint/components/UserMenu";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 export default function NavigationTablet(): JSX.Element {
+  const theme = useTheme();
+    const t = useTypedTranslations("layout");
+
+  
   const [collapsed, setCollapsed] = useState(false);
   const { isAuthenticated } = useAuth();
   const router = useRouter();
@@ -27,7 +38,7 @@ export default function NavigationTablet(): JSX.Element {
   const { activeEvent } = useActiveEvent();
   const role = activeEvent?.myRole ?? "GUEST";
 
-  const items = createNavigation(role, activeEvent?.id);
+  const items = createNavigation(role, t, activeEvent?.id);
 
   return (
     <Box
@@ -39,17 +50,34 @@ export default function NavigationTablet(): JSX.Element {
         p: 2,
       }}
     >
-      <Typography
-        variant="h5"
-        sx={{
-          fontWeight: 700,
-          fontSize: 12,
-          mb: 2,
-        }}
-      >
-        Checkpoint
-      </Typography>
+      <Stack direction={'row'} spacing={0.0001} sx={{
+                alignItems: "center",
+        justifyContent: "space-between",
+      }} >
+        <Typography
+          color={theme.palette.primary.main}
+          variant="h5"
+          sx={{
+            mb: 2,
+            fontWeight: 700,
+            cursor: "pointer",
+            textDecoration: "none",
+            transition: "opacity 0.2s ease, transform 0.2s ease",
+            "&:hover": {
+              opacity: 0.85,
+              transform: "translateY(-1px)",
+            },
+          }}
+        >
+          Checkpoint
+        </Typography>
+        <LanguageSwitcher />
+      </Stack>
 
+      <Stack sx={{
+        justifyContent: 'space-between',
+        height: '97%'
+            }}>
       {isAuthenticated && (
         <>
           <Divider sx={{ my: 2 }} />
@@ -169,6 +197,32 @@ export default function NavigationTablet(): JSX.Element {
           </List>
         </>
       )}
+
+            <Box
+              sx={{
+                mt: "auto",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                pt: 2,
+              }}
+            >
+              {/* <IconButton
+                size="small"
+                onClick={() => setCollapsed((v) => !v)}
+                sx={{
+                  transition: "transform 0.25s ease",
+                  transform: collapsed ? "rotate(180deg)" : "none",
+                }}
+              >
+                <ChevronLeftIcon />
+              </IconButton> */}
+      
+              <ColorBubbleSwitcher />
+              <ThemeToggleButton />
+              <UserMenu />
+        </Box>
+        </Stack>
     </Box>
   );
 }

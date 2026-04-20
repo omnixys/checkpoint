@@ -8,6 +8,7 @@ import React from "react";
 import CheckroomIcon from "@mui/icons-material/Checkroom";
 import DescriptionIcon from "@mui/icons-material/Description";
 import { EventPayload } from "@/checkpoint/generated/graphql";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 type Props = {
   ev: EventPayload;
@@ -90,6 +91,8 @@ function AccordionSection({ icon, title, value }: SectionProps) {
 }
 
 export default function EventDetailsAccordion({ ev }: Props) {
+  const t = useTypedTranslations("event");
+
   return (
     <Stack spacing={2}>
       {/* <AccordionSection
@@ -97,10 +100,15 @@ export default function EventDetailsAccordion({ ev }: Props) {
         title="Location"
         value={`${ev.address.street} ${ev.address.zip} ${ev.address.city} ${ev.address.country}`}
       /> */}
-      <AccordionSection icon={<CheckroomIcon />} title="Dresscode" value={ev.settings.dressCode} />
+      <AccordionSection
+        icon={<CheckroomIcon />}
+        title={t("details.dresscode")}
+        value={ev.settings.dressCode}
+      />
+
       <AccordionSection
         icon={<DescriptionIcon />}
-        title="Description"
+        title={t("details.description")}
         value={ev.settings.description}
       />
     </Stack>

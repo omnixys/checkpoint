@@ -13,6 +13,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import TimelineIcon from "@mui/icons-material/Timeline";
 
 import { EventTimelinePayload } from "@/checkpoint/generated/graphql";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 /**
  * Maps event type → icon
@@ -42,6 +43,7 @@ type Props = {
 
 export default function EventTimeline({ items }: Props) {
   const theme = useTheme();
+  const t = useTypedTranslations("event");
 
   const sorted = [...items].sort(
     (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
@@ -50,7 +52,7 @@ export default function EventTimeline({ items }: Props) {
   return (
     <Stack spacing={3}>
       <Typography variant="h6" sx={{ fontWeight: 700 }}>
-        Timeline
+        {t("title")}
       </Typography>
 
       <Stack spacing={3}>
@@ -144,7 +146,8 @@ export default function EventTimeline({ items }: Props) {
               }}
             >
               <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-                {item.label}
+                {/* {t(`timeline.${item.type}`)} */}
+                {item.type}
               </Typography>
 
               <Typography

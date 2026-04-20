@@ -1,0 +1,28 @@
+{
+  "loading": "Loading…",
+  "locale": "en-US",
+  "all": "All",
+  "cancel": "Cancel",
+
+  "done": "Done",
+  "apply": "Apply",
+
+  "empty": "—",
+  "edit": "Edit",
+  "delete": "Delete",
+
+  "phone": {
+    "title": "Phone numbers ({count})",
+    "add": "+ Add phone number"
+  },
+
+  "language": {
+    "en-US": "English",
+    "de-DE": "German"
+  },
+
+  "copy": "Copy to Clipboard!",
+  "management": "Management",
+  "chooseSeat": "Choose a Seat",
+  "chosen":  "Chosen"
+}

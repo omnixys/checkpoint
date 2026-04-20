@@ -73,7 +73,7 @@ export default function CalendarGridView({
                       width: 6,
                       height: 6,
                       borderRadius: "50%",
-                      backgroundColor: theme.palette.omnixys.primary,
+                      backgroundColor: theme.palette.primary.main,
                     }}
                   />
                 ))}
@@ -85,7 +85,7 @@ export default function CalendarGridView({
                   sx={{
                     mt: 1,
                     fontSize: 12,
-                    color: theme.palette.omnixys.textSecondary,
+                    color: theme.palette.text.secondary,
                   }}
                 >
                   {monthEvents.length} Events
@@ -117,7 +117,7 @@ export default function CalendarGridView({
               borderRadius: 3,
               cursor: "pointer",
               backgroundColor: hasEvents
-                ? `${theme.palette.omnixys.primary}18`
+                ? `${theme.palette.primary.main}18`
                 : theme.palette.apple.tertiarySystemBackground,
             }}
           >

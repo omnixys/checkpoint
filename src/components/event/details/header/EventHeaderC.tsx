@@ -3,8 +3,10 @@
 import { alpha, Box, Chip, Stack, Typography, useTheme } from "@mui/material";
 import { EventHeaderProps } from "../EventActions";
 import { useEventFormatting } from "@/checkpoint/hooks/events/useEventFormatting";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 export default function EventHeaderC({ ev }: EventHeaderProps) {
+  const t = useTypedTranslations("event");
   const theme = useTheme();
 
   const { roleChipColor, startFormatted, endFormatted } = useEventFormatting(ev);
@@ -30,7 +32,9 @@ export default function EventHeaderC({ ev }: EventHeaderProps) {
         </Typography>
 
         <Chip
-          label={ev.myRole ?? "Guest"}
+          label={
+            ev.myRole ? t(`header.role.${ev.myRole}`) : t("header.role.GUEST")
+          }
           color={roleChipColor}
           variant="filled"
           sx={{ width: "fit-content", fontWeight: 600 }}
@@ -39,11 +43,11 @@ export default function EventHeaderC({ ev }: EventHeaderProps) {
 
       <Stack spacing={0.5}>
         <Typography variant="body2" color="text.secondary">
-          Start: {startFormatted}
+          {t("header.start")}: {startFormatted}
         </Typography>
 
         <Typography variant="body2" color="text.secondary">
-          Ende: {endFormatted}
+          {t("header.end")}: {endFormatted}
         </Typography>
       </Stack>
     </Box>

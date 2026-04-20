@@ -5,6 +5,7 @@ import EventLocationMap from "@/checkpoint/components/event/details/EventLocatio
 import EventTimeline from "@/checkpoint/components/event/details/EventTimeline";
 import EventDescriptionEditor from "@/checkpoint/components/event/EventDescriptionEditor";
 import { EventPayload } from "@/checkpoint/generated/graphql";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { Box, Typography } from "@mui/material";
 
 type Props = {
@@ -14,6 +15,8 @@ type Props = {
 };
 
 export default function EventTabContent({ ev, active, onDescriptionChange }: Props) {
+  const t = useTypedTranslations("event");
+
   switch (active) {
     case "timeline":
       return <EventTimeline items={ev.timeline} />;
@@ -36,7 +39,7 @@ export default function EventTabContent({ ev, active, onDescriptionChange }: Pro
       return (
         <Box sx={{ mt: 4 }}>
           <Typography variant="body1">
-            Inhalt für den Tab <strong>{active}</strong> ist noch nicht implementiert.
+            {t("tabs.notImplemented", { tab: active })}
           </Typography>
         </Box>
       );

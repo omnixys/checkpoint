@@ -42,7 +42,6 @@ export default function AppShellMobile({ children }: { children: React.ReactNode
           rightActions={
             <>
               {isAuthenticated && <EventSelectorMobileButton onOpen={() => setOpen(true)} />}
-              <ThemeToggleButton />
               <UserMenu />
             </>
           }
@@ -67,7 +66,7 @@ export default function AppShellMobile({ children }: { children: React.ReactNode
         sx={{
           position: "sticky",
           bottom: 0,
-          zIndex: 120,
+          zIndex: 12000000,
         }}
       >
         <NavigationMobile />

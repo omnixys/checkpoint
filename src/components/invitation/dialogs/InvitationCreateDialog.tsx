@@ -13,6 +13,8 @@ import {
   Box,
   MenuItem,
   useTheme,
+  alpha,
+  Theme,
 } from "@mui/material";
 import { useParams } from "next/navigation";
 
@@ -23,6 +25,7 @@ import { useInvitationForm } from "@/checkpoint/hooks/invitation/useInvitationFo
 import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
 import { CallingCodeCountry } from "@/checkpoint/types/country.type";
 import { EventListItem } from "@/checkpoint/types/event.type";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 /**
  * Props for InvitationCreateDialog
@@ -39,23 +42,26 @@ type Props = {
 function Section({
   title,
   children,
+  theme,
 }: {
   title?: string | undefined;
-  children: React.ReactNode;
+    children: React.ReactNode;
+    theme: Theme;
 }) {
   return (
     <Box
       sx={{
         p: 2.5,
-        borderRadius: 3,
-        background: "rgba(255,255,255,0.02)",
-        border: "1px solid rgba(255,255,255,0.05)",
+        // background: "rgba(255,255,255,0.02)",
+        // border: "1px solid rgba(255,255,255,0.05)",
+
+        borderRadius: theme.shape.sectionRadius,
+        background: alpha(theme.palette.background.paper, 0.02),
+        border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
       }}
     >
       <Stack spacing={2}>
-        {title && (
-          <Typography sx={{ fontWeight: 600 }}>{title}</Typography>
-        )}
+        {title && <Typography sx={{ fontWeight: 600 }}>{title}</Typography>}
         {children}
       </Stack>
     </Box>
@@ -73,7 +79,10 @@ function Section({
 export default function InvitationCreateDialog({
   logic,
   callingCodeCountries,
-}: Props) {
+}: Props) {  
+  const tInvitation = useTypedTranslations("invitation");
+      const tCommon = useTypedTranslations("common");
+
   const theme = useTheme();
   const params = useParams();
   const eventId = String(params.id);
@@ -140,12 +149,13 @@ export default function InvitationCreateDialog({
       slotProps={{
         paper: {
           sx: {
-            borderRadius: "20px",
             overflow: "hidden",
-            backdropFilter: "blur(30px)",
-            background: "rgba(20,20,20,0.75)",
-            border: "1px solid rgba(255,255,255,0.08)",
-            boxShadow: "0 40px 120px rgba(0,0,0,0.6)",
+            boxShadow: `0 40px 120px ${alpha(theme.palette.background.paper, 0.35)}`,
+
+            p: theme.spacing(3),
+            borderRadius: theme.shape.borderRadius2,
+            background: alpha(theme.palette.background.paper, 1),
+            border: `1px solid ${alpha(theme.palette.divider, 0.6)}`,
           },
         },
       }}
@@ -160,11 +170,11 @@ export default function InvitationCreateDialog({
               fontWeight: 700,
             }}
           >
-            Neue Einladung
+            {tInvitation("createInv.title")}
           </Typography>
 
           <Typography variant="body2" color="text.secondary">
-            Erstelle einen neuen Gast und verwalte seine Einladung
+            {tInvitation("createInv.subtitle")}{" "}
           </Typography>
         </Stack>
       </DialogTitle>
@@ -173,10 +183,10 @@ export default function InvitationCreateDialog({
       <DialogContent>
         <Stack spacing={3} sx={{ mt: 1 }}>
           {/* PERSON SECTION */}
-          <Section title="Person">
+          <Section title={tInvitation("createInv.person")} theme={theme}>
             <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
               <TextField
-                label="Vorname"
+                label={tInvitation("createInv.firstName")}
                 fullWidth
                 autoFocus
                 value={values.firstName}
@@ -184,7 +194,7 @@ export default function InvitationCreateDialog({
               />
 
               <TextField
-                label="Nachname"
+                label={tInvitation("createInv.lastName")}
                 fullWidth
                 value={values.lastName}
                 onChange={(e) => setField("lastName", e.target.value)}
@@ -192,14 +202,14 @@ export default function InvitationCreateDialog({
             </Stack>
 
             <TextField
-              label="E-Mail"
+              label={tInvitation("createInv.email")}
               fullWidth
               value={values.email}
               onChange={(e) => setField("email", e.target.value)}
             />
           </Section>
 
-          <Section>
+          <Section theme={theme}>
             <PhoneNumberListAccordion
               values={phoneNumbers}
               onAdd={addPhone}
@@ -212,10 +222,10 @@ export default function InvitationCreateDialog({
           </Section>
 
           {/* INVITATION SECTION */}
-          <Section title="Einladung">
+          <Section title={tInvitation("createInv.invitation")} theme={theme}>
             <TextField
               type="number"
-              label="Max. Begleitpersonen"
+              label={tInvitation("createInv.maxInvitees")}
               fullWidth
               value={values.maxInvitees}
               onChange={(e) =>
@@ -229,17 +239,18 @@ export default function InvitationCreateDialog({
             <TextField
               select
               fullWidth
-              label="Eingeladen von (optional)"
+              label={tInvitation("createInv.invitedBy")}
               value={values.eventId}
               onChange={(e) => setField("eventId", e.target.value)}
-              helperText="Optional: Wer hat diese Person eingeladen?"
+              helperText={tInvitation("createInv.invitedByHelp")}
             >
               <MenuItem value="">
-                <em>Keine Zuordnung</em>
+                <em>{tInvitation("createInv.noAssignment")}</em>
               </MenuItem>
 
               {logic.events?.map((event: EventListItem) => {
-                const name = event.name?.trim() || "Unbekannt";
+                const name =
+                  event.name?.trim() || tInvitation("createInv.unknown");
 
                 return (
                   <MenuItem key={event.id} value={event.id}>
@@ -267,16 +278,20 @@ export default function InvitationCreateDialog({
       {/* -------------------------------- ACTIONS -------------------------------- */}
       <DialogActions
         sx={{
-          px: 3,
-          py: 2,
+          px: theme.spacing(3),
+          py: theme.spacing(2),
+
           position: "sticky",
           bottom: 0,
-          backdropFilter: "blur(20px)",
-          background: "rgba(0,0,0,0.6)",
-          borderTop: "1px solid rgba(255,255,255,0.05)",
+
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
+
+          background: alpha(theme.palette.background.default, 0.25),
+          borderTop: `1px solid ${alpha(theme.palette.divider, 0.5)}`,
         }}
       >
-        <Button onClick={handleClose}>Abbrechen</Button>
+        <Button onClick={handleClose}> {tCommon("cancel")}</Button>
 
         <Button
           variant="contained"
@@ -287,7 +302,9 @@ export default function InvitationCreateDialog({
             px: 3,
           }}
         >
-          {loading ? "Erstellen..." : "Einladung erstellen"}
+          {loading
+            ? tInvitation("createInv.creating")
+            : tInvitation("createInv.submit")}
         </Button>
       </DialogActions>
     </Dialog>

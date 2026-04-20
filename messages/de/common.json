@@ -1,0 +1,27 @@
+{
+  "loading": "Lädt…",
+  "locale": "de-DE",
+  "all": "Alle",
+  "cancel": "Abbrechen",
+
+  "empty": "—",
+  "edit": "Bearbeiten",
+  "delete": "Löschen",
+
+  "phone": {
+    "title": "Telefonnummern ({count})",
+    "add": "+ Telefonnummer hinzufügen"
+  },
+  "language": {
+    "en-US": "Englisch",
+    "de-DE": "Deutsch"
+  },
+
+  "copy": "Kopiert!",
+  "management": "Verwaltung",
+  "chooseSeat": "Sitzplatz auswählen",
+  "chosen": "Ausgewählt",
+
+  "done": "Fertig",
+  "apply": "Anwenden"
+}

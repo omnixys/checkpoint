@@ -46,7 +46,12 @@ export const createAppTheme = (mode: PaletteMode, scheme: OmnixysColorScheme = "
       button: { textTransform: "none", fontWeight: 600 },
     },
 
-    shape: { borderRadius: 16 },
+    shape: {
+      borderRadius: 16,
+      borderRadius2: 5,
+      sectionRadius: 3,
+      buttonRadius: 3,
+    },
     spacing: 8,
 
     omnixys: {

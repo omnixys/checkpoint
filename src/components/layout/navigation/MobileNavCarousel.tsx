@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Paper, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
 import useEmblaCarousel from "embla-carousel-react";
 import { JSX, useEffect } from "react";
@@ -8,6 +8,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { NavItem } from "../navigation.config";
 import { isActiveNavItem } from "./navigation.util";
 import { env } from "@/checkpoint/lib/env";
+import { useThemeMode } from "@/checkpoint/providers/ThemeModeProvider";
 
 type Props = {
   items: NavItem[];
@@ -17,6 +18,9 @@ type Props = {
 export function MobileNavCarousel({ items, eventId }: Props) {
   const router = useRouter();
   const pathname = usePathname();
+  const theme = useTheme();
+  const { mode } = useThemeMode();
+  
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
@@ -50,6 +54,7 @@ export function MobileNavCarousel({ items, eventId }: Props) {
         backdropFilter: "blur(20px)",
         backgroundColor: "rgba(20,20,20,0.75)",
         borderTop: "1px solid rgba(255,255,255,0.08)",
+        borderRadius: 0
       }}
     >
       <Box ref={emblaRef} sx={{ overflow: "hidden" }}>
@@ -64,7 +69,10 @@ export function MobileNavCarousel({ items, eventId }: Props) {
             return (
               <Box
                 key={item.path}
-                onClick={() => !item.disabled && router.push(env.CHECKPOINT_BASE_PATH + item.path)}
+                onClick={() =>
+                  !item.disabled &&
+                  router.push(item.path)
+                }
                 sx={{
                   flex: "0 0 25%", // 👈 max 4 sichtbar
                   py: 1,
@@ -81,11 +89,12 @@ export function MobileNavCarousel({ items, eventId }: Props) {
                     transform: "translateX(-50%)",
                     width: 22,
                     height: 3,
-                    borderRadius: 999,
+                    // borderRadius: 999,
                     backgroundColor: "primary.main",
                     opacity: active ? 1 : 0,
                     scaleX: active ? 1 : 0,
-                    transition: "opacity 200ms ease, transform 260ms cubic-bezier(.4,0,.2,1)",
+                    transition:
+                      "opacity 200ms ease, transform 260ms cubic-bezier(.4,0,.2,1)",
                   }}
                 />
 
@@ -95,7 +104,11 @@ export function MobileNavCarousel({ items, eventId }: Props) {
                     flexDirection: "column",
                     alignItems: "center",
                     gap: 0.4,
-                    color: active ? "primary.main" : "text.secondary",
+                    color: active
+                      ? "primary.main"
+                      : mode === "light"
+                        ? theme.palette.background.default
+                        : theme.palette.text.secondary,
                     transition: "color 0.25s ease",
                   }}
                 >
@@ -112,7 +125,7 @@ export function MobileNavCarousel({ items, eventId }: Props) {
                   <Typography
                     noWrap
                     sx={{
-                      fontSize: 1,
+                      fontSize: 12,
                       fontWeight: active ? 700 : 500,
                     }}
                   >

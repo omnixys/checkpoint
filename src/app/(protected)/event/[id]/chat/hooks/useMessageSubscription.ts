@@ -27,7 +27,6 @@ export function useMessageSubscription(chatId: string | null) {
 
     onData: ({ client, data }) => {
       const newMessage = data.data?.whatsappMessage;
-      console.log({newMessage});
       if (!newMessage) return;
 
       /**

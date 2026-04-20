@@ -30,9 +30,14 @@ import {
   GetSeatByGuestAndEventQueryVariables,
   GetSeatByGuestAndEventDocument,
 } from "@/checkpoint/generated/graphql";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 export default function InvitationDetailDialog({ logic }: { logic: InvitationLogic }) {
   const inv = logic.activeInvitation;
+  
+    const tInvitation = useTypedTranslations("invitation");
+  const tCommon = useTypedTranslations("common");
+  
 
   const [copied, setCopied] = useState(false);
   const [approveSeatOpen, setApproveSeatOpen] = useState(false);
@@ -119,6 +124,9 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
         slots={{
           transition: MotionDialogTransition,
         }}
+        sx={{
+          pt: 15,
+        }}
         maxWidth="sm"
         fullWidth
       >
@@ -126,8 +134,10 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
           <Stack spacing={3}>
             {/* ACTIONS */}
             <Box>
-              <Typography variant="subtitle2" gutterBottom>
-                Einladung
+              <Typography variant="h5" gutterBottom sx={{
+                pb: 2
+              }}>
+                {tInvitation("detail.title", { firstName: inv.firstName })}
               </Typography>
               <Stack
                 direction="row"
@@ -157,7 +167,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                       .then(() => logic.closeInvitation())
                   }
                 >
-                  Approve
+                  {tInvitation("approve")}
                 </Button>
 
                 <Button
@@ -166,7 +176,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                   disabled={!freeSeats.length}
                   onClick={() => setApproveSeatOpen(true)}
                 >
-                  Approve + Seat
+                  {tInvitation("approveAndSeat")}
                 </Button>
 
                 <Button
@@ -190,7 +200,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                       .then(() => logic.closeInvitation())
                   }
                 >
-                  Decline
+                  {tInvitation("decline")}
                 </Button>
               </Stack>
             </Box>
@@ -200,19 +210,21 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
             {/* SHARE */}
             <Box>
               <Typography variant="subtitle2" gutterBottom>
-                Teilen & Kontakt
+                {tInvitation("detail.shareAndContact")}
               </Typography>
               <Stack spacing={1.5}>
                 <Button
                   startIcon={<WhatsAppIcon />}
                   onClick={() =>
                     openWhatsapp(
-                      `Hallo ${inv.firstName}, ich melde mich wegen deiner Einladung.`,
+                      tInvitation("detail.whatsappMessage", {
+                        firstname: inv.firstName,
+                      }),
                       inv.phoneNumber ?? null,
                     )
                   }
                 >
-                  WhatsApp Nachricht senden
+                  {tInvitation("detail.sendWhatsappMessage")}
                 </Button>
 
                 <Button
@@ -221,11 +233,11 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                     openWhatsapp(whatsappInviteText, inv.phoneNumber ?? null)
                   }
                 >
-                  WhatsApp Einladung senden
+                  {tInvitation("detail.whatsappInvitation")}
                 </Button>
 
                 <Tooltip
-                  title={copied ? "Kopiert!" : "RSVP-Link kopieren"}
+                  title={copied ? tCommon("copy") : tInvitation("copyRsvp")}
                   open={copied}
                 >
                   <Button
@@ -236,7 +248,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                       setTimeout(() => setCopied(false), 900);
                     }}
                   >
-                    RSVP-Link kopieren
+                    {tInvitation('copyRsvp')}
                   </Button>
                 </Tooltip>
               </Stack>
@@ -247,7 +259,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
             {/* SYSTEM */}
             <Box>
               <Typography variant="subtitle2" gutterBottom>
-                Verwaltung
+               {tCommon('management')}
               </Typography>
               <Stack direction="row" spacing={2}>
                 <Button
@@ -260,7 +272,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                       .then(() => logic.closeInvitation())
                   }
                 >
-                  Delete
+                 {tCommon('delete')}
                 </Button>
               </Stack>
             </Box>
@@ -268,7 +280,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
             {(seatLoading || seatsLoading) && (
               <Stack direction="row" spacing={2}>
                 <CircularProgress size={18} />
-                <Typography>Lade Sitzplätze…</Typography>
+                <Typography>{tInvitation("detail.loadingSeats")}</Typography>
               </Stack>
             )}
           </Stack>
@@ -295,7 +307,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
               onClick={() => setApproveSeatOpen(false)}
               sx={{ textTransform: "none" }}
             >
-              ← Zurück
+              {tInvitation("detail.back")}
             </Button>
 
             <Typography
@@ -304,7 +316,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                 fontSize: 16,
               }}
             >
-              Sitzplatz auswählen
+              {tCommon('chooseSeat')}
             </Typography>
           </Stack>
         </DialogTitle>
@@ -325,7 +337,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
               <input
                 value={seatQuery}
                 onChange={(e) => setSeatQuery(e.target.value)}
-                placeholder="Bereich, Tisch oder Platz suchen"
+                placeholder={tInvitation("detail.searchSeatPlaceholder")}
                 style={{
                   width: "100%",
                   border: "none",
@@ -399,7 +411,8 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                                 fontWeight: 600,
                               }}
                             >
-                              {s.table?.name ?? "Tisch"} · Platz {s.number}
+                              {s.table?.name ?? tInvitation("detail.table")} ·{" "}
+                              {tInvitation("detail.seat")} {s.number}
                             </Typography>
 
                             {selected && (
@@ -407,7 +420,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                                 variant="caption"
                                 sx={{ color: "#7ecbff" }}
                               >
-                                Ausgewählt
+                                {tCommon('chosen')}
                               </Typography>
                             )}
                           </Stack>

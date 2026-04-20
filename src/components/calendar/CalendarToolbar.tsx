@@ -50,7 +50,7 @@ function SegmentedControl<T>({ value, onChange, segments }: Props<T>) {
               fontWeight: 600,
               color: active
                 ? theme.palette.apple.systemBackground
-                : theme.palette.omnixys.textSecondary,
+                : theme.palette.text.secondary,
             }}
           >
             {active && (
@@ -60,7 +60,7 @@ function SegmentedControl<T>({ value, onChange, segments }: Props<T>) {
                   position: "absolute",
                   inset: 0,
                   borderRadius: 999,
-                  background: theme.palette.omnixys.primary,
+                  background: theme.palette.primary.main,
                 }}
                 transition={{ type: "spring", stiffness: 300, damping: 25 }}
               />
@@ -175,7 +175,7 @@ export default function CalendarToolbar({
             borderRadius: 999,
             cursor: "pointer",
             fontWeight: 600,
-            backgroundColor: theme.palette.omnixys.primary,
+            backgroundColor: theme.palette.primary.main,
             color: theme.palette.apple.systemBackground,
           }}
         >

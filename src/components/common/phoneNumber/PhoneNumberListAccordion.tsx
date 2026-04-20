@@ -11,12 +11,14 @@ import {
   useTheme,
   alpha,
   Divider,
+  Tooltip,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 
 import { PhoneNumberInput } from "@/checkpoint/generated/graphql";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 type Props = {
   values: PhoneNumberInput[];
@@ -26,6 +28,7 @@ type Props = {
 };
 
 export default function PhoneNumberListAccordion({ values, onAdd, onEdit, onRemove }: Props) {
+  const t = useTypedTranslations("common");
   const theme = useTheme();
 
   return (
@@ -42,7 +45,7 @@ export default function PhoneNumberListAccordion({ values, onAdd, onEdit, onRemo
             fontWeight: 600,
           }}
         >
-          Telefonnummern ({values.length})
+          {t("phone.title", { count: values.length })}
         </Typography>
       </AccordionSummary>
 
@@ -72,18 +75,22 @@ export default function PhoneNumberListAccordion({ values, onAdd, onEdit, onRemo
                 </Typography>
 
                 <Typography variant="body2" color="text.secondary">
-                  {p.countryCode} {p.number || "—"}
+                  {p.countryCode} {p.number || t("empty")}
                 </Typography>
               </Stack>
 
               <Stack direction="row">
-                <IconButton onClick={() => onEdit(index)}>
-                  <EditIcon />
-                </IconButton>
+                <Tooltip title={t("edit")}>
+                  <IconButton onClick={() => onEdit(index)}>
+                    <EditIcon />
+                  </IconButton>
+                </Tooltip>
 
-                <IconButton onClick={() => onRemove(index)}>
-                  <DeleteIcon />
-                </IconButton>
+                <Tooltip title={t("delete")}>
+                  <IconButton onClick={() => onRemove(index)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
               </Stack>
             </Stack>
           ))}
@@ -91,7 +98,7 @@ export default function PhoneNumberListAccordion({ values, onAdd, onEdit, onRemo
           <Divider />
 
           <Button onClick={onAdd} fullWidth>
-            + Telefonnummer hinzufügen
+            {t("phone.add")}
           </Button>
         </Stack>
       </AccordionDetails>

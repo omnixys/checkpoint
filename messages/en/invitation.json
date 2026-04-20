@@ -1,0 +1,142 @@
+{
+  "searchPlaceholder": "Search by name, email, or phone...",
+  "event": "Event",
+  "type": "Type",
+  "status": "Status",
+
+  "mainEvent": "{name} (Main event)",
+
+  "typePrivate": "Private",
+  "typePublic": "Public",
+
+  "copyRsvp": "Copy RSVP Link",
+
+  "statusType": {
+    "PENDING": "pending",
+    "APPROVED": "approved",
+    "REJECTED": "Rejected",
+    "DECLINED": "Declined",
+    "ACCEPTED": "Accepted",
+    "CANCELED": "Canceled"
+  },
+
+  "title": "Invitations",
+  "subtitle": "Manage guests, statuses and invitations",
+
+  "backToEvent": "Back to event",
+  "create": "Create invitation",
+
+  "showFilters": "Show filters",
+  "hideFilters": "Hide filters",
+
+  "table": {
+    "type": "Type",
+    "name": "Name",
+    "phone": "Phone numbers",
+    "email": "Email",
+    "status": "Status",
+    "link": "Link",
+    "actions": "Actions"
+  },
+
+  "copyLink": "Copy link",
+  "delete": "Delete invitation",
+
+  "rsvpType": {
+    "PRIVATE": "Private",
+    "PUBLIC": "Public"
+  },
+
+  "noPhone": "No phone number",
+  "noEmail": "No email",
+
+  "approve": "Approve",
+  "approveAndSeat": "Approve & assign seat",
+  "decline": "Decline",
+  "rsvpPath": "/rsvp/{id}",
+
+  "bulk": {
+    "approve": "Approve all ({count})",
+    "approve_one": "Approve 1 invitation",
+    "approve_other": "Approve {count} invitations",
+    "send": "Send invitations",
+    "clear": "Clear selection"
+  },
+
+  "detail": {
+    "title": "{firstName}'s Invitation",
+    "shareAndContact": "Share & Contact",
+
+    "whatsappMessage": "Hello {firstName}, ich melde mich wegen deiner Einladung.",
+
+    "sendWhatsappMessage": "Send WhatsApp message",
+    "whatsappInvitation": "Send WhatsApp invitation",
+    "copyRsvpLink": "Copy RSVP link",
+    "copied": "Copied!",
+    "administration": "Administration",
+    "delete": "Delete",
+    "loadingSeats": "Loading seats…",
+    "selectSeat": "Select seat",
+    "back": "← Back",
+    "searchSeatPlaceholder": "Search area, table or seat",
+    "selected": "Selected",
+    "table": "Table",
+    "seat": "Seat",
+    "other": "Other"
+  },
+
+  "createInv": {
+    "title": "New invitation",
+    "subtitle": "Create a new guest and manage their invitation",
+
+    "person": "Person",
+    "invitation": "Invitation",
+
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+
+    "maxInvitees": "Max. guests",
+
+    "invitedBy": "Invited by (optional)",
+    "invitedByHelp": "Optional: Who invited this person?",
+
+    "noAssignment": "No assignment",
+    "unknown": "Unknown",
+
+    "creating": "Creating...",
+    "submit": "Create invitation"
+  },
+
+  "bulkSend": {
+    "title": "Send invitations",
+    "send": "Send"
+  },
+
+  "bulkApprove": {
+    "title": "Approve invitations",
+
+    "invitationId": "Invitation ID: {id}",
+
+    "locale": "Language",
+    "event": "Event",
+    "seat": "Seat",
+
+    "noSeat": "No seat",
+
+    "selectedSeat": "Selected seat label: {seat}",
+
+    "empty": "No invitations selected.",
+
+    "loading": "Approving...",
+    "submit": "Approve all ({count})"
+  },
+
+  "filters": {
+    "title": "Filters",
+    "open": "Open filters",
+    "close": "Close filters",
+    "apply": "Apply filters",
+    "reset": "Reset filters"
+  }
+}

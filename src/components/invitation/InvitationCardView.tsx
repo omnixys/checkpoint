@@ -1,118 +1,147 @@
 "use client";
 
-import InvitationStatusChip from "@/checkpoint/components/invitation/InvitationStatusChip";
-import { InvitationPayload } from "@/checkpoint/generated/graphql";
-import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
-import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import {
+  Paper,
+  Stack,
+  Typography,
+  IconButton,
+  Box,
+  Chip,
+  useTheme,
+  alpha,
+  Tooltip,
+} from "@mui/material";
+
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
-import { IconButton, Paper, Stack, Typography, useTheme } from "@mui/material";
+
 import { motion } from "framer-motion";
+import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
+import { InvitationPayload } from "@/checkpoint/generated/graphql";
+import InvitationStatusChip from "./InvitationStatusChip";
+import { env } from "@/checkpoint/lib/env";
+import { useState } from "react";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
-/* ---------------------------------------------------------------------------
- * Card View for Mobile & Tablet devices
- * VisionOS-inspired layout (soft depth, rounded corners, glassy surface)
- * ------------------------------------------------------------------------- */
-export default function InvitationCardView({ logic }: { logic: InvitationLogic }) {
+export default function InvitationCardView({
+  logic,
+}: {
+  logic: InvitationLogic;
+}) {
   const theme = useTheme();
-  const { invitations } = logic;
+  const [copiedMap, setCopiedMap] = useState<Record<string, boolean>>({});
+  
+    const tInvitation = useTypedTranslations("invitation");
+    const tCommon = useTypedTranslations("common");
 
+    const handleCopy = (id: string) => {
+      navigator.clipboard.writeText(
+        `${window.location.origin}${env.CHECKPOINT_BASE_PATH}rsvp/${id}`,
+      );
+
+      setCopiedMap((prev) => ({ ...prev, [id]: true }));
+
+      setTimeout(() => {
+        setCopiedMap((prev) => ({ ...prev, [id]: false }));
+      }, 900);
+    };
+  
   return (
-    <Stack
-      spacing={3}
-      sx={{
-        display: "grid",
-        gridTemplateColumns: {
-          xs: "1fr",
-          sm: "1fr 1fr", // Tablet: 2 columns
-          md: "1fr 1fr",
-          lg: "1fr", // Desktop: we don't use CardView
-        },
-        gap: 3,
-      }}
-    >
-      {invitations.map((inv) => (
-        <Paper
-          //TODO optimieren!!!
-          onClick={() => logic.openInvitation(inv as InvitationPayload)}
-          key={inv.id}
-          elevation={0}
-          sx={{
-            borderRadius: "22px",
-            padding: 2.4,
-            cursor: "pointer",
-            backdropFilter: "blur(18px)",
-            backgroundColor: theme.palette.background.paper,
-            boxShadow: theme.shadows[4],
-            transition: "all 0.25s ease",
-            "&:hover": {
-              boxShadow: theme.shadows[8],
-              transform: "translateY(-3px)",
-            },
-          }}
-        >
-          <Stack spacing={1.3}>
-            <Typography variant="h6" sx={{ fontWeight: 600, letterSpacing: "-0.2px" }}>
-              {inv.firstName} {inv.lastName}
-            </Typography>
-
-            <InvitationStatusChip status={inv.status} rsvp={inv.rsvpChoice ?? undefined} />
-
-            <Typography variant="body2" sx={{ opacity: 0.75 }}>
-              {inv.phoneNumber ?? "Keine Nummer"}
-            </Typography>
-
-            <Typography variant="body2" sx={{ opacity: 0.7 }}>
-              {inv.email ?? "Keine Email"}
-            </Typography>
-
-            <Stack direction="row" spacing={1} sx={{ alignItems: "center", mt: 1 }}>
-              <Typography
-                variant="body2"
+    <Stack spacing={2}>
+      {logic.invitations.map((inv) => {
+        const copied = copiedMap[inv.id] ?? false;
+      
+        return (
+          <Paper
+            key={inv.id}
+            onClick={() => logic.openInvitation(inv as InvitationPayload)}
+            sx={{
+              p: 2,
+              borderRadius: "20px",
+              backdropFilter: "blur(16px)",
+              background: alpha(theme.palette.background.paper, 0.8),
+              boxShadow: theme.shadows[4],
+            }}
+          >
+            <Stack spacing={1.5}>
+              {/* HEADER */}
+              <Stack
+                direction="row"
                 sx={{
-                  opacity: 0.7,
-                  maxWidth: 150,
-                  textOverflow: "ellipsis",
-                  overflow: "hidden",
+                  justifyContent: "space-between",
                 }}
               >
-                /rsvp/{inv.id}
+                <Typography
+                  sx={{
+                    fontWeight: 600,
+                  }}
+                >
+                  {inv.firstName} {inv.lastName}
+                </Typography>
+
+                <InvitationStatusChip
+                  status={inv.status}
+                  rsvp={inv.rsvpChoice ?? undefined}
+                />
+              </Stack>
+
+              {/* CONTACT */}
+              <Typography variant="body2" sx={{ opacity: 0.7 }}>
+                {inv.phoneNumber || "-"}
               </Typography>
 
-              <motion.div
-                whileTap={{
-                  scale: 0.7,
-                  backgroundColor: theme.palette.success.light,
-                }}
-                transition={{ duration: 0.25 }}
-              >
-                <IconButton
-                  size="small"
-                  onClick={() =>
-                    navigator.clipboard.writeText(
-                      `${window.location.origin}/checkpoint/rsvp/${inv.id}`,
-                    )
-                  }
-                >
-                  <ContentCopyIcon fontSize="small" />
-                </IconButton>
-              </motion.div>
-            </Stack>
+              <Typography variant="body2" sx={{ opacity: 0.6 }}>
+                {inv.email || "-"}
+              </Typography>
 
-            <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-              <motion.div
-                whileTap={{
-                  scale: 0.7,
-                  backgroundColor: theme.palette.success.light,
+              {/* LINK */}
+              <Stack
+                direction="row"
+                sx={{
+                  alignItems: "center",
                 }}
-                transition={{ duration: 0.25 }}
+                spacing={1}
               >
+                <Typography
+                  variant="caption"
+                  sx={{
+                    flex: 1,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  /rsvp/{inv.id.slice(0, 8)}...
+                </Typography>
+
+                <Tooltip
+                  title={copied ? tCommon("copy") : tInvitation("copyRsvp")}
+                  open={copied}
+                >
+                  <IconButton
+                    size="small"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCopy(inv.id);
+                    }}
+                    sx={{
+                      width: 40,
+                      height: 40,
+                    }}
+                  >
+                    <ContentCopyIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              </Stack>
+
+              {/* ACTIONS */}
+              <Stack direction="row" spacing={1}>
                 <IconButton
                   color="success"
-                  onClick={() =>
+                  onClick={(e) => {
+                    e.stopPropagation();
                     logic
                       .approveInvitation({
-                        //TODO optimieren!!! seatId, seat und event name hinzufügen
                         variables: {
                           input: {
                             invitationId: inv.id,
@@ -123,37 +152,30 @@ export default function InvitationCardView({ logic }: { logic: InvitationLogic }
                           },
                         },
                       })
-                      .then(() => logic.refetch())
-                  }
+                      .then(() => logic.refetch());
+                  }}
                 >
                   <CheckCircleRoundedIcon />
                 </IconButton>
-              </motion.div>
 
-              <motion.div
-                whileTap={{
-                  scale: 0.7,
-                  backgroundColor: theme.palette.success.light,
-                }}
-                transition={{ duration: 0.25 }}
-              >
                 <IconButton
                   color="error"
-                  onClick={() =>
+                  onClick={(e) => {
+                    e.stopPropagation();
                     logic
                       .deleteInvitation({
                         variables: { id: inv.id },
                       })
-                      .then(() => logic.refetch())
-                  }
+                      .then(() => logic.refetch());
+                  }}
                 >
                   <DeleteForeverRoundedIcon />
                 </IconButton>
-              </motion.div>
+              </Stack>
             </Stack>
-          </Stack>
-        </Paper>
-      ))}
+          </Paper>
+        );
+      })}
     </Stack>
   );
 }

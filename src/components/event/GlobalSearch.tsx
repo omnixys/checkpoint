@@ -4,8 +4,11 @@ import React from "react";
 import { Box, Modal, TextField, Stack, Typography, useTheme, alpha } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { motion } from "framer-motion";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 export default function GlobalSearch() {
+  const t = useTypedTranslations("event");
+
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [query, setQuery] = React.useState("");
@@ -45,13 +48,13 @@ export default function GlobalSearch() {
         >
           <Stack spacing={2}>
             <Typography variant="h6" sx={{ fontWeight: 700 }}>
-              Suche
+              {t("search.title")}
             </Typography>
 
             <TextField
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Events suchen…"
+              placeholder={t("search.placeholder")}
               autoFocus
               slotProps={{
                 input: {

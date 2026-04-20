@@ -4,6 +4,7 @@ import InvitationBulkApproveDialog from "@/checkpoint/components/invitation/dial
 import InvitationBulkSendDialog from "@/checkpoint/components/invitation/dialogs/InvitationBulkSendDialog";
 import InvitationCreateDialog from "@/checkpoint/components/invitation/dialogs/InvitationCreateDialog";
 import InvitationDetailDialog from "@/checkpoint/components/invitation/dialogs/InvitationDetailDialog";
+import InvitationDetailMobileDialog from "@/checkpoint/components/invitation/dialogs/InvitationDetailMobileDialog";
 import InvitationContent from "@/checkpoint/components/invitation/InvitationContent";
 import InvitationHeader from "@/checkpoint/components/invitation/InvitationHeader";
 import BackToTopButton from "@/checkpoint/components/utils/BackToTopButton";
@@ -52,11 +53,11 @@ export default function InvitationClientPage({ countries }: { countries: Calling
       <InvitationHeader logic={logic} scroll={scroll} />
 
       {/* CONTENT */}
-      <PullToRefresh onReload={logic.reload}>
-        <Box sx={{ px: { xs: 2, md: 3 }, pb: 12 }}>
+      {/* <PullToRefresh onReload={logic.reload}> */}
+        <Box sx={{ px: { xs: 2, md: 3 }, pb: 12, pt: isMobile ? 6 : 0 }}>
           <InvitationContent logic={logic} isMobile={isMobile} />
         </Box>
-      </PullToRefresh>
+      {/* </PullToRefresh> */}
 
       {/* FLOATING ELEMENTS */}
       <BackToTopButton visible={visible} />
@@ -67,7 +68,11 @@ export default function InvitationClientPage({ countries }: { countries: Calling
       <InvitationBulkSendDialog logic={logic} />
       <InvitationBulkApproveDialog logic={logic} />
 
-      {logic.activeInvitation && <InvitationDetailDialog logic={logic} />}
+      {logic.activeInvitation && isMobile ? (
+            <InvitationDetailMobileDialog logic={logic} />
+      ):(
+        <InvitationDetailDialog logic={logic} />
+      )}
     </Box>
   );
 }

@@ -7,6 +7,7 @@ import {
   ListItemIcon,
   Menu,
   MenuItem,
+  Stack,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -25,6 +26,8 @@ import ColorBubbleSwitcher from "@/checkpoint/components/ColorBubbleSwitcher";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { useDevice } from "@/checkpoint/providers/DeviceProvider";
+import ThemeToggleButton from "@/checkpoint/components/ThemeToggleButton";
+import LanguageSwitcher from "@/checkpoint/components/LanguageSwitcher";
 
 /**
  * eventRoles:
@@ -121,9 +124,17 @@ export default function UserMenu(): JSX.Element | null {
         </MenuItem>
 
         {device === "mobile" && (
-          <MenuItem>
-            <ColorBubbleSwitcher />
-          </MenuItem>
+          <Stack direction={"row"}>
+            <MenuItem>
+              <ColorBubbleSwitcher />
+            </MenuItem>
+            <MenuItem>
+              <ThemeToggleButton />
+            </MenuItem>
+            <MenuItem>
+              <LanguageSwitcher />
+            </MenuItem>
+          </Stack>
         )}
         {/* Profile */}
         <MenuItem onClick={() => go(`${CHECKPOINT_BASE_PATH}me`)}>

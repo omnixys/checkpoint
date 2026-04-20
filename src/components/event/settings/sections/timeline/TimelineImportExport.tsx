@@ -9,7 +9,6 @@ export function TimelineImportExport({ onImport }: { onImport: (items: TimelineI
   const theme = useTheme();
 
   const handleFile = async (file: File) => {
-    console.log({ file });
     const ext = file.name.split(".").pop();
 
     if (ext === "xlsx") {
@@ -27,8 +26,6 @@ export function TimelineImportExport({ onImport }: { onImport: (items: TimelineI
         type: row.Type || "INFO",
         timestamp: buildTimestamp(row.Time),
       }));
-
-      console.log({ items });
 
       onImport(items);
       return;

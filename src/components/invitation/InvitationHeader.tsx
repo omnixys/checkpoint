@@ -7,6 +7,8 @@ import { useHeaderCollapse } from "@/checkpoint/components/invitation/useHeaderC
 import InvitationFilters from "@/checkpoint/components/invitation/InvitationFilters";
 import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
 import { omnixysPresets } from '../../themes/colors/omnixysPresets';
+import { useDevice } from "@/checkpoint/providers/DeviceProvider";
+import InvitationFiltersMobile from "@/checkpoint/components/invitation/InvitationFiltersMobile";
 
 /**
  * Smart Header
@@ -31,6 +33,7 @@ export default function InvitationHeader({
   logic,
   scroll,
 }: InvitationHeaderProp) {
+  const { isMobile } = useDevice();
   const theme = useTheme();
   const { collapsed, setCollapsed } = useHeaderCollapse();
 
@@ -75,7 +78,11 @@ export default function InvitationHeader({
               overflow: "hidden",
             }}
           >
-            <InvitationFilters logic={logic} />
+            {isMobile ? (
+              <InvitationFiltersMobile logic={logic} />
+            ) : (
+              <InvitationFilters logic={logic} />
+            )}
           </motion.div>
         )}
       </AnimatePresence>

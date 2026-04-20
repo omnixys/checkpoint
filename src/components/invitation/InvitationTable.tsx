@@ -18,17 +18,20 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  Tooltip,
   Typography,
   useTheme,
 } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useMemo, useState } from "react";
 import { InvitationPayload } from "@/checkpoint/generated/graphql";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 /* ---------------------------------------------------------------------------
  * Local derived types
  * ------------------------------------------------------------------------- */
 type InvitationRow = NonNullable<InvitationLogic["invitations"]>[number];
+type RsvpType = 'PRIVATE' | 'PUBLIC';
 
 /* ---------------------------------------------------------------------------
  * Desktop Table view for Invitations
@@ -37,6 +40,7 @@ type InvitationRow = NonNullable<InvitationLogic["invitations"]>[number];
  * - Bulk select cascades to plus-ones
  * ------------------------------------------------------------------------- */
 export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
+  const t = useTypedTranslations("invitation");
   const { invitations, selected, toggleSelect } = logic;
   const theme = useTheme();
 
@@ -113,13 +117,13 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
       <TableHead>
         <TableRow>
           <TableCell width={48} />
-          <TableCell>Type</TableCell>
-          <TableCell>Name</TableCell>
-          <TableCell>Telefonnummern</TableCell>
-          <TableCell>Email</TableCell>
-          <TableCell>Status</TableCell>
-          <TableCell>Link</TableCell>
-          <TableCell align="right">Aktionen</TableCell>
+          <TableCell>{t("table.type")}</TableCell>
+          <TableCell>{t("table.name")}</TableCell>
+          <TableCell>{t("table.phone")}</TableCell>
+          <TableCell>{t("table.email")}</TableCell>
+          <TableCell>{t("table.status")}</TableCell>
+          <TableCell>{t("table.link")}</TableCell>
+          <TableCell align="right">{t("table.actions")}</TableCell>
         </TableRow>
       </TableHead>
 
@@ -133,7 +137,9 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
               {/* PARENT ROW */}
               <TableRow
                 hover
-                onClick={() => logic.openInvitation(parent as InvitationPayload)}
+                onClick={() =>
+                  logic.openInvitation(parent as InvitationPayload)
+                }
                 sx={{
                   cursor: "pointer",
                   transition: "transform .25s ease, box-shadow .25s ease",
@@ -159,7 +165,9 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
                 </TableCell>
 
                 {/* Type */}
-                <TableCell>{parent.type}</TableCell>
+                <TableCell>
+                  {t(`rsvpType.${parent.type as RsvpType}`)}
+                </TableCell>
 
                 {/* NAME + EXPAND */}
                 <TableCell>
@@ -178,7 +186,9 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
                           toggleExpand(parent.id);
                         }}
                         sx={{
-                          transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
+                          transform: isExpanded
+                            ? "rotate(180deg)"
+                            : "rotate(0deg)",
                           transition: "transform .25s ease",
                         }}
                       >
@@ -212,26 +222,33 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
 
                 {/* Link */}
                 <TableCell onClick={(event) => event.stopPropagation()}>
-                  <IconButton
-                    size="small"
-                    onClick={() => {
-                      void handleCopyLink(parent.id);
-                    }}
-                  >
-                    <ContentCopyIcon fontSize="small" />
-                  </IconButton>
+                  <Tooltip title={t("copyLink")}>
+                    <IconButton
+                      size="small"
+                      onClick={() => {
+                        void handleCopyLink(parent.id);
+                      }}
+                    >
+                      <ContentCopyIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
                 </TableCell>
 
                 {/* Actions */}
-                <TableCell align="right" onClick={(event) => event.stopPropagation()}>
-                  <IconButton
-                    color="error"
-                    onClick={() => {
-                      void handleDelete(parent.id);
-                    }}
-                  >
-                    <DeleteForeverIcon />
-                  </IconButton>
+                <TableCell
+                  align="right"
+                  onClick={(event) => event.stopPropagation()}
+                >
+                  <Tooltip title={t("delete")}>
+                    <IconButton
+                      color="error"
+                      onClick={() => {
+                        void handleDelete(parent.id);
+                      }}
+                    >
+                      <DeleteForeverIcon />
+                    </IconButton>
+                  </Tooltip>
                 </TableCell>
               </TableRow>
 
@@ -267,7 +284,11 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
                           {children.map((plusOne) => (
                             <Box
                               key={plusOne.id}
-                              onClick={() => logic.openInvitation(plusOne as InvitationPayload)}
+                              onClick={() =>
+                                logic.openInvitation(
+                                  plusOne as InvitationPayload,
+                                )
+                              }
                               sx={{
                                 px: 2,
                                 py: 1.2,
@@ -299,7 +320,8 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
                                       fontWeight: 500,
                                     }}
                                   >
-                                    {plusOne.firstName ?? "-"} {plusOne.lastName ?? ""}
+                                    {plusOne.firstName ?? "-"}{" "}
+                                    {plusOne.lastName ?? ""}
                                   </Typography>
                                 </Stack>
 

@@ -40,25 +40,6 @@ export default function AppShellTablet({ children }: { children: React.ReactNode
           overflow: "hidden",
         }}
       >
-        {/* Topbar bleibt sticky */}
-        <Box
-          sx={{
-            position: "sticky",
-            top: 0,
-            zIndex: 50,
-            display: "flex",
-            justifyContent: "flex-end",
-            alignItems: "center",
-            p: 2,
-            gap: 1,
-            bgcolor: (t) => t.palette.background.default,
-          }}
-        >
-          <ThemeToggleButton />
-          <ColorBubbleSwitcher />
-          <UserMenu />
-        </Box>
-
         {/* inhalt scrollt unabhängig */}
         <Box
           sx={{

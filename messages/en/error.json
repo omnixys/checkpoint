@@ -1,4 +1,7 @@
 {
+   "generic": "Something went wrong",
+    "eventNotFound": "Event not found",
+   
   "notFound": {
     "title": "Page not found",
     "message": "The requested page does not exist or has been moved.",

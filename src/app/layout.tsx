@@ -120,7 +120,7 @@ export default async function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <NextIntlClientProvider messages={messages}>
           <Provider>
-            <StartupVisionPro />
+            {/* <StartupVisionPro /> */}
             {children}
           </Provider>
         </NextIntlClientProvider>

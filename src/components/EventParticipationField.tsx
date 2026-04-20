@@ -1,6 +1,7 @@
 "use client";
 
 import { EventSelectionNode } from "@/checkpoint/hooks/events/useEventSelection";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   Accordion,
@@ -37,6 +38,7 @@ export default function EventParticipationField({
   onToggleChild,
 }: Props) {
   const theme = useTheme();
+  const t = useTypedTranslations("rsvp");
 
   const selectedChildren = useMemo(() => {
     return children.filter((c) => isChildSelected(c.id));
@@ -55,12 +57,16 @@ export default function EventParticipationField({
     return (
       <Accordion defaultExpanded>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="subtitle1">Teilnahme bestätigen</Typography>
+          <Typography variant="subtitle1">
+            {t("public.participationConfirm")}
+          </Typography>
         </AccordionSummary>
 
         <AccordionDetails>
           <FormControlLabel
-            control={<Checkbox checked={isRootSelected} onChange={onToggleRoot} />}
+            control={
+              <Checkbox checked={isRootSelected} onChange={onToggleRoot} />
+            }
             label={rootEventName}
           />
         </AccordionDetails>
@@ -78,7 +84,7 @@ export default function EventParticipationField({
       sx={{
         background: alpha(theme.palette.background.paper, 0.7),
         backdropFilter: "blur(14px)",
-        borderRadius: 3,
+        borderRadius: 0,
       }}
     >
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -93,7 +99,7 @@ export default function EventParticipationField({
               fontWeight: 600,
             }}
           >
-            Teilnahme
+            {t("public.participation")}
           </Typography>
 
           {/* Selection Summary */}
@@ -105,14 +111,18 @@ export default function EventParticipationField({
             }}
           >
             {isRootSelected ? (
-              <Chip label="Alle Events" color="primary" size="small" />
+              <Chip
+                label={t("public.allEvents")}
+                color="primary"
+                size="small"
+              />
             ) : selectedChildren.length > 0 ? (
               selectedChildren
                 .slice(0, 2)
                 .map((c) => <Chip key={c.id} label={c.name} size="small" />)
             ) : (
               <Typography variant="body2" color="text.secondary">
-                Keine Auswahl
+                {t("public.noSelection")}
               </Typography>
             )}
 
@@ -141,7 +151,11 @@ export default function EventParticipationField({
                   onChange={onToggleRoot}
                 />
               }
-              label={<Typography sx={{ fontWeight: 500 }}>{rootEventName} (alle)</Typography>}
+              label={
+                <Typography sx={{ fontWeight: 500 }}>
+                  {t("public.rootWithAll", { name: rootEventName })}
+                </Typography>
+              }
             />
           </Box>
 
@@ -166,7 +180,10 @@ export default function EventParticipationField({
                   >
                     <FormControlLabel
                       control={
-                        <Checkbox checked={checked} onChange={() => onToggleChild(child.id)} />
+                        <Checkbox
+                          checked={checked}
+                          onChange={() => onToggleChild(child.id)}
+                        />
                       }
                       label={child.name}
                     />

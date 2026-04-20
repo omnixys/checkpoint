@@ -11,6 +11,7 @@ import BlurOnIcon from "@mui/icons-material/BlurOn";
 
 import { motion } from "framer-motion";
 import { EventVisualOverride, EventViweMode } from "@/checkpoint/types/event.type";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 type Props = {
   viewMode: EventViweMode;
@@ -37,7 +38,7 @@ function SegmentedButton({
   children: React.ReactNode;
   tooltip: string;
   disabled?: boolean;
-}) {
+  }) {  
   const theme = useTheme();
 
   return (
@@ -100,6 +101,8 @@ export default function ViewModeToggle({
   disabled,
 }: Props) {
   const theme = useTheme();
+    const t = useTypedTranslations("event");
+
 
   const visualDisabled = disabled || viewMode === "list";
 
@@ -139,21 +142,21 @@ export default function ViewModeToggle({
           <SegmentedButton
             active={viewMode === "list"}
             onClick={() => onViewModeChange("list")}
-            tooltip="Listenansicht"
+            tooltip={t("view.mode.list.tooltip")}
             disabled={disabled}
           >
             <ViewListIcon fontSize="small" />
-            <Typography variant="body2">Liste</Typography>
+            <Typography variant="body2">{t("view.mode.list.label")}</Typography>
           </SegmentedButton>
 
           <SegmentedButton
             active={viewMode === "grid"}
             onClick={() => onViewModeChange("grid")}
-            tooltip="Grid Ansicht"
+            tooltip={t("view.mode.grid.tooltip")}
             disabled={disabled}
           >
             <GridViewIcon fontSize="small" />
-            <Typography variant="body2">Grid</Typography>
+            <Typography variant="body2">{t("view.mode.grid.label")}</Typography>
           </SegmentedButton>
         </Box>
 
@@ -174,7 +177,7 @@ export default function ViewModeToggle({
           <SegmentedButton
             active={visualOverride === "auto"}
             onClick={() => onVisualOverrideChange("auto")}
-            tooltip="Automatisch"
+            tooltip={t("view.visual.auto")}
             disabled={visualDisabled}
           >
             <BlurOnIcon fontSize="small" />
@@ -183,7 +186,7 @@ export default function ViewModeToggle({
           <SegmentedButton
             active={visualOverride === "image"}
             onClick={() => onVisualOverrideChange("image")}
-            tooltip="Bild anzeigen"
+            tooltip={t("view.visual.image")}
             disabled={visualDisabled}
           >
             <ImageIcon fontSize="small" />
@@ -192,7 +195,7 @@ export default function ViewModeToggle({
           <SegmentedButton
             active={visualOverride === "banner"}
             onClick={() => onVisualOverrideChange("banner")}
-            tooltip="Banner anzeigen"
+            tooltip={t("view.visual.banner")}
             disabled={visualDisabled}
           >
             <HorizontalRuleIcon fontSize="small" />
@@ -201,7 +204,7 @@ export default function ViewModeToggle({
           <SegmentedButton
             active={visualOverride === "none"}
             onClick={() => onVisualOverrideChange("none")}
-            tooltip="Ohne Vorschau"
+            tooltip={t("view.visual.none")}
             disabled={visualDisabled}
           >
             <ViewListIcon fontSize="small" />

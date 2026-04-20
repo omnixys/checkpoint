@@ -1,7 +1,7 @@
 "use client";
 
 import React, { JSX } from "react";
-import { Box, Typography, TextField, Fade } from "@mui/material";
+import { Box, Typography, TextField, Fade, useTheme } from "@mui/material";
 import { useSpring, animated } from "@react-spring/web";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { EventPayload } from "@/checkpoint/generated/graphql";
@@ -14,7 +14,6 @@ interface Props {
 export default function EventSelectorActionSheet({ open, onClose }: Props): JSX.Element {
   const { events, activeEventId, selectEvent } = useActiveEvent();
   const [search, setSearch] = React.useState("");
-
   const filtered = events.filter((ev) => ev.name.toLowerCase().includes(search.toLowerCase()));
 
   // SPRING ANIMATION (real iOS feel)

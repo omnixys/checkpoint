@@ -1,0 +1,137 @@
+{
+  "searchPlaceholder": "Suchen nach Name, E-Mail oder Telefonnummer...",
+  "event": "Event",
+  "type": "Typ",
+  "status": "Status",
+
+  "mainEvent": "{name} (Hauptevent)",
+
+  "typePrivate": "Privat",
+  "typePublic": "Öffentlich",
+  "copyRsvp": "RSVP-Link kopieren",
+
+  "statusType": {
+    "PENDING": "Ausstehend",
+    "APPROVED": "Genehmigt",
+    "REJECTED": "Abgelehnt",
+    "DECLINED": "Abgesagt",
+    "ACCEPTED": "Zugesagt",
+    "CANCELED": "Stoniert"
+  },
+
+  "title": "Einladungen",
+  "subtitle": "Verwalte Gäste, Status und Einladungen",
+
+  "backToEvent": "Zurück zum Event",
+  "create": "Einladung erstellen",
+
+  "showFilters": "Filter anzeigen",
+  "hideFilters": "Filter ausblenden",
+
+  "table": {
+    "type": "Typ",
+    "name": "Name",
+    "phone": "Telefonnummern",
+    "email": "E-Mail",
+    "status": "Status",
+    "link": "Link",
+    "actions": "Aktionen"
+  },
+
+  "copyLink": "Link kopieren",
+  "delete": "Einladung löschen",
+
+  "rsvpType": {
+    "PRIVATE": "Privat",
+    "PUBLIC": "Öffentlich"
+  },
+
+  "noPhone": "Keine Telefonnummer",
+  "noEmail": "Keine E-Mail",
+
+  "approve": "Genehmigen",
+  "approveAndSeat": "Genehmigen und Sitz zuweisen",
+  "decline": "Ablehnen",
+  "rsvpPath": "/rsvp/{id}",
+
+  "detail": {
+    "title": "{firstName}'s  Einladung",
+    "shareAndContact": "Teilen & Kontakt",
+    "whatsappMessage": "Hallo {firstName}, ich melde mich wegen deiner Einladung.",
+    "sendWhatsappMessage": "WhatsApp Nachricht senden",
+    "whatsappInvitation": "WhatsApp Einladung senden",
+    "copyRsvpLink": "RSVP-Link kopieren",
+    "copied": "Kopiert!",
+    "administration": "Verwaltung",
+    "delete": "Löschen",
+    "loadingSeats": "Lade Sitzplätze…",
+    "selectSeat": "Sitzplatz auswählen",
+    "back": "← Zurück",
+    "searchSeatPlaceholder": "Bereich, Tisch oder Platz suchen",
+    "selected": "Ausgewählt",
+    "table": "Tisch",
+    "seat": "Platz",
+    "other": "Andere"
+  },
+
+  "bulk": {
+    "approve": "Alle genehmigen ({count})",
+    "send": "Einladungen verschicken",
+    "clear": "Auswahl löschen"
+  },
+
+  "createInv": {
+    "title": "Neue Einladung",
+    "subtitle": "Erstelle einen neuen Gast und verwalte seine Einladung",
+
+    "person": "Person",
+    "invitation": "Einladung",
+
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "email": "E-Mail",
+
+    "maxInvitees": "Max. Begleitpersonen",
+
+    "invitedBy": "Eingeladen von (optional)",
+    "invitedByHelp": "Optional: Wer hat diese Person eingeladen?",
+
+    "noAssignment": "Keine Zuordnung",
+    "unknown": "Unbekannt",
+
+    "creating": "Erstellen...",
+    "submit": "Einladung erstellen"
+  },
+
+  "bulkSend": {
+    "title": "Einladungen verschicken",
+    "send": "Senden"
+  },
+
+  "bulkApprove": {
+    "title": "Einladungen genehmigen",
+
+    "invitationId": "Einladung-ID: {id}",
+
+    "locale": "Sprache",
+    "event": "Event",
+    "seat": "Sitzplatz",
+
+    "noSeat": "Kein Sitzplatz",
+
+    "selectedSeat": "Gewählte Seat-Beschriftung: {seat}",
+
+    "empty": "Keine Einladungen ausgewählt.",
+
+    "loading": "Genehmige...",
+    "submit": "Alle genehmigen ({count})"
+  },
+
+  "filters": {
+    "title": "Filter",
+    "open": "Filter öffnen",
+    "close": "Filter schließen",
+    "apply": "Filter anwenden",
+    "reset": "Filter zurücksetzen"
+  }
+}

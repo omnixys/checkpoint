@@ -1,5 +1,6 @@
 "use client";
 
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { useDevice } from "@/checkpoint/providers/DeviceProvider";
 import { alpha, Box, Stack, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
@@ -132,15 +133,17 @@ function DesktopOption({
  * MAIN COMPONENT
  * ------------------------------------------------------ */
 export default function EventVariantToggle({ variant, onChange }: Props) {
+  const t = useTypedTranslations("event");
+  
   const { isMobile } = useDevice();
   const theme = useTheme();
 
-  const OPTIONS: { label: string; value: VariantType }[] = [
-    { label: "A – Calendar", value: "A" },
-    { label: "B – Hero", value: "B" },
-    { label: "C – Dashboard", value: "C" },
-    { label: "D – Vision Pro", value: "D" },
-  ];
+const OPTIONS: { label: string; value: VariantType }[] = [
+  { label: t("variant.A"), value: "A" },
+  { label: t("variant.B"), value: "B" },
+  { label: t("variant.C"), value: "C" },
+  { label: t("variant.D"), value: "D" },
+];
 
   return (
     <>

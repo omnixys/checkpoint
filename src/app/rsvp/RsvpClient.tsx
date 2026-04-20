@@ -75,6 +75,7 @@ function ErrorState({ title, message }: { title: string; message: string }) {
 }
 
 function LoadingScreen() {
+   const t = useTypedTranslations("common");
   return (
     <Box
       sx={{
@@ -85,6 +86,7 @@ function LoadingScreen() {
       }}
     >
       <CircularProgress />
+      <Typography variant="body2">{t("loading")}</Typography>
     </Box>
   );
 }
@@ -182,7 +184,9 @@ export default function RsvpClient({
   /* ---------------- Guards ---------------- */
 
   if (!eventId) {
-    return <ErrorState title={t("invalidLink")} message="Missing eventId." />;
+    return (
+      <ErrorState title={t("invalidLink")} message={t("missingEventId")} />
+    );
   }
 
   if (loadingEvent || loadingTree) {
@@ -331,7 +335,7 @@ setValidationMessages([t("validation.multiEventNotSupported")]);
                 </Alert>
               )}
 
-              {error && <Alert severity="error">{error.message}</Alert>}
+              {error && <Alert severity="error"> {t("submitFailed")}</Alert>}
 
               <Button
                 variant="contained"

@@ -5,9 +5,13 @@ import { motion, useMotionValue, useTransform } from "framer-motion";
 import Image from "next/image";
 import React from "react";
 import { EventHeaderProps } from "../EventActions";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 export default function EventHeaderD({ ev }: EventHeaderProps) {
   const theme = useTheme();
+  const t = useTypedTranslations("event");
+  const tCommon = useTypedTranslations("common");
+  const locale = tCommon("locale");
 
   // 3D tilt values
   const tiltX = useMotionValue(0);
@@ -33,7 +37,11 @@ export default function EventHeaderD({ ev }: EventHeaderProps) {
   const hero = (ev as unknown as { imageUrl?: string }).imageUrl || "/event/event-default.png";
 
   return (
-    <motion.div style={{ perspective: 1600 }} onMouseMove={onMove} onMouseLeave={onLeave}>
+    <motion.div
+      style={{ perspective: 1600 }}
+      onMouseMove={onMove}
+      onMouseLeave={onLeave}
+    >
       <motion.div
         style={{
           rotateX,
@@ -55,7 +63,12 @@ export default function EventHeaderD({ ev }: EventHeaderProps) {
           }}
         >
           {/* Background Image */}
-          <Image src={hero} alt={ev.name} fill style={{ objectFit: "cover", opacity: 0.75 }} />
+          <Image
+            src={hero}
+            alt={ev.name}
+            fill
+            style={{ objectFit: "cover", opacity: 0.75 }}
+          />
 
           {/* Fog Gradient */}
           <Box
@@ -90,7 +103,11 @@ export default function EventHeaderD({ ev }: EventHeaderProps) {
             </Typography>
 
             <Chip
-              label={ev.myRole ?? "Guest"}
+              label={
+                ev.myRole
+                  ? t(`header.role.${ev.myRole}`)
+                  : t("header.role.GUEST")
+              }
               color={roleChipColor}
               sx={{
                 fontWeight: 700,
@@ -102,14 +119,14 @@ export default function EventHeaderD({ ev }: EventHeaderProps) {
             />
 
             <Typography variant="body1">
-              {new Date(ev.settings.startsAt).toLocaleString("de-DE", {
+              {new Date(ev.settings.startsAt).toLocaleString(locale, {
                 dateStyle: "medium",
                 timeStyle: "short",
               })}
             </Typography>
             <Typography variant="body2">
-              bis{" "}
-              {new Date(ev.settings.endsAt).toLocaleString("de-DE", {
+              {t("header.until")}{" "}
+              {new Date(ev.settings.endsAt).toLocaleString(locale, {
                 dateStyle: "medium",
                 timeStyle: "short",
               })}

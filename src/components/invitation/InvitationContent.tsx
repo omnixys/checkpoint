@@ -19,7 +19,10 @@ export default function InvitationContent({
   return (
     <>
       {/* LIST */}
-      {isMobile ? <InvitationCardView logic={logic} /> : <InvitationTable logic={logic} />}
+      {isMobile
+        ? <InvitationCardView logic={logic} />
+        : <InvitationTable logic={logic} />
+      }
 
       {/* BULK BAR */}
       <InvitationBulkBar logic={logic} />

@@ -70,7 +70,7 @@ export interface BulkApproveEntry {
   eventId: string;
   eventName: string;
   seatId: string | null;
-  seatLabel: string;
+  seatLabel: string | null;
 }
 
 /* ---------------------------------------------------------------------------
@@ -332,8 +332,6 @@ export function useInvitationLogic(eventId: string) {
     });
 
     const seats = result.data?.seats ?? [];
-    console.log("{ seats }");
-    console.log({ seats });
 
     const mapped: BulkApproveSeatOption[] = seats.map((seat) => ({
       id: seat.id,
@@ -508,7 +506,7 @@ export function useInvitationLogic(eventId: string) {
         eventId: resolvedEventId,
         eventName: resolvedEventName,
         seatId: null,
-        seatLabel: "debug",
+        seatLabel: null,
       };
     }
 

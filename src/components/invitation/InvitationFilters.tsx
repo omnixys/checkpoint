@@ -13,17 +13,28 @@ import {
   alpha,
 } from "@mui/material";
 import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 type InvitationEventFilterOption = {
   id: string;
   label: string;
 };
 
+type StatusType = "PENDING" | "APPROVED" | "REJECTED" | "DECLINED" | "ACCEPTED";
+
 
 export default function InvitationFilters({ logic }: { logic: InvitationLogic }) {
   const theme = useTheme();
+  const tInvitation = useTypedTranslations("invitation");
+    const tCommon = useTypedTranslations("common");
 
-  const statuses = ["PENDING", "APPROVED", "REJECTED", "DECLINED", "ACCEPTED"];
+  const statuses: StatusType[] = [
+    "PENDING",
+    "APPROVED",
+    "REJECTED",
+    "DECLINED",
+    "ACCEPTED",
+  ];
 
   const children = logic.childEvents.filter(
     (child) => logic.rootEventId !== child.id,
@@ -32,11 +43,11 @@ export default function InvitationFilters({ logic }: { logic: InvitationLogic })
     return [
       {
         id: "__ALL__",
-        label: "Alle",
+        label: tCommon("all"),
       },
       {
         id: logic.rootEventId,
-        label: `${logic.rootEventName} (Hauptevent)`,
+        label: tInvitation("mainEvent", { name: logic.rootEventName }),
       },
       ...children.map((event) => ({
         id: event.id,
@@ -52,15 +63,12 @@ export default function InvitationFilters({ logic }: { logic: InvitationLogic })
         px: 3,
         pb: 2,
 
-          overflow: "hidden",
+        overflow: "hidden",
 
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
 
-        background:
-          theme.palette.mode === "dark"
-            ? "rgba(0,0,0,0.6)"
-            : "rgba(255,255,255,0.7)",
+        background: theme.palette.background.paper,
 
         boxShadow: "0 20px 60px rgba(0,0,0,0.4)",
 
@@ -94,7 +102,7 @@ export default function InvitationFilters({ logic }: { logic: InvitationLogic })
       <Stack spacing={1}>
         <TextField
           fullWidth
-          placeholder="Suchen nach Name, E-Mail oder Telefonnummer..."
+          placeholder={tInvitation("searchPlaceholder")}
           value={logic.search}
           onChange={(e) => logic.setSearch(e.target.value)}
           sx={{
@@ -104,7 +112,7 @@ export default function InvitationFilters({ logic }: { logic: InvitationLogic })
               background: alpha(theme.palette.background.paper, 0.6),
               backdropFilter: "blur(12px)",
             },
-          }}  
+          }}
         />
 
         <Stack
@@ -117,7 +125,7 @@ export default function InvitationFilters({ logic }: { logic: InvitationLogic })
         >
           <Box>
             <Typography variant="caption" sx={{ opacity: 0.7 }}>
-              Event
+              {tInvitation("event")}
             </Typography>
 
             <Box
@@ -167,7 +175,7 @@ export default function InvitationFilters({ logic }: { logic: InvitationLogic })
 
           <Box>
             <Typography variant="caption" sx={{ opacity: 0.7 }}>
-              Typ
+              {tInvitation("type")}
             </Typography>
             <Box
               sx={{
@@ -194,16 +202,22 @@ export default function InvitationFilters({ logic }: { logic: InvitationLogic })
                 size="small"
                 sx={{ gap: 1, mt: 0.5, flexWrap: "wrap" }}
               >
-                <ToggleButton value="ALL">Alle</ToggleButton>
-                <ToggleButton value="PRIVATE">Private</ToggleButton>
-                <ToggleButton value="PUBLIC">Public</ToggleButton>
+                <ToggleButton value="ALL">{tCommon("all")}</ToggleButton>
+
+                <ToggleButton value="PRIVATE">
+                  {tInvitation("typePrivate")}
+                </ToggleButton>
+
+                <ToggleButton value="PUBLIC">
+                  {tInvitation("typePublic")}
+                </ToggleButton>
               </ToggleButtonGroup>
             </Box>
           </Box>
 
           <Box>
             <Typography variant="caption" sx={{ opacity: 0.7 }}>
-              Status
+              {tInvitation("status")}
             </Typography>
 
             <Box
@@ -223,7 +237,7 @@ export default function InvitationFilters({ logic }: { logic: InvitationLogic })
                 return (
                   <Chip
                     key={status}
-                    label={status}
+                    label={tInvitation(`statusType.${status}`)}
                     onClick={() =>
                       logic.setStatusFilter(active ? null : status)
                     }

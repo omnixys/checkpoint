@@ -8,7 +8,9 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Stack,
   Typography,
+  useTheme,
 } from "@mui/material";
 import { JSX, useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
@@ -23,9 +25,14 @@ import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { env } from "@/checkpoint/lib/env";
 import EventSelector from "@/checkpoint/components/Selectors/EventSelector";
+import LanguageSwitcher from "@/checkpoint/components/LanguageSwitcher";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 export default function NavigationDesktop(): JSX.Element {
   const [collapsed, setCollapsed] = useState(false);
+  const theme = useTheme();
+    const t = useTypedTranslations("layout");
+
 
   const { isAuthenticated } = useAuth();
   const router = useRouter();
@@ -34,7 +41,7 @@ export default function NavigationDesktop(): JSX.Element {
   const { activeEvent } = useActiveEvent();
   const role = activeEvent?.myRole ?? "GUEST";
 
-  const items = createNavigation(role, activeEvent?.id);
+  const items = createNavigation(role, t, activeEvent?.id);
 
   return (
     <Box
@@ -50,25 +57,31 @@ export default function NavigationDesktop(): JSX.Element {
         p: collapsed ? 1.5 : 3,
       }}
     >
-      <Typography
-        variant="h5"
-        component={Link}
-        href={env.CHECKPOINT_BASE_PATH}
-        sx={{
-          mb: 2,
-          fontWeight: 700,
-          cursor: "pointer",
-          textDecoration: "none",
-          transition: "opacity 0.2s ease, transform 0.2s ease",
-          "&:hover": {
-            opacity: 0.85,
-            transform: "translateY(-1px)",
-          },
-        }}
-      >
-        Checkpoint
-      </Typography>
-
+      <Stack direction={'row'} spacing={0.5} sx={{
+                alignItems: "center",
+        justifyContent: "space-between",
+      }} >
+        <Typography
+          color={theme.palette.primary.main}
+          variant="h5"
+          component={Link}
+          href={env.CHECKPOINT_BASE_PATH}
+          sx={{
+            mb: 2,
+            fontWeight: 700,
+            cursor: "pointer",
+            textDecoration: "none",
+            transition: "opacity 0.2s ease, transform 0.2s ease",
+            "&:hover": {
+              opacity: 0.85,
+              transform: "translateY(-1px)",
+            },
+          }}
+        >
+          Checkpoint
+        </Typography>
+        <LanguageSwitcher />
+      </Stack>
       <Divider sx={{ mb: 2 }} />
       {isAuthenticated && (
         <>
