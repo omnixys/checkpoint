@@ -13,6 +13,7 @@ import home from "../../messages/en/home.json";
 import error from "../../messages/en/error.json";
 import rsvp from "../../messages/en/rsvp.json";
 import common from "../../messages/en/common.json";
+import create from "../../messages/en/create.json";
 
 
 
@@ -33,6 +34,7 @@ export const messages = {
   error,
   rsvp,
   common,
+  create,
 };
 
 export type Messages = typeof messages;

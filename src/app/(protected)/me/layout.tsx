@@ -26,8 +26,6 @@ export default function MeLayout({ children }: { children: ReactNode }) {
         minHeight: "100vh",
         px: { xs: 2, md: 6 },
         py: 4,
-        background: (theme) =>
-          `linear-gradient(180deg, ${theme.palette.background.default}, ${theme.palette.background.paper})`,
       }}
     >
       <Stack

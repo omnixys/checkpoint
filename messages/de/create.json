@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "title": "Event erstellen",
+    "subtitle": "Erstelle ein Event mit luxuriösem Flow"
+  },
+  "steps": {
+    "basics": "Basics",
+    "address": "Adresse",
+    "settings": "Einstellungen",
+    "visibility": "Sichtbarkeit",
+    "experience": "Erlebnis",
+    "schedule": "Zeitplan",
+    "children": "Unterevents",
+    "summary": "Zusammenfassung",
+    "success": "Fertig"
+  },
+
+  "visibility": {
+    "title": "Sichtbarkeit",
+    "description": "Steuere, wer dieses Event finden, zusagen und teilen kann.",
+    "isPublic": "Öffentliches Event",
+    "isPublicHint": "Macht dieses Event im öffentlichen Event-Bereich sichtbar.",
+    "allowPublicRsvp": "Öffentliche RSVP erlauben",
+    "allowPublicRsvpHint": "Gäste können über einen öffentlichen RSVP-Flow antworten.",
+    "allowPublicPlusOne": "Öffentliche Begleitpersonen erlauben",
+    "allowPublicPlusOneHint": "Gäste können Begleitpersonen hinzufügen, wenn RSVP aktiviert ist.",
+    "allowPublicRsvpWebsite": "RSVP-Webseite aktivieren",
+    "allowPublicRsvpWebsiteHint": "Stellt eine dedizierte RSVP-Webseite für dieses Event bereit.",
+    "publicRsvpWebsite": "RSVP-Webseite",
+    "publicRsvpWebsitePlaceholder": "https://..."
+  },
+  "common": {
+    "enabled": "Aktiviert",
+    "disabled": "Deaktiviert"
+  }
+}

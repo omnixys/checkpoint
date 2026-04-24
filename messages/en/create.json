@@ -1,0 +1,226 @@
+{
+  "meta": {
+    "title": "Create event",
+    "subtitle": "Create an event with a luxurious flow."
+  },
+  "steps": {
+    "basics": "Basics",
+    "address": "Address",
+    "settings": "Setup",
+    "visibility": "Visibility",
+    "experience": "Experience",
+    "schedule": "Schedule",
+    "children": "Children",
+    "summary": "Review",
+    "success": "Done"
+  },
+
+  "success": {
+    "title": "Event prepared successfully ✨",
+    "description": "The wizard has been completed successfully.",
+    "createAnother": "Create another event",
+    "subtitle": "Share the link, invite people, and watch the magic happen."
+  },
+
+  "actions": {
+    "back": "Back",
+    "next": "Continue",
+    "skip": "Skip for now",
+    "create": "Create event",
+    "edit": "Edit",
+    "addChild": "Add session",
+    "remove": "Remove",
+    "createAnother": "Create another",
+    "viewEvent": "View event",
+    "review": "Review everything"
+  },
+
+  "basics": {
+    "title": "Let's start with the essentials",
+    "subtitle": "You can always change these later.",
+    "title2": "The identity of the event",
+    "name": "Event name",
+    "namePlaceholder": "Annual Summit 2026",
+    "descriptionPlaceholder": "A short, inviting summary…",
+    "parent": "Parent event (optional)",
+    "parentPlaceholder": "Link this to an existing event",
+    "startsAt": "Starts",
+    "endsAt": "Ends",
+    "description": "Give the event a clear name and optionally attach it to a parent event.",
+    "parentId": "Parent event ID",
+    "parentIdPlaceholder": "Optional",
+    "previewTitle": "Quick preview",
+    "previewEventName": "Name",
+    "previewParent": "Structure",
+    "previewEmptyName": "No event name yet",
+    "previewStandalone": "Standalone event"
+  },
+
+  "children": {
+    "category": "kp",
+    "description": "Add child events when the main event contains multiple areas, time slots or sub-formats.",
+    "add": "Add child event",
+    "empty": "There are currently no child events/Sessions yet. Add your first.",
+    "parentId": "Parent ID",
+    "maxSeats": "Seats",
+    "remove": "Remove child event",
+    "title": "Add sessions or sub-events",
+    "subtitle": "Optional. Great for conferences, festivals, retreats.",
+    "name": "Session/sub-event name",
+    "startsAt": "Starts",
+    "endsAt": "Ends",
+    "untitled": "Untitled",
+    "dateRange": "{date}, {start} – {end}",
+    "dateSingle": "{date}, {time}",
+    "dateRangeMultiDay": "{startDate}, {startTime} – {endDate}, {endTime}"
+  },
+
+  "summary": {
+    "subtitle": "Take a final look. Everything's editable.",
+    "basics": "Event basics",
+    "address": "Location",
+    "settings": "Settings",
+    "children": "Sessions/Sub-Events",
+    "noAddress": "No location set",
+
+    "title": "Final review",
+    "description": "Review all values one final time before confirming the create flow.",
+    "event": "Event",
+    "configuration": "Configuration",
+    "name": "Name",
+    "parentId": "Parent ID",
+    "maxSeats": "Max seats",
+    "rotateSeconds": "Rotation",
+    "none": "None",
+    "empty": "Empty",
+    "noChildren": "No Sub-Events available",
+    "child": "Child event",
+    "reEntryOn": "Re-entry on",
+    "reEntryOff": "Re-entry off",
+    "rsvpOn": "RSVP on",
+    "rsvpOff": "RSVP off",
+    "plusOneOn": "Plus-one on",
+    "plusOneOff": "Plus-one off",
+    "public": "Public",
+    "private": "Private",
+
+    "visibility": "Visibility",
+    "experience": "Experience"
+  },
+
+  "settings": {
+    "title2": "Tune it for your audience",
+    "subtitle": "Smart defaults are already chosen.",
+    "visibility": "Visibility",
+    "visibilityOptions": {
+      "public": "Public",
+      "unlisted": "Unlisted",
+      "private": "Private"
+    },
+    "capacity": "Capacity",
+    "capacityPlaceholder": "Unlimited",
+    "category": "Category",
+    "timezone": "Timezone",
+    "rsvp": "RSVP & access",
+    "requiresApproval": "Require approval",
+    "allowGuests": "Allow plus-ones",
+    "enableWaitlist": "Enable waitlist",
+    "ticketingEnabled": "Sell tickets",
+
+    "title": "Access and capacity",
+    "description": "Control capacity, QR rotation and re-entry so that security and admins can operate immediately.",
+    "maxSeats": "Maximum seats",
+    "maxSeatsField": "Seats",
+    "rotateSeconds": "QR rotation in seconds",
+    "rotateSecondsField": "Rotation",
+    "allowReEntry": "Allow re-entry",
+    "allowReEntryHint": "Guests may leave the event and enter again",
+    "isActive": "Event active",
+    "isActiveHint": "The event is immediately ready to use",
+    "quickSummary": "Quick summary",
+    "summarySeats": "Maximum seats: {count}",
+    "summaryRotate": "Rotation: {count} seconds",
+    "summaryReEntryEnabled": "Re-entry is enabled",
+    "summaryReEntryDisabled": "Re-entry is disabled",
+    "summaryActive": "Event is active",
+    "summaryInactive": "Event is inactive"
+  },
+
+  "address": {
+    "title": "Where will it happen?",
+    "subtitle": "Search an address — we'll fill the rest in for you.",
+    "search": "Search address",
+    "searchPlaceholder": "Start typing a venue, street or city…",
+    "noResults": "No matches yet. Keep typing.",
+    "loading": "Searching…",
+    "skip": "Set location later",
+    "selected": "Selected location",
+    "country": "Country",
+    "city": "City",
+    "postalCode": "Postal code",
+    "street": "Street",
+    "houseNumber": "House number",
+    "state": "Region",
+
+    "description": "Search first via suggestions, then refine each address field individually.",
+    "searchHint": "Type at least 3 characters",
+    "noOptions": "No results found",
+    "additionalInfo": "Additional info",
+    "previewTitle": "Address preview",
+    "previewLabel": "Live preview",
+    "empty": {
+      "street": "Street and house number missing",
+      "city": "Postal code and city missing",
+      "country": "State and country missing"
+    }
+  },
+
+  "experience": {
+    "title": "Experience and branding",
+    "dressCode": "Dress code",
+    "dressCodePlaceholder": "e.g. Black Tie",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe the mood, flow or highlights of the event",
+    "media": "Media",
+    "coverImageUrl": "Cover image URL",
+    "coverImageUrlPlaceholder": "https://...",
+    "logoUrl": "Logo URL",
+    "logoUrlPlaceholder": "https://...",
+    "toneTitle": "Premium impression",
+    "toneDescription": "Use dress code, copy and media to create a premium event identity before invitations are sent.",
+    "chooseLogo": "Choose logo",
+    "chooseCover": "Choose cover",
+    "category": "Category",
+    "categories": {
+      "general": "General",
+      "conference": "Conference",
+      "music": "Music",
+      "workshop": "Workshop",
+      "social": "Social",
+      "sports": "Sports"
+    }
+  },
+
+  "common": {
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "incomplete": "Incomplete"
+  },
+
+  "visibility": {
+    "title": "Visibility",
+    "description": "Control who can discover, RSVP and share this event.",
+    "isPublic": "Public event",
+    "isPublicHint": "Make this event visible to people with access to the public event area.",
+    "allowPublicRsvp": "Allow public RSVP",
+    "allowPublicRsvpHint": "Guests can respond through a public RSVP flow.",
+    "allowPublicPlusOne": "Allow public plus-ones",
+    "allowPublicPlusOneHint": "Guests can add plus-ones when RSVP is enabled.",
+    "allowPublicRsvpWebsite": "Enable RSVP website",
+    "allowPublicRsvpWebsiteHint": "Expose a dedicated RSVP website for this event.",
+    "publicRsvpWebsite": "RSVP website",
+    "publicRsvpWebsitePlaceholder": "https://...",
+    "helperText": "Control who can discover and interact with your event. Public events can be accessed without invitation.",
+    "publicWebsiteTitle": "Public RSVP website"
+  }
+}

@@ -63,3 +63,75 @@ export function addYears(date: Date, delta: number): Date {
   d.setFullYear(d.getFullYear() + delta);
   return d;
 }
+
+type TranslateFn = (
+  key: any,
+  values?: Record<string, string | number>,
+) => string;
+
+
+export function formatChildEventDateRange(
+  startsAt: string | undefined,
+  endsAt: string | undefined,
+  locale: string,
+  t: TranslateFn,
+): string | null {
+  if (!startsAt) {
+    return null;
+  }
+
+  const startDate = new Date(startsAt);
+  const endDate = endsAt ? new Date(endsAt) : null;
+
+  if (Number.isNaN(startDate.getTime())) {
+    return null;
+  }
+
+  const dateFormatter = new Intl.DateTimeFormat(locale, {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+
+  const timeFormatter = new Intl.DateTimeFormat(locale, {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  const date = dateFormatter.format(startDate);
+  const startTime = timeFormatter.format(startDate);
+
+  // 👉 Kein Enddatum
+  if (!endDate || Number.isNaN(endDate.getTime())) {
+    return t("children.dateSingle", {
+      date,
+      time: startTime,
+    });
+  }
+
+  const endTime = timeFormatter.format(endDate);
+
+  // 👉 Same day check
+  const isSameDay =
+    startDate.getFullYear() === endDate.getFullYear() &&
+    startDate.getMonth() === endDate.getMonth() &&
+    startDate.getDate() === endDate.getDate();
+
+  if (isSameDay) {
+    return t("children.dateRange", {
+      date,
+      start: startTime,
+      end: endTime,
+    });
+  }
+
+  // 👉 Multi-day case
+  const endDateLabel = dateFormatter.format(endDate);
+
+  return t("children.dateRangeMultiDay", {
+    startDate: date,
+    startTime,
+    endDate: endDateLabel,
+    endTime,
+  });
+}

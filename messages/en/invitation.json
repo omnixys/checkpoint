@@ -138,5 +138,71 @@
     "close": "Close filters",
     "apply": "Apply filters",
     "reset": "Reset filters"
+  },
+
+  "plusOnes": {
+    "title": "Your Plus Ones",
+    "subtitle": "Manage all plus-ones for your invitation here. You can add, edit, remove them and optionally see their assigned seat.",
+    "add": "Add guest",
+    "removeAll": "Remove all",
+    "remaining": "Remaining slots: {count}",
+    "loading": "Loading plus-ones ...",
+    "created": "Plus-one has been added.",
+    "updated": "Plus-one has been updated.",
+    "removed": "Plus-one has been removed.",
+    "removedAll": "All plus-ones have been removed.",
+    "errorCreate": "Plus-one could not be created.",
+    "errorUpdate": "Plus-one could not be updated.",
+    "errorRemove": "Plus-one could not be removed.",
+    "errorRemoveAll": "Plus-ones could not be removed together.",
+    "errorMissingInvitation": "No invitation could be resolved.",
+    "emptyTitle": "No plus-ones yet",
+    "emptyDescription": "Add your first plus-one so it can be managed and assigned later.",
+    "noInvitationTitle": "No invitation found",
+    "noInvitationDescription": "No manageable invitation could currently be found for this account.",
+    "seat": "Seat",
+    "stats": {
+      "used": "Currently created",
+      "remaining": "Remaining slots",
+      "seatsAssigned": "Assigned seats"
+    },
+    "fields": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "phoneSection": "Phone number",
+      "countryCode": "Country code",
+      "phoneNumber": "Phone number",
+      "phoneType": "Type",
+      "phoneLabel": "Label"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Remove"
+    },
+    "dialog": {
+      "createTitle": "Add plus-one",
+      "editTitle": "Edit plus-one",
+      "subtitle": "Maintain the contact information of the plus-one here.",
+      "createAction": "Add",
+      "updateAction": "Save"
+    },
+    "phoneTypes": {
+      "WHATSAPP": "WhatsApp",
+      "MOBILE": "Mobile",
+      "PRIVATE": "Private",
+      "WORK": "Work",
+      "HOME": "Home",
+      "OTHER": "Other"
+    },
+    "status": {
+      "PENDING": "Pending",
+      "ACCEPTED": "Accepted",
+      "DECLINED": "Declined",
+      "CANCELED": "Canceled",
+      "REJECTED": "Rejected",
+      "APPROVED": "Approved",
+      "UNKNOWN": "Unknown"
+    }
   }
 }

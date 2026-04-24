@@ -132,7 +132,6 @@ export function createNavigation(
         label: t("sidebar.plusOnes"),
         icon: <GroupsIcon />,
         path: `${basePath}my-plus-ones`,
-        disabled: true,
       },
       {
         label: t("sidebar.profile"),

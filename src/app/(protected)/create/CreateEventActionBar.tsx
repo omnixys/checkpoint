@@ -1,0 +1,64 @@
+import { useCreateEvent } from "@/checkpoint/app/(protected)/create/context/CreateEventContext";
+import { CreateEventWizardStep } from "@/checkpoint/app/(protected)/create/types/event/event-wizard.type";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { Button, Stack, useTheme } from "@mui/material";
+
+interface CreateEventActionBarProps {
+  previousStep: () => void;
+  nextStep: () => void;
+
+  activeStep: number;
+
+  disableNext?: boolean;
+  isSubmitting?: boolean;
+}
+
+export default function CreateEventActionBar({
+  previousStep,
+  activeStep,
+  nextStep,
+  disableNext = false,
+  isSubmitting = false,
+}: CreateEventActionBarProps) {
+  const theme = useTheme();
+  const t = useTypedTranslations("create");
+
+  const isLastStep = activeStep === CreateEventWizardStep.SUMMARY;
+
+  return (
+    <Stack
+      direction="row"
+      sx={{
+        justifyContent: "space-between",
+        mt: 4,
+        pt: 3,
+        borderTop: `1px solid ${theme.palette.divider}`,
+      }}
+    >
+      {/* BACK */}
+      <Button
+        onClick={previousStep}
+        disabled={activeStep === 0 || isSubmitting}
+        sx={{
+          textTransform: "none",
+        }}
+      >
+        {t("actions.back")}
+      </Button>
+
+      {/* NEXT / SUBMIT */}
+      <Button
+        variant="contained"
+        onClick={nextStep}
+        disabled={disableNext || isSubmitting}
+        sx={{
+          textTransform: "none",
+          borderRadius: 3,
+          px: 3,
+        }}
+      >
+        {isLastStep ? t("actions.create") : t("actions.next")}
+      </Button>
+    </Stack>
+  );
+}

@@ -43,7 +43,8 @@ export default getRequestConfig(async () => {
     auth: (await import(`../../messages/${language}/auth.json`)).default,
     event: (await import(`../../messages/${language}/event.json`)).default,
     // calendar: (await import(`../../messages/${language}/calendar.json`)).default,
-    invitation: (await import(`../../messages/${language}/invitation.json`)).default,
+    invitation: (await import(`../../messages/${language}/invitation.json`))
+      .default,
     // ticket: (await import(`../../messages/${language}/ticket.json`)).default,
     // security: (await import(`../../messages/${language}/security.json`)).default,
     // settings: (await import(`../../messages/${language}/settings.json`)).default,
@@ -55,6 +56,7 @@ export default getRequestConfig(async () => {
     error: (await import(`../../messages/${language}/error.json`)).default,
     rsvp: (await import(`../../messages/${language}/rsvp.json`)).default,
     common: (await import(`../../messages/${language}/common.json`)).default,
+    create: (await import(`../../messages/${language}/create.json`)).default,
   };
 
   return {

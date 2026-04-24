@@ -4,5 +4,5 @@ fragment AuthUser on KcUser {
   firstName
   lastName
   email
-  roles
+  role
 }

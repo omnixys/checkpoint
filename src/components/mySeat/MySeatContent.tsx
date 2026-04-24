@@ -105,7 +105,7 @@ export default function MySeatContent(): JSX.Element {
    * UI
    * ----------------------------------------------------- */
   return (
-    <Box sx={{ p: 2 }}>
+    <Box sx={{ p: 2, pt:30 }}>
       <Card
         sx={{
           borderRadius: 4,

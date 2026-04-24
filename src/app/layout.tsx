@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import StartupVisionPro from "@/checkpoint/components/startup/StartupVisionPro";
@@ -7,6 +7,10 @@ import { baseMetadata } from "@/checkpoint/lib/metadata/base.metadata";
 import { env } from "@/checkpoint/lib/env";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
+
+export const viewport: Viewport = {
+  themeColor: "#6A4BBC", // MUST match omnixys primary :contentReference[oaicite:0]{index=0}
+};
 
 export const metadata: Metadata = {
   ...baseMetadata,
@@ -81,8 +85,6 @@ export const metadata: Metadata = {
    * -------------------------------------------------------------
    */
   manifest: "/manifest.json",
-
-  themeColor: "#6A4BBC", // MUST match omnixys primary :contentReference[oaicite:0]{index=0}
 
   robots: {
     index: true,

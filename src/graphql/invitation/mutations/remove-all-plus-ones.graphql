@@ -1,5 +1,3 @@
-# import InvitationFull from "../fragments/invitation.fragment.graphql"
-
 mutation RemoveAllPlusOnesByInvitationId($id: ID!) {
   removeAllPlusOnesByInvitationId(invitedByInvitationId: $id) {
     ...InvitationFull

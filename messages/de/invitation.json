@@ -133,5 +133,71 @@
     "close": "Filter schließen",
     "apply": "Filter anwenden",
     "reset": "Filter zurücksetzen"
+  },
+
+  "plusOnes": {
+    "title": "Deine Begleitpersonen",
+    "subtitle": "Verwalte hier alle Plus-Ones deiner Einladung. Du kannst sie hinzufügen, bearbeiten, entfernen und – falls vorhanden – auch ihren Sitzplatz sehen.",
+    "add": "Gast hinzufügen",
+    "removeAll": "Alle entfernen",
+    "remaining": "Verbleibende Plätze: {count}",
+    "loading": "Begleitpersonen werden geladen ...",
+    "created": "Begleitperson wurde hinzugefügt.",
+    "updated": "Begleitperson wurde aktualisiert.",
+    "removed": "Begleitperson wurde entfernt.",
+    "removedAll": "Alle Begleitpersonen wurden entfernt.",
+    "errorCreate": "Begleitperson konnte nicht erstellt werden.",
+    "errorUpdate": "Begleitperson konnte nicht aktualisiert werden.",
+    "errorRemove": "Begleitperson konnte nicht entfernt werden.",
+    "errorRemoveAll": "Begleitpersonen konnten nicht gesammelt entfernt werden.",
+    "errorMissingInvitation": "Es konnte keine Einladung geladen werden.",
+    "emptyTitle": "Noch keine Begleitpersonen vorhanden",
+    "emptyDescription": "Füge deine erste Begleitperson hinzu, damit sie ebenfalls verwaltet und später zugeordnet werden kann.",
+    "noInvitationTitle": "Keine Einladung gefunden",
+    "noInvitationDescription": "Für dieses Konto konnte aktuell keine verwaltbare Einladung gefunden werden.",
+    "seat": "Sitzplatz",
+    "stats": {
+      "used": "Aktuell angelegt",
+      "remaining": "Freie Plätze",
+      "seatsAssigned": "Sitzplätze vergeben"
+    },
+    "fields": {
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "email": "E-Mail",
+      "phoneSection": "Telefonnummer",
+      "countryCode": "Ländervorwahl",
+      "phoneNumber": "Telefonnummer",
+      "phoneType": "Typ",
+      "phoneLabel": "Bezeichnung"
+    },
+    "actions": {
+      "edit": "Bearbeiten",
+      "delete": "Entfernen"
+    },
+    "dialog": {
+      "createTitle": "Begleitperson hinzufügen",
+      "editTitle": "Begleitperson bearbeiten",
+      "subtitle": "Pflege hier die Kontaktinformationen der Begleitperson.",
+      "createAction": "Hinzufügen",
+      "updateAction": "Speichern"
+    },
+    "phoneTypes": {
+      "WHATSAPP": "WhatsApp",
+      "MOBILE": "Mobil",
+      "PRIVATE": "Privat",
+      "WORK": "Arbeit",
+      "HOME": "Zuhause",
+      "OTHER": "Sonstiges"
+    },
+    "status": {
+      "PENDING": "Ausstehend",
+      "ACCEPTED": "Akzeptiert",
+      "DECLINED": "Abgelehnt",
+      "CANCELED": "Storniert",
+      "REJECTED": "Zurückgewiesen",
+      "APPROVED": "Freigegeben",
+      "UNKNOWN": "Unbekannt"
+    }
   }
 }

@@ -1,4 +1,4 @@
-"use client";
+
 
 import ChangePasswordClient from "@/checkpoint/app/(protected)/me/security/ChangePasswordClient";
 import MySeatClientPage from "@/checkpoint/app/(protected)/my-seat/MySeatPageClient";
