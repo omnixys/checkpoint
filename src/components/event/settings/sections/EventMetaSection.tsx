@@ -80,7 +80,16 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
         description: "Guest Event",
         startsAt: new Date().toISOString(),
         endsAt: new Date(Date.now() + 1000 * 60 * 60 * 5).toISOString(),
+        allowPublicPlusOne: true,
+        allowPublicRsvp: true,
+        allowPublicRsvpWebsite: true,
+        coverImageUrl: "",
+        isActive: true,
+        isPublic: true,
+        logoUrl: "",
+        publicRsvpWebsite: "",
       },
+      children:[],
     };
 
     const result = await execute(() => actions.addChild(payload));

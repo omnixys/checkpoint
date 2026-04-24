@@ -26,7 +26,7 @@ export default function QrRingLegend() {
                 width: 10,
                 height: 10,
                 borderRadius: "50%",
-                bgcolor: omni.primary,
+                bgcolor: theme.palette.primary.main,
               }}
             />
             <Typography
@@ -44,7 +44,7 @@ export default function QrRingLegend() {
                 width: 10,
                 height: 10,
                 borderRadius: "50%",
-                bgcolor: omni.secondary,
+                bgcolor: theme.palette.secondary.main,
                 alignItems: "center",
               }}
             />
@@ -63,7 +63,7 @@ export default function QrRingLegend() {
                 width: 10,
                 height: 10,
                 borderRadius: "50%",
-                bgcolor: omni.error,
+                bgcolor: theme.palette.error.main,
                 alignItems: "center",
               }}
             />
@@ -81,7 +81,7 @@ export default function QrRingLegend() {
         tooltip: {
           sx: {
             bgcolor: apple.systemBackground,
-            color: omni.textPrimary,
+            color: theme.palette.text.primary,
             border: `1px solid ${apple.separator}`,
             boxShadow: "0 12px 28px rgba(0,0,0,0.25)",
           },
@@ -96,7 +96,7 @@ export default function QrRingLegend() {
           display: "inline-flex",
           alignItems: "center",
           gap: 0.5,
-          color: omni.textSecondary,
+          color: theme.palette.text.secondary,
           cursor: "help",
         }}
       >

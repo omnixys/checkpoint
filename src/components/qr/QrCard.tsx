@@ -95,11 +95,13 @@ export default function QrCard({ ticket, event }: Props) {
 
   const presenceColor = useMemo((): string => {
     if (!ticket) {
-      return omni.error;
+      return theme.palette.error.main;
     }
 
-    return ticket.currentState === "INSIDE" ? omni.success : omni.error;
-  }, [omni.error, omni.success, ticket]);
+    return ticket.currentState === "INSIDE"
+      ? theme.palette.success.main
+      : theme.palette.error.main;
+  }, [theme.palette.error.main, theme.palette.success.main, ticket]);
 
   const isRevoked = ticket?.revoked ?? false;
 
@@ -235,16 +237,22 @@ export default function QrCard({ ticket, event }: Props) {
       >
         <Stack spacing={3}>
           <Stack spacing={30} direction={"row"}>
-            <BackButtonBase href={from ?? env.CHECKPOINT_BASE_PATH} label={"zurück"} />
+            <BackButtonBase
+              href={from ?? env.CHECKPOINT_BASE_PATH}
+              label={"zurück"}
+            />
             <Stack spacing={1.5}>
-              <Typography variant="h5" sx={{ color: omni.textPrimary, fontWeight: 800 }}>
+              <Typography
+                variant="h5"
+                sx={{ color: theme.palette.text.primary, fontWeight: 800 }}
+              >
                 {event.name}
               </Typography>
 
               <Typography
                 variant="body2"
                 sx={{
-                  color: omni.textSecondary,
+                  color: theme.palette.text.secondary,
                   opacity: 0.92,
                 }}
               >
@@ -265,9 +273,11 @@ export default function QrCard({ ticket, event }: Props) {
                       mt: 0.5,
                       alignSelf: "flex-start",
                       fontWeight: 800,
-                      bgcolor: `${isRevoked ? omni.error : presenceColor}22`,
-                      color: isRevoked ? omni.error : presenceColor,
-                      border: `1px solid ${isRevoked ? omni.error : presenceColor}55`,
+                      bgcolor: `${isRevoked ? theme.palette.error.main : presenceColor}22`,
+                      color: isRevoked
+                        ? theme.palette.error.main
+                        : presenceColor,
+                      border: `1px solid ${isRevoked ? theme.palette.error.main : presenceColor}55`,
                     }}
                   />
                 </motion.div>
@@ -281,8 +291,8 @@ export default function QrCard({ ticket, event }: Props) {
               icon={<WarningAmberRoundedIcon />}
               sx={{
                 borderRadius: 3,
-                bgcolor: `${omni.error}12`,
-                border: `1px solid ${omni.error}33`,
+                bgcolor: `${theme.palette.error.main}12`,
+                border: `1px solid ${theme.palette.error.main}33`,
                 "& .MuiAlert-message": {
                   width: "100%",
                 },
@@ -296,7 +306,8 @@ export default function QrCard({ ticket, event }: Props) {
                 Ticket wurde deaktiviert
               </Typography>
               <Typography variant="body2" sx={{ mt: 0.5 }}>
-                {ticket.revokedReason ?? "Bitte wende dich an den Veranstalter."}
+                {ticket.revokedReason ??
+                  "Bitte wende dich an den Veranstalter."}
               </Typography>
             </Alert>
           ) : null}
@@ -312,7 +323,9 @@ export default function QrCard({ ticket, event }: Props) {
             </Alert>
           ) : null}
 
-          {!isRevoked && !isDeviceActivated ? <ActivateTicketButton ticketId={ticket.id} /> : null}
+          {!isRevoked && !isDeviceActivated ? (
+            <ActivateTicketButton ticketId={ticket.id} />
+          ) : null}
 
           {!isRevoked && isDeviceActivated ? (
             <Box
@@ -331,7 +344,10 @@ export default function QrCard({ ticket, event }: Props) {
                   justifyContent: "center",
                   p: { xs: 1.25, sm: 2.5 },
                   borderRadius: 4,
-                  bgcolor: theme.palette.mode === "light" ? apple.systemBackground : apple.gray6,
+                  bgcolor:
+                    theme.palette.mode === "light"
+                      ? apple.systemBackground
+                      : apple.gray6,
                   border: `1px solid ${apple.separator}`,
                 }}
               >
@@ -362,7 +378,9 @@ export default function QrCard({ ticket, event }: Props) {
                       inset: QR_INSET,
                       borderRadius: 4,
                       bgcolor:
-                        theme.palette.mode === "light" ? apple.systemBackground : apple.gray6,
+                        theme.palette.mode === "light"
+                          ? apple.systemBackground
+                          : apple.gray6,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -378,8 +396,14 @@ export default function QrCard({ ticket, event }: Props) {
                           alignItems: "center",
                         }}
                       >
-                        <CircularProgress size={34} sx={{ color: omni.primary }} />
-                        <Typography variant="body2" sx={{ color: omni.textSecondary }}>
+                        <CircularProgress
+                          size={34}
+                          sx={{ color: theme.palette.primary.main }}
+                        />
+                        <Typography
+                          variant="body2"
+                          sx={{ color: theme.palette.text.secondary }}
+                        >
                           QR wird vorbereitet…
                         </Typography>
                       </Stack>
@@ -389,7 +413,7 @@ export default function QrCard({ ticket, event }: Props) {
                           value={qrPayload ?? "NO_TOKEN"}
                           size={QR_SIZE}
                           marginSize={2}
-                          fgColor={omni.primary}
+                          fgColor={theme.palette.primary.main}
                           bgColor={apple.systemBackground}
                         />
                         {/* {seatLabel ? <QrSeatOverlay seat={seatLabel} /> : null} */}
@@ -409,16 +433,20 @@ export default function QrCard({ ticket, event }: Props) {
                   void generateSignedQrPayload();
                 }}
                 disabled={loadingToken || isPreparingQr}
-                startIcon={loadingToken || isPreparingQr ? undefined : <RefreshRoundedIcon />}
+                startIcon={
+                  loadingToken || isPreparingQr ? undefined : (
+                    <RefreshRoundedIcon />
+                  )
+                }
                 sx={{
                   borderRadius: 3,
                   py: 1.35,
-                  color: omni.primary,
-                  border: `1px solid ${omni.primary}55`,
-                  bgcolor: `${omni.primary}08`,
+                  color: theme.palette.primary.main,
+                  border: `1px solid ${theme.palette.primary.main}55`,
+                  bgcolor: `${theme.palette.primary.main}08`,
                   "&:hover": {
-                    bgcolor: `${omni.primary}14`,
-                    borderColor: `${omni.primary}88`,
+                    bgcolor: `${theme.palette.primary.main}14`,
+                    borderColor: `${theme.palette.primary.main}88`,
                   },
                   "&.Mui-disabled": {
                     borderColor: apple.separator,
@@ -426,7 +454,7 @@ export default function QrCard({ ticket, event }: Props) {
                 }}
               >
                 {loadingToken || isPreparingQr ? (
-                  <CircularProgress size={22} sx={{ color: omni.primary }} />
+                  <CircularProgress size={22} sx={{ color: theme.palette.primary.main }} />
                 ) : isQrActive ? (
                   "QR-Code jetzt erneuern"
                 ) : (
@@ -451,8 +479,8 @@ export default function QrCard({ ticket, event }: Props) {
                     fontWeight: 700,
                     color:
                       remainingSeconds <= QR_CRITICAL_THRESHOLD_SECONDS
-                        ? omni.error
-                        : omni.textSecondary,
+                        ? theme.palette.error.main
+                        : theme.palette.text.secondary,
                   }}
                 >
                   {isQrActive

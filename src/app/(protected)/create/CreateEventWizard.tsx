@@ -79,25 +79,20 @@ export default function CreateEventWizard() {
         return <BasicsStep />;
 
       case CreateEventWizardStep.ADDRESS:
-        return <AddressStep draft={draft} onChange={updateDraft} />;
+        return <AddressStep />;
 
       case CreateEventWizardStep.SETTINGS:
-        return <SettingsStep draft={draft} onChange={updateDraft} />;
+        return <SettingsStep />;
 
       case CreateEventWizardStep.VISIBILITY:
-        return <VisibilityStep draft={draft} onChange={updateDraft} />;
+        return <VisibilityStep  />;
 
       case CreateEventWizardStep.EXPERIENCE:
-        return <ExperienceStep draft={draft} onChange={updateDraft} />;
+        return <ExperienceStep />;
 
       case CreateEventWizardStep.CHILDREN:
         return (
-          <ChildrenStep
-            draft={draft}
-            addChild={addChild}
-            removeChild={removeChild}
-            updateChild={updateChild}
-          />
+          <ChildrenStep />
         );
 
       case CreateEventWizardStep.SUMMARY:

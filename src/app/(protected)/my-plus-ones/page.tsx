@@ -21,10 +21,10 @@ import PlusOneDialog from "@/checkpoint/app/(protected)/my-plus-ones/PlusOneDial
 import PlusOneCard from "@/checkpoint/app/(protected)/my-plus-ones/PlusOneCard";
 import { usePlusOnes } from "@/checkpoint/app/(protected)/my-plus-ones/hooks/usePlusOnes";
 import type {
-  CreatePlusOneInput,
   PlusOneItem,
   UpdatePlusOneInput,
 } from "@/checkpoint/app/(protected)/my-plus-ones/types/plusOne.types";
+import { CreatePlusOneInput } from "@/checkpoint/generated/graphql";
 
 const MotionBox = motion.create(Box);
 

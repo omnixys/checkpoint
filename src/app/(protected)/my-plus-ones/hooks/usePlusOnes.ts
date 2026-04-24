@@ -4,8 +4,8 @@ import { useCallback, useMemo } from "react";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { useSnackbar } from "notistack";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { MyInvitationsQuery, MyInvitationsQueryVariables, MyInvitationsDocument, InvitationQuery, InvitationDocument, CreatePlusOnesInvitationMutation, CreatePlusOnesInvitationMutationVariables, CreatePlusOnesInvitationDocument, RemovePlusOneInvitationMutation, RemovePlusOneInvitationMutationVariables, RemovePlusOneInvitationDocument, RemoveAllPlusOnesByInvitationIdMutation, RemoveAllPlusOnesByInvitationIdMutationVariables, RemoveAllPlusOnesByInvitationIdDocument, UpdatePlusOnesInvitationMutation, UpdatePlusOnesInvitationMutationVariables, UpdatePlusOnesInvitationDocument } from "@/checkpoint/generated/graphql";
-import { CreatePlusOneInput, PlusOneItem, UpdatePlusOneInput } from "@/checkpoint/app/(protected)/my-plus-ones/types/plusOne.types";
+import { MyInvitationsQuery, MyInvitationsQueryVariables, MyInvitationsDocument, InvitationQuery, InvitationDocument, CreatePlusOnesInvitationMutation, CreatePlusOnesInvitationMutationVariables, CreatePlusOnesInvitationDocument, RemovePlusOneInvitationMutation, RemovePlusOneInvitationMutationVariables, RemovePlusOneInvitationDocument, RemoveAllPlusOnesByInvitationIdMutation, RemoveAllPlusOnesByInvitationIdMutationVariables, RemoveAllPlusOnesByInvitationIdDocument, UpdatePlusOnesInvitationMutation, UpdatePlusOnesInvitationMutationVariables, UpdatePlusOnesInvitationDocument, CreatePlusOneInput } from "@/checkpoint/generated/graphql";
+import {  UpdatePlusOneInput } from "@/checkpoint/app/(protected)/my-plus-ones/types/plusOne.types";
 
 
 

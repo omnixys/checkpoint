@@ -16,8 +16,8 @@ export function StatusCarousel({ total, checkedIn, inside, outside }: Props) {
 
   const items = [
     { label: "Gesamt", value: total },
-    { label: "Eingecheckt", value: checkedIn, color: omni.success },
-    { label: "Drinnen", value: inside, color: omni.primary },
+    { label: "Eingecheckt", value: checkedIn, color: theme.palette.success.main },
+    { label: "Drinnen", value: inside, color: theme.palette.primary.main },
     { label: "Draußen", value: outside, color: apple.quaternaryLabel },
   ];
 

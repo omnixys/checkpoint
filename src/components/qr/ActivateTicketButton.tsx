@@ -62,16 +62,19 @@ export default function ActivateTicketButton({ ticketId }: Props) {
         borderRadius: 3,
         py: 1.4,
         fontWeight: 700,
-        bgcolor: omni.primary,
-        color: omni.textPrimary,
-        boxShadow: `0 10px 30px ${omni.primary}44`,
+        bgcolor: theme.palette.primary.main,
+        color: theme.palette.text.primary,
+        boxShadow: `0 10px 30px ${theme.palette.primary.main}44`,
         "&:hover": {
-          bgcolor: omni.secondary,
+          bgcolor: theme.palette.secondary.main,
         },
       }}
     >
       {loading ? (
-        <CircularProgress size={22} sx={{ color: omni.textPrimary }} />
+        <CircularProgress
+          size={22}
+          sx={{ color: theme.palette.text.primary }}
+        />
       ) : (
         "Ticket auf diesem Gerät aktivieren"
       )}

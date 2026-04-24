@@ -17,7 +17,7 @@ export const glassInputSx = (theme: Theme) => {
     },
 
     "&:hover .MuiOutlinedInput-notchedOutline": {
-      borderColor: theme.palette.omnixys.secondary,
+      borderColor: theme.palette.secondary.main,
     },
 
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {

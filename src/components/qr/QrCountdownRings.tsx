@@ -90,7 +90,7 @@ export default function QrCountdownRings({
           cy={size / 2}
           r={outerRadius}
           fill="none"
-          stroke={omni.primary}
+          stroke={theme.palette.primary.main}
           strokeWidth={outerStroke}
           strokeLinecap="round"
           strokeDasharray={outerCirc}
@@ -106,7 +106,7 @@ export default function QrCountdownRings({
           cy={size / 2}
           r={innerRadius}
           fill="none"
-          stroke={omni.secondary}
+          stroke={theme.palette.secondary.main}
           strokeWidth={innerStroke}
           strokeLinecap="round"
           strokeDasharray={innerCirc}
@@ -135,7 +135,7 @@ export default function QrCountdownRings({
           inset: 0,
           borderRadius: "50%",
           filter: "blur(10px)",
-          background: `radial-gradient(circle, ${omni.error}55 0%, transparent 70%)`,
+          background: `radial-gradient(circle, ${theme.palette.error.main}55 0%, transparent 70%)`,
         }}
       />
     </Box>

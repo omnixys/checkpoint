@@ -1,8 +1,5 @@
-import type {
-  ChildEventFormValue,
-  CreateEventWizardFormValue,
-  EventAddressFormValue,
-} from "@/checkpoint/validation/create-event.schema";
+
+import { CreateEventWizardFormValue, EventAddressFormValue, ChildEventFormValue } from "@/checkpoint/app/(protected)/create/validation/createEvent.schema";
 import type { FieldErrors, UseFormReturn } from "react-hook-form";
 
 export enum CreateEventWizardStep {

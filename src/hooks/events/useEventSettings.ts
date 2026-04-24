@@ -67,6 +67,14 @@ const DEFAULT_SETTINGS: CreateSettingsInput = {
   description: "Guest Event",
   startsAt: new Date().toISOString(),
   endsAt: new Date(Date.now() + 1000 * 60 * 60 * 5).toISOString(),
+  allowPublicPlusOne: true,
+  allowPublicRsvp: true,
+  allowPublicRsvpWebsite: true,
+  coverImageUrl: "",
+  isActive: true,
+  isPublic: true,
+  logoUrl: "",
+  publicRsvpWebsite: "",
 };
 
 /**
@@ -288,6 +296,7 @@ export function useEventSettings(eventId: string) {
           ...payload.settings,
         };
 
+
         return createChild({
           variables: {
             input: {
@@ -295,6 +304,7 @@ export function useEventSettings(eventId: string) {
               name: payload.name,
               address,
               settings,
+              children: [],
             },
           },
         });

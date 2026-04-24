@@ -13,7 +13,7 @@ type Props = {
 
 export default function SuccessStep() {
   const theme = useTheme();
-  const t = useTypedTranslations("create1");
+  const t = useTypedTranslations("create");
 
   return (
     <Box
