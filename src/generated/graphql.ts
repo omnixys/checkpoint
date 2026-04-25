@@ -327,6 +327,15 @@ export type CreateEventInput = {
   settings: CreateSettingsInput;
 };
 
+export type CreateMediaDto = {
+  eventId: Scalars['String']['input'];
+  filename: Scalars['String']['input'];
+  key: Scalars['String']['input'];
+  mimetype: Scalars['String']['input'];
+  size: Scalars['Float']['input'];
+  url: Scalars['String']['input'];
+};
+
 export type CreateNotificationInput = {
   channel: Channel;
   dedupeKey: InputMaybe<Scalars['String']['input']>;
@@ -630,7 +639,7 @@ export type HouseNumber = {
 
 export type ImportInvitationsInput = {
   eventId: Scalars['ID']['input'];
-  uploadId: Scalars['ID']['input'];
+  key: Scalars['String']['input'];
   uploadType: Scalars['String']['input'];
 };
 
@@ -918,6 +927,7 @@ export type Mutation = {
   createEventAddress: EventAddressPayload;
   createInvitation: InvitationPayload;
   createInvitationFromRsvp: InvitationPayload;
+  createMedia: Scalars['String']['output'];
   createNotification: NotificationPayload;
   createPlusOnesInvitation: InvitationPayload;
   createSeat: SeatPayload;
@@ -947,7 +957,7 @@ export type Mutation = {
   generateWebAuthnAuthOptions: Scalars['JSON']['output'];
   generateWebAuthnAuthOptions2: Scalars['JSON']['output'];
   generateWebAuthnRegistrationOptions: Scalars['JSON']['output'];
-  /** Imports invitations from CSV or Excel file stored temporarily on the server. */
+  /** Imports invitations from CSV/XLSX stored in object storage */
   importInvitations: ImportInvitationsResult;
   loginTotp: TokenPayload;
   logout: SuccessPayload;
@@ -1158,6 +1168,11 @@ export type MutationCreateInvitationArgs = {
 
 export type MutationCreateInvitationFromRsvpArgs = {
   input: PublicRsvpInput;
+};
+
+
+export type MutationCreateMediaArgs = {
+  input: CreateMediaDto;
 };
 
 
@@ -1784,6 +1799,8 @@ export type Query = {
   me: UserPayload;
   meAuth: KcUser;
   meByToken: KcUser;
+  mediaUrl: Scalars['String']['output'];
+  mediaVariantUrl: Scalars['String']['output'];
   myEvents: Array<EventPayload>;
   myInvitations: Array<InvitationPayload>;
   myNotifications: Array<NotificationPayload>;
@@ -2020,6 +2037,17 @@ export type QueryLayoutChangeLogArgs = {
 
 export type QueryLayoutVersionsArgs = {
   eventId: Scalars['ID']['input'];
+};
+
+
+export type QueryMediaUrlArgs = {
+  mediaId: Scalars['String']['input'];
+};
+
+
+export type QueryMediaVariantUrlArgs = {
+  mediaId: Scalars['String']['input'];
+  width: Scalars['Float']['input'];
 };
 
 

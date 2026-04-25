@@ -33,6 +33,7 @@ import {
   BulkApproveInvitationsMutationVariables,
   BulkApproveInvitationsDocument,
 } from "@/checkpoint/generated/graphql";
+import { env } from "@/checkpoint/lib/env";
 import { getLogger } from "@/checkpoint/utils/logger";
 import { mapPhoneNumbersToInput } from "@/checkpoint/utils/mapPhoneNumbersToInput";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client/react";
@@ -71,6 +72,21 @@ export interface BulkApproveEntry {
   eventName: string;
   seatId: string | null;
   seatLabel: string | null;
+  
+}
+
+
+/* ---------------------------------------------------------------------------
+ * Types
+ * ------------------------------------------------------------------------- */
+export interface PreviewResponse {
+  headers: string[];
+  mapping: Record<string, string>;
+  confidence: number;
+  rows: Record<string, unknown>[];
+  errors: string[];
+  duplicates: number[];
+  total: number;
 }
 
 /* ---------------------------------------------------------------------------
@@ -111,15 +127,9 @@ export function useInvitationLogic(eventId: string) {
   const [sendOpen, setSendOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
   const [approveOpen, setApproveOpen] = useState(false);
-  const [activeInvitation, setActiveInvitation] = useState<InvitationPayload | null>(null);
+  const [activeInvitation, setActiveInvitation] =
+    useState<InvitationPayload | null>(null);
 
-  /* -----------------------------------------------------------------------
-   * Upload / Import State
-   * --------------------------------------------------------------------- */
-  const [uploadId, setUploadId] = useState<string | null>(null);
-  const [uploadType, setUploadType] = useState<string | null>(null);
-  const [importLoading, setImportLoading] = useState(false);
-  const [importProgress, setImportProgress] = useState(0);
 
   /* -----------------------------------------------------------------------
    * Bulk Send State
@@ -131,9 +141,9 @@ export function useInvitationLogic(eventId: string) {
    * Bulk Approve State
    * --------------------------------------------------------------------- */
   const [bulkApproveIds, setBulkApproveIds] = useState<string[] | null>(null);
-  const [bulkApproveEntries, setBulkApproveEntries] = useState<Record<string, BulkApproveEntry>>(
-    {},
-  );
+  const [bulkApproveEntries, setBulkApproveEntries] = useState<
+    Record<string, BulkApproveEntry>
+  >({});
   const [seatOptionsByEventId, setSeatOptionsByEventId] = useState<
     Record<string, BulkApproveSeatOption[]>
   >({});
@@ -145,6 +155,17 @@ export function useInvitationLogic(eventId: string) {
   const [unreadCount, setUnreadCount] = useState(0);
 
   /* -----------------------------------------------------------------------
+   * Upload / Preview / Import State
+   * --------------------------------------------------------------------- */
+  const [key, setKey] = useState<string | null>(null);
+  const [uploadType, setUploadType] = useState<"csv" | "xlsx">("csv");
+
+    const [importLoading, setImportLoading] = useState(false);
+    const [importProgress, setImportProgress] = useState(0);
+  const [preview, setPreview] = useState<PreviewResponse | null>(null);
+
+
+  /* -----------------------------------------------------------------------
    * Queries
    * --------------------------------------------------------------------- */
   const { data: childrenData, loading: childrenLoading } = useQuery<
@@ -154,29 +175,35 @@ export function useInvitationLogic(eventId: string) {
     variables: { id: eventId },
   });
 
-  const eventIds = [eventId, ...(childrenData?.eventChildren?.map((event) => event.id) ?? [])];
+  const eventIds = [
+    eventId,
+    ...(childrenData?.eventChildren?.map((event) => event.id) ?? []),
+  ];
 
   const {
     data: invitationData,
     loading: invitationsLoading,
     refetch,
-  } = useQuery<GetFullEventInvitationQuery, GetFullEventInvitationQueryVariables>(
-    GetFullEventInvitationDocument,
-    {
-      variables: { eventIds },
-    },
-  );
-
-  const { data: rootEventData, loading: rootLoading } = useQuery<EventQuery, EventQueryVariables>(
-    EventDocument,
-    {
-      variables: { id: eventId },
-    },
-  );
-
-  const [loadSeatsByEvent] = useLazyQuery<SeatsQuery, SeatsQueryVariables>(SeatsDocument, {
-    fetchPolicy: "network-only",
+  } = useQuery<
+    GetFullEventInvitationQuery,
+    GetFullEventInvitationQueryVariables
+  >(GetFullEventInvitationDocument, {
+    variables: { eventIds },
   });
+
+  const { data: rootEventData, loading: rootLoading } = useQuery<
+    EventQuery,
+    EventQueryVariables
+  >(EventDocument, {
+    variables: { id: eventId },
+  });
+
+  const [loadSeatsByEvent] = useLazyQuery<SeatsQuery, SeatsQueryVariables>(
+    SeatsDocument,
+    {
+      fetchPolicy: "network-only",
+    },
+  );
 
   /* -----------------------------------------------------------------------
    * Data Mapping
@@ -245,7 +272,9 @@ export function useInvitationLogic(eventId: string) {
 
     return bulkApproveIds
       .map((id) => invitationById.get(id))
-      .filter((invitation): invitation is NonNullable<typeof invitation> => Boolean(invitation));
+      .filter((invitation): invitation is NonNullable<typeof invitation> =>
+        Boolean(invitation),
+      );
   }, [bulkApproveIds, invitationById]);
 
   /* -----------------------------------------------------------------------
@@ -268,7 +297,8 @@ export function useInvitationLogic(eventId: string) {
       }
 
       if (normalizedSearch) {
-        const fullName = `${invitation.firstName ?? ""} ${invitation.lastName ?? ""}`.toLowerCase();
+        const fullName =
+          `${invitation.firstName ?? ""} ${invitation.lastName ?? ""}`.toLowerCase();
 
         const email = (invitation.email ?? "").toLowerCase();
         const phone = (invitation.phoneNumber ?? "").toLowerCase();
@@ -349,43 +379,6 @@ export function useInvitationLogic(eventId: string) {
   }
 
   /* -----------------------------------------------------------------------
-   * Import Handler
-   * --------------------------------------------------------------------- */
-  async function executeImport() {
-    if (!uploadId || !uploadType) {
-      throw new Error("Upload not initialized");
-    }
-
-    try {
-      setImportLoading(true);
-      setImportProgress(10);
-
-      const result = await importInvitations({
-        variables: {
-          input: {
-            eventId,
-            uploadId,
-            uploadType,
-          },
-        },
-      });
-
-      setImportProgress(100);
-      await refetch();
-
-      logger.debug("Import finished", result.data);
-
-      return result;
-    } catch (err) {
-      logger.error("Import failed", err);
-      setImportProgress(0);
-      throw err;
-    } finally {
-      setImportLoading(false);
-    }
-  }
-
-  /* -----------------------------------------------------------------------
    * General Actions
    * --------------------------------------------------------------------- */
   function toggleSelect(id: string) {
@@ -438,14 +431,17 @@ export function useInvitationLogic(eventId: string) {
     try {
       logger.debug("Sending bulk invitations", { ids });
 
-      const selectedInvitations = invitations.filter((invitation) => ids.includes(invitation.id));
+      const selectedInvitations = invitations.filter((invitation) =>
+        ids.includes(invitation.id),
+      );
 
       if (selectedInvitations.length === 0) {
         throw new Error("No invitations selected");
       }
 
       const guests = selectedInvitations.map((invitation) => {
-        const eventNameResolved = eventNameById[invitation.eventId] ?? rootEventName;
+        const eventNameResolved =
+          eventNameById[invitation.eventId] ?? rootEventName;
 
         const rsvpUrl = `${window.location.origin}/rsvp/${invitation.id}`;
 
@@ -488,7 +484,9 @@ export function useInvitationLogic(eventId: string) {
    * Bulk Approve Dialog Actions
    * --------------------------------------------------------------------- */
   async function openBulkApproveDialog(ids: string[]) {
-    const selectedInvitations = invitations.filter((invitation) => ids.includes(invitation.id));
+    const selectedInvitations = invitations.filter((invitation) =>
+      ids.includes(invitation.id),
+    );
 
     if (selectedInvitations.length === 0) {
       throw new Error("No invitations selected");
@@ -549,7 +547,10 @@ export function useInvitationLogic(eventId: string) {
     });
   }
 
-  async function setBulkApproveEvent(invitationId: string, selectedEventId: string) {
+  async function setBulkApproveEvent(
+    invitationId: string,
+    selectedEventId: string,
+  ) {
     await ensureSeatsLoaded(selectedEventId);
 
     setBulkApproveEntries((prev) => {
@@ -624,7 +625,6 @@ export function useInvitationLogic(eventId: string) {
           input: {
             invitationIds: payload,
             approved: true,
-            
           },
         },
       });
@@ -671,13 +671,119 @@ export function useInvitationLogic(eventId: string) {
     setUnreadCount((count) => count + 1);
   }
 
+  /* ======================================================================
+   * UPLOAD
+   * ====================================================================== */
+  async function uploadFile(file: File) {
+    const form = new FormData();
+    form.append("file", file);
+
+    const res = await fetch(`${env.NEXT_PUBLIC_INVITATION_URI}/upload`, {
+      method: "POST",
+      body: form,
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      throw new Error("Upload failed");
+    }
+
+    const json = await res.json();
+
+    setKey(json.key);
+    setUploadType(json.type);
+
+    logger.debug("Upload success", json);
+
+    return json;
+  }
+
+  /* ======================================================================
+   * PREVIEW
+   * ====================================================================== */
+async function previewFile(input?: {
+  key: string;
+  type: "csv" | "xlsx";
+}): Promise<PreviewResponse> {
+  const effectiveKey = input?.key ?? key;
+  const effectiveType = input?.type ?? uploadType;
+
+  if (!effectiveKey || !effectiveType) {
+    throw new Error("No upload available");
+  }
+
+  const res = await fetch(`${env.NEXT_PUBLIC_INVITATION_URI}/preview`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({
+      key: effectiveKey,
+      type: effectiveType,
+      eventId,
+    }),
+  });
+
+  const json: PreviewResponse = await res.json();
+
+  setPreview(json);
+
+  return json;
+}
+
+  /* ======================================================================
+   * IMPORT
+   * ====================================================================== */
+  async function executeImport() {
+    if (!key || !uploadType) {
+      throw new Error("Upload not initialized");
+    }
+
+    setImportProgress(20);
+
+    try {
+      const result = await importInvitations({
+        variables: {
+          input: {
+            eventId,
+            key,
+            uploadType,
+          },
+        },
+      });
+
+      setImportProgress(100);
+
+      logger.debug("Import finished", result.data);
+
+      return result;
+    } catch (err) {
+      setImportProgress(0);
+      logger.error("Import failed", err);
+      throw err;
+    }
+  }
+
+  /* ======================================================================
+   * RESET
+   * ====================================================================== */
+  function resetImport() {
+    setKey(null);
+    setUploadType('csv');
+    setPreview(null);
+    setImportProgress(0);
+  }
+
   /* -----------------------------------------------------------------------
    * Return
    * --------------------------------------------------------------------- */
   return {
+    eventId,
     events: childrenData?.eventChildren,
     invitations: filteredInvitations,
     loading: invitationsLoading || rootLoading || childrenLoading,
+
 
     /* filters */
     search,
@@ -715,9 +821,7 @@ export function useInvitationLogic(eventId: string) {
     closeInvitation,
 
     /* upload/import */
-    uploadId,
     uploadType,
-    setUploadId,
     setUploadType,
     importLoading,
     importProgress,
@@ -728,6 +832,14 @@ export function useInvitationLogic(eventId: string) {
     approveInvitation,
     deleteInvitation,
     importInvitations,
+
+    key,
+    preview,
+
+    /* actions */
+    uploadFile,
+    previewFile,
+    resetImport,
 
     /* bulk send */
     openBulkSendDialog,

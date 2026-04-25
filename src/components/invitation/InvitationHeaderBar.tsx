@@ -13,6 +13,7 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import ArrowCircleLeftIcon from "@mui/icons-material/ArrowCircleLeft";
+import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
 
 import { motion } from "framer-motion";
 import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
@@ -224,7 +225,6 @@ export function InvitationHeaderBar({ collapsed, onToggle, logic }: Props) {
               </motion.div>
             </Tooltip>
 
-            {/* <IconButton>
             <Tooltip title="Einladungen importieren">
               <motion.div whileTap={{ scale: 0.9 }}>
                 <IconButton
@@ -243,7 +243,6 @@ export function InvitationHeaderBar({ collapsed, onToggle, logic }: Props) {
                 </IconButton>
               </motion.div>
             </Tooltip>
-          </IconButton> */}
 
             <Box>
               <RefreshArcButton onReload={logic.reload} />

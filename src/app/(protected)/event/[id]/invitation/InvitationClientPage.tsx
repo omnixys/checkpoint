@@ -5,6 +5,7 @@ import InvitationBulkSendDialog from "@/checkpoint/components/invitation/dialogs
 import InvitationCreateDialog from "@/checkpoint/components/invitation/dialogs/InvitationCreateDialog";
 import InvitationDetailDialog from "@/checkpoint/components/invitation/dialogs/InvitationDetailDialog";
 import InvitationDetailMobileDialog from "@/checkpoint/components/invitation/dialogs/InvitationDetailMobileDialog";
+import InvitationImportDialog from "@/checkpoint/components/invitation/dialogs/InvitationImportDialog";
 import InvitationContent from "@/checkpoint/components/invitation/InvitationContent";
 import InvitationHeader from "@/checkpoint/components/invitation/InvitationHeader";
 import BackToTopButton from "@/checkpoint/components/utils/BackToTopButton";
@@ -64,7 +65,7 @@ export default function InvitationClientPage({ countries }: { countries: Calling
 
       {/* DIALOGS */}
       <InvitationCreateDialog logic={logic} callingCodeCountries={countries} />
-      {/* <InvitationImportDialog logic={logic} /> */}
+      <InvitationImportDialog logic={logic} />
       <InvitationBulkSendDialog logic={logic} />
       <InvitationBulkApproveDialog logic={logic} />
 

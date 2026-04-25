@@ -26,8 +26,8 @@ export const env = {
     return process.env.NEXT_PUBLIC_BASE_URL!;
   },
 
-  get NEXT_PUBLIC_UPLOAD_URI(): string {
-    return process.env.NEXT_PUBLIC_UPLOAD_URI!;
+  get NEXT_PUBLIC_INVITATION_URI(): string {
+    return process.env.NEXT_PUBLIC_INVITATION_URI!;
   },
 
   get NEXT_PUBLIC_APP_URL(): string {
@@ -47,7 +47,7 @@ if (process.env.NODE_ENV !== "production") {
     CHECKPOINT_BASE_PATH: env.CHECKPOINT_BASE_PATH,
     NEXT_PUBLIC_EVENT_ID: env.NEXT_PUBLIC_EVENT_ID,
     NEXT_PUBLIC_BASE_URL: env.NEXT_PUBLIC_BASE_URL,
-    NEXT_PUBLIC_UPLOAD_URI: env.NEXT_PUBLIC_UPLOAD_URI,
+    NEXT_PUBLIC_UPLOAD_URI: env.NEXT_PUBLIC_INVITATION_URI,
     NEXT_PUBLIC_APP_URL: env.NEXT_PUBLIC_APP_URL,
   });
   console.debug("==============================================");
