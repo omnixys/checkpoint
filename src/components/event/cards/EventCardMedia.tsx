@@ -1,11 +1,10 @@
 "use client";
 
-import { EventPayload } from "@/checkpoint/generated/graphql";
 import { Box, useTheme } from "@mui/material";
 import Image from "next/image";
 
 type Props = {
-  ev: EventPayload;
+  ev: any;
   visualStyle: "image" | "banner" | "none";
 };
 
@@ -13,7 +12,9 @@ export default function EventCardMedia({ ev, visualStyle }: Props) {
   const theme = useTheme();
 
   // Falls später: ev.imageUrl kann aus DB kommen
-  const imageUrl = (ev as unknown as { imageUrl?: string }).imageUrl || "/event/event-default.png";
+  const imageUrl =
+    (ev as unknown as { imageUrl?: string }).imageUrl ||
+    "/event/event-default.png";
 
   // ---------- NONE ----------
   if (visualStyle === "none") {

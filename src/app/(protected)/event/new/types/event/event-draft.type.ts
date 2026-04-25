@@ -22,10 +22,12 @@ export interface CreateSettingsDraft {
   publicRsvpWebsite: string | null;
   isActive: boolean;
   isPublic: boolean;
-  coverImageUrl: string | null;
-  logoUrl: string | null;
   dressCode: string | null;
   description: string | null;
+
+  logoUrl: string | null;
+  coverImageUrl: string | null;
+  
   // descriptionLong: string | null;
   startsAt: string | null;
   endsAt: string | null;
@@ -75,8 +77,9 @@ export const mapAddress = (
 export const mapSettings = (
   settings: CreateSettingsDraft,
 ): any /* ideally generated type */ => {
+   const { logoUrl, coverImageUrl, ...rest } = settings;
   return {
-    ...settings,
+    ...rest,
   };
 };
 

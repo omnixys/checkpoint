@@ -1,6 +1,5 @@
 "use client";
 
-import { EventPayload } from "@/checkpoint/generated/graphql";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
 import {
@@ -19,7 +18,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 
 type Props = {
-  ev: EventPayload;
+  ev: any;
   toLocal: (dt: string | number | Date) => string;
   isActive: boolean;
   onSetActive: () => void;
@@ -32,7 +31,12 @@ const STATUS_COLOR: Record<EventStatus, "success" | "warning" | "default"> = {
   past: "default",
 };
 
-export default function EventCardCompact({ ev, toLocal, isActive, onSetActive }: Props) {
+export default function EventCardCompact({
+  ev,
+  toLocal,
+  isActive,
+  onSetActive,
+}: Props) {
   const theme = useTheme();
   const t = useTypedTranslations("event");
 
@@ -40,9 +44,8 @@ export default function EventCardCompact({ ev, toLocal, isActive, onSetActive }:
   const start = new Date(ev.settings.startsAt).getTime();
   const end = new Date(ev.settings.endsAt).getTime();
 
-const status: EventStatus =
-  start <= now && end >= now ? "running" : start > now ? "upcoming" : "past";
-
+  const status: EventStatus =
+    start <= now && end >= now ? "running" : start > now ? "upcoming" : "past";
 
   return (
     <motion.div

@@ -1,12 +1,29 @@
 "use client";
 
-import React, { createContext, useContext, useReducer } from "react";
-import { useZodForm } from "../hooks/useZodForm";
-import { createEventWizardSchema } from "../validation/createEvent.schema";
 import {
   ChildEventDraft,
   CreateEventDraft,
-} from "@/checkpoint/app/(protected)/create/types/event/event-draft.type";
+} from "@/checkpoint/app/(protected)/event/new/types/event/event-draft.type";
+import React, { createContext, useContext, useReducer } from "react";
+import { useZodForm } from "../hooks/useZodForm";
+import { createEventWizardSchema } from "../validation/createEvent.schema";
+import { MediaType } from "@/checkpoint/generated/graphql";
+
+/**
+ * -------------------------------------------------------------
+ * Upload File Type
+ * -------------------------------------------------------------
+ */
+export type PendingUpload = {
+  id: string;
+  file: File;
+  type: "cover" | "logo";
+};
+
+type UploadItem = {
+  file: File;
+  type: MediaType;
+};
 
 /**
  * -------------------------------------------------------------
@@ -15,6 +32,8 @@ import {
  */
 type State = {
   draft: CreateEventDraft;
+  uploads: UploadItem[];
+  uploads2: PendingUpload[];
 };
 
 /**
@@ -27,7 +46,11 @@ type Action =
   | { type: "PATCH_SETTINGS"; patch: Partial<CreateEventDraft["settings"]> }
   | { type: "ADD_CHILD" }
   | { type: "REMOVE_CHILD"; index: number }
-  | { type: "UPDATE_CHILD"; index: number; patch: Partial<ChildEventDraft> };
+  | { type: "UPDATE_CHILD"; index: number; patch: Partial<ChildEventDraft> }
+  | { type: "ADD_UPLOAD_2"; upload2: PendingUpload }
+  | { type: "CLEAR_UPLOADS_2" }
+  | { type: "ADD_UPLOAD"; item: UploadItem }
+  | { type: "CLEAR_UPLOADS" };
 
 /**
  * -------------------------------------------------------------
@@ -46,18 +69,21 @@ const initialState: State = {
       allowPublicRsvpWebsite: false,
       isActive: true,
       isPublic: false,
-  publicRsvpWebsite: '',
-  coverImageUrl: '',
-  logoUrl: '',
-      dressCode: '',
-      description: '',
-  // descriptionLong: '',
-  startsAt: null,
-  endsAt: null,
-  category: 'GENERAL'
+      publicRsvpWebsite: "",
+      dressCode: "",
+      description: "sdf",
+      // descriptionLong: '',
+      startsAt: null,
+      endsAt: null,
+      category: "GENERAL",
+
+      logoUrl: '',
+      coverImageUrl: '',
     },
     children: [],
   },
+  uploads: [],
+  uploads2: [],
 };
 
 /**
@@ -67,10 +93,14 @@ const initialState: State = {
  */
 function reducer(state: State, action: Action): State {
   switch (action.type) {
+    
     case "PATCH":
       return {
         ...state,
-        draft: action.patch as CreateEventDraft, // 💎 FULL REPLACE
+        draft: {
+          ...state.draft,
+          ...action.patch,
+        },
       };
 
     case "PATCH_SETTINGS":
@@ -95,7 +125,7 @@ function reducer(state: State, action: Action): State {
             {
               id: crypto.randomUUID(),
               name: "",
-              category: 'GENERAL',
+              category: "GENERAL",
             },
           ],
         },
@@ -121,6 +151,30 @@ function reducer(state: State, action: Action): State {
         },
       };
 
+    case "ADD_UPLOAD_2":
+      return {
+        ...state,
+        uploads2: [...state.uploads2, action.upload2],
+      };
+
+    case "CLEAR_UPLOADS_2":
+      return {
+        ...state,
+        uploads2: [],
+      };
+
+    case "ADD_UPLOAD":
+      return {
+        ...state,
+        uploads: [...state.uploads, action.item],
+      };
+
+    case "CLEAR_UPLOADS":
+      return {
+        ...state,
+        uploads: [],
+      };
+
     default:
       return state;
   }
@@ -133,6 +187,8 @@ function reducer(state: State, action: Action): State {
  */
 type CreateEventContextType = {
   draft: CreateEventDraft;
+  uploads: UploadItem[];
+  uploads2: PendingUpload[];
 
   form: ReturnType<typeof useZodForm>;
 
@@ -142,6 +198,11 @@ type CreateEventContextType = {
   addChild: () => void;
   removeChild: (i: number) => void;
   updateChild: (i: number, p: Partial<ChildEventDraft>) => void;
+
+  addUpload: (file: File, type: UploadItem["type"]) => void;
+  addUpload2: (file: File, type: "cover" | "logo") => void;
+  clearUploads: () => void;
+  clearUploads2: () => void;
 };
 
 /**
@@ -176,6 +237,7 @@ export function CreateEventProvider({
    */
   const value: CreateEventContextType = {
     draft: state.draft,
+    uploads2: state.uploads2,
 
     form,
 
@@ -189,6 +251,22 @@ export function CreateEventProvider({
 
     updateChild: (i, p) =>
       dispatch({ type: "UPDATE_CHILD", index: i, patch: p }),
+
+    addUpload2: (file, type) =>
+      dispatch({
+        type: "ADD_UPLOAD_2",
+        upload2: {
+          id: crypto.randomUUID(),
+          file,
+          type,
+        },
+      }),
+    clearUploads2: () => dispatch({ type: "CLEAR_UPLOADS_2" }),
+
+    uploads: state.uploads,
+    addUpload: (file, type) =>
+      dispatch({ type: "ADD_UPLOAD", item: { file, type } }),
+    clearUploads: () => dispatch({ type: "CLEAR_UPLOADS" }),
   };
 
   return <Context.Provider value={value}>{children}</Context.Provider>;

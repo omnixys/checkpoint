@@ -1,18 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Box, Stack, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 import LocationOnRoundedIcon from "@mui/icons-material/LocationOnRounded";
 
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import AddressForm, {
   FormState,
 } from "@/checkpoint/components/event/settings/address/AddressForm";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
-import { useEventAddress } from "@/checkpoint/app/(protected)/create/hooks/useEventAddress";
-import { useCreateEvent } from "@/checkpoint/app/(protected)/create/context/CreateEventContext";
+import { useCreateEvent } from "@/checkpoint/app/(protected)/event/new/context/CreateEventContext";
+import { useEventAddress } from "@/checkpoint/app/(protected)/event/new/hooks/useEventAddress";
 
 /**
  * -------------------------------------------------------------
@@ -61,8 +61,8 @@ export default function AddressStep() {
           city: result.city ?? "",
           postalCode: result.postalCode ?? "",
           country: result.country ?? "",
-          state: result.state ?? '',
-          additionalInfo: '',
+          state: result.state ?? "",
+          additionalInfo: "",
         },
       });
     })();

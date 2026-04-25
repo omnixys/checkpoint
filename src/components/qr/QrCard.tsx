@@ -5,15 +5,17 @@ import QrCountdownRings from "@/checkpoint/components/qr/QrCountdownRings";
 import QrRingLegend from "@/checkpoint/components/qr/QrRingLegend";
 import { BackButtonBase } from "@/checkpoint/components/utils/back-button-base";
 import {
-  TicketPayload,
-  EventPayload,
+  GenerateTokenDocument,
   GenerateTokenMutation,
   GenerateTokenMutationVariables,
-  GenerateTokenDocument,
+  TicketPayload,
 } from "@/checkpoint/generated/graphql";
 import { env } from "@/checkpoint/lib/env";
 import { loadPrivateKey } from "@/checkpoint/utils/ticket/device-utils";
-import { hapticCritical, hapticRotate } from "@/checkpoint/utils/ticket/haptics";
+import {
+  hapticCritical,
+  hapticRotate,
+} from "@/checkpoint/utils/ticket/haptics";
 import { qrBeatAnimation } from "@/checkpoint/utils/ticket/qr-beat";
 import { signQrMessage } from "@/checkpoint/utils/ticket/qr-signature";
 import { useMutation } from "@apollo/client/react";
@@ -30,7 +32,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { QRCodeCanvas } from "qrcode.react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -57,7 +59,7 @@ type SignedQrPayload = {
 
 type Props = {
   ticket?: TicketPayload;
-  event?: EventPayload;
+  event?: any;
 };
 
 export default function QrCard({ ticket, event }: Props) {
@@ -454,7 +456,10 @@ export default function QrCard({ ticket, event }: Props) {
                 }}
               >
                 {loadingToken || isPreparingQr ? (
-                  <CircularProgress size={22} sx={{ color: theme.palette.primary.main }} />
+                  <CircularProgress
+                    size={22}
+                    sx={{ color: theme.palette.primary.main }}
+                  />
                 ) : isQrActive ? (
                   "QR-Code jetzt erneuern"
                 ) : (

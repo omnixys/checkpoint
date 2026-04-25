@@ -21,18 +21,50 @@ function setDeep(obj: any, path: string, value: any) {
 
 /**
  * -------------------------------------------------------------
+ * Type inference helper
+ * -------------------------------------------------------------
+ */
+function normalizeValue(value: unknown): unknown {
+  /**
+   * WHY:
+   * - TextField returns string ALWAYS
+   * - We must convert numeric strings → number
+   * - Keep booleans untouched
+   */
+
+  if (typeof value === "string") {
+    // empty stays empty (important for UX)
+    if (value.trim() === "") return "";
+
+    // detect numeric string
+    const parsed = Number(value);
+
+    if (!Number.isNaN(parsed)) {
+      return parsed;
+    }
+
+    return value;
+  }
+
+  return value;
+}
+
+/**
+ * -------------------------------------------------------------
  * Hook
  * -------------------------------------------------------------
  */
 export function useField(path: string) {
-  const { draft, form, patch } = useCreateEvent(); // ✅ FIX
+  const { draft, form, patch } = useCreateEvent(); 
 
   /**
    * -------------------------------------------------------------
    * Value Resolver
    * -------------------------------------------------------------
    */
-  const value = path.split(".").reduce((acc: any, key) => acc?.[key], draft);
+  const value = path
+    .split(".")
+    .reduce((acc: any, key) => acc?.[key], draft);
 
   /**
    * -------------------------------------------------------------
@@ -67,7 +99,8 @@ export function useField(path: string) {
 
     onChange: (e: any) => {
       const val = e?.target ? e.target.value : e;
-      setValue(val);
+     const normalized = normalizeValue(val);
+    setValue(normalized);
     },
 
     onBlur: () => form.validateField(path),

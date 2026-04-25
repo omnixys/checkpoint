@@ -1,10 +1,10 @@
 "use client";
 
-import { Box, Stack, TextField, Typography, useTheme } from "@mui/material";
-import { motion } from "framer-motion";
+import { useField } from "@/checkpoint/app/(protected)/event/new/hooks/useField";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
-import { useField } from "@/checkpoint/app/(protected)/create/hooks/useField";
+import { Box, Stack, TextField, Typography, useTheme } from "@mui/material";
+import { motion } from "framer-motion";
 
 export default function BasicsStep() {
   const theme = useTheme();
@@ -12,8 +12,8 @@ export default function BasicsStep() {
 
   const name = useField("name");
   const description = useField("settings.description");
-const startsAt = useField("settings.startsAt");
-const endsAt = useField("settings.endsAt");
+  const startsAt = useField("settings.startsAt");
+  const endsAt = useField("settings.endsAt");
 
   return (
     <Box
@@ -43,11 +43,7 @@ const endsAt = useField("settings.endsAt");
 
       {/* FORM */}
       <Stack spacing={3}>
-        <TextField label={t("basics.name")}
-          fullWidth
-          {...name}
-
-/>
+        <TextField label={t("basics.name")} fullWidth {...name} />
 
         <TextField
           label={t("basics.description")}

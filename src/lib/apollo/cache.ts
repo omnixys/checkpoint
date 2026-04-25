@@ -19,7 +19,7 @@ const typePolicies: TypePolicies = {
         keyArgs: ["id"],
       },
 
-      EventPayload: {
+      any: {
         keyArgs: ["id"],
       },
 

@@ -1,11 +1,11 @@
 "use client";
 
-import { CreateEventDraft } from "@/checkpoint/app/(protected)/create/types/event/event-draft.type";
-import { CreateEventWizardStep } from "@/checkpoint/app/(protected)/create/types/event/event-wizard.type";
+import { useCreateEvent } from "@/checkpoint/app/(protected)/event/new/context/CreateEventContext";
+import { CreateEventDraft } from "@/checkpoint/app/(protected)/event/new/types/event/event-draft.type";
+import { CreateEventWizardStep } from "@/checkpoint/app/(protected)/event/new/types/event/event-wizard.type";
 import { formatEnum } from "@/checkpoint/i18n/format-enum";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { formatChildEventDateRange } from "@/checkpoint/utils/date-utils";
-import { useCreateEvent } from "@/checkpoint/app/(protected)/create/context/CreateEventContext";
 
 import { Box, Chip, Stack, Typography, useTheme } from "@mui/material";
 
@@ -24,9 +24,8 @@ export default function SummaryStep({ draft, onEdit }: Props) {
   const { form } = useCreateEvent();
   const errors = form.errors;
 
-
   /**
-   * 
+   *
    * -------------------------------------------------------------
    * Section Error Mapping
    * -------------------------------------------------------------
@@ -126,7 +125,7 @@ export default function SummaryStep({ draft, onEdit }: Props) {
           error={hasError("children")}
           onClick={() => onEdit(CreateEventWizardStep.CHILDREN)}
         >
-          {draft.children.length ? (
+          {draft.children?.length ? (
             draft.children.map((child) => {
               const date = formatChildEventDateRange(
                 child.startsAt,

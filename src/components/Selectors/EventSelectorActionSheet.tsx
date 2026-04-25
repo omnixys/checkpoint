@@ -1,20 +1,24 @@
 "use client";
 
-import React, { JSX } from "react";
-import { Box, Typography, TextField, Fade, useTheme } from "@mui/material";
-import { useSpring, animated } from "@react-spring/web";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
-import { EventPayload } from "@/checkpoint/generated/graphql";
+import { Box, Fade, TextField, Typography } from "@mui/material";
+import { animated, useSpring } from "@react-spring/web";
+import React, { JSX } from "react";
 
 interface Props {
   open: boolean;
   onClose: () => void;
 }
 
-export default function EventSelectorActionSheet({ open, onClose }: Props): JSX.Element {
+export default function EventSelectorActionSheet({
+  open,
+  onClose,
+}: Props): JSX.Element {
   const { events, activeEventId, selectEvent } = useActiveEvent();
   const [search, setSearch] = React.useState("");
-  const filtered = events.filter((ev) => ev.name.toLowerCase().includes(search.toLowerCase()));
+  const filtered = events.filter((ev) =>
+    ev.name.toLowerCase().includes(search.toLowerCase()),
+  );
 
   // SPRING ANIMATION (real iOS feel)
   const spring = useSpring({
@@ -94,21 +98,25 @@ export default function EventSelectorActionSheet({ open, onClose }: Props): JSX.
               mb: 2,
               "& .MuiOutlinedInput-root": {
                 borderRadius: 3,
-                backgroundColor: (t) => t.palette.apple.secondarySystemBackground,
+                backgroundColor: (t) =>
+                  t.palette.apple.secondarySystemBackground,
               },
             }}
           />
 
           {/* Event List */}
           <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-            {filtered.map((ev: EventPayload) => (
+            {filtered.map((ev: any) => (
               <Box
                 key={ev.id}
                 onClick={() => void handleSelect(ev.id)}
                 sx={{
                   p: 2,
                   borderRadius: 3,
-                  bgcolor: ev.id === activeEventId ? "primary.main" : (t) => t.palette.apple.gray6,
+                  bgcolor:
+                    ev.id === activeEventId
+                      ? "primary.main"
+                      : (t) => t.palette.apple.gray6,
                   color: ev.id === activeEventId ? "#fff" : "text.primary",
                   fontWeight: ev.id === activeEventId ? 700 : 500,
                   boxShadow:

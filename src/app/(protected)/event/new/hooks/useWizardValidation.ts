@@ -1,8 +1,8 @@
 "use client";
 
+import { CreateEventWizardStep } from "@/checkpoint/app/(protected)/event/new/types/event/event-wizard.type";
 import { useCallback } from "react";
 import { ZodSchema } from "zod";
-import { CreateEventWizardStep } from "@/checkpoint/app/(protected)/create/types/event/event-wizard.type";
 
 type StepMap = Record<CreateEventWizardStep, ZodSchema<any>>;
 

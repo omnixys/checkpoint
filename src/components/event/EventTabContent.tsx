@@ -4,17 +4,20 @@ import EventDetailsAccordion from "@/checkpoint/components/event/details/EventDe
 import EventLocationMap from "@/checkpoint/components/event/details/EventLocationMap";
 import EventTimeline from "@/checkpoint/components/event/details/EventTimeline";
 import EventDescriptionEditor from "@/checkpoint/components/event/EventDescriptionEditor";
-import { EventPayload } from "@/checkpoint/generated/graphql";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { Box, Typography } from "@mui/material";
 
 type Props = {
-  ev: EventPayload;
+  ev: any;
   active: string;
   onDescriptionChange: (v: string) => void;
 };
 
-export default function EventTabContent({ ev, active, onDescriptionChange }: Props) {
+export default function EventTabContent({
+  ev,
+  active,
+  onDescriptionChange,
+}: Props) {
   const t = useTypedTranslations("event");
 
   switch (active) {

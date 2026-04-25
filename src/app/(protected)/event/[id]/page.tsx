@@ -20,7 +20,7 @@ export async function generateMetadata({
 }: {
   params: { id: string };
 }): Promise<Metadata> {
-  const eventId = params.id;
+  const eventId = params?.id;
 
   /**
    * -------------------------------------------------------------

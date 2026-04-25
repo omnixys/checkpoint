@@ -1,5 +1,3 @@
-import { EventPayload } from "@/checkpoint/generated/graphql";
-
 /**
  * Normalize any date into a stable day key.
  * Ensures consistent grouping and comparison across the app.
@@ -11,8 +9,8 @@ export function getDateKey(date: Date | string): string {
 /**
  * Groups events by day for efficient rendering.
  */
-export function groupEventsByDay(events: readonly EventPayload[]): Map<string, EventPayload[]> {
-  const map = new Map<string, EventPayload[]>();
+export function groupEventsByDay(events: readonly any[]): Map<string, any[]> {
+  const map = new Map<string, any[]>();
 
   for (const event of events) {
     const key = getDateKey(event.settings.startsAt);
@@ -30,7 +28,7 @@ export function groupEventsByDay(events: readonly EventPayload[]): Map<string, E
 /**
  * Returns all events for a given day.
  */
-export function getEventsForDay(events: readonly EventPayload[], date: Date): EventPayload[] {
+export function getEventsForDay(events: readonly any[], date: Date): any[] {
   const key = getDateKey(date);
 
   return events.filter((e) => getDateKey(e.settings.startsAt) === key);

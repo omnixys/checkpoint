@@ -17,4 +17,22 @@ fragment EventFull on EventPayload {
   userRoles {
     ...EventUserRole
   }
+
+  coverMedia {
+    url
+    filename
+    variants {
+      width
+      url
+    }
+  }
+
+  logoMedia {
+    url
+    filename
+    variants {
+      width
+      url
+    }
+  }
 }

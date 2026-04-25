@@ -4,6 +4,8 @@ import { Box, Stack, Typography, useTheme, Button } from "@mui/material";
 import { motion } from "framer-motion";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import Confetti from "react-confetti";
+import Link from "next/link";
+import { env } from "@/checkpoint/lib/env";
 
 
 type Props = {
@@ -11,7 +13,7 @@ type Props = {
   onViewEvent: () => void;
 };
 
-export default function SuccessStep() {
+export default function SuccessStep({eventId}: {eventId: string | undefined}) {
   const theme = useTheme();
   const t = useTypedTranslations("create");
 
@@ -107,7 +109,9 @@ export default function SuccessStep() {
               fontSize: 15,
             }}
           >
-            {t("actions.viewEvent")}
+            <Link href={`${env.CHECKPOINT_BASE_PATH}event/eventId`}>
+              {t("actions.viewEvent")}
+            </Link>
           </Button>
 
           <Button
@@ -119,7 +123,9 @@ export default function SuccessStep() {
               fontSize: 15,
             }}
           >
-            {t("actions.createAnother")}
+            <Link href={`${env.CHECKPOINT_BASE_PATH}event/new`}>
+              {t("actions.createAnother")}
+            </Link>
           </Button>
         </Stack>
       </Stack>

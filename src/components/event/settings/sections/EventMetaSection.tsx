@@ -1,27 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import OwnerTransferDialog from "@/checkpoint/components/event/settings/dialog/OwnerTransferDialog";
 import {
+  CreateEventInput,
+  UserRolePayload,
+} from "@/checkpoint/generated/graphql";
+import { useMutationHandler } from "@/checkpoint/hooks/core/useMutationHandler";
+import { useAuth } from "@/checkpoint/providers/AuthProvider";
+import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
+import { EventMetaDTO } from "@/checkpoint/types/event.type";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
+import {
+  Alert,
   Box,
-  Stack,
-  Typography,
+  Button,
   Chip,
   IconButton,
-  TextField,
-  Button,
   Snackbar,
-  Alert,
+  Stack,
+  TextField,
+  Typography,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add";
 import { useTheme } from "@mui/material/styles";
-import { motion, AnimatePresence } from "framer-motion";
-import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
-import { CreateEventInput, EventPayload, UserRolePayload } from "@/checkpoint/generated/graphql";
-import { useAuth } from "@/checkpoint/providers/AuthProvider";
-import { useMutationHandler } from "@/checkpoint/hooks/core/useMutationHandler";
-import OwnerTransferDialog from "@/checkpoint/components/event/settings/dialog/OwnerTransferDialog";
-import { EventMetaDTO, EventTree } from "@/checkpoint/types/event.type";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
 
 type Props = {
   meta: EventMetaDTO;
@@ -83,14 +86,12 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
         allowPublicPlusOne: true,
         allowPublicRsvp: true,
         allowPublicRsvpWebsite: true,
-        coverImageUrl: "",
         isActive: true,
         isPublic: true,
-        logoUrl: "",
         publicRsvpWebsite: "",
-        category: 'GENERAL',
+        category: "GENERAL",
       },
-      children:[],
+      children: [],
     };
 
     const result = await execute(() => actions.addChild(payload));
@@ -112,7 +113,9 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
             borderRadius: 3,
             backdropFilter: "blur(10px)",
             backgroundColor:
-              theme.palette.mode === "dark" ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
+              theme.palette.mode === "dark"
+                ? "rgba(255,255,255,0.04)"
+                : "rgba(0,0,0,0.03)",
           }}
         >
           <Stack spacing={1}>
@@ -191,7 +194,9 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
         onClose={() => setDialogOpen(false)}
         currentOwnerId={meta.owner}
         onTransfer={(newOwnerId) =>
-          execute(() => actions.transferOwner?.(newOwnerId) ?? Promise.resolve())
+          execute(
+            () => actions.transferOwner?.(newOwnerId) ?? Promise.resolve(),
+          )
         }
       />
 
@@ -231,7 +236,9 @@ function ChildRow({ child }: { child: { id: string; name: string } }) {
         gap: 1,
         backdropFilter: "blur(10px)",
         backgroundColor:
-          theme.palette.mode === "dark" ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
+          theme.palette.mode === "dark"
+            ? "rgba(255,255,255,0.04)"
+            : "rgba(0,0,0,0.03)",
       }}
     >
       <Typography sx={{ flex: 1 }}>{child.name}</Typography>

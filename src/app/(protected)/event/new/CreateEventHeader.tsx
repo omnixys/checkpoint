@@ -1,4 +1,4 @@
-import { CreateEventWizardStep } from "@/checkpoint/app/(protected)/create/types/event/event-wizard.type";
+import { CreateEventWizardStep } from "@/checkpoint/app/(protected)/event/new/types/event/event-wizard.type";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import ChecklistRoundedIcon from "@mui/icons-material/ChecklistRounded";
 import {

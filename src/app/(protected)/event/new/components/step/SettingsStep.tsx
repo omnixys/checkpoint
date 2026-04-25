@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
 import {
+  alpha,
+  Box,
   FormControlLabel,
   Grid,
   Slider,
@@ -10,19 +11,17 @@ import {
   TextField,
   Typography,
   useTheme,
-  alpha,
-  Box,
 } from "@mui/material";
 
-import SecurityRoundedIcon from "@mui/icons-material/SecurityRounded";
 import MeetingRoomRoundedIcon from "@mui/icons-material/MeetingRoomRounded";
+import SecurityRoundedIcon from "@mui/icons-material/SecurityRounded";
 import SyncRoundedIcon from "@mui/icons-material/SyncRounded";
 
 import { motion } from "framer-motion";
 
+import CreateWizardCard from "@/checkpoint/app/(protected)/event/new/components/CreateWizardCard";
+import { useField } from "@/checkpoint/app/(protected)/event/new/hooks/useField";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { useField } from "@/checkpoint/app/(protected)/create/hooks/useField";
-import CreateWizardCard from "@/checkpoint/app/(protected)/create/components/CreateWizardCard";
 
 /**
  * -------------------------------------------------------------

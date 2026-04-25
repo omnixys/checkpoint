@@ -1,9 +1,8 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
-import { EventPayload } from "@/checkpoint/generated/graphql";
 import { useEventTabs } from "@/checkpoint/hooks/events/useEventTabs";
 import { useEventVariant } from "@/checkpoint/hooks/events/useEventVariant";
+import { useCallback, useMemo } from "react";
 
 /**
  * Main orchestration hook for Event Page
@@ -13,7 +12,7 @@ import { useEventVariant } from "@/checkpoint/hooks/events/useEventVariant";
  * - Centralizes ALL logic
  * - Easier testing + scaling
  */
-export function useEventPage(ev: EventPayload) {
+export function useEventPage(ev: any) {
   const { active, changeTab } = useEventTabs();
   const { variant, changeVariant } = useEventVariant();
 

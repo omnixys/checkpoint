@@ -18,7 +18,6 @@ import {
   RemoveUserFromEventDocument,
   TransferEventOwnershipDocument,
   UpdateEventDocument,
-  UpdateEventInput,
   UpdateSettingsInput,
   UpdateTimeLinesDocument,
   UserRoleType,
@@ -70,12 +69,10 @@ const DEFAULT_SETTINGS: CreateSettingsInput = {
   allowPublicPlusOne: true,
   allowPublicRsvp: true,
   allowPublicRsvpWebsite: true,
-  coverImageUrl: "",
   isActive: true,
   isPublic: true,
-  logoUrl: "",
   publicRsvpWebsite: "",
-  category: 'GENERAL'
+  category: "GENERAL",
 };
 
 /**
@@ -86,14 +83,19 @@ export function useEventSettings(eventId: string) {
   // QUERY
   // ─────────────────────────────
 
-  const { data, loading } = useQuery<EventQuery, EventQueryVariables>(EventDocument, {
-    variables: { id: eventId },
-    fetchPolicy: "cache-and-network",
-  });
+  const { data, loading } = useQuery<EventQuery, EventQueryVariables>(
+    EventDocument,
+    {
+      variables: { id: eventId },
+      fetchPolicy: "cache-and-network",
+    },
+  );
 
   const event = data?.event;
 
-  const staffRoles = (event?.userRoles ?? []).filter((role) => role.role !== "GUEST");
+  const staffRoles = (event?.userRoles ?? []).filter(
+    (role) => role.role !== "GUEST",
+  );
   // ─────────────────────────────
   // MUTATIONS
   // ─────────────────────────────
@@ -116,7 +118,9 @@ export function useEventSettings(eventId: string) {
     variables: { id: eventId },
   });
 
-  const children = eventData?.eventChildren.filter((child) => child.id !== eventId);
+  const children = eventData?.eventChildren.filter(
+    (child) => child.id !== eventId,
+  );
 
   // ─────────────────────────────
   // ACTIONS
@@ -166,23 +170,37 @@ export function useEventSettings(eventId: string) {
 
                 id: event?.settings?.id ?? "temp",
 
-                allowReEntry: normalized.allowReEntry ?? event?.settings?.allowReEntry ?? true,
+                allowReEntry:
+                  normalized.allowReEntry ??
+                  event?.settings?.allowReEntry ??
+                  true,
 
-                rotateSeconds: normalized.rotateSeconds ?? event?.settings?.rotateSeconds ?? 300,
+                rotateSeconds:
+                  normalized.rotateSeconds ??
+                  event?.settings?.rotateSeconds ??
+                  300,
 
-                maxSeats: normalized.maxSeats ?? event?.settings?.maxSeats ?? 50,
+                maxSeats:
+                  normalized.maxSeats ?? event?.settings?.maxSeats ?? 50,
 
-                isActive: normalized.isActive ?? event?.settings?.isActive ?? false,
+                isActive:
+                  normalized.isActive ?? event?.settings?.isActive ?? false,
 
-                dressCode: normalized.dressCode ?? event?.settings?.dressCode ?? null,
+                dressCode:
+                  normalized.dressCode ?? event?.settings?.dressCode ?? null,
 
-                description: normalized.description ?? event?.settings?.description ?? null,
+                description:
+                  normalized.description ??
+                  event?.settings?.description ??
+                  null,
 
-                startsAt: normalized.startsAt ?? event?.settings?.startsAt ?? null,
+                startsAt:
+                  normalized.startsAt ?? event?.settings?.startsAt ?? null,
 
                 endsAt: normalized.endsAt ?? event?.settings?.endsAt ?? null,
 
-                createdAt: event?.settings?.createdAt ?? new Date().toISOString(),
+                createdAt:
+                  event?.settings?.createdAt ?? new Date().toISOString(),
 
                 updatedAt: new Date().toISOString(),
               },
@@ -296,7 +314,6 @@ export function useEventSettings(eventId: string) {
           ...DEFAULT_SETTINGS,
           ...payload.settings,
         };
-
 
         return createChild({
           variables: {

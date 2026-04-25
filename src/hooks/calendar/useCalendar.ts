@@ -1,4 +1,3 @@
-import { EventPayload } from "@/checkpoint/generated/graphql";
 import { groupEventsByDay } from "@/checkpoint/utils/calendar/calendar.utils";
 import { addMonths, addYears } from "@/checkpoint/utils/date-utils";
 import { useMemo, useState } from "react";
@@ -10,7 +9,7 @@ export type CalendarMode = "month" | "year";
  * Central calendar state management.
  * This is the single source of truth for all calendar behavior.
  */
-export function useCalendar(events: readonly EventPayload[]) {
+export function useCalendar(events: readonly any[]) {
   const [view, setView] = useState<CalendarView>("list");
   const [mode, setMode] = useState<CalendarMode>("month");
   const [visibleDate, setVisibleDate] = useState<Date>(new Date());

@@ -7,6 +7,36 @@ import React from "react";
 import { EventHeaderProps } from "../EventActions";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
+type MediaVariant = {
+  width: number;
+  url: string;
+};
+
+type Media = {
+  url: string;
+  filename: string;
+  variants?: MediaVariant[];
+};
+
+function getBestImage(
+  media: Media | null | undefined,
+  targetWidth: number,
+): string | null {
+  if (!media) return null;
+
+  if (!media.variants?.length) return media.filename;
+
+  const sorted = [...media.variants].sort(
+    (a, b) => a.width - b.width,
+  );
+
+  const match = sorted.find((v) => v.width >= targetWidth);
+
+const last = sorted[sorted.length - 1];
+
+return match?.url ?? last?.url ?? media.filename;
+}
+
 export default function EventHeaderD({ ev }: EventHeaderProps) {
   const theme = useTheme();
   const t = useTypedTranslations("event");
@@ -34,7 +64,7 @@ export default function EventHeaderD({ ev }: EventHeaderProps) {
   const roleChipColor =
     ev.myRole === "ADMIN" ? "primary" : ev.myRole === "SECURITY" ? "success" : "default";
 
-  const hero = (ev as unknown as { imageUrl?: string }).imageUrl || "/event/event-default.png";
+  const hero = getBestImage(ev.logoMedia, 1200) || "/event/event-default.png";
 
   return (
     <motion.div

@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import {
   Box,
   Button,
@@ -17,10 +16,10 @@ import UploadRoundedIcon from "@mui/icons-material/UploadRounded";
 
 import { motion } from "framer-motion";
 
+import { useCreateEvent } from "@/checkpoint/app/(protected)/event/new/context/CreateEventContext";
+import { useField } from "@/checkpoint/app/(protected)/event/new/hooks/useField";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { useField } from "@/checkpoint/app/(protected)/create/hooks/useField";
-import { useUploadMedia } from "@/checkpoint/hooks/common/useUploadMedia";
-import { CreateEventDraft } from "@/checkpoint/app/(protected)/create/types/event/event-draft.type";
+import { MediaType } from "@/checkpoint/generated/graphql";
 
 /**
  * -------------------------------------------------------------
@@ -31,9 +30,9 @@ import { CreateEventDraft } from "@/checkpoint/app/(protected)/create/types/even
 const CATEGORY_OPTIONS = [
   "GENERAL",
   "KONFERENZ",
-"MUSIK",
- "WORKSHOP",
- "SOCIAL",
+  "MUSIK",
+  "WORKSHOP",
+  "SOCIAL",
   "SPORTS",
 ] as const;
 
@@ -53,6 +52,7 @@ const CATEGORY_OPTIONS = [
  */
 export default function ExperienceStep() {
   const t = useTypedTranslations("create");
+  const { addUpload } = useCreateEvent();
 
   /**
    * -------------------------------------------------------------
@@ -65,25 +65,43 @@ export default function ExperienceStep() {
   const coverImageUrl = useField("settings.coverImageUrl");
   const logoUrl = useField("settings.logoUrl");
 
-    // const { upload, loading } = useUploadMedia(draft.id ?? "temp");
+  // const { upload, loading } = useUploadMedia(draft.id ?? "temp");
   /**
    * -------------------------------------------------------------
    * File Handlers (Preview + Form Sync)
    * -------------------------------------------------------------
    */
-  const handleFile = (
+  const handleFile2 = (
     file: File | undefined,
+    type: MediaType,
     setter: (val: string) => void,
   ) => {
     if (!file) return;
 
+    /**
+     * 1. Preview (instant UX)
+     */
     const preview = URL.createObjectURL(file);
     setter(preview);
 
     /**
-     * ⚠️ Later:
-     * upload(file) → return CDN URL → setter(url)
+     * 2. Save for later upload
      */
+    addUpload(file, type);
+  };
+
+  const handleFile = (file: File | undefined, type: MediaType) => {
+    if (!file) return;
+
+    addUpload(file, type);
+
+    const preview = URL.createObjectURL(file);
+
+    if (type === 'COVER') {
+      coverImageUrl.onChange(preview);
+    } else {
+      logoUrl.onChange(preview);
+    }
   };
 
   return (
@@ -176,7 +194,11 @@ export default function ExperienceStep() {
                   type="file"
                   accept="image/*"
                   onChange={(e) =>
-                    handleFile(e.target.files?.[0], coverImageUrl.onChange)
+                    handleFile(
+                      e.target.files?.[0],
+                      'COVER',
+                      //coverImageUrl.onChange,
+                    )
                   }
                 />
               </Button>
@@ -210,7 +232,11 @@ export default function ExperienceStep() {
                   type="file"
                   accept="image/*"
                   onChange={(e) =>
-                    handleFile(e.target.files?.[0], logoUrl.onChange)
+                    handleFile(
+                      e.target.files?.[0],
+                      'LOGO',
+                      //logoUrl.onChange
+                    )
                   }
                 />
               </Button>

@@ -1,6 +1,5 @@
 "use client";
 
-import { EventPayload } from "@/checkpoint/generated/graphql";
 import { getEventsForDay } from "@/checkpoint/utils/calendar/calendar.utils";
 import { Box, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
@@ -8,7 +7,7 @@ import { useTheme } from "@mui/material/styles";
 type Props = {
   date: Date;
   mode: "month" | "year";
-  events: readonly EventPayload[];
+  events: readonly any[];
   onSelectDay: (date: Date) => void;
   onSelectMonth: (month: number) => void;
 };
@@ -40,7 +39,8 @@ export default function CalendarGridView({
           const monthEvents = events.filter(
             (e) =>
               new Date(e.settings.startsAt).getMonth() === m &&
-              new Date(e.settings.startsAt).getFullYear() === date.getFullYear(),
+              new Date(e.settings.startsAt).getFullYear() ===
+                date.getFullYear(),
           );
 
           return (
@@ -104,7 +104,9 @@ export default function CalendarGridView({
   );
 
   return (
-    <Box sx={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 1 }}>
+    <Box
+      sx={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 1 }}
+    >
       {days.map((d) => {
         const hasEvents = getEventsForDay(events, d).length > 0;
 

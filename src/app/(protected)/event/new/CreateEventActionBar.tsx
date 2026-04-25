@@ -1,13 +1,11 @@
-import { useCreateEvent } from "@/checkpoint/app/(protected)/create/context/CreateEventContext";
-import { useField } from "@/checkpoint/app/(protected)/create/hooks/useField";
-import { CreateEventWizardStep } from "@/checkpoint/app/(protected)/create/types/event/event-wizard.type";
+import { CreateEventWizardStep } from "@/checkpoint/app/(protected)/event/new/types/event/event-wizard.type";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { Button, Stack, useTheme } from "@mui/material";
 
 interface CreateEventActionBarProps {
   previousStep: () => void;
   onNext: () => void | Promise<void>;
-  onSubmit?: () => Promise<void>; 
+  onSubmit?: () => Promise<void>;
 
   activeStep: number;
 
@@ -26,8 +24,6 @@ export default function CreateEventActionBar({
   const theme = useTheme();
   const t = useTypedTranslations("create");
 
-
-  
   const isLastStep = activeStep === CreateEventWizardStep.SUMMARY;
 
   return (

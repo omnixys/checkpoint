@@ -1,11 +1,10 @@
 "use client";
 
 import CalendarEventCard from "@/checkpoint/components/calendar/CalendarEventCard";
-import { EventPayload } from "@/checkpoint/generated/graphql";
 import { Box, Typography } from "@mui/material";
 
 type Props = {
-  grouped: Map<string, EventPayload[]>;
+  grouped: Map<string, any[]>;
   onSelectDay: (date: Date) => void;
 };
 

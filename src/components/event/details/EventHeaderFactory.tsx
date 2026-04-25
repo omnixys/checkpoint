@@ -4,7 +4,6 @@ import EventHeaderA from "@/checkpoint/components/event/details/header/EventHead
 import EventHeaderB from "@/checkpoint/components/event/details/header/EventHeaderB";
 import EventHeaderC from "@/checkpoint/components/event/details/header/EventHeaderC";
 import EventHeaderD from "@/checkpoint/components/event/details/header/EventHeaderD";
-import { EventPayload } from "@/checkpoint/generated/graphql";
 import { EventVariant } from "@/checkpoint/hooks/events/useEventVariant";
 
 /**
@@ -16,7 +15,7 @@ import { EventVariant } from "@/checkpoint/hooks/events/useEventVariant";
  * - Scalable for future variants
  */
 type Props = {
-  ev: EventPayload;
+  ev: any;
   variant: EventVariant;
 };
 

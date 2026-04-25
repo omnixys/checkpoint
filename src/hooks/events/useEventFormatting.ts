@@ -1,8 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
 import { ChipProps } from "@mui/material";
-import { EventPayload } from "@/checkpoint/generated/graphql";
+import { useMemo } from "react";
 
 /**
  * Centralized formatting + mapping logic for events.
@@ -12,7 +11,7 @@ import { EventPayload } from "@/checkpoint/generated/graphql";
  * - Ensures consistent formatting everywhere
  * - Single source of truth
  */
-export function useEventFormatting(ev: EventPayload) {
+export function useEventFormatting(ev: any) {
   /**
    * Role → Chip color mapping
    */
@@ -48,7 +47,10 @@ export function useEventFormatting(ev: EventPayload) {
    * Hero image fallback logic
    */
   const heroImage = useMemo(() => {
-    return (ev as unknown as { imageUrl?: string }).imageUrl || "/event/event-default.png";
+    return (
+      (ev as unknown as { imageUrl?: string }).imageUrl ||
+      "/event/event-default.png"
+    );
   }, [ev]);
 
   return {

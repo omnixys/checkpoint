@@ -1,42 +1,42 @@
 "use client";
 
-import React, { useState } from "react";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  alpha,
+  Box,
   Button,
+  Chip,
   Grid,
   IconButton,
+  MenuItem,
   Stack,
   TextField,
   Typography,
   useTheme,
-  alpha,
-  Box,
-  Chip,
-  MenuItem,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
 } from "@mui/material";
+import { useState } from "react";
 
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
-import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
-import ExpandLessRoundedIcon from "@mui/icons-material/ExpandLessRounded";
 import EventRoundedIcon from "@mui/icons-material/EventRounded";
-import MusicNoteRoundedIcon from "@mui/icons-material/MusicNoteRounded";
-import SportsSoccerRoundedIcon from "@mui/icons-material/SportsSoccerRounded";
+import ExpandLessRoundedIcon from "@mui/icons-material/ExpandLessRounded";
+import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
 import GroupsRoundedIcon from "@mui/icons-material/GroupsRounded";
+import MusicNoteRoundedIcon from "@mui/icons-material/MusicNoteRounded";
 import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
+import SportsSoccerRoundedIcon from "@mui/icons-material/SportsSoccerRounded";
 
+import { useCreateEvent } from "@/checkpoint/app/(protected)/event/new/context/CreateEventContext";
+import { useField } from "@/checkpoint/app/(protected)/event/new/hooks/useField";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { useCreateEvent } from "@/checkpoint/app/(protected)/create/context/CreateEventContext";
-import { useField } from "@/checkpoint/app/(protected)/create/hooks/useField";
 
+import { ChildEventDraft } from "@/checkpoint/app/(protected)/event/new/types/event/event-draft.type";
+import { formatEnum } from "@/checkpoint/i18n/format-enum";
+import { formatChildEventDateRange } from "@/checkpoint/utils/date-utils";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { formatChildEventDateRange } from "@/checkpoint/utils/date-utils";
-import { formatEnum } from "@/checkpoint/i18n/format-enum";
-import { ChildEventDraft } from "@/checkpoint/app/(protected)/create/types/event/event-draft.type";
 
 const CATEGORY_OPTIONS = [
   "general",
@@ -47,22 +47,22 @@ const CATEGORY_OPTIONS = [
   "sports",
 ] as const;
 
-  function getCategoryIcon(category?: string) {
-    switch (category) {
-      case "Musik":
-        return <MusicNoteRoundedIcon />;
-      case "Sports":
-        return <SportsSoccerRoundedIcon />;
-      case "Workshop":
-        return <SchoolRoundedIcon />;
-      case "Social":
-        return <GroupsRoundedIcon />;
-      case "Konferenz":
-        return <EventRoundedIcon />;
-      default:
-        return <EventRoundedIcon />;
-    }
+function getCategoryIcon(category?: string) {
+  switch (category) {
+    case "Musik":
+      return <MusicNoteRoundedIcon />;
+    case "Sports":
+      return <SportsSoccerRoundedIcon />;
+    case "Workshop":
+      return <SchoolRoundedIcon />;
+    case "Social":
+      return <GroupsRoundedIcon />;
+    case "Konferenz":
+      return <EventRoundedIcon />;
+    default:
+      return <EventRoundedIcon />;
   }
+}
 
 function validateChild(child: ChildEventDraft) {
   const errors: Record<string, string> = {};
@@ -100,16 +100,12 @@ export default function ChildrenStep() {
   const [collapsed, setCollapsed] = useState<Record<number, boolean>>({});
   const [touched, setTouched] = useState<Record<number, boolean>>({});
 
-
   const toggle = (index: number) => {
     setCollapsed((prev) => ({
       ...prev,
       [index]: !prev[index],
     }));
   };
-
-
-
 
   return (
     <Stack spacing={2.5}>
@@ -328,7 +324,7 @@ export default function ChildrenStep() {
                         >
                           {CATEGORY_OPTIONS.map((opt) => (
                             <MenuItem key={opt} value={opt}>
-                              {formatEnum(t, "categorie",opt)}
+                              {formatEnum(t, "categorie", opt)}
                             </MenuItem>
                           ))}
                         </TextField>

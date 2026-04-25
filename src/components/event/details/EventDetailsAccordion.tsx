@@ -5,13 +5,12 @@ import { alpha, Box, Stack, Typography, useTheme } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
 
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import CheckroomIcon from "@mui/icons-material/Checkroom";
 import DescriptionIcon from "@mui/icons-material/Description";
-import { EventPayload } from "@/checkpoint/generated/graphql";
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 type Props = {
-  ev: EventPayload;
+  ev: any;
 };
 
 type SectionProps = {
@@ -57,7 +56,10 @@ function AccordionSection({ icon, title, value }: SectionProps) {
 
         <Box sx={{ flex: 1 }} />
 
-        <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.25 }}>
+        <motion.div
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ duration: 0.25 }}
+        >
           <ExpandMoreIcon />
         </motion.div>
       </Stack>

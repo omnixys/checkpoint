@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import {
   Box,
   FormControlLabel,
@@ -10,14 +9,14 @@ import {
   Typography,
 } from "@mui/material";
 
-import PublicRoundedIcon from "@mui/icons-material/PublicRounded";
-import LanguageRoundedIcon from "@mui/icons-material/LanguageRounded";
 import GroupAddRoundedIcon from "@mui/icons-material/GroupAddRounded";
+import LanguageRoundedIcon from "@mui/icons-material/LanguageRounded";
+import PublicRoundedIcon from "@mui/icons-material/PublicRounded";
 
 import { motion } from "framer-motion";
 
+import { useField } from "@/checkpoint/app/(protected)/event/new/hooks/useField";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { useField } from "@/checkpoint/app/(protected)/create/hooks/useField";
 
 /**
  * -------------------------------------------------------------

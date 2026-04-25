@@ -1,17 +1,20 @@
 "use client";
 
-import { EventPayload } from "@/checkpoint/generated/graphql";
 import { alpha, Box, Chip, Stack, Typography, useTheme } from "@mui/material";
 
 type Props = {
-  ev: EventPayload;
+  ev: any;
 };
 
 export default function EventHeaderA({ ev }: Props) {
   const theme = useTheme();
 
   const roleChipColor =
-    ev.myRole === "ADMIN" ? "primary" : ev.myRole === "SECURITY" ? "success" : "default";
+    ev.myRole === "ADMIN"
+      ? "primary"
+      : ev.myRole === "SECURITY"
+        ? "success"
+        : "default";
 
   return (
     <Box

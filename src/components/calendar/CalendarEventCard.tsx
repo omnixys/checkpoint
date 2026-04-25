@@ -1,14 +1,13 @@
 "use client";
 
-import { JSX } from "react";
-import { Box, IconButton, Typography } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import { EventPayload } from "@/checkpoint/generated/graphql";
 import { useEventReminder } from "@/checkpoint/hooks/calendar/useEventReminder";
 import NotificationsActiveRoundedIcon from "@mui/icons-material/NotificationsActiveRounded";
+import { Box, IconButton, Typography } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import { JSX } from "react";
 
 type Props = {
-  event: EventPayload;
+  event: any;
 };
 
 export default function CalendarEventCard({ event }: Props): JSX.Element {

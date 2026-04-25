@@ -16,13 +16,12 @@ import {
 import { motion } from "framer-motion";
 import Link from "next/link";
 
-import EventCardMedia from "./EventCardMedia";
-import { EventPayload } from "@/checkpoint/generated/graphql";
-import { env } from "@/checkpoint/lib/env";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { env } from "@/checkpoint/lib/env";
+import EventCardMedia from "./EventCardMedia";
 
 type Props = {
-  ev: EventPayload;
+  ev: any;
   toLocal: (dt: string | number | Date) => string;
   visualOverride: "auto" | "image" | "banner" | "none";
   isActive: boolean;
@@ -51,8 +50,8 @@ export default function EventCardPro({
   const start = new Date(ev.settings.startsAt).getTime();
   const end = new Date(ev.settings.endsAt).getTime();
 
-const status: EventStatus =
-  start <= now && end >= now ? "running" : start > now ? "upcoming" : "past";
+  const status: EventStatus =
+    start <= now && end >= now ? "running" : start > now ? "upcoming" : "past";
 
   const style =
     visualOverride === "auto"

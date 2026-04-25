@@ -1,6 +1,5 @@
 "use client";
 
-import { EventPayload } from "@/checkpoint/generated/graphql";
 import { EventsFilter } from "@/checkpoint/types/event.type";
 import { useMemo } from "react";
 
@@ -13,7 +12,7 @@ import { useMemo } from "react";
  * This MUST NOT live inside components.
  */
 export function useFilteredEvents(params: {
-  events: EventPayload[] | undefined;
+  events: any[] | undefined;
   search: string;
   filter: EventsFilter;
   activeEventId: string | undefined;
@@ -40,7 +39,10 @@ export function useFilteredEvents(params: {
         ? filtered
         : filtered.filter((ev) => {
             const q = search.toLowerCase();
-            return ev.name.toLowerCase().includes(q) || (ev.id?.toLowerCase().includes(q) ?? false);
+            return (
+              ev.name.toLowerCase().includes(q) ||
+              (ev.id?.toLowerCase().includes(q) ?? false)
+            );
           });
 
     const sorted = [...searched].sort((a, b) => {
