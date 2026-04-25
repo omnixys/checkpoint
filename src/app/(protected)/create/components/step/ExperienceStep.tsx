@@ -19,20 +19,32 @@ import { motion } from "framer-motion";
 
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { useField } from "@/checkpoint/app/(protected)/create/hooks/useField";
+import { useUploadMedia } from "@/checkpoint/hooks/common/useUploadMedia";
+import { CreateEventDraft } from "@/checkpoint/app/(protected)/create/types/event/event-draft.type";
 
 /**
  * -------------------------------------------------------------
  * Constants
  * -------------------------------------------------------------
  */
+
 const CATEGORY_OPTIONS = [
-  "general",
-  "conference",
-  "music",
-  "workshop",
-  "social",
-  "sports",
+  "GENERAL",
+  "KONFERENZ",
+"MUSIK",
+ "WORKSHOP",
+ "SOCIAL",
+  "SPORTS",
 ] as const;
+
+// const CATEGORY_OPTIONS = [
+//   "general",
+//   "conference",
+//   "music",
+//   "workshop",
+//   "social",
+//   "sports",
+// ] as const;
 
 /**
  * -------------------------------------------------------------
@@ -53,6 +65,7 @@ export default function ExperienceStep() {
   const coverImageUrl = useField("settings.coverImageUrl");
   const logoUrl = useField("settings.logoUrl");
 
+    // const { upload, loading } = useUploadMedia(draft.id ?? "temp");
   /**
    * -------------------------------------------------------------
    * File Handlers (Preview + Form Sync)

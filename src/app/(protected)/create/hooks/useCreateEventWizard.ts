@@ -52,10 +52,10 @@ const createInitialSettings = (): CreateEventDraft["settings"] => ({
   logoUrl: "",
   dressCode: "",
   description: "",
-  descriptionLong: "",
+  // descriptionLong: "",
   startsAt: "",
   endsAt: "",
-  category: "",
+  category: 'GENERAL',
 });
 
 const createInitialEventDraft = (): CreateEventDraft => ({
@@ -75,7 +75,7 @@ export const createEmptyChildEvent = (): ChildEventDraft => ({
   endsAt: "",
   maxSeats: 0,
   parentId: '',
-  category: ''
+  category: 'GENERAL',
 });
 
 /**
@@ -162,7 +162,7 @@ function reducer(state: CreateEventDraft, action: Action): CreateEventDraft {
  * -------------------------------------------------------------
  */
 export function useCreateEventWizard(): UseCreateEventWizardProps {
-  const [activeStep, setActiveStep] = useState(CreateEventWizardStep.SUMMARY);
+  const [activeStep, setActiveStep] = useState(CreateEventWizardStep.BASICS);
 
   const [draft, dispatch] = useReducer(
     reducer,

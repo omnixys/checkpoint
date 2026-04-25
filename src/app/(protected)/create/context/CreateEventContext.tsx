@@ -46,6 +46,15 @@ const initialState: State = {
       allowPublicRsvpWebsite: false,
       isActive: true,
       isPublic: false,
+  publicRsvpWebsite: '',
+  coverImageUrl: '',
+  logoUrl: '',
+      dressCode: '',
+      description: '',
+  // descriptionLong: '',
+  startsAt: null,
+  endsAt: null,
+  category: 'GENERAL'
     },
     children: [],
   },
@@ -61,7 +70,7 @@ function reducer(state: State, action: Action): State {
     case "PATCH":
       return {
         ...state,
-        draft: { ...state.draft, ...action.patch },
+        draft: action.patch as CreateEventDraft, // 💎 FULL REPLACE
       };
 
     case "PATCH_SETTINGS":
@@ -86,7 +95,7 @@ function reducer(state: State, action: Action): State {
             {
               id: crypto.randomUUID(),
               name: "",
-              category: "General",
+              category: 'GENERAL',
             },
           ],
         },

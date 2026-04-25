@@ -41,6 +41,7 @@ export function useField(path: string) {
    */
   const setValue = (val: any) => {
     const next = structuredClone(draft);
+    
     setDeep(next, path, val);
 
     patch(next); // ✅ FULL PATCH

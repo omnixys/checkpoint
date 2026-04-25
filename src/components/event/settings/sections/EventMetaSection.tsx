@@ -88,6 +88,7 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
         isPublic: true,
         logoUrl: "",
         publicRsvpWebsite: "",
+        category: 'GENERAL',
       },
       children:[],
     };

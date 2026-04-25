@@ -192,12 +192,12 @@
     "chooseCover": "Choose cover",
     "category": "Category",
     "categories": {
-      "general": "General",
-      "conference": "Conference",
-      "music": "Music",
-      "workshop": "Workshop",
-      "social": "Social",
-      "sports": "Sports"
+       "GENERAL": "General",
+      "KONFERENZ": "Conference",
+      "MUSIK": "Music",
+     "WORKSHOP": "Workshop",
+     "SOCIAL": "Social",
+       "SPORTS": "Sports"
     }
   },
 

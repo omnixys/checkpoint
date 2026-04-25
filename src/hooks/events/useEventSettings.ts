@@ -75,6 +75,7 @@ const DEFAULT_SETTINGS: CreateSettingsInput = {
   isPublic: true,
   logoUrl: "",
   publicRsvpWebsite: "",
+  category: 'GENERAL'
 };
 
 /**

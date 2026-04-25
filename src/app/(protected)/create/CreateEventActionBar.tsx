@@ -1,11 +1,13 @@
 import { useCreateEvent } from "@/checkpoint/app/(protected)/create/context/CreateEventContext";
+import { useField } from "@/checkpoint/app/(protected)/create/hooks/useField";
 import { CreateEventWizardStep } from "@/checkpoint/app/(protected)/create/types/event/event-wizard.type";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { Button, Stack, useTheme } from "@mui/material";
 
 interface CreateEventActionBarProps {
   previousStep: () => void;
-  nextStep: () => void;
+  onNext: () => void | Promise<void>;
+  onSubmit?: () => Promise<void>; 
 
   activeStep: number;
 
@@ -16,13 +18,16 @@ interface CreateEventActionBarProps {
 export default function CreateEventActionBar({
   previousStep,
   activeStep,
-  nextStep,
+  onNext,
+  onSubmit,
   disableNext = false,
   isSubmitting = false,
 }: CreateEventActionBarProps) {
   const theme = useTheme();
   const t = useTypedTranslations("create");
 
+
+  
   const isLastStep = activeStep === CreateEventWizardStep.SUMMARY;
 
   return (
@@ -49,7 +54,7 @@ export default function CreateEventActionBar({
       {/* NEXT / SUBMIT */}
       <Button
         variant="contained"
-        onClick={nextStep}
+        onClick={isLastStep ? onSubmit : onNext} // 💎 sauber getrennt
         disabled={disableNext || isSubmitting}
         sx={{
           textTransform: "none",

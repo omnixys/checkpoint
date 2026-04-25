@@ -22,6 +22,10 @@ import { CreateEventWizardStep } from "@/checkpoint/app/(protected)/create/types
 
 import { useCreateEvent } from "@/checkpoint/app/(protected)/create/context/CreateEventContext";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { useMutation } from "@/checkpoint/hooks/core/useMutation";
+import { CreateEventDocument, CreateEventMutation, CreateEventMutationVariables } from "@/checkpoint/generated/graphql";
+import { mapEvent } from "@/checkpoint/app/(protected)/create/types/event/event-draft.type";
+import { useUploadMedia } from "@/checkpoint/hooks/common/useUploadMedia";
 
 export default function CreateEventWizard() {
   const theme = useTheme();
@@ -37,13 +41,13 @@ export default function CreateEventWizard() {
     nextStep,
     previousStep,
     progress,
-    draft,
-    updateDraft,
-    addChild,
-    removeChild,
-    updateChild,
     goTo,
   } = useCreateEventWizard();
+
+  const { draft } =
+    useCreateEvent();
+  
+    
 
   /**
    * -------------------------------------------------------------
@@ -51,6 +55,46 @@ export default function CreateEventWizard() {
    * -------------------------------------------------------------
    */
   const { form } = useCreateEvent();
+
+  const [create] = useMutation<CreateEventMutation, CreateEventMutationVariables>(CreateEventDocument)
+
+  const handleCreateEvent = useCallback(async (): Promise<void> => {
+  const input = mapEvent(draft);
+
+  const result = await create({
+    variables: { input },
+  });
+
+    const eventId = result.data?.createEvent.id;
+    const { upload, loading } = useUploadMedia(eventId ?? '');
+    
+      const handleUpload = async (
+        file: File | undefined,
+        setter: (val: string) => void,
+      ) => {
+        if (!file) return;
+
+        /**
+         * Immediate preview (UX)
+         */
+        const preview = URL.createObjectURL(file);
+        setter(preview);
+
+        try {
+          /**
+           * REAL upload
+           */
+          const result = await upload(file);
+
+          /**
+           * Replace preview with CDN URL
+           */
+          setter(result.url);
+        } catch (err) {
+          console.error("Upload failed", err);
+        }
+      };
+}, [draft, create]);
 
   /**
    * -------------------------------------------------------------
@@ -163,8 +207,9 @@ export default function CreateEventWizard() {
           {!isSuccess && (
             <CreateEventActionBar
               previousStep={previousStep}
-              nextStep={handleNext}
               activeStep={activeStep}
+              onNext={nextStep}
+              onSubmit={handleCreateEvent}
             />
           )}
         </Box>

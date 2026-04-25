@@ -12,8 +12,8 @@ export default function BasicsStep() {
 
   const name = useField("name");
   const description = useField("settings.description");
-  const startsAt = useField("startsAt");
-  const endsAt = useField("endsAt");
+const startsAt = useField("settings.startsAt");
+const endsAt = useField("settings.endsAt");
 
   return (
     <Box
@@ -43,7 +43,11 @@ export default function BasicsStep() {
 
       {/* FORM */}
       <Stack spacing={3}>
-        <TextField label={t("basics.name")} fullWidth {...name} />
+        <TextField label={t("basics.name")}
+          fullWidth
+          {...name}
+
+/>
 
         <TextField
           label={t("basics.description")}

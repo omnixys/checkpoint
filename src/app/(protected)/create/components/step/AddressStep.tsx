@@ -61,6 +61,8 @@ export default function AddressStep() {
           city: result.city ?? "",
           postalCode: result.postalCode ?? "",
           country: result.country ?? "",
+          state: result.state ?? '',
+          additionalInfo: '',
         },
       });
     })();

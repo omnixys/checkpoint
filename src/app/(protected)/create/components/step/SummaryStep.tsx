@@ -24,7 +24,9 @@ export default function SummaryStep({ draft, onEdit }: Props) {
   const { form } = useCreateEvent();
   const errors = form.errors;
 
+
   /**
+   * 
    * -------------------------------------------------------------
    * Section Error Mapping
    * -------------------------------------------------------------
@@ -109,7 +111,11 @@ export default function SummaryStep({ draft, onEdit }: Props) {
             label={t("experience.category")}
             value={
               draft.settings.category
-                ? formatEnum(t, "category", draft.settings.category)
+                ? formatEnum(
+                    t,
+                    "experience.categories",
+                    draft.settings.category,
+                  )
                 : null
             }
           />
