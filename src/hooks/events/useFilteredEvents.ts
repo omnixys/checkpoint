@@ -25,8 +25,8 @@ export function useFilteredEvents(params: {
     const now = Date.now();
 
     const filtered = base.filter((ev) => {
-      const start = new Date(ev.settings.startsAt).getTime();
-      const end = new Date(ev.settings.endsAt).getTime();
+      const start = new Date(ev.settings?.startsAt).getTime();
+      const end = new Date(ev.settings?.endsAt).getTime();
 
       if (filter === "upcoming") return start > now;
       if (filter === "now") return start <= now && end >= now;

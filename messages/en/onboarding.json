@@ -1,0 +1,37 @@
+{
+  "tour": {
+  "home": "Overview of your event",
+  "notifications": "Manage notifications",
+  "scanner": "Scan QR codes",
+  "eventPage": "View event details",
+  "invitations": "Manage invitations",
+  "seats": "Manage seating",
+  "guests": "View all guests",
+  "tickets": "Manage tickets",
+  "profile": "Your profile",
+  "myTicket": "Your ticket",
+  "mySeat": "Your seat",
+  "plusOnes": "Manage plus-ones",
+
+  "event": {
+    "title": "Select event",
+    "description": "Select an event first to use all features."
+  },
+  "color": {
+    "title": "Color scheme",
+    "description": "Customize the visual appearance of the app."
+  },
+  "theme": {
+    "title": "Dark mode",
+    "description": "Switch between light and dark appearance."
+  },
+  "language": {
+    "title": "Language",
+    "description": "Change the app language."
+  },
+  "user": {
+    "title": "Profile",
+    "description": "Open your settings, profile, and shortcuts."
+  }
+}
+}

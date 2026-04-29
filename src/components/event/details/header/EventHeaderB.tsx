@@ -12,7 +12,7 @@ export function getBestImage(
 ): string | null {
   if (!media) return null;
 
-  if (!media.variants?.length) return media.filename;
+  if (!media.variants?.length) return media.url;
 
   const sorted = [...media.variants].sort((a, b) => a.width - b.width);
 
@@ -20,7 +20,7 @@ export function getBestImage(
 
   const last = sorted[sorted.length - 1];
 
-  return match?.url ?? last?.url ?? media.filename;
+  return match?.url ?? last?.url ?? media.url;
 }
 
 export default function EventHeaderB({ eventPageData }: EventHeaderProps) {
@@ -91,7 +91,7 @@ export default function EventHeaderB({ eventPageData }: EventHeaderProps) {
           variant="body1"
           sx={{ color: theme.palette.primary.contrastText }}
         >
-          {new Date(eventPageData.settings.startsAt).toLocaleString("de-DE", {
+          {new Date(eventPageData.settings?.startsAt).toLocaleString("de-DE", {
             dateStyle: "medium",
             timeStyle: "short",
           })}
@@ -102,7 +102,7 @@ export default function EventHeaderB({ eventPageData }: EventHeaderProps) {
           sx={{ color: theme.palette.primary.contrastText }}
         >
           bis{" "}
-          {new Date(eventPageData.settings.endsAt).toLocaleString("de-DE", {
+          {new Date(eventPageData.settings?.endsAt).toLocaleString("de-DE", {
             dateStyle: "medium",
             timeStyle: "short",
           })}

@@ -153,7 +153,7 @@ export default function UserMenu(): JSX.Element | null {
         </MenuItem> */}
 
         {/* My QR */}
-        <MenuItem onClick={() => go(`${CHECKPOINT_BASE_PATH}my-qr`)}>
+        <MenuItem onClick={() => go(`${CHECKPOINT_BASE_PATH}me/my-qr`)}>
           <ListItemIcon>
             <BadgeIcon fontSize="small" />
           </ListItemIcon>
@@ -161,14 +161,14 @@ export default function UserMenu(): JSX.Element | null {
         </MenuItem>
 
         {/* Plus-Ones → only for guests */}
-        {/* {eventRole === "GUEST" && (
-          <MenuItem onClick={() => go(`${CHECKPOINT_BASE_PATH}my-plus-ones`)}>
+        {eventRole === "GUEST" && (
+          <MenuItem onClick={() => go(`${CHECKPOINT_BASE_PATH}me/my-plus-ones`)}>
             <ListItemIcon>
               <GroupsIcon fontSize="small" />
             </ListItemIcon>
             Plus-Ones verwalten
           </MenuItem>
-        )} */}
+        )}
 
         {/* Security-only */}
         {eventRole === "SECURITY" && (

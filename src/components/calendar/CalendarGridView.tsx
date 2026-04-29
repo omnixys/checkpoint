@@ -39,8 +39,8 @@ export default function CalendarGridView({
 
           const monthEvents = events.filter(
             (e) =>
-              new Date(e.settings.startsAt).getMonth() === m &&
-              new Date(e.settings.startsAt).getFullYear() ===
+              new Date(e.settings?.startsAt).getMonth() === m &&
+              new Date(e.settings?.startsAt).getFullYear() ===
                 date.getFullYear(),
           );
 

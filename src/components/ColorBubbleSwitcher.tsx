@@ -8,7 +8,7 @@ import React, { useRef, useState } from "react";
 // -------------------------------------------------------------
 // Available colors
 // -------------------------------------------------------------
-const schemes: OmnixysColorScheme[] = ["original", "red", "green", "yellow", "blue"];
+const schemes: OmnixysColorScheme[] = ["original", "red", "green", "yellow", "blue", "brown"];
 
 const bubbleColor: Record<OmnixysColorScheme, string> = {
   original: "#6A4BBC",
@@ -16,6 +16,7 @@ const bubbleColor: Record<OmnixysColorScheme, string> = {
   green: "#16A34A",
   yellow: "#F59E0B",
   blue: "#2563EB",
+  brown: "#8B5E3C",
 };
 
 // -------------------------------------------------------------

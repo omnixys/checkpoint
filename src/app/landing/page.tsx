@@ -60,7 +60,7 @@ export default function LandingPage() {
                 </Button>
                 <Button
                   component={Link}
-                  href={`${CHECKPOINT_BASE_PATH}my-qr`}
+                  href={`${CHECKPOINT_BASE_PATH}me/my-qr`}
                   size="large"
                   fullWidth
                   variant="outlined"

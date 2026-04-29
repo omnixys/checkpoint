@@ -1,124 +1,170 @@
 "use client";
 
-import {
-  MeQuery,
-  MeQueryVariables,
-  MeDocument,
-  UpdateMyProfileMutation,
-  UpdateMyProfileMutationVariables,
-  UpdateMyProfileDocument,
-} from "@/checkpoint/generated/graphql";
 import useMeMutation from "@/checkpoint/hooks/user/useMeMutation";
 import useMeQuery from "@/checkpoint/hooks/user/useMeQuery";
-import { useMutation, useQuery } from "@apollo/client/react";
-import { Alert, Button, Card, CardContent, Snackbar, Stack, TextField } from "@mui/material";
+
+import {
+  alpha,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Stack,
+  TextField,
+  Typography,
+  useTheme,
+} from "@mui/material";
+
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function ProfileClientPage() {
+  const theme = useTheme();
   const router = useRouter();
 
   const { mePage, mePageLoading } = useMeQuery({
     loadMePage: true,
   });
-  /* ------------------------------------------------------------
-   * Form state
-   * ------------------------------------------------------------ */
-  const [form, setForm] = useState<{
-    username: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-  }>({
+
+  const { updateProfile, updateProfileLoading } = useMeMutation();
+
+  const [form, setForm] = useState({
     username: "",
     firstName: "",
     lastName: "",
     email: "",
   });
 
-  /* ------------------------------------------------------------
-   * Feedback state
-   * ------------------------------------------------------------ */
-  const [feedback, setFeedback] = useState<{
-    type: "success" | "error";
-    message: string;
-  } | null>(null);
+  const [savedState, setSavedState] = useState(form);
+  const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">(
+    "idle",
+  );
 
   /* ------------------------------------------------------------
-   * Sync form once ME is loaded
+   * Sync initial data
    * ------------------------------------------------------------ */
   useEffect(() => {
     if (mePage) {
-      setForm({
+      const next = {
         username: mePage.username,
         firstName: mePage.personalInfo?.firstName ?? "",
         lastName: mePage.personalInfo?.lastName ?? "",
         email: mePage.personalInfo?.email ?? "",
-      });
+      };
+
+      setForm(next);
+      setSavedState(next);
     }
   }, [mePage]);
 
-  const {updateProfileLoading, updateProfile} = useMeMutation();
+  /* ------------------------------------------------------------
+   * Dirty check
+   * ------------------------------------------------------------ */
+  const isDirty = useMemo(() => {
+    return JSON.stringify(form) !== JSON.stringify(savedState);
+  }, [form, savedState]);
 
+  /* ------------------------------------------------------------
+   * Prevent accidental leave (optional but useful)
+   * ------------------------------------------------------------ */
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [isDirty]);
+
+  /* ------------------------------------------------------------
+   * Update handler
+   * ------------------------------------------------------------ */
   const update = async () => {
-                    const { data, error } = await updateProfile({
-                      variables: { input: form },
-                    });
-    
-    const payload = data?.updateMyProfile;
-    
-          if (!payload?.ok) {
-            setFeedback({
-              type: "error",
-              message: payload?.message || "Profile update failed",
-            });
-            return;
-          }
+    if (!isDirty || updateProfileLoading) return;
 
-          setFeedback({
-            type: "success",
-            message: payload.message || "Profile updated successfully",
-          });
+    try {
+      setStatus("saving");
 
-          // Redirect after short confirmation
-          setTimeout(() => {
-            router.push("/me");
-          }, 1500);
-    
-    if (error) {
-            setFeedback({
-              type: "error",
-              message: error.message ?? "Profile update failed",
-            });
+      const { data } = await updateProfile({
+        variables: { input: form },
+      });
+
+      const payload = data?.updateMyProfile;
+
+      if (!payload?.ok) {
+        setStatus("error");
+        return;
+      }
+
+      setSavedState(form);
+      setStatus("saved");
+
+      setTimeout(() => {
+        router.push("/me");
+      }, 1200);
+    } catch {
+      setStatus("error");
     }
+  };
 
-  }
+  if (mePageLoading) return null;
 
-  /* ------------------------------------------------------------
-   * Loading guard
-   * ------------------------------------------------------------ */
-  if (mePageLoading) {
-    return null;
-  }
-
-  /* ------------------------------------------------------------
-   * Render
-   * ------------------------------------------------------------ */
   return (
-    <>
-      <Card>
+    <Stack spacing={4}>
+      {/* 🔥 HEADER */}
+      <Box
+        component={motion.div}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        sx={{
+          p: 3,
+          borderRadius: 4,
+          backdropFilter: "blur(20px)",
+          background: alpha(theme.palette.background.paper, 0.6),
+          border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+          boxShadow: `0 20px 60px ${alpha(theme.palette.common.black, 0.2)}`,
+        }}
+      >
+        <Typography variant="h4" sx={{ fontWeight: 700 }}>
+          Edit Profile
+        </Typography>
+        <Typography color="text.secondary">
+          Update your personal information
+        </Typography>
+      </Box>
+
+      {/* 🔥 FORM */}
+      <Card
+        sx={{
+          borderRadius: 4,
+          backdropFilter: "blur(16px)",
+          background: alpha(theme.palette.background.paper, 0.5),
+          border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+        }}
+      >
         <CardContent>
           <Stack spacing={3}>
             <TextField
               label="First Name"
               value={form.firstName}
               onChange={(e) => setForm({ ...form, firstName: e.target.value })}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") update();
+              }}
+              fullWidth
             />
 
             <TextField
               label="Last Name"
               value={form.lastName}
               onChange={(e) => setForm({ ...form, lastName: e.target.value })}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") update();
+              }}
+              fullWidth
             />
 
             <TextField
@@ -126,26 +172,76 @@ export default function ProfileClientPage() {
               type="email"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") update();
+              }}
+              fullWidth
             />
-
-            <Button
-              variant="contained"
-              disabled={updateProfileLoading}
-              onClick={update}
-            >
-              {updateProfileLoading ? "Saving…" : "Save Changes"}
-            </Button>
           </Stack>
         </CardContent>
       </Card>
 
-      <Snackbar
-        open={!!feedback}
-        autoHideDuration={3000}
-        onClose={() => setFeedback(null)}
+      {/* 🔥 FLOATING ACTION BAR */}
+      <Box
+        component={motion.div}
+        initial={{ opacity: 0, y: 40 }}
+        animate={{
+          opacity: isDirty ? 1 : 0,
+          y: isDirty ? 0 : 40,
+          pointerEvents: isDirty ? "auto" : "none",
+        }}
+        sx={{
+          position: "sticky",
+          bottom: 16,
+          zIndex: 10,
+        }}
       >
-        <Alert severity={feedback?.type}>{feedback?.message}</Alert>
-      </Snackbar>
-    </>
+        <Box
+          sx={{
+            mx: "auto",
+            maxWidth: 520,
+            p: 2,
+            borderRadius: 3,
+            backdropFilter: "blur(20px)",
+            background: alpha(theme.palette.background.paper, 0.75),
+            border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+            boxShadow: `0 10px 40px ${alpha(theme.palette.common.black, 0.2)}`,
+          }}
+        >
+          <Stack
+            direction="row"
+            spacing={2}
+            sx={{
+                          alignItems:"center",
+            justifyContent:"space-between"
+            }}
+
+          >
+            {/* STATUS */}
+            <Typography variant="body2" color="text.secondary">
+              {status === "saving" && "Saving…"}
+              {status === "saved" && "All changes saved"}
+              {status === "error" && "Error saving changes"}
+              {status === "idle" && "Unsaved changes"}
+            </Typography>
+
+            {/* CTA */}
+            <Button
+              variant="contained"
+              disableElevation
+              onClick={update}
+              disabled={!isDirty || updateProfileLoading}
+              sx={{
+                borderRadius: 2,
+                px: 3,
+                fontWeight: 600,
+              }}
+            >
+              {updateProfileLoading ? "Saving…" : "Save Changes"}
+            </Button>
+          </Stack>
+        </Box>
+      </Box>
+    </Stack>
   );
 }

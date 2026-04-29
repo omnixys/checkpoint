@@ -22,7 +22,8 @@ export type OmnixysColorScheme =
   | "red"
   | "green"
   | "yellow"
-  | "blue";
+  | "blue"
+  | 'brown';
 
 export type OmnixysExtendedPalette = {
   surface: {

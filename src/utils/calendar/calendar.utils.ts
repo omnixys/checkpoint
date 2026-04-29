@@ -18,7 +18,7 @@ export function groupEventsByDay(events: GetMyEventCalendarDataQuery['myEvents']
     return
   }
     for (const event of events) {
-      const key = getDateKey(event.settings.startsAt);
+      const key = getDateKey(event.settings?.startsAt);
 
       if (!map.has(key)) {
         map.set(key, []);

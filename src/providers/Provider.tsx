@@ -15,6 +15,8 @@ import { ApolloRootProvider } from "@/checkpoint/providers/ApolloProvider";
 import AppShell from "@/checkpoint/components/layout/AppShell";
 import { env } from "@/checkpoint/lib/env";
 import ThemeRegistry from "@/checkpoint/lib/mui/ThemeRegistry";
+import OnboardingProvider from "@/checkpoint/providers/OnboardingProvider";
+import TourProvider from "@/checkpoint/providers/TourProvider";
 
 type ProviderProps = { children: React.ReactNode };
 
@@ -31,25 +33,6 @@ export default function Provider({ children }: ProviderProps) {
 
   const isAuthRoute = AUTH_ROUTES.some((route) => pathname.startsWith(route));
 
-  const [hydrated, setHydrated] = React.useState(false);
-  const [showOnboarding, setShowOnboarding] = React.useState(false);
-
-  React.useEffect(() => {
-    setHydrated(true);
-
-    const done =
-      typeof window !== "undefined" && localStorage.getItem("checkpoint.onboardingDone") === "1";
-
-    if (!done) {
-      setShowOnboarding(true);
-    }
-  }, []);
-
-  const finishOnboarding = () => {
-    localStorage.setItem("checkpoint.onboardingDone", "1");
-    setShowOnboarding(false);
-  };
-
   return (
     <DeviceProvider>
       <ThemeModeProvider>
@@ -58,18 +41,17 @@ export default function Provider({ children }: ProviderProps) {
             <AuthProvider>
               <ActiveEventProvider>
                 <DateProvider>
-                  {/* ALWAYS keep hook tree alive */}
-                  {showOnboarding && (
-                    <OnboardingModal onFinish={finishOnboarding} />
-                  )}
-
-                  {isAuthRoute ? (
-                    children
-                  ) : (
-                    <SwipeBackProvider>
-                      <AppShell>{children}</AppShell>
-                    </SwipeBackProvider>
-                  )}
+                  <TourProvider>
+                    <OnboardingProvider>
+                      {isAuthRoute ? (
+                        children
+                      ) : (
+                        <SwipeBackProvider>
+                          <AppShell>{children}</AppShell>
+                        </SwipeBackProvider>
+                      )}
+                    </OnboardingProvider>
+                  </TourProvider>
                 </DateProvider>
               </ActiveEventProvider>
             </AuthProvider>

@@ -14,7 +14,6 @@ import {
 } from "@mui/icons-material";
 import { env } from "@/checkpoint/lib/env";
 import { UserRoleType } from "@/checkpoint/generated/graphql";
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 const basePath = env.CHECKPOINT_BASE_PATH;
 
@@ -22,12 +21,10 @@ export type NavItem = {
   label: string;
   icon: JSX.Element;
   path: string;
+  tourId?: string;
   disabled?: boolean;
 };
-/**
- * Translation function contract.
- * Ensures type-safe and framework-agnostic usage.
- */
+
 type TFunction = (key: any) => string;
 
 export function createNavigation(
@@ -43,52 +40,61 @@ export function createNavigation(
         label: t("sidebar.home"),
         icon: <DashboardIcon />,
         path: `${basePath}`,
+        tourId: "sidebar.home",
       },
       {
         label: t("sidebar.notifications"),
         icon: <NotificationsIcon />,
         path: `${basePath}event/${activeEventId}/notification`,
         disabled: !hasEvent,
+        tourId: "sidebar.notifications",
       },
       {
         label: t("sidebar.scanner"),
         icon: <QrCodeScannerIcon />,
         path: `${basePath}scan`,
+        tourId: "sidebar.scanner",
       },
       {
         label: t("sidebar.activeEvent"),
         icon: <EventIcon />,
         path: `${basePath}event/${activeEventId}`,
         disabled: !hasEvent,
+        tourId: "sidebar.event",
       },
       {
         label: t("sidebar.invitations"),
         icon: <MailOutlineIcon />,
         path: `${basePath}event/${activeEventId}/invitation`,
         disabled: !hasEvent,
+        tourId: "sidebar.invitations",
       },
       {
         label: t("sidebar.seats"),
         icon: <EventSeatIcon />,
         path: `${basePath}event/${activeEventId}/seat`,
         disabled: !hasEvent,
+        tourId: "sidebar.seats",
       },
       {
         label: t("sidebar.guests"),
         icon: <GroupsIcon />,
         path: `${basePath}event/${activeEventId}/guest`,
         disabled: !hasEvent,
+        tourId: "sidebar.guests",
       },
       {
         label: t("sidebar.tickets"),
         icon: <ConfirmationNumberOutlinedIcon />,
         path: `${basePath}event/${activeEventId}/ticket`,
         disabled: !hasEvent,
+        tourId: "sidebar.tickets",
       },
       {
         label: t("sidebar.profile"),
         icon: <AccountCircleIcon />,
         path: `${basePath}me`,
+        tourId: "sidebar.profile",
       },
     ],
 
@@ -97,46 +103,59 @@ export function createNavigation(
         label: t("sidebar.home"),
         icon: <DashboardIcon />,
         path: `${basePath}`,
+        tourId: "sidebar.home",
       },
       {
         label: t("sidebar.scanner"),
         icon: <QrCodeScannerIcon />,
         path: `${basePath}scan`,
+        tourId: "sidebar.scanner",
       },
       {
         label: t("sidebar.guests"),
         icon: <GroupsIcon />,
         path: `${basePath}event/${activeEventId}/guest`,
         disabled: !hasEvent,
+        tourId: "sidebar.guests",
       },
       {
         label: t("sidebar.profile"),
         icon: <AccountCircleIcon />,
         path: `${basePath}me`,
+        tourId: "sidebar.profile",
       },
     ],
 
     GUEST: [
-      { label: t("sidebar.home"), icon: <HomeIcon />, path: `${basePath}` },
+      {
+        label: t("sidebar.home"),
+        icon: <HomeIcon />,
+        path: `${basePath}`,
+        tourId: "sidebar.home",
+      },
       {
         label: t("sidebar.myTicket"),
         icon: <BadgeIcon />,
-        path: `${basePath}my-qr`,
+        path: `${basePath}me/my-qr`,
+        tourId: "sidebar.myTicket",
       },
       {
         label: t("sidebar.mySeat"),
         icon: <EventSeatIcon />,
-        path: `${basePath}my-seat`,
+        path: `${basePath}me/my-seat`,
+        tourId: "sidebar.mySeat",
       },
       {
         label: t("sidebar.plusOnes"),
         icon: <GroupsIcon />,
-        path: `${basePath}my-plus-ones`,
+        path: `${basePath}me/my-plus-ones`,
+        tourId: "sidebar.plusOnes",
       },
       {
         label: t("sidebar.profile"),
         icon: <AccountCircleIcon />,
         path: `${basePath}me`,
+        tourId: "sidebar.profile",
       },
     ],
   };

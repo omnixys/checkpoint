@@ -48,10 +48,10 @@ export default function MyPlusOnesPage() {
     null,
   );
 
-  const usedSlots = plusOnes.length;
+  const usedSlots = plusOnes?.length;
 
   const seatsAssigned = useMemo(() => {
-    return plusOnes.filter((entry: any) => entry.seat?.label).length;
+    return plusOnes?.filter((entry: any) => entry.seat?.label).length;
   }, [plusOnes]);
 
   const openCreateDialog = (): void => {
@@ -266,7 +266,7 @@ export default function MyPlusOnesPage() {
                 variant="outlined"
                 startIcon={<DeleteSweepRoundedIcon />}
                 onClick={() => void removeAllPlusOnes()}
-                disabled={!hasRootInvitation || plusOnes.length === 0}
+                disabled={!hasRootInvitation || plusOnes?.length === 0}
                 fullWidth
               >
                 {t("plusOnes.removeAll")}
@@ -312,7 +312,7 @@ export default function MyPlusOnesPage() {
               {t("plusOnes.noInvitationDescription")}
             </Typography>
           </Box>
-        ) : plusOnes.length === 0 ? (
+        ) : plusOnes?.length === 0 ? (
           <MotionBox
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -341,7 +341,7 @@ export default function MyPlusOnesPage() {
         ) : (
           <Stack spacing={1.5}>
             <AnimatePresence mode="popLayout">
-              {plusOnes.map((plusOne: any, index: any) => (
+              {plusOnes?.map((plusOne: any, index: any) => (
                 <PlusOneCard
                   key={plusOne.id}
                   plusOne={plusOne}

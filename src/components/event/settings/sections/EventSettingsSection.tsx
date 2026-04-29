@@ -17,10 +17,15 @@ import {
 } from "@mui/material";
 import dayjs from "dayjs";
 
-import { EventCategory, SettingsPayload } from "@/checkpoint/generated/graphql";
+import {
+  EventCategory,
+  GetEventSettingsQuery,
+  InvitationApprovalMode,
+} from "@/checkpoint/generated/graphql";
 
 import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
 import { mapSettingsPatchToInput } from "@/checkpoint/utils/event/settings.mapper";
+import { Safe } from "@/checkpoint/types/core/core.type";
 
 const EVENT_CATEGORIES: EventCategory[] = [
   "GENERAL",
@@ -31,25 +36,24 @@ const EVENT_CATEGORIES: EventCategory[] = [
   "WORKSHOP",
 ];
 
-type FullSettingsPayload = SettingsPayload & {
-  allowPublicRsvp?: boolean;
-  allowPublicPlusOne?: boolean;
-  allowPublicRsvpWebsite?: boolean;
-  allowPlusOneUpdate?: boolean;
-  publicRsvpWebsite?: string | null;
-  isPublic?: boolean;
-  category?: EventCategory;
-};
+const APPROVAL_MODES: InvitationApprovalMode[] = [
+  "MANUAL",
+  "AUTO",
+  "AUTO_INVITE_ONLY",
+  "AUTO_PUBLIC_ONLY",
+];
+
+type SettingsType = Safe<Safe<GetEventSettingsQuery["event"]>["settings"]>;
 
 type Props = {
-  settings: SettingsPayload;
+  settings: SettingsType;
   actions: {
     updateSettings: (patch: any) => Promise<any>;
   };
 };
 
-function normalizeSettings(settings: SettingsPayload): FullSettingsPayload {
-  const fullSettings = settings as FullSettingsPayload;
+function normalizeSettings(settings: SettingsType) {
+  const fullSettings = settings;
 
   return {
     ...settings,
@@ -60,6 +64,14 @@ function normalizeSettings(settings: SettingsPayload): FullSettingsPayload {
     publicRsvpWebsite: fullSettings.publicRsvpWebsite ?? "",
     isPublic: fullSettings.isPublic ?? false,
     category: fullSettings.category ?? "GENERAL",
+
+    approvalMode: fullSettings.approvalMode ?? "MANUAL",
+    maxPlusOnes: fullSettings.maxPlusOnes ?? 0,
+    requireApprovalForPlusOnes: fullSettings.requireApprovalForPlusOnes ?? true,
+    rsvpDeadline: fullSettings.rsvpDeadline ?? null,
+
+    allowGuestSeatSelection: fullSettings.allowGuestSeatSelection ?? false,
+    allowSeatOverbooking: fullSettings.allowSeatOverbooking ?? false,
   };
 }
 
@@ -70,7 +82,9 @@ function datetimeValue(value?: string | null) {
 export default function EventSettingsSection({ settings, actions }: Props) {
   const theme = useTheme();
 
-  const [local, setLocal] = useState<FullSettingsPayload>(() => normalizeSettings(settings));
+  const [local, setLocal] = useState<SettingsType>(() =>
+    normalizeSettings(settings),
+  );
   const [dirty, setDirty] = useState(false);
 
   useEffect(() => {
@@ -78,7 +92,10 @@ export default function EventSettingsSection({ settings, actions }: Props) {
     setDirty(false);
   }, [settings]);
 
-  const update = <K extends keyof FullSettingsPayload>(key: K, value: FullSettingsPayload[K]) => {
+  const update = <K extends keyof SettingsType>(
+    key: K,
+    value: SettingsType[K],
+  ) => {
     setLocal((prev) => ({ ...prev, [key]: value }));
     setDirty(true);
   };
@@ -95,6 +112,12 @@ export default function EventSettingsSection({ settings, actions }: Props) {
       publicRsvpWebsite: local.publicRsvpWebsite?.trim() || null,
       isPublic: local.isPublic,
       category: local.category,
+      approvalMode: local.approvalMode,
+      maxPlusOnes: local.maxPlusOnes,
+      requireApprovalForPlusOnes: local.requireApprovalForPlusOnes,
+      rsvpDeadline: local.rsvpDeadline ? new Date(local.rsvpDeadline) : null,
+      allowGuestSeatSelection: local.allowGuestSeatSelection,
+      allowSeatOverbooking: local.allowSeatOverbooking,
     };
 
     await actions.updateSettings(input);
@@ -222,6 +245,63 @@ export default function EventSettingsSection({ settings, actions }: Props) {
           <Divider />
 
           <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
+            <TextField
+              select
+              fullWidth
+              label="Approval Mode"
+              value={local.approvalMode ?? "MANUAL"}
+              onChange={(e) =>
+                update("approvalMode", e.target.value as InvitationApprovalMode)
+              }
+              sx={inputSx}
+            >
+              {APPROVAL_MODES.map((mode) => (
+                <MenuItem key={mode} value={mode}>
+                  {mode}
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              fullWidth
+              label="Max Plus Ones"
+              type="number"
+              value={local.maxPlusOnes ?? 0}
+              onChange={(e) => update("maxPlusOnes", Number(e.target.value))}
+              sx={inputSx}
+            />
+          </Stack>
+
+          <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={Boolean(local.requireApprovalForPlusOnes)}
+                  onChange={(e) =>
+                    update("requireApprovalForPlusOnes", e.target.checked)
+                  }
+                />
+              }
+              label="Automatically Approve Plus Ones"
+              sx={{ minWidth: 180 }}
+            />
+            <TextField
+              fullWidth
+              label="RSVP Deadline"
+              type="datetime-local"
+              value={datetimeValue(local.rsvpDeadline)}
+              onChange={(e) =>
+                update(
+                  "rsvpDeadline",
+                  e.target.value ? new Date(e.target.value).toISOString() : null,
+                )
+              }
+              sx={inputSx}
+            />
+          </Stack>
+
+          <Divider />
+
+          <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
             <FormControlLabel
               control={
                 <Switch
@@ -276,6 +356,30 @@ export default function EventSettingsSection({ settings, actions }: Props) {
             }
             label="Allow Re-Entry"
           />
+          <Stack direction={{ xs: "column", md: "row" }} spacing={1}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={Boolean(local.allowGuestSeatSelection)}
+                  onChange={(e) =>
+                    update("allowGuestSeatSelection", e.target.checked)
+                  }
+                />
+              }
+              label="Allow Guest Seat Selection"
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={Boolean(local.allowSeatOverbooking)}
+                  onChange={(e) =>
+                    update("allowSeatOverbooking", e.target.checked)
+                  }
+                />
+              }
+              label="Allow Seat Overbooking"
+            />
+          </Stack>
         </Stack>
       </Box>
 

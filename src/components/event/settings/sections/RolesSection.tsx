@@ -47,7 +47,7 @@ type Props = {
  */
 export default function RolesSection({ roles, meta, actions }: Props) {
   const theme = useTheme();
-  const { user } = useAuth();
+  const { currentUser } = useAuth();
 
   const { execute, loading, error, success, reset } = useMutationHandler();
 
@@ -62,8 +62,8 @@ export default function RolesSection({ roles, meta, actions }: Props) {
   /**
    * Permissions
    */
-  const isOwner = user?.id === meta.owner;
-  const currentUserRole = roles.find((r) => r.userId === user?.id)?.role;
+  const isOwner = currentUser?.id === meta.owner;
+  const currentUserRole = roles.find((r) => r.userId === currentUser?.id)?.role;
   const isAdmin = currentUserRole === "ADMIN";
 
   /**
@@ -127,7 +127,7 @@ export default function RolesSection({ roles, meta, actions }: Props) {
                 <RoleRow
                   name={securityGuestMap.get(role.userId)}
                   role={role}
-                  currentUserId={user?.id}
+                  currentUserId={currentUser?.id}
                   ownerId={meta.owner}
                   isOwner={meta.owner === role.userId}
                   canEdit={isOwner || (isAdmin && role.role !== "ADMIN")}

@@ -24,7 +24,7 @@ const EVENT_ID = env.EVENT_ID;
 
 export default function HomePage(): JSX.Element {
   const theme = useTheme();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, currentUser} = useAuth();
   const { activeEvent } = useActiveEvent();
   const t = useTypedTranslations("home");
 
@@ -94,7 +94,7 @@ export default function HomePage(): JSX.Element {
     role === "GUEST"
       ? {
           label: t("actions.tickets"),
-          href: `${basePath}my-qr`,
+          href: `${basePath}me/my-qr`,
           icon: <ConfirmationNumberIcon />,
         }
       : role === "SECURITY"
@@ -117,7 +117,7 @@ export default function HomePage(): JSX.Element {
           }}
         >
           {t("header.welcome", {
-            name: user?.personalInfo?.firstName ?? "",
+            name: currentUser?.personalInfo?.firstName ?? "",
           })}
         </Typography>
 

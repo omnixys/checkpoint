@@ -39,7 +39,7 @@ export default function InitialView({
   const lastName = invitation?.lastName ?? "";
 
   const eventTitle = eventMetaInfo?.name ?? t("eventFallback");
-  const bannerUrl = eventMetaInfo?.coverMedia?.filename?? null;
+  const bannerUrl = eventMetaInfo?.coverMedia?.url?? null;
 
   return (
     <Stack spacing={3}>

@@ -1,41 +1,48 @@
 "use client";
 
-import { Box, Typography, Paper } from "@mui/material";
-import { JSX } from "react";
+import { Box, Stack, Typography } from "@mui/material";
+import { motion } from "framer-motion";
 
-export default function OnboardingSlide({
-  title,
-  text,
-  icon,
-  action,
-}: {
+type Props = {
   title: string;
   text: string;
   icon: string;
-  action: JSX.Element;
-}) {
+};
+
+export default function OnboardingSlide({ title, text, icon }: Props) {
   return (
-    <Paper
-      sx={{
-        p: 4,
-        borderRadius: 4,
-        textAlign: "center",
-        maxWidth: 400,
-        width: "100%",
-        backgroundColor: (t) => t.palette.apple.systemBackground,
-      }}
-    >
-      <Typography sx={{ fontSize: "60px", mb: 2 }}>{icon}</Typography>
+    <Stack spacing={3}  sx={{
+      alignItems: "center",
+      textAlign: "center"
+    }}>
+      {/* Icon */}
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.4 }}
+      >
+        <Box
+          sx={{
+            fontSize: 64,
+            lineHeight: 1,
+          }}
+        >
+          {icon}
+        </Box>
+      </motion.div>
 
-      <Typography variant="h4" sx={{ fontWeight: 800, mb: 1 }}>
-        {title}
-      </Typography>
+      {/* Text */}
+      <Stack spacing={1}>
+        <Typography variant="h6" sx={{
+          fontWeight: 700
+        }}>
+          {title}
+        </Typography>
 
-      <Typography variant="body1" sx={{ color: "text.secondary", mb: 4 }}>
-        {text}
-      </Typography>
-
-      {action}
-    </Paper>
+        <Typography variant="body2" color="text.secondary">
+          {text}
+        </Typography>
+      </Stack>
+    </Stack>
   );
 }

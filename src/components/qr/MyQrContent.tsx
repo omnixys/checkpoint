@@ -2,14 +2,10 @@
 
 import QrCard from "@/checkpoint/components/qr/QrCard";
 import { BackButtonBase } from "@/checkpoint/components/utils/back-button-base";
-import {
-  GetMyTicketsQuery,
-  GetMyTicketsQueryVariables,
-  GetMyTicketsDocument,
-} from "@/checkpoint/generated/graphql";
+import NoTicket from "@/checkpoint/components/utils/NoTicket";
 import useMyTicketQuery from "@/checkpoint/hooks/ticket/useMyTicketQuery";
+import { env } from "@/checkpoint/lib/env";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
-import { useQuery } from "@apollo/client/react";
 import { Box, Stack, Typography, CircularProgress, Alert } from "@mui/material";
 import { useMemo } from "react";
 /**
@@ -57,9 +53,7 @@ export default function MyQrContent() {
   }
 
   if (!ticket) {
-    return (
-      <Alert severity="info">Kein Ticket für dieses Event vorhanden.</Alert>
-    );
+    return <NoTicket eventId={activeEvent.id} eventName={activeEvent.name} />;
   }
 
   return (

@@ -43,7 +43,7 @@ export default function EventActions({ eventPageData }: EventHeaderProps) {
             fullWidth
             variant="contained"
             component={Link}
-            href={`${basePath}my-qr?eventId=${eventPageData.id}`}
+            href={`${basePath}me/my-qr?eventId=${eventPageData.id}`}
             sx={{ borderRadius: 3, fontWeight: 600 }}
           >
             {t("actions.myTicket")}
@@ -53,7 +53,7 @@ export default function EventActions({ eventPageData }: EventHeaderProps) {
             fullWidth
             variant="outlined"
             component={Link}
-            href={`${basePath}my-seat?eventId=${eventPageData.id}`}
+            href={`${basePath}me/my-seat?eventId=${eventPageData.id}`}
             sx={{ borderRadius: 3 }}
           >
             {t("actions.mySeat")}

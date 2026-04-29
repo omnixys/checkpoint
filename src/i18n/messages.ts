@@ -14,6 +14,7 @@ import error from "../../messages/en/error.json";
 import rsvp from "../../messages/en/rsvp.json";
 import common from "../../messages/en/common.json";
 import create from "../../messages/en/create.json";
+import onboarding from "../../messages/en/onboarding.json";
 
 
 
@@ -35,6 +36,7 @@ export const messages = {
   rsvp,
   common,
   create,
+  onboarding
 };
 
 export type Messages = typeof messages;

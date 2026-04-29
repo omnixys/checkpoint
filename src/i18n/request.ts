@@ -57,6 +57,7 @@ export default getRequestConfig(async () => {
     rsvp: (await import(`../../messages/${language}/rsvp.json`)).default,
     common: (await import(`../../messages/${language}/common.json`)).default,
     create: (await import(`../../messages/${language}/create.json`)).default,
+    onboarding: (await import(`../../messages/${language}/onboarding.json`)).default,
   };
 
   return {

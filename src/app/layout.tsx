@@ -6,6 +6,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
+import StartupVisionPro from "@/checkpoint/components/startup/StartupVisionPro";
 
 export const viewport: Viewport = {
   themeColor: "#6A4BBC", // MUST match omnixys primary :contentReference[oaicite:0]{index=0}
@@ -121,7 +122,7 @@ export default async function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <NextIntlClientProvider messages={messages}>
           <Provider>
-            {/* <StartupVisionPro /> */}
+            <StartupVisionPro />
             {children}
           </Provider>
         </NextIntlClientProvider>

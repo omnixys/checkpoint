@@ -50,7 +50,7 @@ export default function EventsHeader({
   const tCommon = useTypedTranslations("common");
   
   const theme = useTheme();
-  const { user } = useAuth();
+  const { currentUser } = useAuth();
 
   return (
     <Stack
@@ -151,7 +151,7 @@ export default function EventsHeader({
             transition={{ type: "spring", stiffness: 300, damping: 15 }}
           >
             <IconButton
-              disabled={user?.role !== "ADMIN"}
+              disabled={currentUser?.role !== "ADMIN"}
               onClick={onRefresh}
               sx={{
                 width: 44,
@@ -172,7 +172,7 @@ export default function EventsHeader({
             transition={{ type: "spring", stiffness: 300, damping: 15 }}
           >
             <Button
-              disabled={user?.role !== "ADMIN"}
+              disabled={currentUser?.role !== "ADMIN"}
               component={Link}
               href={onCreateHref}
               variant="contained"

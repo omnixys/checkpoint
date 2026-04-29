@@ -67,8 +67,15 @@ export default function TableCluster({
       <CardHeader
         title={`Tisch ${tableName}`}
         subheader={`Section ${sectionName} • ${seats.length} Sitzplätze`}
-        titleTypographyProps={{ variant: "subtitle1", sx: { fontWeight: 700 } }}
-        subheaderTypographyProps={{ variant: "caption" }}
+        slotProps={{
+          title: {
+            variant: "subtitle1",
+            sx: { fontWeight: 700 },
+          },
+          subheader: {
+            variant: "caption",
+          },
+        }}
         avatar={<SeatIcon />}
         onClick={() => onTableClick?.(tableName, seats)}
         sx={{ borderRadius: 3, cursor: "pointer" }}

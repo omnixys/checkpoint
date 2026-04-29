@@ -55,7 +55,7 @@ type Props = {
  */
 export default function EventMetaSection({ meta, actions, roles }: Props) {
   const theme = useTheme();
-  const { user } = useAuth();
+  const { currentUser } = useAuth();
 
   const [childName, setChildName] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -71,7 +71,7 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
     loadUserName: true,
   });
 
-  const currentUserId = user?.id;
+  const currentUserId = currentUser?.id;
   const isOwner = currentUserId === meta.owner;
 
   // TODO visuell optimieren mit error und loader
@@ -98,6 +98,7 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
       parentId: meta.id,
       name: childName,
       address: null,
+
       settings: {
         allowReEntry: true,
         rotateSeconds: 600,
@@ -114,6 +115,12 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
         publicRsvpWebsite: "",
         category: "GENERAL",
         allowPlusOneUpdate: false,
+        allowGuestSeatSelection: false,
+        allowSeatOverbooking: false,
+        approvalMode: "AUTO",
+        maxPlusOnes: 1,
+        requireApprovalForPlusOnes: true,
+        rsvpDeadline: new Date(Date.now() + 1000 * 60 * 60 * 5).toISOString(),
       },
       children: [],
     };

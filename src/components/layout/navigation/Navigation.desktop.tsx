@@ -27,6 +27,9 @@ import { env } from "@/checkpoint/lib/env";
 import EventSelector from "@/checkpoint/components/Selectors/EventSelector";
 import LanguageSwitcher from "@/checkpoint/components/LanguageSwitcher";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { useTourAnchor } from "@/checkpoint/hooks/core/useTourAnchor";
+import { useTour } from "@/checkpoint/providers/TourProvider";
+import NavigationItem from "@/checkpoint/components/layout/navigation/NavigationItem";
 
 export default function NavigationDesktop(): JSX.Element {
   const [collapsed, setCollapsed] = useState(false);
@@ -35,12 +38,17 @@ export default function NavigationDesktop(): JSX.Element {
 
 
   const { isAuthenticated } = useAuth();
-  const router = useRouter();
-  const pathname = usePathname();
-
   const { activeEvent } = useActiveEvent();
-  const role = activeEvent?.myRole ?? "GUEST";
 
+  const selectorRef = useTourAnchor("event.selector"); 
+  const colorRef = useTourAnchor("ui.colorSwitcher");
+  const toggleRef = useTourAnchor("ui.themeToggle");
+  const userMenuRef = useTourAnchor("ui.userMenu");
+    const languageRef = useTourAnchor("ui.language");
+
+
+
+  const role = activeEvent?.myRole ?? "GUEST";
   const items = createNavigation(role, t, activeEvent?.id);
 
   return (
@@ -57,10 +65,14 @@ export default function NavigationDesktop(): JSX.Element {
         p: collapsed ? 1.5 : 3,
       }}
     >
-      <Stack direction={'row'} spacing={0.5} sx={{
-                alignItems: "center",
-        justifyContent: "space-between",
-      }} >
+      <Stack
+        direction={"row"}
+        spacing={0.5}
+        sx={{
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
         <Typography
           color={theme.palette.primary.main}
           variant="h5"
@@ -80,122 +92,27 @@ export default function NavigationDesktop(): JSX.Element {
         >
           Checkpoint
         </Typography>
-        <LanguageSwitcher />
+
+        <Box ref={languageRef} sx={{ display: "contents" }}>
+          <LanguageSwitcher />
+        </Box>
       </Stack>
       <Divider sx={{ mb: 2 }} />
       {isAuthenticated && (
         <>
-          <EventSelector />
+          <Box ref={selectorRef} sx={{ display: "contents" }}>
+            <EventSelector />
+          </Box>
 
           <Divider sx={{ my: 2 }} />
-
           <List sx={{ flexGrow: 1 }}>
             {items.map((item) => (
-              <ListItemButton
-                title={collapsed ? item.label : undefined}
+              <NavigationItem
                 key={item.path}
-                disabled={item.disabled}
-                selected={isActiveNavItem(
-                  pathname,
-                  item.path,
-                  items.map((i) => i.path),
-                )}
-                onClick={() => router.push(item.path)}
-                sx={{
-                  position: "relative",
-                  borderRadius: 2,
-                  pl: 2.5,
-
-                  "&::before": {
-                    content: '""',
-                    position: "absolute",
-                    left: 6,
-                    top: "50%",
-                    // transform: "translateY(-50%)",
-                    width: 4,
-                    height: "60%",
-                    borderRadius: 999,
-                    backgroundColor: isActiveNavItem(
-                      pathname,
-                      item.path,
-                      items.map((i) => i.path),
-                    )
-                      ? "primary.main"
-                      : "transparent",
-                    // transition:
-                    //   "background-color 0.25s ease, height 0.25s ease",
-
-                    transition: "transform 260ms cubic-bezier(.4,0,.2,1)",
-                    transformOrigin: "center",
-                    transform: isActiveNavItem(
-                      pathname,
-                      item.path,
-                      items.map((i) => i.path),
-                    )
-                      ? "translateY(-50%) scaleY(1)"
-                      : "translateY(-50%) scaleY(0)",
-                  },
-
-                  "&.Mui-selected": {
-                    backgroundColor: "rgba(255,255,255,0.08)",
-                  },
-
-                  "&:hover": {
-                    "@media (hover: hover)": {
-                      backgroundColor: "rgba(255,255,255,0.06)",
-                      boxShadow: "0 0 0 1px rgba(255,255,255,0.15)",
-                    },
-                  },
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 36,
-                    color: isActiveNavItem(
-                      pathname,
-                      item.path,
-                      items.map((i) => i.path),
-                    )
-                      ? getRoleColor(role)
-                      : "text.secondary",
-                    transition: "color 0.25s ease",
-                  }}
-                >
-                  <motion.div
-                    key={
-                      isActiveNavItem(
-                        pathname,
-                        item.path,
-                        items.map((i) => i.path),
-                      )
-                        ? "active"
-                        : "inactive"
-                    }
-                    initial={{ scale: 1 }}
-                    animate={
-                      isActiveNavItem(
-                        pathname,
-                        item.path,
-                        items.map((i) => i.path),
-                      )
-                        ? { scale: [1, 1.15, 1] }
-                        : { scale: 1 }
-                    }
-                    transition={{ duration: 0.35, ease: "easeOut" }}
-                  >
-                    {item.icon}
-                  </motion.div>
-                </ListItemIcon>
-
-                <ListItemText
-                  primary={item.label}
-                  sx={{
-                    opacity: collapsed ? 0 : 1,
-                    transition: "opacity 0.2s ease",
-                    whiteSpace: "nowrap",
-                  }}
-                />
-              </ListItemButton>
+                item={item}
+                items={items}
+                role={role}
+              />
             ))}
           </List>
         </>
@@ -220,10 +137,17 @@ export default function NavigationDesktop(): JSX.Element {
         >
           <ChevronLeftIcon />
         </IconButton> */}
+        <Box ref={colorRef} sx={{ display: "contents" }}>
+          <ColorBubbleSwitcher />
+        </Box>
 
-        <ColorBubbleSwitcher />
-        <ThemeToggleButton />
-        <UserMenu />
+        <Box ref={toggleRef} sx={{ display: "contents" }}>
+          <ThemeToggleButton />
+        </Box>
+
+        <Box ref={userMenuRef} sx={{ display: "contents" }}>
+          <UserMenu />
+        </Box>
       </Box>
     </Box>
   );

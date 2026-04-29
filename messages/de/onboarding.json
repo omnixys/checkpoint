@@ -1,0 +1,37 @@
+{
+  "tour": {
+  "home": "Übersicht über dein Event",
+  "notifications": "Benachrichtigungen verwalten",
+  "scanner": "QR-Codes scannen",
+  "eventPage": "Event-Details anzeigen",
+  "invitations": "Einladungen verwalten",
+  "seats": "Sitzplätze verwalten",
+  "guests": "Alle Gäste anzeigen",
+  "tickets": "Tickets verwalten",
+  "profile": "Dein Profil",
+  "myTicket": "Dein Ticket",
+  "mySeat": "Dein Sitzplatz",
+  "plusOnes": "Begleitpersonen verwalten",
+
+  "event": {
+    "title": "Event auswählen",
+    "description": "Wähle zuerst ein Event aus, um alle Funktionen nutzen zu können."
+  },
+  "color": {
+    "title": "Farbschema",
+    "description": "Passe das visuelle Erscheinungsbild der App an."
+  },
+  "theme": {
+    "title": "Dark Mode",
+    "description": "Wechsle zwischen heller und dunkler Darstellung."
+  },
+  "language": {
+    "title": "Sprache",
+    "description": "Ändere die Sprache der App."
+  },
+  "user": {
+    "title": "Profil",
+    "description": "Öffne deine Einstellungen, dein Profil und weitere Shortcuts."
+  }
+}
+}

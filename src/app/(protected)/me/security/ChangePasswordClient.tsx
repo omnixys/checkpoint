@@ -5,21 +5,25 @@ import {
   ChangeMyPasswordMutationVariables,
   ChangeMyPasswordDocument,
 } from "@/checkpoint/generated/graphql";
+
 import { useMutation } from "@apollo/client/react";
 import {
-  Alert,
-  Button,
+  alpha,
+  Box,
   Card,
   CardContent,
-  Snackbar,
   Stack,
   TextField,
   Typography,
+  useTheme,
 } from "@mui/material";
+
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 export default function ChangePasswordCard() {
+  const theme = useTheme();
   const router = useRouter();
 
   const [form, setForm] = useState({
@@ -28,91 +32,192 @@ export default function ChangePasswordCard() {
     confirm: "",
   });
 
-  const [feedback, setFeedback] = useState<{
-    type: "success" | "error";
-    message: string;
-  } | null>(null);
+  const [status, setStatus] = useState<"idle" | "saving" | "success" | "error">(
+    "idle",
+  );
 
-  const [changePassword, { loading }] = useMutation<
+  const [changePassword] = useMutation<
     ChangeMyPasswordMutation,
     ChangeMyPasswordMutationVariables
-  >(ChangeMyPasswordDocument, {
-    onCompleted() {
-      setFeedback({
-        type: "success",
-        message: "Password updated successfully",
+  >(ChangeMyPasswordDocument);
+
+  /* ------------------------------------------------------------
+   * Validation
+   * ------------------------------------------------------------ */
+  const errors = useMemo(() => {
+    return {
+      mismatch: form.confirm !== "" && form.confirm !== form.newPassword,
+      weak: form.newPassword.length > 0 && form.newPassword.length < 8,
+    };
+  }, [form]);
+
+  const disabled =
+    !form.oldPassword || !form.newPassword || errors.mismatch || errors.weak;
+
+  /* ------------------------------------------------------------
+   * Submit
+   * ------------------------------------------------------------ */
+  const submit = async () => {
+    try {
+      setStatus("saving");
+
+      const { data } = await changePassword({
+        variables: {
+          input: {
+            oldPassword: form.oldPassword,
+            newPassword: form.newPassword,
+          },
+        },
       });
 
-      // Clear sensitive fields
-      setForm({ oldPassword: "", newPassword: "", confirm: "" });
+      if (!data?.changeMyPassword?.ok) {
+        setStatus("error");
+        return;
+      }
 
-      // Redirect after short delay
+      setStatus("success");
+
+      setForm({
+        oldPassword: "",
+        newPassword: "",
+        confirm: "",
+      });
+
       setTimeout(() => {
         router.push("/me");
-      }, 1000);
-    },
-    onError(error) {
-      setFeedback({
-        type: "error",
-        message: error.message ?? "Password update failed",
-      });
-    },
-  });
-
-  const disabled = !form.oldPassword || !form.newPassword || form.newPassword !== form.confirm;
+      }, 1200);
+    } catch {
+      setStatus("error");
+    }
+  };
 
   return (
-    <>
-      <Card>
+    <Stack spacing={4}>
+      {/* 🔥 HEADER */}
+      <Box
+        component={motion.div}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        sx={{
+          p: 3,
+          borderRadius: 4,
+          backdropFilter: "blur(20px)",
+          background: alpha(theme.palette.background.paper, 0.6),
+          border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+        }}
+      >
+        <Typography
+          variant="h4"
+          sx={{
+            fontWeight: 700,
+          }}
+        >
+          Security
+        </Typography>
+
+        <Typography color="text.secondary">
+          Update your password to keep your account secure
+        </Typography>
+      </Box>
+
+      {/* 🔥 FORM */}
+      <Card
+        sx={{
+          borderRadius: 4,
+          backdropFilter: "blur(16px)",
+          background: alpha(theme.palette.background.paper, 0.5),
+          border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+        }}
+      >
         <CardContent>
           <Stack spacing={3}>
-            <Typography variant="h6">Change Password</Typography>
-
             <TextField
               label="Current password"
               type="password"
               value={form.oldPassword}
-              onChange={(e) => setForm({ ...form, oldPassword: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, oldPassword: e.target.value })
+              }
+              fullWidth
             />
 
             <TextField
               label="New password"
               type="password"
               value={form.newPassword}
-              onChange={(e) => setForm({ ...form, newPassword: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, newPassword: e.target.value })
+              }
+              error={errors.weak}
+              helperText={
+                errors.weak ? "Password must be at least 8 characters" : " "
+              }
+              fullWidth
             />
 
             <TextField
-              label="Confirm new password"
+              label="Confirm password"
               type="password"
-              error={form.confirm !== "" && form.confirm !== form.newPassword}
               value={form.confirm}
               onChange={(e) => setForm({ ...form, confirm: e.target.value })}
+              error={errors.mismatch}
+              helperText={errors.mismatch ? "Passwords do not match" : " "}
+              fullWidth
             />
-
-            <Button
-              variant="contained"
-              disabled={disabled || loading}
-              onClick={() =>
-                changePassword({
-                  variables: {
-                    input: {
-                      oldPassword: form.oldPassword,
-                      newPassword: form.newPassword,
-                    },
-                  },
-                })
-              }
-            >
-              {loading ? "Updating…" : "Update password"}
-            </Button>
           </Stack>
         </CardContent>
       </Card>
 
-      <Snackbar open={!!feedback} autoHideDuration={3000} onClose={() => setFeedback(null)}>
-        <Alert severity={feedback?.type}>{feedback?.message}</Alert>
-      </Snackbar>
-    </>
+      {/* 🔥 ACTION BAR */}
+      <Box
+        component={motion.div}
+        initial={{ opacity: 0, y: 40 }}
+        animate={{
+          opacity: form.newPassword ? 1 : 0,
+          y: form.newPassword ? 0 : 40,
+        }}
+        sx={{
+          position: "sticky",
+          bottom: 16,
+        }}
+      >
+        <Box
+          sx={{
+            mx: "auto",
+            maxWidth: 480,
+            p: 2,
+            borderRadius: 3,
+            backdropFilter: "blur(20px)",
+            background: alpha(theme.palette.background.paper, 0.7),
+            border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+          }}
+        >
+          <Stack
+            direction="row"
+            sx={{
+              justifyContent: "space-between",
+            }}
+          >
+            <Typography variant="body2" color="text.secondary">
+              {status === "saving" && "Updating password…"}
+              {status === "success" && "Password updated"}
+              {status === "error" && "Error updating password"}
+              {status === "idle" && "Enter a new password"}
+            </Typography>
+
+            <Typography
+              sx={{
+                cursor: disabled ? "not-allowed" : "pointer",
+                opacity: disabled ? 0.4 : 1,
+                fontWeight: 600,
+              }}
+              onClick={!disabled ? submit : undefined}
+            >
+              Update
+            </Typography>
+          </Stack>
+        </Box>
+      </Box>
+    </Stack>
   );
 }

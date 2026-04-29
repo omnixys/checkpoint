@@ -72,6 +72,12 @@ const DEFAULT_SETTINGS: CreateSettingsInput = {
   publicRsvpWebsite: "",
   category: "GENERAL",
   allowPlusOneUpdate: false,
+  maxPlusOnes: 1,
+  requireApprovalForPlusOnes: false,
+  rsvpDeadline: null,
+  approvalMode: "AUTO",
+  allowGuestSeatSelection: false,
+  allowSeatOverbooking: false,
 };
 
 /**

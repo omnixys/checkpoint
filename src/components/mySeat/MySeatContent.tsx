@@ -1,18 +1,9 @@
 "use client";
 
-import {
-  GetMyTicketsQuery,
-  GetMyTicketsQueryVariables,
-  GetMyTicketsDocument,
-  TicketPayload,
-  SeatQuery,
-  SeatQueryVariables,
-  SeatDocument,
-} from "@/checkpoint/generated/graphql";
+import NoTicket from "@/checkpoint/components/utils/NoTicket";
 import useSeatQuery from "@/checkpoint/hooks/seat/useSeatQuery";
 import useMyTicketQuery from "@/checkpoint/hooks/ticket/useMyTicketQuery";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
-import { useQuery } from "@apollo/client/react";
 import EventSeatIcon from "@mui/icons-material/EventSeat";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { Box, Card, CardContent, Stack, Typography } from "@mui/material";
@@ -27,11 +18,12 @@ export default function MySeatContent(): JSX.Element {
    * Hooks (ALWAYS executed)
    * ----------------------------------------------------- */
   const { activeEvent } = useActiveEvent();
-  const { ticketEventIdMap, myTicketListLoading } = useMyTicketQuery({eventId: activeEvent?.id, loadMyTicketList: true});
+  const { ticketEventIdMap, myTicketListLoading } = useMyTicketQuery({
+    eventId: activeEvent?.id,
+    loadMyTicketList: true,
+  });
 
-  const ticket = activeEvent
-    ? ticketEventIdMap.get(activeEvent.id)
-    : undefined;
+  const ticket = activeEvent ? ticketEventIdMap.get(activeEvent.id) : undefined;
 
   const { fullSeatInfo, fullSeatInfoLoading, fullSeatInfoError } = useSeatQuery(
     { seatId: ticket?.seatId, loadFullSeatInfo: true },
@@ -55,19 +47,7 @@ export default function MySeatContent(): JSX.Element {
   }
 
   if (!ticket) {
-    return (
-      <Box sx={{ p: 4 }}>
-        <Typography>Kein Ticket für dieses Event gefunden.</Typography>
-      </Box>
-    );
-  }
-
-  if (!fullSeatInfo) {
-    return (
-      <Box sx={{ p: 4 }}>
-        <Typography>Noch kein Sitzplatz zugewiesen.</Typography>
-      </Box>
-    );
+    return <NoTicket eventId={activeEvent.id} eventName={activeEvent.name} />;
   }
 
   if (fullSeatInfoLoading) {
@@ -78,10 +58,69 @@ export default function MySeatContent(): JSX.Element {
     );
   }
 
-  if (fullSeatInfoError || !fullSeatInfo) {
+  if (fullSeatInfoError) {
     return (
       <Box sx={{ p: 4 }}>
         <Typography>Sitzplatz konnte nicht geladen werden.</Typography>
+      </Box>
+    );
+  }
+
+  if (!ticket.seatId || !fullSeatInfo) {
+    const canChooseSeat =
+      activeEvent.settings?.allowGuestSeatSelection === true;
+    const title = canChooseSeat
+      ? "Noch keinen Sitzplatz ausgewählt"
+      : "Dein Sitzplatz steht noch aus";
+    const message = canChooseSeat
+      ? "Bitte suche dir noch einen Platz für dieses Event aus."
+      : "Bitte gedulde dich noch. Ein Platz wird dir noch zugewiesen.";
+
+    return (
+      <Box sx={{ p: 2, pt: 30 }}>
+        <Card
+          sx={{
+            borderRadius: 4,
+            border: "1px solid",
+            borderColor: canChooseSeat ? "primary.light" : "divider",
+            bgcolor: canChooseSeat
+              ? "rgba(25, 118, 210, 0.08)"
+              : "background.paper",
+            backdropFilter: "blur(14px)",
+          }}
+        >
+          <CardContent>
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              spacing={2}
+              sx={{
+                alignItems: { xs: "flex-start", sm: "center" },
+              }}
+            >
+              <Box
+                sx={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: "50%",
+                  display: "grid",
+                  placeItems: "center",
+                  bgcolor: canChooseSeat ? "primary.main" : "action.hover",
+                  color: canChooseSeat
+                    ? "primary.contrastText"
+                    : "text.secondary",
+                  flexShrink: 0,
+                }}
+              >
+                <EventSeatIcon fontSize="large" />
+              </Box>
+
+              <Stack spacing={0.75}>
+                <Typography variant="h6">{title}</Typography>
+                <Typography color="text.secondary">{message}</Typography>
+              </Stack>
+            </Stack>
+          </CardContent>
+        </Card>
       </Box>
     );
   }

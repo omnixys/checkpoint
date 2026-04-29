@@ -1,7 +1,36 @@
+import { omnixysPresets } from "@/checkpoint/themes/colors/omnixysPresets";
 import { OmnixysColorScheme } from "./paletteTypes";
 
 export type RGB = readonly [number, number, number];
 
+
+function hexToRgb(hex: string): RGB {
+  const cleaned = hex.replace("#", "");
+
+  const parts = cleaned.match(/.{1,2}/g);
+
+  if (!parts || parts.length !== 3) {
+    throw new Error(`Invalid hex color: ${hex}`);
+  }
+
+  const nums = parts.map((x) => parseInt(x, 16));
+
+  const [r, g, b] = nums;
+
+  // zusätzliche Sicherheit (optional, aber sauber)
+  if (
+    r === undefined ||
+    g === undefined ||
+    b === undefined ||
+    Number.isNaN(r) ||
+    Number.isNaN(g) ||
+    Number.isNaN(b)
+  ) {
+    throw new Error(`Invalid RGB conversion: ${hex}`);
+  }
+
+  return [r, g, b];
+}
 /**
  * Central visual token builder.
  *
@@ -16,13 +45,11 @@ export function buildVisualTokens(
 ) {
   const isDark = mode === "dark";
 
-  const schemeMap: Record<OmnixysColorScheme, RGB> = {
-    original: [106, 75, 188],
-    red: [220, 38, 38],
-    green: [22, 163, 74],
-    yellow: [245, 158, 11],
-    blue: [37, 99, 235],
-  };
+const schemeMap = Object.fromEntries(
+  Object.entries(omnixysPresets).map(([key, preset]) => {
+    return [key, hexToRgb(preset.light.primary)];
+  }),
+) as Record<OmnixysColorScheme, RGB>;
 
   const base = schemeMap[scheme];
 
