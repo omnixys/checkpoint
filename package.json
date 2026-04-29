@@ -1,7 +1,6 @@
 {
-  "name": "checkpoint",
+  "name": "@omnixys/checkpoint",
   "version": "0.1.0",
-  "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -10,6 +9,16 @@
     "format": "biome format --write",
     "codegen": "graphql-codegen",
     "release": "semantic-release"
+  },
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "files": [
+    "src/**/*",
+    "messages/**/*.json"
+  ],
+  "private": false,
+    "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   },
   "dependencies": {
     "@apollo/client": "^4.1.7",

@@ -4,6 +4,9 @@
   "all": "Alle",
   "cancel": "Abbrechen",
 
+    "done": "Fertig",
+  "apply": "Anwenden",
+
   "empty": "—",
   "edit": "Bearbeiten",
   "delete": "Löschen",
@@ -12,6 +15,7 @@
     "title": "Telefonnummern ({count})",
     "add": "+ Telefonnummer hinzufügen"
   },
+  
   "language": {
     "en-US": "Englisch",
     "de-DE": "Deutsch"
@@ -20,8 +24,5 @@
   "copy": "Kopiert!",
   "management": "Verwaltung",
   "chooseSeat": "Sitzplatz auswählen",
-  "chosen": "Ausgewählt",
-
-  "done": "Fertig",
-  "apply": "Anwenden"
+  "chosen": "Ausgewählt"
 }

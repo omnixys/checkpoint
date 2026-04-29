@@ -1,36 +1,224 @@
 {
   "meta": {
     "title": "Event erstellen",
-    "subtitle": "Erstelle ein Event mit luxuriösem Flow"
+    "subtitle": "Erstelle ein Event mit einem hochwertigen Ablauf."
   },
+
   "steps": {
-    "basics": "Basics",
+    "basics": "Grundlagen",
     "address": "Adresse",
-    "settings": "Einstellungen",
+    "settings": "Konfiguration",
     "visibility": "Sichtbarkeit",
     "experience": "Erlebnis",
     "schedule": "Zeitplan",
-    "children": "Unterevents",
-    "summary": "Zusammenfassung",
+    "children": "Sessions",
+    "summary": "Überprüfung",
     "success": "Fertig"
+  },
+
+  "success": {
+    "title": "Event erfolgreich erstellt ✨",
+    "description": "Der Erstellungsprozess wurde erfolgreich abgeschlossen.",
+    "createAnother": "Weiteres Event erstellen",
+    "subtitle": "Teile den Link, lade Gäste ein und starte dein Event."
+  },
+
+  "actions": {
+    "back": "Zurück",
+    "next": "Weiter",
+    "skip": "Überspringen",
+    "create": "Event erstellen",
+    "edit": "Bearbeiten",
+    "addChild": "Session hinzufügen",
+    "remove": "Entfernen",
+    "createAnother": "Weiteres erstellen",
+    "viewEvent": "Event ansehen",
+    "review": "Alles überprüfen"
+  },
+
+  "basics": {
+    "title": "Starte mit den Grundlagen",
+    "subtitle": "Du kannst diese später jederzeit ändern.",
+    "title2": "Identität des Events",
+    "name": "Eventname",
+    "namePlaceholder": "Jahreskonferenz 2026",
+    "descriptionPlaceholder": "Kurze Beschreibung des Events…",
+    "parent": "Übergeordnetes Event (optional)",
+    "parentPlaceholder": "Mit bestehendem Event verknüpfen",
+    "startsAt": "Beginn",
+    "endsAt": "Ende",
+    "description": "Gib dem Event einen klaren Namen und optional eine Struktur.",
+    "parentId": "Parent-ID",
+    "parentIdPlaceholder": "Optional",
+    "previewTitle": "Vorschau",
+    "previewEventName": "Name",
+    "previewParent": "Struktur",
+    "previewEmptyName": "Kein Name vergeben",
+    "previewStandalone": "Eigenständiges Event"
+  },
+
+  "children": {
+    "category": "Kategorie",
+    "description": "Füge Sessions hinzu, wenn dein Event mehrere Bereiche oder Zeitfenster hat.",
+    "add": "Session hinzufügen",
+    "empty": "Noch keine Sessions vorhanden.",
+    "parentId": "Parent-ID",
+    "maxSeats": "Plätze",
+    "remove": "Session entfernen",
+    "title": "Sessions hinzufügen",
+    "subtitle": "Optional. Ideal für Konferenzen oder Festivals.",
+    "name": "Session-Name",
+    "startsAt": "Beginn",
+    "endsAt": "Ende",
+    "untitled": "Unbenannt",
+    "dateRange": "{date}, {start} – {end}",
+    "dateSingle": "{date}, {time}",
+    "dateRangeMultiDay": "{startDate}, {startTime} – {endDate}, {endTime}"
+  },
+
+  "summary": {
+    "subtitle": "Letzte Überprüfung. Alles kann noch angepasst werden.",
+    "basics": "Grunddaten",
+    "address": "Ort",
+    "settings": "Einstellungen",
+    "children": "Sessions",
+    "noAddress": "Kein Ort gesetzt",
+    "title": "Finale Überprüfung",
+    "description": "Überprüfe alle Angaben vor dem Erstellen.",
+    "event": "Event",
+    "configuration": "Konfiguration",
+    "name": "Name",
+    "parentId": "Parent-ID",
+    "maxSeats": "Maximale Plätze",
+    "rotateSeconds": "Rotation",
+    "none": "Keine",
+    "empty": "Leer",
+    "noChildren": "Keine Sessions vorhanden",
+    "child": "Session",
+    "reEntryOn": "Wiedereintritt aktiv",
+    "reEntryOff": "Wiedereintritt deaktiviert",
+    "rsvpOn": "RSVP aktiv",
+    "rsvpOff": "RSVP deaktiviert",
+    "plusOneOn": "Begleitpersonen erlaubt",
+    "plusOneOff": "Begleitpersonen deaktiviert",
+    "public": "Öffentlich",
+    "private": "Privat",
+    "visibility": "Sichtbarkeit",
+    "experience": "Erlebnis"
+  },
+
+  "settings": {
+    "title2": "Optimierung für dein Publikum",
+    "subtitle": "Smarte Standardwerte sind bereits gesetzt.",
+    "visibility": "Sichtbarkeit",
+    "visibilityOptions": {
+      "public": "Öffentlich",
+      "unlisted": "Nicht gelistet",
+      "private": "Privat"
+    },
+
+    "capacity": "Kapazität",
+    "capacityPlaceholder": "Unbegrenzt",
+    "category": "Kategorie",
+    "timezone": "Zeitzone",
+    "rsvp": "RSVP & Zugang",
+    "requiresApproval": "Freigabe erforderlich",
+    "allowGuests": "Begleitpersonen erlauben",
+    "enableWaitlist": "Warteliste aktivieren",
+    "ticketingEnabled": "Tickets verkaufen",
+    "title": "Zugang & Kapazität",
+    "description": "Steuere Kapazität, QR-Rotation und Wiedereintritt.",
+    "maxSeats": "Maximale Plätze",
+    "maxSeatsField": "Plätze",
+    "rotateSeconds": "QR-Rotation (Sekunden)",
+    "rotateSecondsField": "Rotation",
+    "allowReEntry": "Wiedereintritt erlauben",
+    "allowReEntryHint": "Gäste können erneut eintreten",
+    "isActive": "Event aktiv",
+    "isActiveHint": "Event ist sofort verfügbar",
+    "quickSummary": "Zusammenfassung",
+    "summarySeats": "Plätze: {count}",
+    "summaryRotate": "Rotation: {count} Sekunden",
+    "summaryReEntryEnabled": "Wiedereintritt aktiviert",
+    "summaryReEntryDisabled": "Wiedereintritt deaktiviert",
+    "summaryActive": "Event aktiv",
+    "summaryInactive": "Event inaktiv"
+  },
+
+  "address": {
+    "title": "Wo findet das Event statt?",
+    "subtitle": "Adresse suchen – wir füllen den Rest automatisch.",
+    "search": "Adresse suchen",
+    "searchPlaceholder": "Ort, Straße oder Location eingeben…",
+    "noResults": "Keine Ergebnisse",
+    "loading": "Suche läuft…",
+    "skip": "Später festlegen",
+    "selected": "Ausgewählte Adresse",
+    "country": "Land",
+    "city": "Stadt",
+    "postalCode": "PLZ",
+    "street": "Straße",
+    "houseNumber": "Hausnummer",
+    "state": "Region",
+    "description": "Zuerst suchen, dann Details anpassen.",
+    "searchHint": "Mindestens 3 Zeichen eingeben",
+    "noOptions": "Keine Ergebnisse gefunden",
+    "additionalInfo": "Zusatzinformationen",
+    "previewTitle": "Adressvorschau",
+    "previewLabel": "Live Vorschau",
+    "empty": {
+      "street": "Straße fehlt",
+      "city": "PLZ/Stadt fehlt",
+      "country": "Land fehlt"
+    }
+  },
+
+  "experience": {
+    "title": "Erlebnis & Branding",
+    "dressCode": "Dresscode",
+    "dressCodePlaceholder": "z. B. Black Tie",
+    "description": "Beschreibung",
+    "descriptionPlaceholder": "Beschreibe Stimmung und Ablauf",
+    "media": "Medien",
+    "coverImageUrl": "Coverbild URL",
+    "coverImageUrlPlaceholder": "https://...",
+    "logoUrl": "Logo URL",
+    "logoUrlPlaceholder": "https://...",
+    "toneTitle": "Premium Eindruck",
+    "toneDescription": "Nutze Design und Inhalte für ein hochwertiges Event.",
+    "chooseLogo": "Logo auswählen",
+    "chooseCover": "Cover auswählen",
+    "category": "Kategorie",
+    "categories": {
+      "GENERAL": "Allgemein",
+      "KONFERENZ": "Konferenz",
+      "MUSIK": "Musik",
+      "WORKSHOP": "Workshop",
+      "SOCIAL": "Social",
+      "SPORTS": "Sport"
+    }
+  },
+  
+  "common": {
+    "enabled": "Aktiv",
+    "disabled": "Deaktiviert",
+    "incomplete": "Unvollständig"
   },
 
   "visibility": {
     "title": "Sichtbarkeit",
-    "description": "Steuere, wer dieses Event finden, zusagen und teilen kann.",
+    "description": "Steuere Zugriff und Interaktionen.",
     "isPublic": "Öffentliches Event",
-    "isPublicHint": "Macht dieses Event im öffentlichen Event-Bereich sichtbar.",
-    "allowPublicRsvp": "Öffentliche RSVP erlauben",
-    "allowPublicRsvpHint": "Gäste können über einen öffentlichen RSVP-Flow antworten.",
-    "allowPublicPlusOne": "Öffentliche Begleitpersonen erlauben",
-    "allowPublicPlusOneHint": "Gäste können Begleitpersonen hinzufügen, wenn RSVP aktiviert ist.",
-    "allowPublicRsvpWebsite": "RSVP-Webseite aktivieren",
-    "allowPublicRsvpWebsiteHint": "Stellt eine dedizierte RSVP-Webseite für dieses Event bereit.",
-    "publicRsvpWebsite": "RSVP-Webseite",
-    "publicRsvpWebsitePlaceholder": "https://..."
-  },
-  "common": {
-    "enabled": "Aktiviert",
-    "disabled": "Deaktiviert"
+    "isPublicHint": "Event ist öffentlich sichtbar",
+    "allowPublicRsvp": "Öffentliche Anmeldung",
+    "allowPublicRsvpHint": "Gäste können sich anmelden",
+    "allowPublicPlusOne": "Begleitpersonen erlauben",
+    "allowPublicPlusOneHint": "Gäste können Begleitpersonen hinzufügen",
+    "allowPublicRsvpWebsite": "RSVP Webseite aktivieren",
+    "allowPublicRsvpWebsiteHint": "Separate RSVP Seite verfügbar",
+    "publicRsvpWebsite": "RSVP Webseite",
+    "publicRsvpWebsitePlaceholder": "https://...",
+    "helperText": "Bestimme Zugriff und Sichtbarkeit.",
+    "publicWebsiteTitle": "Öffentliche RSVP Seite"
   }
 }
