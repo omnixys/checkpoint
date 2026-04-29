@@ -36,19 +36,17 @@ export const metadata: Metadata = buildMetadata({
  */
 export default function MySeatPage(): JSX.Element {
   return (
-        <Box
-          style={{
-            flexGrow: 1,
-            display: "flex",
-            justifyContent: "center",
-            paddingTop: "2rem",
-          }}
-        >
-          <Suspense
-            fallback={<Skeleton variant="rectangular" width={210} height={118} />}
-          >
-            <MySeatClientPage />
-          </Suspense>
-        </Box>
+    <Box
+      style={{
+        flexGrow: 1,
+        display: "flex",
+        justifyContent: "center",
+        paddingTop: "2rem",
+      }}
+    >
+      <Suspense fallback={<Skeleton variant="rectangular" width={210} height={118} />}>
+        <MySeatClientPage />
+      </Suspense>
+    </Box>
   );
 }

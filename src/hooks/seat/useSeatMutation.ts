@@ -1,4 +1,3 @@
-
 import {
   EventPageDocument,
   EventPageQuery,
@@ -23,19 +22,16 @@ import {
 } from "@/checkpoint/generated/graphql";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client/react";
 
-interface Props {
-
-}
+interface Props {}
 
 export default function useSeatQuery() {
+  const [renameSection, { data }] = useMutation<
+    RenameSectionMutation,
+    RenameSectionMutationVariables
+  >(RenameSectionDocument);
 
-    const [renameSection, { data }] = useMutation<
-      RenameSectionMutation,
-      RenameSectionMutationVariables
-      >(RenameSectionDocument);
-  
   return {
     renameSection,
-    data
+    data,
   };
 }

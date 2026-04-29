@@ -9,7 +9,7 @@ import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { useSnackbar } from "notistack";
 import { useCallback, useMemo } from "react";
-import { RemoveAllPlusOnesMutation } from '../../../../../generated/graphql';
+import { RemoveAllPlusOnesMutation } from "../../../../../generated/graphql";
 
 type InvitationQueryVariables = {
   invitationId: string;
@@ -40,10 +40,9 @@ export const usePlusOnes = (): UsePlusOnesResult => {
   };
   const invitationId = getInvitationId(eventId ?? "");
 
-  const { plusOneInvitationList, plusOneInvitationListLoading } =
-    useInvitationQuery({
-      loadPlusOneInvitationList: true,
-    });
+  const { plusOneInvitationList, plusOneInvitationListLoading } = useInvitationQuery({
+    loadPlusOneInvitationList: true,
+  });
 
   const {
     createPlusOneMutation,

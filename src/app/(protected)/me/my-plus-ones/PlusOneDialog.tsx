@@ -70,8 +70,7 @@ export default function PlusOneDialog({
   const [email, setEmail] = useState("");
   const [countryCode, setCountryCode] = useState("+49");
   const [number, setNumber] = useState("");
-  const [phoneType, setPhoneType] =
-    useState<PlusOnePhoneNumberType>("WHATSAPP");
+  const [phoneType, setPhoneType] = useState<PlusOnePhoneNumberType>("WHATSAPP");
   const [label, setLabel] = useState("");
 
   useEffect(() => {
@@ -155,12 +154,7 @@ export default function PlusOneDialog({
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={submitting ? undefined : onClose}
-      fullWidth
-      maxWidth="sm"
-    >
+    <Dialog open={open} onClose={submitting ? undefined : onClose} fullWidth maxWidth="sm">
       <DialogTitle sx={{ pb: 1 }}>
         <MotionBox
           initial={{ opacity: 0, y: 10, scale: 0.98 }}
@@ -281,9 +275,7 @@ export default function PlusOneDialog({
                         label={tInvitation("plusOnes.fields.phoneType")}
                         value={phoneType}
                         onChange={(event) =>
-                          setPhoneType(
-                            event.target.value as PlusOnePhoneNumberType,
-                          )
+                          setPhoneType(event.target.value as PlusOnePhoneNumberType)
                         }
                         fullWidth
                         sx={glassInputSx(theme)}
@@ -329,9 +321,7 @@ export default function PlusOneDialog({
             onClick={handleSubmit}
             disabled={!isValid || submitting}
             variant="contained"
-            startIcon={
-              mode === "create" ? <AddRoundedIcon /> : <SaveRoundedIcon />
-            }
+            startIcon={mode === "create" ? <AddRoundedIcon /> : <SaveRoundedIcon />}
           >
             {submitLabel}
           </Button>

@@ -9,7 +9,7 @@ import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 export default function NavigationMobile(): JSX.Element {
-    const t = useTypedTranslations("layout");
+  const t = useTypedTranslations("layout");
 
   const { isAuthenticated } = useAuth();
   const { activeEvent } = useActiveEvent();

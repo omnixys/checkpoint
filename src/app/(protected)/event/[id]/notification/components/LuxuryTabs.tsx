@@ -37,8 +37,7 @@ export function LuxuryTabs({ value, onChange }: Props) {
               borderRadius: "999px",
               color: "white",
               "&.Mui-selected": {
-                background:
-                  "linear-gradient(135deg, #5B8CFF, #7B61FF, #9F6BFF)",
+                background: "linear-gradient(135deg, #5B8CFF, #7B61FF, #9F6BFF)",
                 color: "white",
               },
             }}

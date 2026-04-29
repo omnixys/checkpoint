@@ -26,15 +26,13 @@ export function VisionOSInlineFix({
         backdropFilter: "blur(30px)",
       }}
     >
-      <Typography  sx={{ mb: 1, fontWeight:600}}>
+      <Typography sx={{ mb: 1, fontWeight: 600 }}>
         Fehler in Zeile {rowIndex + 2} korrigieren
       </Typography>
 
       {Object.keys(row).map((key) => (
         <Box key={key} sx={{ mb: 1 }}>
-          <Typography sx={{ opacity: 0.6, fontSize:13 }}>
-            {key}
-          </Typography>
+          <Typography sx={{ opacity: 0.6, fontSize: 13 }}>{key}</Typography>
           <TextField
             size="small"
             fullWidth

@@ -47,9 +47,7 @@ export async function uploadFile(file: File): Promise<string> {
 
 export async function uploadAndRegister(file: File, eventId?: string) {
   // 1. presigned URL holen
-  const res = await fetch(
-    `/api/storage/upload-url?filename=${file.name}&type=${file.type}`,
-  );
+  const res = await fetch(`/api/storage/upload-url?filename=${file.name}&type=${file.type}`);
 
   const { uploadUrl, fileUrl, key } = await res.json();
 

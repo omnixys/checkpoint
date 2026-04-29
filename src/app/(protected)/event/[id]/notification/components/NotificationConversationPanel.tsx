@@ -17,10 +17,7 @@ import DoneAllRoundedIcon from "@mui/icons-material/DoneAllRounded";
 import MailOutlineRoundedIcon from "@mui/icons-material/MailOutlineRounded";
 import BoltRoundedIcon from "@mui/icons-material/BoltRounded";
 import { useMemo, useState } from "react";
-import {
-  useNotificationItems,
-  useNotificationMessages,
-} from "../hooks/useNotificationMocks";
+import { useNotificationItems, useNotificationMessages } from "../hooks/useNotificationMocks";
 import { NotificationChannel } from "../types/notification-channel.enum";
 import {
   EmailMessage,
@@ -58,9 +55,7 @@ function isEmailItem(item: NotificationListItem): item is EmailThread {
   return item.channel === NotificationChannel.EMAIL;
 }
 
-function isWhatsAppMessage(
-  message: NotificationMessage,
-): message is WhatsAppMessage {
+function isWhatsAppMessage(message: NotificationMessage): message is WhatsAppMessage {
   return message.channel === NotificationChannel.WHATSAPP;
 }
 
@@ -110,10 +105,9 @@ function SharedTextField({
         "& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline": {
           borderColor: alpha(theme.palette.common.white, 0.2),
         },
-        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
-          {
-            borderColor: theme.palette.primary.main,
-          },
+        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+          borderColor: theme.palette.primary.main,
+        },
         "& .MuiInputBase-input::placeholder": {
           color: alpha(theme.palette.text.primary, 0.52),
           opacity: 1,
@@ -182,10 +176,7 @@ function WhatsAppHeader({ item }: { item: WhatsAppChat }) {
   const theme = useTheme();
 
   return (
-    <Stack
-      direction="row"
-      sx={{ justifyContent: "space-between", alignItems: "center" }}
-    >
+    <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
       <Box>
         <Typography
           sx={{
@@ -203,8 +194,7 @@ function WhatsAppHeader({ item }: { item: WhatsAppChat }) {
             fontSize: 13,
           }}
         >
-          {item.phoneNumber} ·{" "}
-          {item.isOnline ? "Online now" : "Last seen recently"}
+          {item.phoneNumber} · {item.isOnline ? "Online now" : "Last seen recently"}
         </Typography>
       </Box>
 
@@ -231,10 +221,7 @@ function InAppHeader({ item }: { item: InAppChat }) {
   const statusColor = getStatusColor(theme, item.status);
 
   return (
-    <Stack
-      direction="row"
-      sx={{ justifyContent: "space-between", alignItems: "center" }}
-    >
+    <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
       <Box>
         <Typography
           sx={{
@@ -282,10 +269,7 @@ function EmailHeader({ item }: { item: EmailThread }) {
   const theme = useTheme();
 
   return (
-    <Stack
-      direction="row"
-      sx={{ justifyContent: "space-between", alignItems: "center" }}
-    >
+    <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
       <Box>
         <Typography
           sx={{
@@ -367,9 +351,7 @@ function WhatsAppTimeline({ messages }: { messages: WhatsAppMessage[] }) {
                 }`,
               }}
             >
-              <Typography sx={{ fontSize: 14.5, lineHeight: 1.6 }}>
-                {message.body}
-              </Typography>
+              <Typography sx={{ fontSize: 14.5, lineHeight: 1.6 }}>{message.body}</Typography>
 
               <Stack
                 direction="row"
@@ -429,10 +411,7 @@ function InAppTimeline({ messages }: { messages: InAppMessage[] }) {
               backgroundColor: alpha(color, 0.08),
             }}
           >
-            <Stack
-              direction="row"
-              sx={{ justifyContent: "space-between", alignItems: "center" }}
-            >
+            <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
               <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
                 <Box
                   sx={{
@@ -442,9 +421,7 @@ function InAppTimeline({ messages }: { messages: InAppMessage[] }) {
                     backgroundColor: color,
                   }}
                 />
-                <Typography
-                  sx={{ color: theme.palette.text.primary, fontWeight: 700 }}
-                >
+                <Typography sx={{ color: theme.palette.text.primary, fontWeight: 700 }}>
                   {message.title ?? message.eventType}
                 </Typography>
               </Stack>
@@ -540,9 +517,7 @@ function EmailTimeline({ messages }: { messages: EmailMessage[] }) {
             </Typography>
           </Stack>
 
-          <Divider
-            sx={{ my: 2, borderColor: theme.palette.extended.border.subtle }}
-          />
+          <Divider sx={{ my: 2, borderColor: theme.palette.extended.border.subtle }} />
 
           <Typography
             sx={{
@@ -600,8 +575,7 @@ function ConversationInput({ channel }: { channel: NotificationChannel }) {
         direction="row"
         spacing={1.25}
         sx={{
-          alignItems:
-            channel === NotificationChannel.EMAIL ? "stretch" : "center",
+          alignItems: channel === NotificationChannel.EMAIL ? "stretch" : "center",
         }}
       >
         <SharedTextField
@@ -669,9 +643,7 @@ export function NotificationConversationPanel({ channel, chatId }: Props) {
           backgroundColor: theme.palette.background.paper,
         }}
       >
-        {isWhatsAppItem(selectedItem) ? (
-          <WhatsAppHeader item={selectedItem} />
-        ) : null}
+        {isWhatsAppItem(selectedItem) ? <WhatsAppHeader item={selectedItem} /> : null}
         {isInAppItem(selectedItem) ? <InAppHeader item={selectedItem} /> : null}
         {isEmailItem(selectedItem) ? <EmailHeader item={selectedItem} /> : null}
       </Box>

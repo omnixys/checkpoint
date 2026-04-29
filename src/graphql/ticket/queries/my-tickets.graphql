@@ -6,14 +6,12 @@ query GetMyTickets {
   }
 }
 
-
 query GetMyTicketList {
   getMyTickets {
     eventId
     seatId
   }
 }
-
 
 query GetMyFullTicketList {
   getMyTickets {

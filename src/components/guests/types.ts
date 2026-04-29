@@ -21,5 +21,4 @@ export type GuestDTO = {
   checkedInAt?: string;
 };
 
-
 export type fullSeatInfo = StripMeta<GetFullSeatInfoQuery["seat"]>;

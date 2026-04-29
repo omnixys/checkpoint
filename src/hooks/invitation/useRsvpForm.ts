@@ -13,7 +13,6 @@ import {
 } from "@/checkpoint/generated/graphql";
 import { NormalizedPlusOne } from "@/checkpoint/types/event.type";
 
-
 type RsvpFormState = {
   firstName: string;
   lastName: string;
@@ -41,17 +40,12 @@ function createEmptyPlusOne(): NormalizedPlusOne {
   };
 }
 
-
-
 type PhoneNumberInput = Omit<
   InvitationPayload["phoneNumbers"][number],
   "id" | "createdAt" | "updatedAt" | "infoId" | "__typename"
 >;
 
-
-function normalizePhoneNumbers(
-  phoneNumbers: PhoneNumberInput[]
-): PhoneNumberInput[] {
+function normalizePhoneNumbers(phoneNumbers: PhoneNumberInput[]): PhoneNumberInput[] {
   return (phoneNumbers ?? []).map((phone) => ({
     type: phone.type,
     number: phone.number,
@@ -62,7 +56,7 @@ function normalizePhoneNumbers(
 }
 
 function normalizePlusOne(
-  input: GetInvitationQuery["invitation"]["plusOnes"][number]
+  input: GetInvitationQuery["invitation"]["plusOnes"][number],
 ): NormalizedPlusOne {
   return {
     firstName: input.firstName ?? "",
@@ -71,7 +65,6 @@ function normalizePlusOne(
     phoneNumbers: normalizePhoneNumbers(input.phoneNumbers),
   };
 }
-
 
 function toGraphQlPlusOne(input: NormalizedPlusOne): PublicPlusOneInput {
   return {
@@ -91,7 +84,7 @@ function toGraphQlPlusOne(input: NormalizedPlusOne): PublicPlusOneInput {
  * - submission
  * - mapping to GraphQL DTO
  */
-export function useRsvpForm(invitation: GetInvitationQuery['invitation']) {
+export function useRsvpForm(invitation: GetInvitationQuery["invitation"]) {
   const [state, setState] = useState<RsvpFormState>({
     firstName: invitation.firstName ?? "",
     lastName: invitation.lastName ?? "",

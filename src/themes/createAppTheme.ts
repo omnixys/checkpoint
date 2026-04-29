@@ -10,10 +10,9 @@ export const createAppTheme = (mode: PaletteMode, scheme: OmnixysColorScheme = "
   const apple = mode === "light" ? appleLight : appleDark;
   const omnixys = omnixysPresets[scheme];
   const omni = omnixys[mode];
-    const visual = buildVisualTokens(mode, scheme);
+  const visual = buildVisualTokens(mode, scheme);
 
-
-    const extended = buildExtendedPalette(mode, omni);
+  const extended = buildExtendedPalette(mode, omni);
 
   const baseTheme = createTheme({
     palette: {

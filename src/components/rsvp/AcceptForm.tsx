@@ -13,14 +13,14 @@ import { GetInvitationQuery } from "@/checkpoint/generated/graphql";
 import { CallingCodeCountry } from "@/checkpoint/types/country.type";
 
 type AcceptFormProps = {
-  invitation: GetInvitationQuery['invitation'];
+  invitation: GetInvitationQuery["invitation"];
   countries: CallingCodeCountry[];
   onAccepted: () => void;
 };
 
 export default function AcceptForm({ invitation, countries, onAccepted }: AcceptFormProps) {
   const t = useTypedTranslations("rsvp");
-  
+
   const theme = useTheme();
   const form = useRsvpForm(invitation);
 
@@ -50,9 +50,7 @@ export default function AcceptForm({ invitation, countries, onAccepted }: Accept
       await form.submit();
       onAccepted();
     } catch (error) {
-      setSubmitError(
-        error instanceof Error ? error.message : t("acceptForm.submitError"),
-      );
+      setSubmitError(error instanceof Error ? error.message : t("acceptForm.submitError"));
     }
   };
 
@@ -113,11 +111,7 @@ export default function AcceptForm({ invitation, countries, onAccepted }: Accept
 
         {submitError && <Alert severity="error">{submitError}</Alert>}
 
-        <Button
-          variant="contained"
-          disabled={!form.isValid}
-          onClick={handleSubmit}
-        >
+        <Button variant="contained" disabled={!form.isValid} onClick={handleSubmit}>
           {t("acceptForm.submit")}
         </Button>
       </Stack>

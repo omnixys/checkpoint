@@ -7,15 +7,7 @@ import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import EventIcon from "@mui/icons-material/Event";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
-import {
-  Box,
-  Button,
-  Card,
-  CardActionArea,
-  Stack,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Box, Button, Card, CardActionArea, Stack, Typography, useTheme } from "@mui/material";
 import Link from "next/link";
 import { JSX } from "react";
 
@@ -24,7 +16,7 @@ const EVENT_ID = env.EVENT_ID;
 
 export default function HomePage(): JSX.Element {
   const theme = useTheme();
-  const { isAuthenticated, currentUser} = useAuth();
+  const { isAuthenticated, currentUser } = useAuth();
   const { activeEvent } = useActiveEvent();
   const t = useTypedTranslations("home");
 
@@ -56,10 +48,7 @@ export default function HomePage(): JSX.Element {
           {t("brand.title")}
         </Typography>
 
-        <Typography
-          variant="body1"
-          sx={{ color: theme.palette.text.secondary }}
-        >
+        <Typography variant="body1" sx={{ color: theme.palette.text.secondary }}>
           {t("brand.subtitle")}
         </Typography>
 
@@ -121,13 +110,8 @@ export default function HomePage(): JSX.Element {
           })}
         </Typography>
 
-        <Typography
-          variant="body2"
-          sx={{ color: theme.palette.text.secondary }}
-        >
-          {activeEvent
-            ? t("header.activeEvent", { event: activeEvent.name })
-            : t("header.noEvent")}
+        <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+          {activeEvent ? t("header.activeEvent", { event: activeEvent.name }) : t("header.noEvent")}
         </Typography>
       </Stack>
 

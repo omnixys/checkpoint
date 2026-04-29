@@ -4,8 +4,6 @@ query EventChildren($id: ID!) {
   }
 }
 
-
-
 query GetSubEventNameList($eventId: ID!) {
   eventChildren(eventId: $eventId) {
     id
@@ -16,4 +14,3 @@ query GetSubEventNameList($eventId: ID!) {
     }
   }
 }
-

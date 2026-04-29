@@ -58,14 +58,10 @@ export default function SettingsStep() {
         {/* HEADER */}
         <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
           <SecurityRoundedIcon color="primary" />
-          <Typography sx={{ fontWeight: 800, fontSize: 20 }}>
-            {t("settings.title")}
-          </Typography>
+          <Typography sx={{ fontWeight: 800, fontSize: 20 }}>{t("settings.title")}</Typography>
         </Stack>
 
-        <Typography color="text.secondary">
-          {t("settings.description")}
-        </Typography>
+        <Typography color="text.secondary">{t("settings.description")}</Typography>
 
         {/* -----------------------------------------------------
          * NUMERIC SETTINGS
@@ -74,9 +70,7 @@ export default function SettingsStep() {
           {/* MAX SEATS */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Stack spacing={1.25}>
-              <Typography sx={{ fontWeight: 700 }}>
-                {t("settings.maxSeats")}
-              </Typography>
+              <Typography sx={{ fontWeight: 700 }}>{t("settings.maxSeats")}</Typography>
 
               <Slider
                 value={Number(maxSeats.value) || 0}
@@ -99,9 +93,7 @@ export default function SettingsStep() {
           {/* ROTATE SECONDS */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Stack spacing={1.25}>
-              <Typography sx={{ fontWeight: 700 }}>
-                {t("settings.rotateSeconds")}
-              </Typography>
+              <Typography sx={{ fontWeight: 700 }}>{t("settings.rotateSeconds")}</Typography>
 
               <Slider
                 value={Number(rotateSeconds.value) || 0}
@@ -134,15 +126,9 @@ export default function SettingsStep() {
               }}
             >
               <Stack spacing={1.5}>
-                <Stack
-                  direction="row"
-                  spacing={1}
-                  sx={{ alignItems: "center" }}
-                >
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
                   <MeetingRoomRoundedIcon color="primary" />
-                  <Typography sx={{ fontWeight: 700 }}>
-                    {t("settings.allowReEntry")}
-                  </Typography>
+                  <Typography sx={{ fontWeight: 700 }}>{t("settings.allowReEntry")}</Typography>
                 </Stack>
 
                 <FormControlLabel
@@ -166,15 +152,9 @@ export default function SettingsStep() {
               }}
             >
               <Stack spacing={1.5}>
-                <Stack
-                  direction="row"
-                  spacing={1}
-                  sx={{ alignItems: "center" }}
-                >
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
                   <SyncRoundedIcon color="secondary" />
-                  <Typography sx={{ fontWeight: 700 }}>
-                    {t("settings.isActive")}
-                  </Typography>
+                  <Typography sx={{ fontWeight: 700 }}>{t("settings.isActive")}</Typography>
                 </Stack>
 
                 <FormControlLabel

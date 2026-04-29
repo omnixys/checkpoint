@@ -43,22 +43,19 @@ export default function useInvitationMutation() {
     AddPlusOneMutation,
     AddPlusOneMutationVariables
   >(AddPlusOneDocument);
-  const addPlusOnePayload =
-    addPlusOneMutationResult.data?.createPlusOnesInvitation;
+  const addPlusOnePayload = addPlusOneMutationResult.data?.createPlusOnesInvitation;
 
   const [updatePlusOneMutation, updatePlusOneMutationResult] = useMutation<
     UpdatePlusOneMutation,
     UpdatePlusOneMutationVariables
   >(UpdatePlusOneDocument);
-  const updatePlusOnePayload =
-    updatePlusOneMutationResult.data?.updatePlusOnesInvitation;
+  const updatePlusOnePayload = updatePlusOneMutationResult.data?.updatePlusOnesInvitation;
 
   const [removePlusOneMutation, removePlusOneMutationResult] = useMutation<
     RemovePlusOneMutation,
     RemovePlusOneMutationVariables
   >(RemovePlusOneDocument);
-  const removePlusOnePayload =
-    removePlusOneMutationResult.data?.removePlusOneInvitation;
+  const removePlusOnePayload = removePlusOneMutationResult.data?.removePlusOneInvitation;
 
   const [removeAllPlusOneMutation, removeAllPlusOneMutationResult] = useMutation<
     RemoveAllPlusOnesMutation,
@@ -90,10 +87,7 @@ export default function useInvitationMutation() {
     ImportInvitationsMutationVariables
   >(ImportInvitationsDocument);
 
-  const [
-    sendBulkInvitationsMutation,
-    sendBulkInvitationsMutationMutationResult,
-  ] = useMutation<
+  const [sendBulkInvitationsMutation, sendBulkInvitationsMutationMutationResult] = useMutation<
     SendBulkInvitationsMutation,
     SendBulkInvitationsMutationVariables
   >(SendBulkInvitationsDocument);

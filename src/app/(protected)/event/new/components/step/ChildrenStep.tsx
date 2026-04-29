@@ -147,9 +147,7 @@ export default function ChildrenStep() {
       <Box sx={{ maxHeight: 500, overflowY: "auto", pr: 1 }}>
         <Stack spacing={2}>
           {children.length === 0 && (
-            <Typography color="text.secondary">
-              {t("children.empty")}
-            </Typography>
+            <Typography color="text.secondary">{t("children.empty")}</Typography>
           )}
 
           {children.map((child, index) => {
@@ -158,18 +156,9 @@ export default function ChildrenStep() {
             const isFirst = index === 0;
             const isLast = index === (draft.children?.length ?? 0) - 1;
 
-            const borderRadius = isFirst
-              ? "24px 24px 0 0"
-              : isLast
-                ? "0 0 24px 24px"
-                : "0";
+            const borderRadius = isFirst ? "24px 24px 0 0" : isLast ? "0 0 24px 24px" : "0";
 
-            const dateLabel = formatChildEventDateRange(
-              child.startsAt,
-              child.endsAt,
-              "de-DE",
-              t,
-            );
+            const dateLabel = formatChildEventDateRange(child.startsAt, child.endsAt, "de-DE", t);
 
             /**
              * 🔥 FIELD BINDINGS
@@ -236,13 +225,7 @@ export default function ChildrenStep() {
               >
                 {/* HEADER */}
                 <AccordionSummary
-                  expandIcon={
-                    expanded ? (
-                      <ExpandLessRoundedIcon />
-                    ) : (
-                      <ExpandMoreRoundedIcon />
-                    )
-                  }
+                  expandIcon={expanded ? <ExpandLessRoundedIcon /> : <ExpandMoreRoundedIcon />}
                   sx={{
                     alignItems: "center",
                   }}
@@ -257,11 +240,7 @@ export default function ChildrenStep() {
                     }}
                   >
                     {/* LEFT */}
-                    <Stack
-                      direction="row"
-                      spacing={1}
-                      sx={{ alignItems: "center" }}
-                    >
+                    <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
                       {getCategoryIcon(child.category)}
                       <Typography sx={{ fontWeight: 700 }}>
                         {child.name || t("children.untitled")}
@@ -308,20 +287,11 @@ export default function ChildrenStep() {
                   <Stack spacing={2} sx={{ mt: 2 }}>
                     <Grid container spacing={2}>
                       <Grid size={{ xs: 12, md: 4 }}>
-                        <TextField
-                          label={t("children.name")}
-                          fullWidth
-                          {...name}
-                        />
+                        <TextField label={t("children.name")} fullWidth {...name} />
                       </Grid>
 
                       <Grid size={{ xs: 12, md: 4 }}>
-                        <TextField
-                          select
-                          label={t("children.category")}
-                          fullWidth
-                          {...category}
-                        >
+                        <TextField select label={t("children.category")} fullWidth {...category}>
                           {CATEGORY_OPTIONS.map((opt) => (
                             <MenuItem key={opt} value={opt}>
                               {formatEnum(t, "categorie", opt)}
@@ -346,18 +316,14 @@ export default function ChildrenStep() {
                           <Grid size={{ xs: 12, md: 6 }}>
                             <DateTimePicker
                               label="Start"
-                              onChange={(val) =>
-                                startsAt.onChange(val?.toISOString() ?? "")
-                              }
+                              onChange={(val) => startsAt.onChange(val?.toISOString() ?? "")}
                             />
                           </Grid>
 
                           <Grid size={{ xs: 12, md: 6 }}>
                             <DateTimePicker
                               label="End"
-                              onChange={(val) =>
-                                endsAt.onChange(val?.toISOString() ?? "")
-                              }
+                              onChange={(val) => endsAt.onChange(val?.toISOString() ?? "")}
                             />
                           </Grid>
                         </Grid>

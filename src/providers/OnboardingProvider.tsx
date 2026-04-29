@@ -16,25 +16,19 @@ type ContextType = {
 
 const OnboardingContext = createContext<ContextType | null>(null);
 
-
 export function useOnboarding() {
   const ctx = useContext(OnboardingContext);
   if (!ctx) throw new Error("useOnboarding must be used within provider");
   return ctx;
 }
 
-export default function OnboardingProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function OnboardingProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const { start } = useTour();
   const { activeEvent } = useActiveEvent();
-      const t = useTypedTranslations("onboarding");
-  
-  const role = activeEvent?.myRole ?? 'GUEST';
-  
+  const t = useTypedTranslations("onboarding");
+
+  const role = activeEvent?.myRole ?? "GUEST";
 
   useEffect(() => {
     const done = localStorage.getItem(ONBOARDING_KEY);
@@ -44,8 +38,8 @@ export default function OnboardingProvider({
   const close = () => {
     localStorage.setItem(ONBOARDING_KEY, "done");
     setOpen(false);
-    
-    const steps = buildTour({role, activeEvent, t});
+
+    const steps = buildTour({ role, activeEvent, t });
 
     if (steps.length > 0) {
       start(steps);

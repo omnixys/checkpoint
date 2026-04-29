@@ -12,8 +12,8 @@ export interface InvitationBulkBarProps {
 }
 
 export default function InvitationBulkBar({ logic }: InvitationBulkBarProps) {
-    const t = useTypedTranslations("invitation");
-  
+  const t = useTypedTranslations("invitation");
+
   const theme = useTheme();
   const selected = logic.selected;
 
@@ -53,10 +53,7 @@ export default function InvitationBulkBar({ logic }: InvitationBulkBarProps) {
           {t("bulk.approve", { count: selected.length })}
         </Button>
 
-        <Button
-          variant="outlined"
-          onClick={() => logic.openBulkSendDialog(selected)}
-        >
+        <Button variant="outlined" onClick={() => logic.openBulkSendDialog(selected)}>
           {t("bulk.send")}
         </Button>
 

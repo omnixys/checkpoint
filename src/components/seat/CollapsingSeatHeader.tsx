@@ -35,10 +35,8 @@ export default function CollapsingSeatHeader() {
       >
         <Typography
           variant="h6"
-
           sx={{
             fontWeight: 700,
-
           }}
         >
           Sitzplätze

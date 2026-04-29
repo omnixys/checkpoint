@@ -52,8 +52,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Checkpoint – Secure Access Platform",
-    description:
-      "QR-based event access, guest tracking, and admin tools in one platform.",
+    description: "QR-based event access, guest tracking, and admin tools in one platform.",
     images: ["/og/cover.png"],
   },
 

@@ -48,19 +48,15 @@ export function VisionOSColumnMapping({
             {REQUIRED.map((req) => (
               <Stack key={req}>
                 <Typography
-    
                   sx={{
                     fontWeight: 600,
-
                   }}
                 >
                   {req}
                 </Typography>
                 <Select
                   value={mapping[req]}
-                  onChange={(e) =>
-                    setMapping({ ...mapping, [req]: e.target.value })
-                  }
+                  onChange={(e) => setMapping({ ...mapping, [req]: e.target.value })}
                   sx={{
                     borderRadius: 3,
                     backdropFilter: "blur(30px)",

@@ -23,23 +23,14 @@ type InvitationEventFilterOption = {
 
 type StatusType = "PENDING" | "APPROVED" | "REJECTED" | "DECLINED" | "ACCEPTED";
 
-
 export default function InvitationFilters({ logic }: { logic: InvitationLogic }) {
   const theme = useTheme();
   const tInvitation = useTypedTranslations("invitation");
-    const tCommon = useTypedTranslations("common");
+  const tCommon = useTypedTranslations("common");
 
-  const statuses: StatusType[] = [
-    "PENDING",
-    "APPROVED",
-    "REJECTED",
-    "DECLINED",
-    "ACCEPTED",
-  ];
+  const statuses: StatusType[] = ["PENDING", "APPROVED", "REJECTED", "DECLINED", "ACCEPTED"];
 
-  const subEvents = logic.subEvents?.filter(
-    (child) => logic.rootEventId !== child.id,
-  );
+  const subEvents = logic.subEvents?.filter((child) => logic.rootEventId !== child.id);
 
   const eventOptions = useMemo<InvitationEventFilterOption[]>(() => {
     return [
@@ -157,9 +148,7 @@ export default function InvitationFilters({ logic }: { logic: InvitationLogic })
                         return;
                       }
 
-                      logic.setEventFilter(
-                        logic.eventFilter === event.id ? null : event.id,
-                      );
+                      logic.setEventFilter(logic.eventFilter === event.id ? null : event.id);
                     }}
                     variant={active ? "filled" : "outlined"}
                     color={active ? "primary" : "default"}
@@ -206,13 +195,9 @@ export default function InvitationFilters({ logic }: { logic: InvitationLogic })
               >
                 <ToggleButton value="ALL">{tCommon("all")}</ToggleButton>
 
-                <ToggleButton value="PRIVATE">
-                  {tInvitation("typePrivate")}
-                </ToggleButton>
+                <ToggleButton value="PRIVATE">{tInvitation("typePrivate")}</ToggleButton>
 
-                <ToggleButton value="PUBLIC">
-                  {tInvitation("typePublic")}
-                </ToggleButton>
+                <ToggleButton value="PUBLIC">{tInvitation("typePublic")}</ToggleButton>
               </ToggleButtonGroup>
             </Box>
           </Box>
@@ -240,9 +225,7 @@ export default function InvitationFilters({ logic }: { logic: InvitationLogic })
                   <Chip
                     key={status}
                     label={tInvitation(`statusType.${status}`)}
-                    onClick={() =>
-                      logic.setStatusFilter(active ? null : status)
-                    }
+                    onClick={() => logic.setStatusFilter(active ? null : status)}
                     variant={active ? "filled" : "outlined"}
                     color={active ? "primary" : "default"}
                     sx={{

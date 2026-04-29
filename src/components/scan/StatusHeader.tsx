@@ -44,7 +44,7 @@ export default function StatusHeader() {
             exit={{ opacity: 0, y: -14 }}
             transition={{ duration: 0.35 }}
           >
-            <Typography variant="h5" sx={{ whiteSpace: "nowrap",fontWeight:700  }}>
+            <Typography variant="h5" sx={{ whiteSpace: "nowrap", fontWeight: 700 }}>
               {activeEvent?.name}
             </Typography>
           </motion.div>

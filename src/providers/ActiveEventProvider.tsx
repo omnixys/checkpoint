@@ -10,21 +10,14 @@ import {
 import useEventQuery from "@/checkpoint/hooks/events/useEventQuery";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { getLogger } from "@/checkpoint/utils/logger";
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 /* ---------------------------------------------------------------------
  * Context Type
  * ------------------------------------------------------------------- */
 interface ActiveEventContextValue {
-  myEventList: MyEventsQuery['myEvents'];
-  activeEvent?: GetActiveEventQuery['event'] | undefined;
+  myEventList: MyEventsQuery["myEvents"];
+  activeEvent?: GetActiveEventQuery["event"] | undefined;
   activeEventId?: string | undefined;
   activeRole?: UserRoleType | undefined;
   loading: boolean;
@@ -36,9 +29,7 @@ interface ActiveEventContextValue {
 /* ---------------------------------------------------------------------
  * Context
  * ------------------------------------------------------------------- */
-const ActiveEventContext = createContext<ActiveEventContextValue | undefined>(
-  undefined,
-);
+const ActiveEventContext = createContext<ActiveEventContextValue | undefined>(undefined);
 
 /* ---------------------------------------------------------------------
  * Storage
@@ -48,11 +39,7 @@ const STORAGE_KEY = "checkpoint.activeEventId";
 /* ---------------------------------------------------------------------
  * Provider
  * ------------------------------------------------------------------- */
-export function ActiveEventProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function ActiveEventProvider({ children }: { children: React.ReactNode }) {
   const logger = getLogger("ActiveEventProvider");
   const { isAuthenticated } = useAuth();
 
@@ -73,13 +60,12 @@ export function ActiveEventProvider({
     }
   }, []);
 
-  const { myEventList, activeEvent, myEventListLoading, activeEventLoading } =
-    useEventQuery({
-      eventId: activeEventId,
-      loadActiveEvent: !activeEventId ? false : true,
-      loadMyEventList: !activeEventId ? true : false,
-      isAuthenticated,
-    });
+  const { myEventList, activeEvent, myEventListLoading, activeEventLoading } = useEventQuery({
+    eventId: activeEventId,
+    loadActiveEvent: !activeEventId ? false : true,
+    loadMyEventList: !activeEventId ? true : false,
+    isAuthenticated,
+  });
 
   /* -------------------------------------------------
    * Select event
@@ -143,8 +129,6 @@ export function ActiveEventProvider({
    * ------------------------------------------------- */
   const loading = myEventListLoading || activeEventLoading;
 
-
-  
   /* -------------------------------------------------
    * Context value
    * ------------------------------------------------- */
@@ -158,22 +142,10 @@ export function ActiveEventProvider({
       selectEvent,
       clearEvent,
     }),
-    [
-      myEventList,
-      activeEvent,
-      activeEventId,
-      activeRole,
-      loading,
-      selectEvent,
-      clearEvent,
-    ],
+    [myEventList, activeEvent, activeEventId, activeRole, loading, selectEvent, clearEvent],
   );
 
-  return (
-    <ActiveEventContext.Provider value={value}>
-      {children}
-    </ActiveEventContext.Provider>
-  );
+  return <ActiveEventContext.Provider value={value}>{children}</ActiveEventContext.Provider>;
 }
 
 /* ---------------------------------------------------------------------

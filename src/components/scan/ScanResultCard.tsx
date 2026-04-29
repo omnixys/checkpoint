@@ -39,18 +39,13 @@ export default function ScanResultCard({ result }: { result: ScanResult }) {
       >
         <Stack spacing={2}>
           {/* STATUS */}
-          <Chip
-            label={result.status}
-            sx={{ bgcolor: color + "22", color, fontWeight: 700 }}
-          />
+          <Chip label={result.status} sx={{ bgcolor: color + "22", color, fontWeight: 700 }} />
 
           {/* MESSAGE */}
           <Typography
             variant="h6"
-
             sx={{
               fontWeight: 700,
-
             }}
           >
             {result.message}
@@ -76,8 +71,7 @@ export default function ScanResultCard({ result }: { result: ScanResult }) {
                 <>
                   <Divider />
                   <Typography>
-                    <b>Gast:</b> {result.guest.firstName}{" "}
-                    {result.guest.lastName}
+                    <b>Gast:</b> {result.guest.firstName} {result.guest.lastName}
                   </Typography>
                 </>
               )}

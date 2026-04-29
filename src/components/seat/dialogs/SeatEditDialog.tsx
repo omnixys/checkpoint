@@ -38,9 +38,7 @@ export default function SeatEditDialog({
   const [note, setNote] = React.useState<string>("");
 
   const safeInvitationId =
-    invitationId && invitationList.some((i) => i.id === invitationId)
-      ? invitationId
-      : "";
+    invitationId && invitationList.some((i) => i.id === invitationId) ? invitationId : "";
 
   React.useEffect(() => {
     setInvitationId(seat?.invitationId ?? "");

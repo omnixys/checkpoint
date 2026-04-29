@@ -20,7 +20,7 @@ export interface PlusOnePhoneHandlers {
 }
 
 export function usePlusOnes() {
-  const [plusOnes, setPlusOnes] = useState< NormalizedPlusOne []>([]);
+  const [plusOnes, setPlusOnes] = useState<NormalizedPlusOne[]>([]);
 
   const add = useCallback(() => {
     setPlusOnes((prev) => [
@@ -39,7 +39,7 @@ export function usePlusOnes() {
   }, []);
 
   const update = useCallback(
-    <K extends keyof  NormalizedPlusOne >(index: number, field: K, value:  NormalizedPlusOne [K]) => {
+    <K extends keyof NormalizedPlusOne>(index: number, field: K, value: NormalizedPlusOne[K]) => {
       setPlusOnes((prev) => prev.map((p, i) => (i === index ? { ...p, [field]: value } : p)));
     },
     [],

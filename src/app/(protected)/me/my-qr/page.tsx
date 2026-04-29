@@ -28,9 +28,7 @@ export const metadata = buildMetadata({
 
 export default function QRPage() {
   return (
-    <Suspense
-      fallback={<Skeleton variant="rectangular" width="100%" height="100vh" />}
-    >
+    <Suspense fallback={<Skeleton variant="rectangular" width="100%" height="100vh" />}>
       <QrClientPage />
     </Suspense>
   );

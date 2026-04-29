@@ -21,25 +21,25 @@ export default function useInvitationQuery({
   invitationId,
   loadPlusOneInvitationList = false,
   loadInvitation = false,
-}: Props){
+}: Props) {
   const plusOneInvitationsQueryResult = useQuery<
     PlusOneInvitationsQuery,
     PlusOneInvitationsQueryVariables
   >(PlusOneInvitationsDocument, {
-    variables: { invitationId: invitationId ?? '' },
+    variables: { invitationId: invitationId ?? "" },
     fetchPolicy: "cache-and-network",
     skip: !loadPlusOneInvitationList || !invitationId,
   });
   const plusOneInvitationList = plusOneInvitationsQueryResult.data?.invitation;
 
-    const invitationQueryResult = useQuery<
-      GetInvitationQuery,
-      GetInvitationQueryVariables
-    >(GetInvitationDocument, {
+  const invitationQueryResult = useQuery<GetInvitationQuery, GetInvitationQueryVariables>(
+    GetInvitationDocument,
+    {
       variables: { invitationId: invitationId ?? "" },
       fetchPolicy: "cache-and-network",
       skip: !loadInvitation || !invitationId,
-    });
+    },
+  );
   const invitation = invitationQueryResult.data?.invitation;
 
   return {

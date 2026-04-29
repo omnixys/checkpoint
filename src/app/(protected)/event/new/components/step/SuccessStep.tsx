@@ -7,13 +7,12 @@ import Confetti from "react-confetti";
 import Link from "next/link";
 import { env } from "@/checkpoint/lib/env";
 
-
 type Props = {
   onCreateAnother: () => void;
   onViewEvent: () => void;
 };
 
-export default function SuccessStep({eventId}: {eventId: string | undefined}) {
+export default function SuccessStep({ eventId }: { eventId: string | undefined }) {
   const theme = useTheme();
   const t = useTypedTranslations("create");
 
@@ -109,9 +108,7 @@ export default function SuccessStep({eventId}: {eventId: string | undefined}) {
               fontSize: 15,
             }}
           >
-            <Link href={`${env.CHECKPOINT_BASE_PATH}event/eventId`}>
-              {t("actions.viewEvent")}
-            </Link>
+            <Link href={`${env.CHECKPOINT_BASE_PATH}event/eventId`}>{t("actions.viewEvent")}</Link>
           </Button>
 
           <Button
@@ -123,9 +120,7 @@ export default function SuccessStep({eventId}: {eventId: string | undefined}) {
               fontSize: 15,
             }}
           >
-            <Link href={`${env.CHECKPOINT_BASE_PATH}event/new`}>
-              {t("actions.createAnother")}
-            </Link>
+            <Link href={`${env.CHECKPOINT_BASE_PATH}event/new`}>{t("actions.createAnother")}</Link>
           </Button>
         </Stack>
       </Stack>

@@ -26,22 +26,20 @@ interface Payload {
   myInvitationIdListRefetch: ReturnType<typeof useQuery>["refetch"];
 }
 
-export default function useMyInvitationQuery({
-  loadMyInvitationIdList = false,
-}: Props): Payload {
-  const myInvitationIdQueryResult = useQuery<
-    MyInvitationsIdQuery,
-    MyInvitationsIdQueryVariables
-  >(MyInvitationsIdDocument, {
-    fetchPolicy: "cache-and-network",
-    skip: !loadMyInvitationIdList,
-  });
+export default function useMyInvitationQuery({ loadMyInvitationIdList = false }: Props): Payload {
+  const myInvitationIdQueryResult = useQuery<MyInvitationsIdQuery, MyInvitationsIdQueryVariables>(
+    MyInvitationsIdDocument,
+    {
+      fetchPolicy: "cache-and-network",
+      skip: !loadMyInvitationIdList,
+    },
+  );
 
   const myInvitationIdList = myInvitationIdQueryResult.data?.myInvitations;
   const myInvitationIdMap = new Map(
     myInvitationIdList?.map((invitation) => [invitation.eventId, invitation]) ?? [],
   );
-  
+
   return {
     myInvitationIdMap,
     myInvitationIdList,

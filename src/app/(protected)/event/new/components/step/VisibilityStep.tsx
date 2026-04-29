@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Box,
-  FormControlLabel,
-  Stack,
-  Switch,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, FormControlLabel, Stack, Switch, TextField, Typography } from "@mui/material";
 
 import GroupAddRoundedIcon from "@mui/icons-material/GroupAddRounded";
 import LanguageRoundedIcon from "@mui/icons-material/LanguageRounded";
@@ -55,9 +48,7 @@ export default function VisibilityStep() {
          * --------------------------------------------------- */}
         <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
           <PublicRoundedIcon color="primary" />
-          <Typography sx={{ fontWeight: 800, fontSize: 20 }}>
-            {t("visibility.title")}
-          </Typography>
+          <Typography sx={{ fontWeight: 800, fontSize: 20 }}>{t("visibility.title")}</Typography>
         </Stack>
 
         {/* -----------------------------------------------------
@@ -98,9 +89,7 @@ export default function VisibilityStep() {
             control={
               <Switch
                 checked={Boolean(allowPublicRsvpWebsite.value)}
-                onChange={(e) =>
-                  allowPublicRsvpWebsite.onChange(e.target.checked)
-                }
+                onChange={(e) => allowPublicRsvpWebsite.onChange(e.target.checked)}
               />
             }
             label={t("visibility.allowPublicRsvpWebsite")}
@@ -113,9 +102,7 @@ export default function VisibilityStep() {
         <Stack spacing={2}>
           <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
             <LanguageRoundedIcon color="secondary" />
-            <Typography sx={{ fontWeight: 800 }}>
-              {t("visibility.publicWebsiteTitle")}
-            </Typography>
+            <Typography sx={{ fontWeight: 800 }}>{t("visibility.publicWebsiteTitle")}</Typography>
           </Stack>
 
           <TextField
@@ -128,9 +115,7 @@ export default function VisibilityStep() {
 
           <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
             <GroupAddRoundedIcon color="primary" />
-            <Typography color="text.secondary">
-              {t("visibility.helperText")}
-            </Typography>
+            <Typography color="text.secondary">{t("visibility.helperText")}</Typography>
           </Stack>
         </Stack>
       </Stack>

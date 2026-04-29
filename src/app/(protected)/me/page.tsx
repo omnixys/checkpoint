@@ -2,15 +2,7 @@
 
 import useMeQuery from "@/checkpoint/hooks/user/useMeQuery";
 import { env } from "@/checkpoint/lib/env";
-import {
-  alpha,
-  Box,
-  Card,
-  CardContent,
-  Stack,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { alpha, Box, Card, CardContent, Stack, Typography, useTheme } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
@@ -26,9 +18,7 @@ export default function MePage() {
 
   if (mePageLoading) return null;
 
-  const name = `${mePage?.personalInfo?.firstName ?? ""} ${
-    mePage?.personalInfo?.lastName ?? ""
-  }`;
+  const name = `${mePage?.personalInfo?.firstName ?? ""} ${mePage?.personalInfo?.lastName ?? ""}`;
 
   return (
     <Stack spacing={4}>
@@ -64,9 +54,7 @@ export default function MePage() {
 
           <Typography color="text.secondary">@{mePage?.username}</Typography>
 
-          <Typography color="text.secondary">
-            {mePage?.personalInfo?.email}
-          </Typography>
+          <Typography color="text.secondary">{mePage?.personalInfo?.email}</Typography>
         </Stack>
       </Box>
 

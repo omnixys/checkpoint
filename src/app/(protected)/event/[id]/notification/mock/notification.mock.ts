@@ -211,8 +211,7 @@ const emailThreads: EmailThread[] = [
     subject: "Executive Welcome Pack",
     fromName: "Maison Privé",
     fromEmail: "guest-relations@maisonprive.com",
-    preview:
-      "We prepared a luxury welcome experience overview for your guests.",
+    preview: "We prepared a luxury welcome experience overview for your guests.",
     updatedAt: "08:22",
     unreadCount: 2,
     hasAttachment: false,
@@ -467,9 +466,7 @@ const emailMessagesByChatId: Record<string, EmailMessage[]> = {
   ],
 };
 
-export function getNotificationItems(
-  channel: NotificationChannel,
-): NotificationListItem[] {
+export function getNotificationItems(channel: NotificationChannel): NotificationListItem[] {
   switch (channel) {
     case NotificationChannel.WHATSAPP:
       return whatsappChats;

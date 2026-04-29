@@ -1,6 +1,16 @@
 "use client";
 
-import { Menu, MenuItem, Stack, Typography, IconButton, alpha, useTheme, Button, Box } from '@mui/material';
+import {
+  Menu,
+  MenuItem,
+  Stack,
+  Typography,
+  IconButton,
+  alpha,
+  useTheme,
+  Button,
+  Box,
+} from "@mui/material";
 import LanguageIcon from "@mui/icons-material/Language";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
@@ -20,8 +30,7 @@ export default function LanguageSwitcher() {
 
   const open = Boolean(anchorEl);
 
-  const handleOpen = (e: React.MouseEvent<HTMLElement>) =>
-    setAnchorEl(e.currentTarget);
+  const handleOpen = (e: React.MouseEvent<HTMLElement>) => setAnchorEl(e.currentTarget);
 
   const handleClose = () => setAnchorEl(null);
 

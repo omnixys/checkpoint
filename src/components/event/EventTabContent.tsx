@@ -13,11 +13,7 @@ type Props = {
   onDescriptionChange: (v: string) => void;
 };
 
-export default function EventTabContent({
-  ev,
-  active,
-  onDescriptionChange,
-}: Props) {
+export default function EventTabContent({ ev, active, onDescriptionChange }: Props) {
   const t = useTypedTranslations("event");
 
   switch (active) {
@@ -41,9 +37,7 @@ export default function EventTabContent({
     default:
       return (
         <Box sx={{ mt: 4 }}>
-          <Typography variant="body1">
-            {t("tabs.notImplemented", { tab: active })}
-          </Typography>
+          <Typography variant="body1">{t("tabs.notImplemented", { tab: active })}</Typography>
         </Box>
       );
   }

@@ -2,14 +2,7 @@
 
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
-import {
-  Box,
-  FormControl,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  Typography,
-} from "@mui/material";
+import { Box, FormControl, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
 import { JSX } from "react";
 
 export default function EventSelector(): JSX.Element {
@@ -23,10 +16,7 @@ export default function EventSelector(): JSX.Element {
 
   if (!isAuthenticated) {
     return (
-      <Typography
-        variant="body2"
-        sx={{ opacity: 0.6, px: 2, py: 1, userSelect: "none" }}
-      >
+      <Typography variant="body2" sx={{ opacity: 0.6, px: 2, py: 1, userSelect: "none" }}>
         Nicht angemeldet
       </Typography>
     );
@@ -34,10 +24,7 @@ export default function EventSelector(): JSX.Element {
 
   if (!myEventList || myEventList.length === 0) {
     return (
-      <Typography
-        variant="body2"
-        sx={{ opacity: 0.6, px: 2, py: 1, userSelect: "none" }}
-      >
+      <Typography variant="body2" sx={{ opacity: 0.6, px: 2, py: 1, userSelect: "none" }}>
         Keine Events
       </Typography>
     );

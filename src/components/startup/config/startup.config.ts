@@ -53,7 +53,6 @@ export const startupConfig = {
     },
   },
 
-
   rays: {
     size: 900,
     blur: 90,

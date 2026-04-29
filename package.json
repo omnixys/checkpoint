@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
-    "codegen": "graphql-codegen"
+    "codegen": "graphql-codegen",
+    "release": "semantic-release"
   },
   "dependencies": {
     "@apollo/client": "^4.1.7",
@@ -62,7 +63,9 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.4.13",
     "@capacitor/cli": "^8.3.0",
+    "@commitlint/config-conventional": "^20.4.2",
     "@graphql-codegen/cli": "^6.3.0",
     "@graphql-codegen/introspection": "^5.0.2",
     "@graphql-codegen/typed-document-node": "^6.1.8",
@@ -70,6 +73,12 @@
     "@graphql-codegen/typescript-operations": "^5.1.0",
     "@graphql-codegen/typescript-react-apollo": "^4.4.1",
     "@graphql-typed-document-node/core": "^3.2.0",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^12.0.6",
+    "@semantic-release/npm": "^13.1.5",
+    "@semantic-release/release-notes-generator": "^14.1.0",
     "@types/canvas-confetti": "^1.9.0",
     "@types/leaflet": "^1.9.21",
     "@types/node": "^20",
@@ -79,6 +88,7 @@
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
     "depcheck": "^1.4.7",
+    "semantic-release": "^25.0.3",
     "typescript": "^5"
   }
 }

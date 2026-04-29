@@ -5,15 +5,7 @@ import VisionStrip from "@/checkpoint/components/vision/VisionStrip";
 import VisionStripItem from "@/checkpoint/components/vision/VisionStripItem";
 import { SeatPayload } from "@/checkpoint/generated/graphql";
 import { SeatListType } from "@/checkpoint/types/seat.type";
-import {
-  Alert,
-  Card,
-  CardContent,
-  CardHeader,
-  Chip,
-  LinearProgress,
-  Stack,
-} from "@mui/material";
+import { Alert, Card, CardContent, CardHeader, Chip, LinearProgress, Stack } from "@mui/material";
 
 type Props = {
   seats: SeatListType[];
@@ -38,9 +30,7 @@ export default function SeatMapRegular({
   onSectionClick,
   onTableClick,
 }: Props) {
-  const sectionKeys = Object.keys(grouped).sort((a, b) =>
-    a.localeCompare(b, "de"),
-  );
+  const sectionKeys = Object.keys(grouped).sort((a, b) => a.localeCompare(b, "de"));
 
   if (seatsLoading) {
     return <LinearProgress sx={{ mb: 2 }} />;
@@ -63,11 +53,7 @@ export default function SeatMapRegular({
           alignItems: "center",
         }}
       >
-        <Chip
-          size="small"
-          label="frei"
-          sx={{ bgcolor: "grey.900", color: "grey.100" }}
-        />
+        <Chip size="small" label="frei" sx={{ bgcolor: "grey.900", color: "grey.100" }} />
         <Chip size="small" label="belegt" color="error" />
       </Stack>
 
@@ -78,9 +64,7 @@ export default function SeatMapRegular({
           return null;
         }
 
-        const tableKeys = Object.keys(tables).sort((a, b) =>
-          a.localeCompare(b, "de"),
-        );
+        const tableKeys = Object.keys(tables).sort((a, b) => a.localeCompare(b, "de"));
 
         const sectionSeats = Object.values(tables).flat();
 

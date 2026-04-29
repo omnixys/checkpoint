@@ -29,7 +29,7 @@ export default function GuestsInsideList({
         background: "rgba(255,255,255,0.18)",
       }}
     >
-      <Typography variant="h6"sx={{ mb: 2, fontWeight: 600 }}>
+      <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
         Guests Inside
       </Typography>
 
@@ -60,9 +60,8 @@ function GuestRow({ g }: { g: { id: string; name: string; seat?: string; timeIn:
 
         <Stack>
           <Typography
-           
             sx={{
-               fontWeight: 600
+              fontWeight: 600,
             }}
           >
             {g.name}

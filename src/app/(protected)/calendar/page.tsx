@@ -4,7 +4,6 @@ import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
 import { Metadata } from "next";
 import { JSX } from "react";
 
-
 export const metadata: Metadata = buildMetadata({
   title: "Event Calendar",
   description: "Browse and manage your upcoming events.",

@@ -12,7 +12,7 @@ import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
  */
 export default function InvalidInvitationDialog({ open }: { open: boolean }) {
   const t = useTypedTranslations("rsvp");
-  
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -56,10 +56,7 @@ export default function InvalidInvitationDialog({ open }: { open: boolean }) {
           {t("invalidInvitation.titleDesktop")}
         </Typography>
 
-        <Typography
-          variant="body1"
-          sx={{ opacity: 0.8, mt: 1, textAlign: "center" }}
-        >
+        <Typography variant="body1" sx={{ opacity: 0.8, mt: 1, textAlign: "center" }}>
           {t("invalidInvitation.descriptionDesktop")}
           freigegeben.
         </Typography>

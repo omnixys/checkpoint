@@ -28,10 +28,9 @@ export default function EntryExitHistory({
     >
       <Typography
         variant="h6"
-
         sx={{
           fontWeight: 600,
-          mb:2
+          mb: 2,
         }}
       >
         Entry / Exit History

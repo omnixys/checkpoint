@@ -45,10 +45,7 @@ export default function EventLocationMapClient({ eventId }: { eventId: string })
   const theme = useTheme();
   const markerIcon = useMapMarker();
 
-  const {
-    address,
-    loading,
-  } = useEventAddressQuery(eventId)
+  const { address, loading } = useEventAddressQuery(eventId);
 
   const [style, setStyle] = useState<MapStyle>("satellite");
 

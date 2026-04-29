@@ -57,16 +57,12 @@ export default function EventParticipationField({
     return (
       <Accordion defaultExpanded>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="subtitle1">
-            {t("public.participationConfirm")}
-          </Typography>
+          <Typography variant="subtitle1">{t("public.participationConfirm")}</Typography>
         </AccordionSummary>
 
         <AccordionDetails>
           <FormControlLabel
-            control={
-              <Checkbox checked={isRootSelected} onChange={onToggleRoot} />
-            }
+            control={<Checkbox checked={isRootSelected} onChange={onToggleRoot} />}
             label={rootEventName}
           />
         </AccordionDetails>
@@ -111,11 +107,7 @@ export default function EventParticipationField({
             }}
           >
             {isRootSelected ? (
-              <Chip
-                label={t("public.allEvents")}
-                color="primary"
-                size="small"
-              />
+              <Chip label={t("public.allEvents")} color="primary" size="small" />
             ) : selectedChildren.length > 0 ? (
               selectedChildren
                 .slice(0, 2)
@@ -180,10 +172,7 @@ export default function EventParticipationField({
                   >
                     <FormControlLabel
                       control={
-                        <Checkbox
-                          checked={checked}
-                          onChange={() => onToggleChild(child.id)}
-                        />
+                        <Checkbox checked={checked} onChange={() => onToggleChild(child.id)} />
                       }
                       label={child.name}
                     />

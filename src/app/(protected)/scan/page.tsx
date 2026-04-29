@@ -3,7 +3,6 @@ import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
 import { Skeleton } from "@mui/material";
 import { Suspense } from "react";
 
-
 export const metadata = buildMetadata({
   title: "QR Scanner",
   description: "Scan QR codes to validate guest access and track entry status.",
@@ -29,11 +28,9 @@ export const metadata = buildMetadata({
 });
 
 export default function ScannerPage() {
-   return (
-        <Suspense
-          fallback={<Skeleton variant="rectangular" width="100%" height="100vh" />}
-        >
-          <ScannerClientPage />
-        </Suspense>
-      );
+  return (
+    <Suspense fallback={<Skeleton variant="rectangular" width="100%" height="100vh" />}>
+      <ScannerClientPage />
+    </Suspense>
+  );
 }

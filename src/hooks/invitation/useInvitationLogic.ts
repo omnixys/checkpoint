@@ -71,8 +71,7 @@ export function useInvitationLogic(eventId: string) {
   const [sendOpen, setSendOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
   const [approveOpen, setApproveOpen] = useState(false);
-  const [activeInvitation, setActiveInvitation] =
-    useState<InvitationPayload | null>(null);
+  const [activeInvitation, setActiveInvitation] = useState<InvitationPayload | null>(null);
 
   /* -----------------------------------------------------------------------
    * Bulk Send State
@@ -84,12 +83,10 @@ export function useInvitationLogic(eventId: string) {
    * Bulk Approve State
    * --------------------------------------------------------------------- */
   const [bulkApproveIds, setBulkApproveIds] = useState<string[] | null>(null);
-  const [bulkApproveEntries, setBulkApproveEntries] = useState<
-    Record<string, BulkApproveEntry>
-  >({});
-  const [seatOptionsByEventId, setSeatOptionsByEventId] = useState<
-    Record<string, any[]>
-  >({});
+  const [bulkApproveEntries, setBulkApproveEntries] = useState<Record<string, BulkApproveEntry>>(
+    {},
+  );
+  const [seatOptionsByEventId, setSeatOptionsByEventId] = useState<Record<string, any[]>>({});
 
   /* -----------------------------------------------------------------------
    * Inbox
@@ -127,10 +124,7 @@ export function useInvitationLogic(eventId: string) {
   const { getSeatList: loadSeatList } = useSeatListQuery({});
 
   const eventIds = fullEventTree
-    ? [
-        fullEventTree.rootEvent.id,
-        ...(fullEventTree.subEvents?.map((s) => s.id) ?? []),
-      ]
+    ? [fullEventTree.rootEvent.id, ...(fullEventTree.subEvents?.map((s) => s.id) ?? [])]
     : [];
 
   const {
@@ -146,10 +140,7 @@ export function useInvitationLogic(eventId: string) {
    * Data Mapping
    * --------------------------------------------------------------------- */
   const rootEvent = fullEventTree?.rootEvent;
-  const subEvents = useMemo(
-    () => fullEventTree?.subEvents,
-    [fullEventTree?.subEvents],
-  );
+  const subEvents = useMemo(() => fullEventTree?.subEvents, [fullEventTree?.subEvents]);
 
   const allEventOptions = useMemo(() => {
     const options = [...(rootEvent ? [rootEvent] : []), ...(subEvents ?? [])];
@@ -183,10 +174,7 @@ export function useInvitationLogic(eventId: string) {
   }, [subEvents, rootEventId, rootEventName]);
 
   const invitationById = useMemo(() => {
-    const map = new Map<
-      string,
-      GetGlobalEventInvitationListQuery["getFullByEventIds"][number]
-    >();
+    const map = new Map<string, GetGlobalEventInvitationListQuery["getFullByEventIds"][number]>();
 
     if (!globalEventInvitationList) return map;
 
@@ -204,9 +192,7 @@ export function useInvitationLogic(eventId: string) {
 
     return bulkApproveIds
       .map((id) => invitationById.get(id))
-      .filter((invitation): invitation is NonNullable<typeof invitation> =>
-        Boolean(invitation),
-      );
+      .filter((invitation): invitation is NonNullable<typeof invitation> => Boolean(invitation));
   }, [bulkApproveIds, invitationById]);
 
   /* -----------------------------------------------------------------------
@@ -231,8 +217,7 @@ export function useInvitationLogic(eventId: string) {
       }
 
       if (normalizedSearch) {
-        const fullName =
-          `${invitation.firstName ?? ""} ${invitation.lastName ?? ""}`.toLowerCase();
+        const fullName = `${invitation.firstName ?? ""} ${invitation.lastName ?? ""}`.toLowerCase();
 
         const email = (invitation.email ?? "").toLowerCase();
         const phone = (invitation.phoneNumber ?? "").toLowerCase();
@@ -246,13 +231,7 @@ export function useInvitationLogic(eventId: string) {
 
       return true;
     });
-  }, [
-    eventFilter,
-    globalEventInvitationList,
-    search,
-    statusFilter,
-    typeFilter,
-  ]);
+  }, [eventFilter, globalEventInvitationList, search, statusFilter, typeFilter]);
 
   /* -----------------------------------------------------------------------
    * Internal Seat Loader
@@ -338,8 +317,8 @@ export function useInvitationLogic(eventId: string) {
     try {
       logger.debug("Sending bulk invitations", { ids });
       setSendingBulk(true);
-      const selectedInvitations = globalEventInvitationList?.filter(
-        (invitation) => ids.includes(invitation.id),
+      const selectedInvitations = globalEventInvitationList?.filter((invitation) =>
+        ids.includes(invitation.id),
       );
 
       if (selectedInvitations?.length === 0) {
@@ -347,8 +326,7 @@ export function useInvitationLogic(eventId: string) {
       }
 
       const guests = selectedInvitations?.map((invitation) => {
-        const eventNameResolved =
-          eventNameById[invitation.eventId] ?? rootEventName;
+        const eventNameResolved = eventNameById[invitation.eventId] ?? rootEventName;
 
         const rsvpUrl = `${window.location.origin}/rsvp/${invitation.id}`;
 
@@ -396,8 +374,8 @@ export function useInvitationLogic(eventId: string) {
    * Bulk Approve Dialog Actions
    * --------------------------------------------------------------------- */
   async function openBulkApproveDialog(ids: string[]) {
-    const selectedInvitations = globalEventInvitationList?.filter(
-      (invitation) => ids.includes(invitation.id),
+    const selectedInvitations = globalEventInvitationList?.filter((invitation) =>
+      ids.includes(invitation.id),
     );
 
     if (!selectedInvitations || selectedInvitations?.length === 0) {
@@ -459,10 +437,7 @@ export function useInvitationLogic(eventId: string) {
     });
   }
 
-  async function setBulkApproveEvent(
-    invitationId: string,
-    selectedEventId: string,
-  ) {
+  async function setBulkApproveEvent(invitationId: string, selectedEventId: string) {
     await ensureSeatsLoaded(selectedEventId);
 
     setBulkApproveEntries((prev) => {

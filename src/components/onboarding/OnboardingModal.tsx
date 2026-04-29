@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Box,
-  Button,
-  IconButton,
-  Stack,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Box, Button, IconButton, Stack, Typography, useTheme } from "@mui/material";
 import CloseRounded from "@mui/icons-material/CloseRounded";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
@@ -38,13 +31,7 @@ const slides = [
   },
 ] satisfies Slide[];
 
-export default function OnboardingModal({
-  open,
-  onClose,
-}: {
-  open: boolean;
-  onClose: () => void;
-}) {
+export default function OnboardingModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const theme = useTheme();
   const [step, setStep] = useState(0);
 
@@ -127,11 +114,7 @@ export default function OnboardingModal({
         </Box>
 
         {/* Progress */}
-        <Stack
-          direction="row"
-          spacing={1}
-          sx={{ pb: 1, justifyContent: "center" }}
-        >
+        <Stack direction="row" spacing={1} sx={{ pb: 1, justifyContent: "center" }}>
           {slides.map((_, i) => (
             <Box
               key={i}

@@ -21,7 +21,7 @@ export default function InvitationStatusChip({
 }: {
   status: InvitationStatus;
   rsvp: RsvpChoice | undefined;
-  }) {
+}) {
   const t = useTypedTranslations("invitation");
 
   let config: {

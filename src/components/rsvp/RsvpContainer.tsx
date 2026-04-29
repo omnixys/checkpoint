@@ -1,6 +1,6 @@
 "use client";
 
-// TODO implementen optimistic fetch 
+// TODO implementen optimistic fetch
 
 import { useQuery } from "@apollo/client/react";
 import { Box, CircularProgress, Stack, useTheme } from "@mui/material";
@@ -56,7 +56,10 @@ export default function RsvpContainer({
   const [screen, setScreen] = useState<RsvpScreen>("initial");
   const [invalidDialogOpen, setInvalidDialogOpen] = useState(false);
 
-  const { invitation, invitationError, invitationLoading, invitationRefetch } = useInvitationQuery({invitationId, loadInvitation: true});
+  const { invitation, invitationError, invitationLoading, invitationRefetch } = useInvitationQuery({
+    invitationId,
+    loadInvitation: true,
+  });
 
   /**
    * Validate invitation when loaded.
@@ -181,9 +184,7 @@ export default function RsvpContainer({
         />
       )}
 
-      {screen === "accepted" && (
-        <FinalScreens type="accepted" invitation={invitation} />
-      )}
+      {screen === "accepted" && <FinalScreens type="accepted" invitation={invitation} />}
 
       {screen === "maybe" && (
         <MaybeDialog invitationId={invitation.id} onBack={() => setScreen("initial")} />

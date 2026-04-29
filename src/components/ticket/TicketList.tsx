@@ -14,15 +14,14 @@ type Props = {
 };
 
 export default function TicketList({ tickets, onOpen, onDelete }: Props) {
-
-  const {seatMap} = useSeatQuery({
+  const { seatMap } = useSeatQuery({
     seatIdList: tickets.map((ticket) => ticket.seatId),
     loadSeatIdList: true,
   });
 
-const getSeatLabel = (seatId: string) => {
-  return seatMap.get(seatId)?.label ?? "—";
-};
+  const getSeatLabel = (seatId: string) => {
+    return seatMap.get(seatId)?.label ?? "—";
+  };
   return (
     <Grid
       container

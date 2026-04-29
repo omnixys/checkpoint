@@ -7,7 +7,6 @@ import { motion } from "framer-motion";
 export default function InvitationAlreadyDeclinedDialog({ open }: { open: boolean }) {
   const t = useTypedTranslations("rsvp");
 
-  
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 

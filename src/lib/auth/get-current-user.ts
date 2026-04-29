@@ -1,4 +1,9 @@
-import { MeQuery, MeDocument, CurrentUserQuery, CurrentUserDocument } from "@/checkpoint/generated/graphql";
+import {
+  MeQuery,
+  MeDocument,
+  CurrentUserQuery,
+  CurrentUserDocument,
+} from "@/checkpoint/generated/graphql";
 import { createServerClient } from "@/checkpoint/lib/apollo/server-client";
 import { CurrentUser } from "@/checkpoint/lib/auth/auth.types";
 
@@ -11,7 +16,7 @@ import { CurrentUser } from "@/checkpoint/lib/auth/auth.types";
  *
  * Returns null if not authenticated.
  */
-export async function getCurrentUser()  {
+export async function getCurrentUser() {
   try {
     const client = await createServerClient();
 

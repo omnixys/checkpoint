@@ -1,7 +1,17 @@
 "use client";
 
 import React, { useState } from "react";
-import { Badge, IconButton, Popover, Box, Stack, Typography, Button, useTheme, alpha } from "@mui/material";
+import {
+  Badge,
+  IconButton,
+  Popover,
+  Box,
+  Stack,
+  Typography,
+  Button,
+  useTheme,
+  alpha,
+} from "@mui/material";
 import MailRoundedIcon from "@mui/icons-material/MailRounded";
 import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
 import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
@@ -13,8 +23,7 @@ import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogi
  */
 export default function UserCreationInbox({ logic }: { logic: InvitationLogic }) {
   const [anchorEl, setAnchorEl] = useState(null);
-    const theme = useTheme();
-  
+  const theme = useTheme();
 
   const open = Boolean(anchorEl);
   const { createdUsers, unreadCount, resetUserInbox } = logic;
@@ -29,13 +38,13 @@ export default function UserCreationInbox({ logic }: { logic: InvitationLogic })
         <IconButton
           onClick={handleOpen}
           sx={{
-                    backdropFilter: "blur(12px)",
-                    background: alpha(theme.palette.primary.main, 0.15),
-                    border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
-                    boxShadow: theme.shadows[3],
-                    "&:hover": {
-                      background: alpha(theme.palette.primary.main, 0.25),
-                    },
+            backdropFilter: "blur(12px)",
+            background: alpha(theme.palette.primary.main, 0.15),
+            border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
+            boxShadow: theme.shadows[3],
+            "&:hover": {
+              background: alpha(theme.palette.primary.main, 0.25),
+            },
           }}
         >
           <MailRoundedIcon />

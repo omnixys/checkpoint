@@ -44,9 +44,7 @@ export default function MyPlusOnesPage() {
   } = usePlusOnes();
 
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingPlusOne, setEditingPlusOne] = useState<PlusOneItem | null>(
-    null,
-  );
+  const [editingPlusOne, setEditingPlusOne] = useState<PlusOneItem | null>(null);
 
   const usedSlots = plusOnes?.length;
 
@@ -287,9 +285,7 @@ export default function MyPlusOnesPage() {
             }}
           >
             <CircularProgress />
-            <Typography color="text.secondary">
-              {t("plusOnes.loading")}
-            </Typography>
+            <Typography color="text.secondary">{t("plusOnes.loading")}</Typography>
           </Stack>
         ) : !hasRootInvitation ? (
           <Box
@@ -333,9 +329,7 @@ export default function MyPlusOnesPage() {
               >
                 {t("plusOnes.emptyTitle")}
               </Typography>
-              <Typography color="text.secondary">
-                {t("plusOnes.emptyDescription")}
-              </Typography>
+              <Typography color="text.secondary">{t("plusOnes.emptyDescription")}</Typography>
             </Stack>
           </MotionBox>
         ) : (

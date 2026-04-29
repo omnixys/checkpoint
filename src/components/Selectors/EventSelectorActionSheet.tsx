@@ -10,15 +10,10 @@ interface Props {
   onClose: () => void;
 }
 
-export default function EventSelectorActionSheet({
-  open,
-  onClose,
-}: Props): JSX.Element {
+export default function EventSelectorActionSheet({ open, onClose }: Props): JSX.Element {
   const { myEventList: events, activeEventId, selectEvent } = useActiveEvent();
   const [search, setSearch] = React.useState("");
-  const filtered = events.filter((ev) =>
-    ev.name.toLowerCase().includes(search.toLowerCase()),
-  );
+  const filtered = events.filter((ev) => ev.name.toLowerCase().includes(search.toLowerCase()));
 
   // SPRING ANIMATION (real iOS feel)
   const spring = useSpring({
@@ -98,8 +93,7 @@ export default function EventSelectorActionSheet({
               mb: 2,
               "& .MuiOutlinedInput-root": {
                 borderRadius: 3,
-                backgroundColor: (t) =>
-                  t.palette.apple.secondarySystemBackground,
+                backgroundColor: (t) => t.palette.apple.secondarySystemBackground,
               },
             }}
           />
@@ -113,10 +107,7 @@ export default function EventSelectorActionSheet({
                 sx={{
                   p: 2,
                   borderRadius: 3,
-                  bgcolor:
-                    ev.id === activeEventId
-                      ? "primary.main"
-                      : (t) => t.palette.apple.gray6,
+                  bgcolor: ev.id === activeEventId ? "primary.main" : (t) => t.palette.apple.gray6,
                   color: ev.id === activeEventId ? "#fff" : "text.primary",
                   fontWeight: ev.id === activeEventId ? 700 : 500,
                   boxShadow:

@@ -6,9 +6,7 @@ import { useEffect, useState } from "react";
 
 import LocationOnRoundedIcon from "@mui/icons-material/LocationOnRounded";
 
-import AddressForm, {
-  FormState,
-} from "@/checkpoint/components/event/settings/address/AddressForm";
+import AddressForm, { FormState } from "@/checkpoint/components/event/settings/address/AddressForm";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 import { useCreateEvent } from "@/checkpoint/app/(protected)/event/new/context/CreateEventContext";
@@ -24,9 +22,7 @@ export default function AddressStep() {
   const t = useTypedTranslations("create");
 
   const { draft, patch } = useCreateEvent();
-  const {
-    resolveGeo,
-  } = useEventAddressQuery()
+  const { resolveGeo } = useEventAddressQuery();
 
   const [input, setInput] = useState<FormState | null>(null);
 
@@ -154,9 +150,7 @@ export default function AddressStep() {
               {draft.address.postalCode} {draft.address.city}
             </Typography>
 
-            <Typography sx={{ fontSize: 14 }}>
-              {draft.address.country}
-            </Typography>
+            <Typography sx={{ fontSize: 14 }}>{draft.address.country}</Typography>
           </Stack>
         </Box>
       )}

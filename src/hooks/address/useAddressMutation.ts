@@ -33,9 +33,8 @@ export function useEventAddressMutation() {
     DeleteEventAddressByEventIdMutationVariables
   >(DeleteEventAddressByEventIdDocument);
 
-
   return {
     createAddressMutation,
-    deleteAddressMutation
+    deleteAddressMutation,
   };
 }

@@ -23,10 +23,8 @@ export const metadata = buildMetadata({
 
 export default function SeatPage(): JSX.Element {
   return (
-        <Suspense
-          fallback={<Skeleton variant="rectangular" width={210} height={118} />}
-        >
-          <SeatsClientPage />
-        </Suspense>
+    <Suspense fallback={<Skeleton variant="rectangular" width={210} height={118} />}>
+      <SeatsClientPage />
+    </Suspense>
   );
 }

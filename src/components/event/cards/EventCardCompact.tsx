@@ -31,12 +31,7 @@ const STATUS_COLOR: Record<EventStatus, "success" | "warning" | "default"> = {
   past: "default",
 };
 
-export default function EventCardCompact({
-  ev,
-  toLocal,
-  isActive,
-  onSetActive,
-}: Props) {
+export default function EventCardCompact({ ev, toLocal, isActive, onSetActive }: Props) {
   const theme = useTheme();
   const t = useTypedTranslations("event");
 
@@ -58,9 +53,7 @@ export default function EventCardCompact({
         variant="outlined"
         sx={{
           borderRadius: 5,
-          bgcolor: isActive
-            ? alpha(theme.palette.primary.main, 0.08)
-            : "background.paper",
+          bgcolor: isActive ? alpha(theme.palette.primary.main, 0.08) : "background.paper",
           boxShadow: isActive
             ? `
                 0 0 0 2px ${theme.palette.primary.main},
@@ -88,11 +81,7 @@ export default function EventCardCompact({
 
             <Box sx={{ flex: 1 }} />
 
-            <Chip
-              label={t(`status.${status}`)}
-              size="small"
-              color={STATUS_COLOR[status]}
-            />
+            <Chip label={t(`status.${status}`)} size="small" color={STATUS_COLOR[status]} />
           </Stack>
 
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
@@ -119,10 +108,7 @@ export default function EventCardCompact({
           </Button>
 
           {!isActive && (
-            <Button
-              sx={{ fontWeight: 700, borderRadius: 3 }}
-              onClick={onSetActive}
-            >
+            <Button sx={{ fontWeight: 700, borderRadius: 3 }} onClick={onSetActive}>
               {t("actions.setActive")}
             </Button>
           )}

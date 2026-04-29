@@ -119,19 +119,14 @@ export default function LoginForm(): JSX.Element {
                   {t("login.title")}
                 </Typography>
 
-                <Typography
-                  sx={{ fontSize: "0.9rem", color: "text.secondary" }}
-                >
+                <Typography sx={{ fontSize: "0.9rem", color: "text.secondary" }}>
                   {t("login.subtitle")}
                 </Typography>
               </Stack>
 
               {/* Error */}
               {error && (
-                <motion.div
-                  initial={{ x: 0 }}
-                  animate={{ x: [-8, 8, -6, 6, 0] }}
-                >
+                <motion.div initial={{ x: 0 }} animate={{ x: [-8, 8, -6, 6, 0] }}>
                   <Alert severity="error">{error}</Alert>
                 </motion.div>
               )}
@@ -148,9 +143,7 @@ export default function LoginForm(): JSX.Element {
                   "& .MuiOutlinedInput-root": {
                     transition: "all 0.3s",
                     boxShadow:
-                      focused === "username"
-                        ? `0 0 0 2px ${theme.palette.primary.main}55`
-                        : "none",
+                      focused === "username" ? `0 0 0 2px ${theme.palette.primary.main}55` : "none",
                   },
                 }}
                 slotProps={{
@@ -177,9 +170,7 @@ export default function LoginForm(): JSX.Element {
                   "& .MuiOutlinedInput-root": {
                     transition: "all 0.3s",
                     boxShadow:
-                      focused === "password"
-                        ? `0 0 0 2px ${theme.palette.primary.main}55`
-                        : "none",
+                      focused === "password" ? `0 0 0 2px ${theme.palette.primary.main}55` : "none",
                   },
                 }}
                 slotProps={{
@@ -202,12 +193,7 @@ export default function LoginForm(): JSX.Element {
 
               {/* CTA */}
               <motion.div whileTap={{ scale: 0.96 }}>
-                <AppleButton
-                  type="submit"
-                  fullWidth
-                  variant="accent"
-                  disabled={loading}
-                >
+                <AppleButton type="submit" fullWidth variant="accent" disabled={loading}>
                   {loading ? t("login.submitLoading") : t("login.submit")}
                 </AppleButton>
               </motion.div>

@@ -1,10 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import {
-  getNotificationItems,
-  getNotificationMessages,
-} from "../mock/notification.mock";
+import { getNotificationItems, getNotificationMessages } from "../mock/notification.mock";
 import { NotificationChannel } from "../types/notification-channel.enum";
 
 export function useNotificationItems(channel: NotificationChannel) {
@@ -16,14 +13,8 @@ export function useNotificationItems(channel: NotificationChannel) {
   };
 }
 
-export function useNotificationMessages(
-  channel: NotificationChannel,
-  chatId: string | null,
-) {
-  const messages = useMemo(
-    () => getNotificationMessages(channel, chatId),
-    [channel, chatId],
-  );
+export function useNotificationMessages(channel: NotificationChannel, chatId: string | null) {
+  const messages = useMemo(() => getNotificationMessages(channel, chatId), [channel, chatId]);
 
   return {
     messages,

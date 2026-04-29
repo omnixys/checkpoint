@@ -11,9 +11,8 @@ import { useEventAddressQuery } from "@/checkpoint/hooks/address/useAddressQuery
 export default function EventAddressSection({ eventId }: { eventId: string }) {
   const theme = useTheme();
 
-  const {  resolveGeo, address, loading, refetch } =
-    useEventAddressQuery(eventId);
-  
+  const { resolveGeo, address, loading, refetch } = useEventAddressQuery(eventId);
+
   const { createAddressMutation, deleteAddressMutation } = useEventAddressMutation();
 
   const [form, setForm] = useState<FormState | null>(null);
@@ -55,24 +54,22 @@ export default function EventAddressSection({ eventId }: { eventId: string }) {
   const handleCreate = async () => {
     if (!form || !geo) return;
 
+    const createPayload = await createAddressMutation({
+      variables: {
+        input: {
+          eventId,
 
-        const createPayload = await createAddressMutation({
-          variables: {
-            input: {
-              eventId,
+          cityId: geo.cityId,
+          postalCodeId: geo.postalCodeId,
+          stateId: geo.stateId,
+          countryId: geo.countryId,
+          streetId: geo.streetId,
+          houseNumberId: geo.houseNumberId,
 
-              cityId: geo.cityId,
-              postalCodeId: geo.postalCodeId,
-              stateId: geo.stateId,
-              countryId: geo.countryId,
-              streetId: geo.streetId,
-              houseNumberId: geo.houseNumberId,
-
-              additionalInfo: "",
-            },
-          },
-        });
-  
+          additionalInfo: "",
+        },
+      },
+    });
   };
 
   return (

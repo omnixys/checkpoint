@@ -48,9 +48,7 @@ function SegmentedControl<T>({ value, onChange, segments }: Props<T>) {
               borderRadius: 999,
               fontSize: 13,
               fontWeight: 600,
-              color: active
-                ? theme.palette.apple.systemBackground
-                : theme.palette.text.secondary,
+              color: active ? theme.palette.apple.systemBackground : theme.palette.text.secondary,
             }}
           >
             {active && (

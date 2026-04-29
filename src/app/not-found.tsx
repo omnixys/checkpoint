@@ -5,7 +5,7 @@ import { env } from "@/checkpoint/lib/env";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 export default function NotFoundPage() {
-  const t = useTypedTranslations('error');
+  const t = useTypedTranslations("error");
 
   return (
     <ErrorView

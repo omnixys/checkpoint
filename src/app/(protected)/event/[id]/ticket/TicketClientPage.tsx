@@ -39,10 +39,10 @@ export default function TicketClientPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [openRotate, setOpenRotate] = useState(false);
 
-  const {ticketPage, ticketPageLoading, ticketPageError} = useTicketQuery({
+  const { ticketPage, ticketPageLoading, ticketPageError } = useTicketQuery({
     eventId,
     loadTicketPage: true,
-  })
+  });
 
   /** -----------------------------------------------------------
    * Mutations
@@ -60,7 +60,6 @@ export default function TicketClientPage() {
     await revokeTicket({ variables: { input: { ticketId: deleteId, reason: "Einfach SO" } } });
     setDeleteId(null);
   }, [revokeTicket, deleteId]);
-
 
   /** -----------------------------------------------------------
    * Loading & Error States
@@ -87,7 +86,6 @@ export default function TicketClientPage() {
       </Box>
     );
   }
-
 
   /** -----------------------------------------------------------
    * RENDER

@@ -2,10 +2,7 @@ import { ColorScale, OmnixysExtendedPalette } from "@/checkpoint/themes/paletteT
 import { PaletteMode } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 
-export function buildExtendedPalette(
-  mode: PaletteMode,
-  omni: ColorScale,
-): OmnixysExtendedPalette {
+export function buildExtendedPalette(mode: PaletteMode, omni: ColorScale): OmnixysExtendedPalette {
   const isDark = mode === "dark";
 
   return {

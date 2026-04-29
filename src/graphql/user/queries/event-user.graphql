@@ -4,7 +4,6 @@ query GetUserList($guesIdList: [ID!]!) {
   }
 }
 
-
 query GetGuestList($guestIdList: [ID!]!) {
   getUserList(userIds: $guestIdList) {
     id
@@ -29,7 +28,7 @@ query GetGuestList($guestIdList: [ID!]!) {
 
 query GetSecurityGuestInfo($guestIdList: [ID!]!) {
   getUserList(userIds: $guestIdList) {
-  id
+    id
     personalInfo {
       firstName
       lastName

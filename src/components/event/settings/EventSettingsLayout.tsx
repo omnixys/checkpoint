@@ -7,7 +7,6 @@ import { useState } from "react";
 import ArrowCircleLeftIcon from "@mui/icons-material/ArrowCircleLeft";
 import { useParams } from "next/navigation";
 
-
 type TabKey = "meta" | "settings" | "timeline" | "roles" | "address";
 
 /**
@@ -21,12 +20,12 @@ export default function EventSettingsLayout({
   sections: Record<TabKey, React.ReactNode>;
 }) {
   const [tab, setTab] = useState<TabKey>("meta");
-    const params = useParams();
-      const id = params?.id;
+  const params = useParams();
+  const id = params?.id;
 
   return (
     <Stack spacing={2}>
-      <Stack spacing={2} direction={'row'}>
+      <Stack spacing={2} direction={"row"}>
         <Link href={`/event/${id}`} passHref>
           <Tooltip title={"Zurück zum Event"}>
             <motion.div

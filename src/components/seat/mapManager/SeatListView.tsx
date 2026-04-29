@@ -47,8 +47,7 @@ export default function SeatListView({
     <Stack spacing={1} sx={{ mt: 1 }}>
       {seats.map((s) => {
         const guestId = seatGuestMap.get(s.id);
-        const fullName = (SeatPayload: SeatListType) =>
-          getSeatHolderLabel(SeatPayload);
+        const fullName = (SeatPayload: SeatListType) => getSeatHolderLabel(SeatPayload);
 
         return (
           <Card
@@ -72,16 +71,15 @@ export default function SeatListView({
                 }}
               >
                 <Typography
-         
                   sx={{
-                             fontWeight:700
+                    fontWeight: 700,
                   }}
                 >
-                  Section {s.section.name || "—"} • Tisch {s.table?.name || "—"}{" "}
-                  • Sitz {seatLabel(s)}
+                  Section {s.section.name || "—"} • Tisch {s.table?.name || "—"} • Sitz{" "}
+                  {seatLabel(s)}
                 </Typography>
 
-                <Box sx={{flex:1}} />
+                <Box sx={{ flex: 1 }} />
 
                 <Chip
                   size="small"

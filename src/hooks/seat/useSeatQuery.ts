@@ -38,35 +38,35 @@ export default function useSeatQuery({
   loadSeatIdList = false,
   loadFullSeatIdList = false,
 }: Props) {
-  const seatInfoQueryResult = useQuery<
-    GetSeatInfoQuery,
-    GetSeatInfoQueryVariables
-  >(GetSeatInfoDocument, {
-    variables: { seatId: seatId ?? "" },
-    fetchPolicy: "cache-and-network",
-    skip: !seatId || !loadSeatInfo,
-  });
+  const seatInfoQueryResult = useQuery<GetSeatInfoQuery, GetSeatInfoQueryVariables>(
+    GetSeatInfoDocument,
+    {
+      variables: { seatId: seatId ?? "" },
+      fetchPolicy: "cache-and-network",
+      skip: !seatId || !loadSeatInfo,
+    },
+  );
   const seatInfo = seatInfoQueryResult.data?.seat;
 
-  const seatInfoListQueryResult = useQuery<
-    GetSeatInfoListQuery,
-    GetSeatInfoListQueryVariables
-  >(GetSeatInfoListDocument, {
-    variables: { seatIdList: seatIdList ?? [] },
-    fetchPolicy: "cache-and-network",
-    skip: !seatIdList || seatIdList.length > 0 || !loadSeatIdList,
-  });
+  const seatInfoListQueryResult = useQuery<GetSeatInfoListQuery, GetSeatInfoListQueryVariables>(
+    GetSeatInfoListDocument,
+    {
+      variables: { seatIdList: seatIdList ?? [] },
+      fetchPolicy: "cache-and-network",
+      skip: !seatIdList || seatIdList.length > 0 || !loadSeatIdList,
+    },
+  );
   const seatInfoList = seatInfoListQueryResult.data?.getSeatList;
   const seatMap = new Map(seatInfoList?.map((s) => [s.id, s]) ?? []);
 
-  const fullSeatInfoQueryResult = useQuery<
-    GetFullSeatInfoQuery,
-    GetFullSeatInfoQueryVariables
-  >(GetSeatInfoDocument, {
-    variables: { seatId: seatId ?? "" },
-    fetchPolicy: "cache-and-network",
-    skip: !seatId || !loadFullSeatInfo,
-  });
+  const fullSeatInfoQueryResult = useQuery<GetFullSeatInfoQuery, GetFullSeatInfoQueryVariables>(
+    GetSeatInfoDocument,
+    {
+      variables: { seatId: seatId ?? "" },
+      fetchPolicy: "cache-and-network",
+      skip: !seatId || !loadFullSeatInfo,
+    },
+  );
   const fullSeatInfo = fullSeatInfoQueryResult.data?.seat;
 
   const fullSeatInfoListQueryResult = useQuery<

@@ -8,16 +8,11 @@ import { Box, Drawer, Typography } from "@mui/material";
 type Props = {
   open: boolean;
   date: Date | null;
-  events: GetMyEventCalendarDataQuery['myEvents'];
+  events: GetMyEventCalendarDataQuery["myEvents"];
   onClose: () => void;
 };
 
-export default function CalendarDaySheet({
-  open,
-  date,
-  events,
-  onClose,
-}: Props) {
+export default function CalendarDaySheet({ open, date, events, onClose }: Props) {
   if (!date) return null;
 
   const dayEvents = getEventsForDay(events, date);
@@ -25,9 +20,7 @@ export default function CalendarDaySheet({
   return (
     <Drawer anchor="bottom" open={open} onClose={onClose}>
       <Box sx={{ p: 3 }}>
-        <Typography sx={{ fontWeight: 700, mb: 2 }}>
-          {date.toLocaleDateString("de-DE")}
-        </Typography>
+        <Typography sx={{ fontWeight: 700, mb: 2 }}>{date.toLocaleDateString("de-DE")}</Typography>
 
         {dayEvents.map((e) => (
           <CalendarEventCard key={e.id} event={e} />

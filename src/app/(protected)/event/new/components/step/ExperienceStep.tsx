@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  Box,
-  Button,
-  Grid,
-  MenuItem,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Grid, MenuItem, Stack, TextField, Typography } from "@mui/material";
 
 import ImageRoundedIcon from "@mui/icons-material/ImageRounded";
 import StyleRoundedIcon from "@mui/icons-material/StyleRounded";
@@ -27,14 +19,7 @@ import { MediaType } from "@/checkpoint/generated/graphql";
  * -------------------------------------------------------------
  */
 
-const CATEGORY_OPTIONS = [
-  "GENERAL",
-  "KONFERENZ",
-  "MUSIK",
-  "WORKSHOP",
-  "SOCIAL",
-  "SPORTS",
-] as const;
+const CATEGORY_OPTIONS = ["GENERAL", "KONFERENZ", "MUSIK", "WORKSHOP", "SOCIAL", "SPORTS"] as const;
 
 // const CATEGORY_OPTIONS = [
 //   "general",
@@ -71,11 +56,7 @@ export default function ExperienceStep() {
    * File Handlers (Preview + Form Sync)
    * -------------------------------------------------------------
    */
-  const handleFile2 = (
-    file: File | undefined,
-    type: MediaType,
-    setter: (val: string) => void,
-  ) => {
+  const handleFile2 = (file: File | undefined, type: MediaType, setter: (val: string) => void) => {
     if (!file) return;
 
     /**
@@ -97,7 +78,7 @@ export default function ExperienceStep() {
 
     const preview = URL.createObjectURL(file);
 
-    if (type === 'COVER') {
+    if (type === "COVER") {
       coverImageUrl.onChange(preview);
     } else {
       logoUrl.onChange(preview);
@@ -120,9 +101,7 @@ export default function ExperienceStep() {
         {/* HEADER */}
         <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
           <StyleRoundedIcon color="primary" />
-          <Typography sx={{ fontWeight: 800, fontSize: 20 }}>
-            {t("experience.title")}
-          </Typography>
+          <Typography sx={{ fontWeight: 800, fontSize: 20 }}>{t("experience.title")}</Typography>
         </Stack>
 
         {/* -----------------------------------------------------
@@ -130,12 +109,7 @@ export default function ExperienceStep() {
          * --------------------------------------------------- */}
         <Grid container spacing={2}>
           <Grid size={{ xs: 12, md: 5 }}>
-            <TextField
-              select
-              label={t("experience.category")}
-              fullWidth
-              {...category}
-            >
+            <TextField select label={t("experience.category")} fullWidth {...category}>
               {CATEGORY_OPTIONS.map((opt) => (
                 <MenuItem key={opt} value={opt}>
                   {t(`experience.categories.${opt}`)}
@@ -160,9 +134,7 @@ export default function ExperienceStep() {
         <Stack spacing={2}>
           <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
             <ImageRoundedIcon color="secondary" />
-            <Typography sx={{ fontWeight: 700 }}>
-              {t("experience.media")}
-            </Typography>
+            <Typography sx={{ fontWeight: 700 }}>{t("experience.media")}</Typography>
           </Stack>
 
           <Grid container spacing={2}>
@@ -196,7 +168,7 @@ export default function ExperienceStep() {
                   onChange={(e) =>
                     handleFile(
                       e.target.files?.[0],
-                      'COVER',
+                      "COVER",
                       //coverImageUrl.onChange,
                     )
                   }
@@ -234,7 +206,7 @@ export default function ExperienceStep() {
                   onChange={(e) =>
                     handleFile(
                       e.target.files?.[0],
-                      'LOGO',
+                      "LOGO",
                       //logoUrl.onChange
                     )
                   }

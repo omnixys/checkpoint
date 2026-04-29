@@ -10,8 +10,6 @@ export type EventAddressDraft = {
   additionalInfo: string | null;
 };
 
-
-
 export interface CreateSettingsDraft {
   allowReEntry: boolean;
   rotateSeconds: number;
@@ -27,7 +25,7 @@ export interface CreateSettingsDraft {
 
   logoUrl: string | null;
   coverImageUrl: string | null;
-  
+
   // descriptionLong: string | null;
   startsAt: string | null;
   endsAt: string | null;
@@ -55,12 +53,7 @@ export type CreateEventDraft = {
   children: ChildEventDraft[];
 };
 
-
-
-
-export const mapAddress = (
-  address?: EventAddressDraft,
-): EventAddressInput | null => {
+export const mapAddress = (address?: EventAddressDraft): EventAddressInput | null => {
   if (!address) return null;
 
   return {
@@ -74,10 +67,8 @@ export const mapAddress = (
   };
 };
 
-export const mapSettings = (
-  settings: CreateSettingsDraft,
-): any /* ideally generated type */ => {
-   const { logoUrl, coverImageUrl, ...rest } = settings;
+export const mapSettings = (settings: CreateSettingsDraft): any /* ideally generated type */ => {
+  const { logoUrl, coverImageUrl, ...rest } = settings;
   return {
     ...rest,
   };
@@ -107,9 +98,7 @@ const mapChild = (
   };
 };
 
-export const mapEvent = (
-  draft: CreateEventDraft,
-): CreateEventInput => {
+export const mapEvent = (draft: CreateEventDraft): CreateEventInput => {
   return {
     parentId: null,
     name: draft.name,
@@ -119,8 +108,6 @@ export const mapEvent = (
     settings: mapSettings(draft.settings),
 
     children:
-      draft.children?.map(
-        (child): CreateEventInput => mapChild(child, draft.settings),
-      ) ?? [],
+      draft.children?.map((child): CreateEventInput => mapChild(child, draft.settings)) ?? [],
   };
 };

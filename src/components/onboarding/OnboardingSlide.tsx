@@ -11,10 +11,13 @@ type Props = {
 
 export default function OnboardingSlide({ title, text, icon }: Props) {
   return (
-    <Stack spacing={3}  sx={{
-      alignItems: "center",
-      textAlign: "center"
-    }}>
+    <Stack
+      spacing={3}
+      sx={{
+        alignItems: "center",
+        textAlign: "center",
+      }}
+    >
       {/* Icon */}
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
@@ -33,9 +36,12 @@ export default function OnboardingSlide({ title, text, icon }: Props) {
 
       {/* Text */}
       <Stack spacing={1}>
-        <Typography variant="h6" sx={{
-          fontWeight: 700
-        }}>
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: 700,
+          }}
+        >
           {title}
         </Typography>
 

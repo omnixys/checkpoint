@@ -9,8 +9,7 @@ export default function EventHeaderC({ eventPageData: ev }: EventHeaderProps) {
   const t = useTypedTranslations("event");
   const theme = useTheme();
 
-  const { roleChipColor, startFormatted, endFormatted } =
-    useEventFormatting(ev);
+  const { roleChipColor, startFormatted, endFormatted } = useEventFormatting(ev);
 
   return (
     <Box
@@ -33,9 +32,7 @@ export default function EventHeaderC({ eventPageData: ev }: EventHeaderProps) {
         </Typography>
 
         <Chip
-          label={
-            ev.myRole ? t(`header.role.${ev.myRole}`) : t("header.role.GUEST")
-          }
+          label={ev.myRole ? t(`header.role.${ev.myRole}`) : t("header.role.GUEST")}
           color={roleChipColor}
           variant="filled"
           sx={{ width: "fit-content", fontWeight: 600 }}

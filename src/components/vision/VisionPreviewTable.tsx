@@ -62,12 +62,7 @@ function autoFixValue(key: string, value: string): string {
 /* ---------------------------------------------------------------------------
  * COMPONENT
  * ------------------------------------------------------------------------- */
-export default function VisionPreviewTable({
-  rows,
-  duplicates,
-  errors,
-  onChange,
-}: Props) {
+export default function VisionPreviewTable({ rows, duplicates, errors, onChange }: Props) {
   const theme = useTheme();
 
   const [localRows, setLocalRows] = useState<Row[]>(rows);
@@ -148,9 +143,7 @@ export default function VisionPreviewTable({
               <TableRow
                 key={rowIndex}
                 sx={{
-                  background: isDuplicate
-                    ? alpha(theme.palette.warning.main, 0.12)
-                    : "transparent",
+                  background: isDuplicate ? alpha(theme.palette.warning.main, 0.12) : "transparent",
 
                   "&:hover": {
                     background: alpha(theme.palette.primary.main, 0.08),
@@ -171,9 +164,7 @@ export default function VisionPreviewTable({
                     >
                       <TextField
                         value={value}
-                        onChange={(e) =>
-                          updateCell(rowIndex, key, e.target.value)
-                        }
+                        onChange={(e) => updateCell(rowIndex, key, e.target.value)}
                         variant="standard"
                         fullWidth
                         size="small"
@@ -193,24 +184,15 @@ export default function VisionPreviewTable({
 
                             ...(invalid && {
                               background: alpha(theme.palette.error.main, 0.12),
-                              boxShadow: `0 0 0 1px ${alpha(
-                                theme.palette.error.main,
-                                0.4,
-                              )}`,
+                              boxShadow: `0 0 0 1px ${alpha(theme.palette.error.main, 0.4)}`,
                             }),
 
                             "&:hover": {
-                              background: alpha(
-                                theme.palette.primary.main,
-                                0.08,
-                              ),
+                              background: alpha(theme.palette.primary.main, 0.08),
                             },
 
                             "&.Mui-focused": {
-                              background: alpha(
-                                theme.palette.primary.main,
-                                0.12,
-                              ),
+                              background: alpha(theme.palette.primary.main, 0.12),
                             },
                           },
                         }}
@@ -221,9 +203,7 @@ export default function VisionPreviewTable({
 
                 {/* STATUS BADGE */}
                 <TableCell>
-                  {isDuplicate && (
-                    <Chip size="small" color="warning" label="Duplicate" />
-                  )}
+                  {isDuplicate && <Chip size="small" color="warning" label="Duplicate" />}
                 </TableCell>
               </TableRow>
             );

@@ -12,7 +12,11 @@ type Props = {
   index: number;
   countries: CallingCodeCountry[];
 
-  onChange: <K extends keyof NormalizedPlusOne>(index: number, field: K, value: NormalizedPlusOne[K]) => void;
+  onChange: <K extends keyof NormalizedPlusOne>(
+    index: number,
+    field: K,
+    value: NormalizedPlusOne[K],
+  ) => void;
 
   onRemove: (index: number) => void;
 

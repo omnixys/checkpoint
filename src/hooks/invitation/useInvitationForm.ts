@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  InvitationCreateInput,
-  PhoneNumberInput,
-} from "@/checkpoint/generated/graphql";
+import { InvitationCreateInput, PhoneNumberInput } from "@/checkpoint/generated/graphql";
 import { usePhoneNumbers } from "@/checkpoint/hooks/common/usePhoneNumbers";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -133,8 +130,7 @@ export function useInvitationForm({
     [initialValues, eventId],
   );
 
-  const [values, setValues] =
-    useState<InvitationFormValues>(mergedInitialValues);
+  const [values, setValues] = useState<InvitationFormValues>(mergedInitialValues);
 
   const {
     phoneNumbers,
@@ -170,10 +166,7 @@ export function useInvitationForm({
   }, [autoCreateFirstPhone, phoneNumbers.length, addPhone]);
 
   const setField = useCallback(
-    <K extends keyof InvitationFormValues>(
-      field: K,
-      value: InvitationFormValues[K],
-    ) => {
+    <K extends keyof InvitationFormValues>(field: K, value: InvitationFormValues[K]) => {
       setValues((prev) => ({
         ...prev,
         [field]: value,
@@ -186,10 +179,7 @@ export function useInvitationForm({
     setValues(mergedInitialValues);
     setAllPhones(initialPhoneNumbers ?? []);
 
-    if (
-      autoCreateFirstPhone &&
-      (!initialPhoneNumbers || initialPhoneNumbers.length === 0)
-    ) {
+    if (autoCreateFirstPhone && (!initialPhoneNumbers || initialPhoneNumbers.length === 0)) {
       /**
        * setAllPhones runs asynchronously through state updates,
        * so we add a first empty phone row explicitly when needed.
@@ -198,27 +188,15 @@ export function useInvitationForm({
         addPhone();
       });
     }
-  }, [
-    mergedInitialValues,
-    initialPhoneNumbers,
-    setAllPhones,
-    autoCreateFirstPhone,
-    addPhone,
-  ]);
+  }, [mergedInitialValues, initialPhoneNumbers, setAllPhones, autoCreateFirstPhone, addPhone]);
 
-  const sanitizedPhoneNumbers = useMemo(
-    () => sanitizePhoneNumbers(phoneNumbers),
-    [phoneNumbers],
-  );
+  const sanitizedPhoneNumbers = useMemo(() => sanitizePhoneNumbers(phoneNumbers), [phoneNumbers]);
 
-  const hasName =
-    values.firstName.trim() !== "" && values.lastName.trim() !== "";
+  const hasName = values.firstName.trim() !== "" && values.lastName.trim() !== "";
 
-  const hasContact =
-    values.email.trim() !== "" || sanitizedPhoneNumbers.length > 0;
+  const hasContact = values.email.trim() !== "" || sanitizedPhoneNumbers.length > 0;
 
-  const hasValidMaxInvitees =
-    Number.isInteger(values.maxInvitees) && values.maxInvitees >= 0;
+  const hasValidMaxInvitees = Number.isInteger(values.maxInvitees) && values.maxInvitees >= 0;
 
   const isValid = hasName && hasContact && hasValidMaxInvitees;
 
@@ -231,8 +209,7 @@ export function useInvitationForm({
       values.lastName !== mergedInitialValues.lastName ||
       values.email !== mergedInitialValues.email ||
       values.maxInvitees !== mergedInitialValues.maxInvitees ||
-      values.invitedByInvitationId !==
-        mergedInitialValues.invitedByInvitationId ||
+      values.invitedByInvitationId !== mergedInitialValues.invitedByInvitationId ||
       basePhones !== currentPhones
     );
   }, [values, mergedInitialValues, initialPhoneNumbers, phoneNumbers]);
@@ -247,12 +224,9 @@ export function useInvitationForm({
       lastName: values.lastName.trim(),
       email: trimmedEmail !== "" ? trimmedEmail : null,
       maxInvitees: values.maxInvitees < 0 ? 0 : values.maxInvitees,
-      phoneNumbers:
-        sanitizedPhoneNumbers.length > 0 ? sanitizedPhoneNumbers : null,
+      phoneNumbers: sanitizedPhoneNumbers.length > 0 ? sanitizedPhoneNumbers : null,
       invitedByInvitationId:
-        trimmedInvitedByInvitationId !== ""
-          ? trimmedInvitedByInvitationId
-          : null,
+        trimmedInvitedByInvitationId !== "" ? trimmedInvitedByInvitationId : null,
       phoneNumber: null,
     };
   }, [values, sanitizedPhoneNumbers]);

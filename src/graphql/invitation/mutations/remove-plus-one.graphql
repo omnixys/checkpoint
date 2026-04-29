@@ -6,7 +6,6 @@ mutation RemovePlusOneInvitation($id: ID!) {
   }
 }
 
-
 mutation RemovePlusOne($id: ID!) {
   removePlusOneInvitation(id: $id) {
     id

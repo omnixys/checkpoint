@@ -31,17 +31,13 @@ export function useCreateEventWizard(): UseCreateEventWizardProps {
    */
   const nextStep = useCallback(() => {
     setActiveStep((prev) =>
-      prev < CreateEventWizardStep.SUCCESS
-        ? ((prev + 1) as CreateEventWizardStep)
-        : prev,
+      prev < CreateEventWizardStep.SUCCESS ? ((prev + 1) as CreateEventWizardStep) : prev,
     );
   }, []);
 
   const previousStep = useCallback(() => {
     setActiveStep((prev) =>
-      prev > CreateEventWizardStep.BASICS
-        ? ((prev - 1) as CreateEventWizardStep)
-        : prev,
+      prev > CreateEventWizardStep.BASICS ? ((prev - 1) as CreateEventWizardStep) : prev,
     );
   }, []);
 

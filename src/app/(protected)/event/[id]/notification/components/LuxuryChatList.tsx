@@ -50,7 +50,7 @@ export function LuxuryChatList({ selectedChatId, onSelect }: Props) {
             </Badge>
 
             <Box sx={{ flex: 1 }}>
-              <Typography color="white" sx={{fontWeight: 600 }}>
+              <Typography color="white" sx={{ fontWeight: 600 }}>
                 {chat.name}
               </Typography>
               <Typography variant="body2" color="gray">

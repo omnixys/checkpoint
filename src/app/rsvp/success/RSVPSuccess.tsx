@@ -11,9 +11,8 @@ import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
 
 export default function RSVPSuccessPage() {
-    const t = useTypedTranslations("rsvp");
-  
-  
+  const t = useTypedTranslations("rsvp");
+
   const theme = useTheme();
   const [width, height] = useWindowSize();
   const [run, setRun] = useState(true);
@@ -47,10 +46,7 @@ export default function RSVPSuccessPage() {
       )}
 
       <Container maxWidth="sm">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <Box
             sx={{
               p: 4,

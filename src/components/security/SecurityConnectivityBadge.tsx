@@ -30,10 +30,8 @@ export default function SecurityConnectivityBadge({
       <Stack
         direction="row"
         spacing={3}
-
         sx={{
           alignItems: "center",
-  
         }}
       >
         <Dot label="WS" active={ws} />
@@ -49,10 +47,8 @@ function Dot({ label, active }: { label: string; active: boolean }) {
     <Stack
       direction="row"
       spacing={1}
-  
       sx={{
         alignItems: "center",
-
       }}
     >
       <Box
@@ -61,14 +57,10 @@ function Dot({ label, active }: { label: string; active: boolean }) {
           height: 10,
           borderRadius: "50%",
           background: active ? "#34c759" : "#ff3b30",
-          boxShadow: active
-            ? "0 0 12px rgba(52,199,89,0.45)"
-            : "0 0 12px rgba(255,59,48,0.45)",
+          boxShadow: active ? "0 0 12px rgba(52,199,89,0.45)" : "0 0 12px rgba(255,59,48,0.45)",
         }}
       />
-      <Typography sx={{ fontSize: "0.75rem", opacity: 0.72 }}>
-        {label}
-      </Typography>
+      <Typography sx={{ fontSize: "0.75rem", opacity: 0.72 }}>{label}</Typography>
     </Stack>
   );
 }

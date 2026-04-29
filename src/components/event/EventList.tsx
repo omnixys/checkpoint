@@ -7,7 +7,12 @@ import { useEventsQuery } from "@/checkpoint/hooks/events/useEventsQuery";
 import { useFilteredEvents } from "@/checkpoint/hooks/events/useFilteredEvents";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
-import { EventListHandle, EventsFilter, EventVisualOverride, EventViweMode } from "@/checkpoint/types/event.type";
+import {
+  EventListHandle,
+  EventsFilter,
+  EventVisualOverride,
+  EventViweMode,
+} from "@/checkpoint/types/event.type";
 
 import { Card, CardContent, Alert, Stack, Skeleton, Grid, Divider } from "@mui/material";
 import React from "react";

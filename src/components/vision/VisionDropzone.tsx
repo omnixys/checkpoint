@@ -69,12 +69,10 @@ export default function VisionDropzone({ file, onSelect }: Props) {
           cursor: "pointer",
           userSelect: "none",
           textAlign: "center",
-          background:
-            "linear-gradient(180deg, rgba(255,255,255,0.45), rgba(255,255,255,0.25))",
+          background: "linear-gradient(180deg, rgba(255,255,255,0.45), rgba(255,255,255,0.25))",
           backdropFilter: "blur(50px) saturate(180%)",
           border: "1px solid rgba(255,255,255,0.55)",
-          boxShadow:
-            "inset 0 0 40px rgba(255,255,255,0.2), 0 10px 40px rgba(0,0,0,0.15)",
+          boxShadow: "inset 0 0 40px rgba(255,255,255,0.2), 0 10px 40px rgba(0,0,0,0.15)",
         }}
       >
         <Box
@@ -86,8 +84,7 @@ export default function VisionDropzone({ file, onSelect }: Props) {
             mb: 2,
             background:
               "radial-gradient(circle at 35% 30%, rgba(255,255,255,0.7), rgba(255,255,255,0.15))",
-            boxShadow:
-              "0 0 35px rgba(255,255,255,0.55), inset 0 0 18px rgba(255,255,255,0.3)",
+            boxShadow: "0 0 35px rgba(255,255,255,0.55), inset 0 0 18px rgba(255,255,255,0.3)",
             backdropFilter: "blur(12px)",
             display: "flex",
             alignItems: "center",
@@ -97,18 +94,14 @@ export default function VisionDropzone({ file, onSelect }: Props) {
           <DownloadIcon sx={{ fontSize: 38, opacity: 0.85 }} />
         </Box>
 
-        <Typography  sx={{ opacity: 0.85, fontSize: 20, fontWeight:600 }}>
+        <Typography sx={{ opacity: 0.85, fontSize: 20, fontWeight: 600 }}>
           Datei ablegen oder auswählen
         </Typography>
 
-        <Typography sx={{ mt: 0.5, opacity: 0.6, fontSize: 13 }}>
-          Unterstützt: CSV, XLSX
-        </Typography>
+        <Typography sx={{ mt: 0.5, opacity: 0.6, fontSize: 13 }}>Unterstützt: CSV, XLSX</Typography>
 
         {file ? (
-          <Typography sx={{ mt: 2, opacity: 0.75, fontSize: 13 }}>
-            Gewählt: {file.name}
-          </Typography>
+          <Typography sx={{ mt: 2, opacity: 0.75, fontSize: 13 }}>Gewählt: {file.name}</Typography>
         ) : null}
 
         <input

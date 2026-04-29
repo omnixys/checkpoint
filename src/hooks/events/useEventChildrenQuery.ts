@@ -29,10 +29,7 @@ interface Props {
   loadChildrenSettings?: boolean | undefined;
 }
 
-export default function useSubEventListQuery({
-  eventId,
-  loadChildrenSettings = false,
-}: Props) {
+export default function useSubEventListQuery({ eventId, loadChildrenSettings = false }: Props) {
   const subEventNameListQueryResult = useQuery<
     GetSubEventNameListQuery,
     GetSubEventNameListQueryVariables
@@ -42,7 +39,6 @@ export default function useSubEventListQuery({
     skip: !loadChildrenSettings || !eventId,
   });
   const subEventNameList = subEventNameListQueryResult.data?.eventChildren;
-
 
   return {
     subEventNameList,

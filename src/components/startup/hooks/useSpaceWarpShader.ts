@@ -13,11 +13,7 @@ type Mode = "light" | "dark";
  */
 function hexToVec3(hex: string): [number, number, number] {
   const bigint = parseInt(hex.replace("#", ""), 16);
-  return [
-    ((bigint >> 16) & 255) / 255,
-    ((bigint >> 8) & 255) / 255,
-    (bigint & 255) / 255,
-  ];
+  return [((bigint >> 16) & 255) / 255, ((bigint >> 8) & 255) / 255, (bigint & 255) / 255];
 }
 
 /**
@@ -46,18 +42,14 @@ export function useSpaceWarpShader(
 
     const visual = preset.visual[mode];
 
-        const g = visual.gradient.orb;
+    const g = visual.gradient.orb;
 
-        const c1 = hexToVec3(g[0]);
-        const c2 = hexToVec3(g[1]);
-        const c3 = hexToVec3(g[2]);
-
+    const c1 = hexToVec3(g[0]);
+    const c2 = hexToVec3(g[1]);
+    const c3 = hexToVec3(g[2]);
 
     const vertex = gl.createShader(gl.VERTEX_SHADER)!;
-    gl.shaderSource(
-      vertex,
-      `attribute vec4 position; void main(){gl_Position=position;}`,
-    );
+    gl.shaderSource(vertex, `attribute vec4 position; void main(){gl_Position=position;}`);
     gl.compileShader(vertex);
 
     const fragment = gl.createShader(gl.FRAGMENT_SHADER)!;
@@ -77,26 +69,11 @@ export function useSpaceWarpShader(
 
       gl?.uniform1f(gl.getUniformLocation(program, "u_tiltY"), tiltY.get());
 
-      gl?.uniform3f(
-        gl.getUniformLocation(program, "u_color1"),
-        c1[0],
-        c1[1],
-        c1[2],
-      );
+      gl?.uniform3f(gl.getUniformLocation(program, "u_color1"), c1[0], c1[1], c1[2]);
 
-      gl?.uniform3f(
-        gl.getUniformLocation(program, "u_color2"),
-        c2[0],
-        c2[1],
-        c2[2],
-      );
+      gl?.uniform3f(gl.getUniformLocation(program, "u_color2"), c2[0], c2[1], c2[2]);
 
-      gl?.uniform3f(
-        gl.getUniformLocation(program, "u_color3"),
-        c3[0],
-        c3[1],
-        c3[2],
-      );
+      gl?.uniform3f(gl.getUniformLocation(program, "u_color3"), c3[0], c3[1], c3[2]);
 
       gl?.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 

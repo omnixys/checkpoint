@@ -1,10 +1,4 @@
-export type PlusOnePhoneNumberType =
-  | "WHATSAPP"
-  | "MOBILE"
-  | "PRIVATE"
-  | "WORK"
-  | "HOME"
-  | "OTHER";
+export type PlusOnePhoneNumberType = "WHATSAPP" | "MOBILE" | "PRIVATE" | "WORK" | "HOME" | "OTHER";
 
 export type PlusOnePhoneNumberInput = {
   countryCode: string;

@@ -13,7 +13,7 @@ const CHECKPOINT_BASE_PATH = env.CHECKPOINT_BASE_PATH;
 
 export default function EventsNavBar() {
   const t = useTypedTranslations("event");
-  
+
   const theme = useTheme();
   const { isMobile } = useDevice();
 
@@ -33,10 +33,7 @@ export default function EventsNavBar() {
       <Stack direction="row" spacing={2}>
         {!isMobile && (
           <>
-            <Typography
-              variant="h5"
-              sx={{ fontWeight: 800, color: theme.palette.text.primary }}
-            >
+            <Typography variant="h5" sx={{ fontWeight: 800, color: theme.palette.text.primary }}>
               {t("title")}
             </Typography>
 
@@ -51,14 +48,8 @@ export default function EventsNavBar() {
             px: { xs: 5, sm: 0 },
           }}
         >
-          <EventsNavButton
-            href={`${CHECKPOINT_BASE_PATH}event`}
-            label={t("overview")}
-          />
-          <EventsNavButton
-            href={`${CHECKPOINT_BASE_PATH}calendar`}
-            label={t("calendar")}
-          />
+          <EventsNavButton href={`${CHECKPOINT_BASE_PATH}event`} label={t("overview")} />
+          <EventsNavButton href={`${CHECKPOINT_BASE_PATH}calendar`} label={t("calendar")} />
           <EventsNavButton
             href={`${CHECKPOINT_BASE_PATH}event/stats`}
             label={t("stats")}

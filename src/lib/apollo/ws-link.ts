@@ -5,9 +5,7 @@ import { ApolloLink, Observable } from "@apollo/client";
 import { Client, createClient } from "graphql-ws";
 import { print } from "graphql";
 
-export function createWsLinkWithAuth(
-  getToken: () => string | null,
-): ApolloLink | null {
+export function createWsLinkWithAuth(getToken: () => string | null): ApolloLink | null {
   if (typeof window === "undefined") return null;
 
   const logger = getLogger("ApolloWS");

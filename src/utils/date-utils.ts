@@ -64,11 +64,7 @@ export function addYears(date: Date, delta: number): Date {
   return d;
 }
 
-type TranslateFn = (
-  key: any,
-  values?: Record<string, string | number>,
-) => string;
-
+type TranslateFn = (key: any, values?: Record<string, string | number>) => string;
 
 export function formatChildEventDateRange(
   startsAt: string | undefined,

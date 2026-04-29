@@ -48,7 +48,7 @@ export default function EventsHeader({
 }: Props) {
   const tEvent = useTypedTranslations("event");
   const tCommon = useTypedTranslations("common");
-  
+
   const theme = useTheme();
   const { currentUser } = useAuth();
 
@@ -66,20 +66,13 @@ export default function EventsHeader({
           {tEvent("header.title")}
         </Typography>
 
-        <Typography
-          variant="body2"
-          sx={{ color: theme.palette.text.secondary }}
-        >
+        <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
           {loading ? tCommon("loading") : tEvent("header.count", { count })}
         </Typography>
       </Stack>
 
       {/* TOOLBAR */}
-      <Stack
-        direction={{ xs: "column", sm: "row" }}
-        spacing={2}
-        sx={{ width: "100%" }}
-      >
+      <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ width: "100%" }}>
         {/* Apple-like Glass Search Input */}
         <motion.div
           initial={{ opacity: 0, y: 6 }}
@@ -102,10 +95,7 @@ export default function EventsHeader({
                   backgroundColor: alpha(theme.palette.background.paper, 0.6),
                   transition: "background-color 0.2s ease",
                   "&:hover": {
-                    backgroundColor: alpha(
-                      theme.palette.background.paper,
-                      0.85,
-                    ),
+                    backgroundColor: alpha(theme.palette.background.paper, 0.85),
                   },
                 },
                 startAdornment: (
@@ -136,9 +126,7 @@ export default function EventsHeader({
               }}
             >
               <MenuItem value="all">{tEvent("header.filter.all")}</MenuItem>
-              <MenuItem value="upcoming">
-                {tEvent("header.filter.upcoming")}
-              </MenuItem>
+              <MenuItem value="upcoming">{tEvent("header.filter.upcoming")}</MenuItem>
               <MenuItem value="now">{tEvent("header.filter.now")}</MenuItem>
               <MenuItem value="past">{tEvent("header.filter.past")}</MenuItem>
             </TextField>

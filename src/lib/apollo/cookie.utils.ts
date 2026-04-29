@@ -10,7 +10,6 @@ export function getAccessTokenClient(): string | null {
   return getCookie("access_token");
 }
 
-
 /**
  * Cookie helper
  */

@@ -6,12 +6,11 @@ query GetSeatList($seatIdList: [ID!]!) {
 
 query GetSeatInfoList($seatIdList: [ID!]!) {
   getSeatList(seatIds: $seatIdList) {
-  id
+    id
     label
     number
   }
 }
-
 
 query GetFullSeatInfoList($seatIdList: [ID!]!) {
   getSeatList(seatIds: $seatIdList) {
@@ -30,4 +29,3 @@ query GetFullSeatInfoList($seatIdList: [ID!]!) {
     }
   }
 }
-

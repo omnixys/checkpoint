@@ -19,13 +19,13 @@ export default function useMyTicketQuery({
   loadMyTicketList = false,
   loadMyFullTicketList = false,
 }: Props) {
-  const myTicketListQueryResult = useQuery<
-    GetMyTicketListQuery,
-    GetMyTicketListQueryVariables
-  >(GetMyTicketListDocument, {
-    fetchPolicy: "cache-and-network",
-    skip: !eventId || !loadMyTicketList,
-  });
+  const myTicketListQueryResult = useQuery<GetMyTicketListQuery, GetMyTicketListQueryVariables>(
+    GetMyTicketListDocument,
+    {
+      fetchPolicy: "cache-and-network",
+      skip: !eventId || !loadMyTicketList,
+    },
+  );
 
   const myTicketList = myTicketListQueryResult.data?.getMyTickets;
   const ticketEventIdMap = new Map(

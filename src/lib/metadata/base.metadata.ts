@@ -24,14 +24,7 @@ export const baseMetadata: Metadata = {
 
   generator: "Next.js",
 
-  keywords: [
-    "event",
-    "qr code",
-    "security",
-    "invitation",
-    "checkpoint",
-    "guest management",
-  ],
+  keywords: ["event", "qr code", "security", "invitation", "checkpoint", "guest management"],
 
   openGraph: {
     type: "website",

@@ -17,7 +17,7 @@ interface Props {
 }
 
 interface Payload {
-  updateProfilePayload: UpdateMyProfileMutation['updateMyProfile'] | undefined;
+  updateProfilePayload: UpdateMyProfileMutation["updateMyProfile"] | undefined;
   updateProfileLoading: ReturnType<typeof useQuery>["loading"];
   updateProfileError: ReturnType<typeof useQuery>["error"];
   updateProfile: useMutation.MutationFunction<
@@ -30,15 +30,13 @@ interface Payload {
 }
 
 export default function useMeMutation(): Payload {
-
   const [updateProfile, updateProfileMutationResult] = useMutation<
     UpdateMyProfileMutation,
     UpdateMyProfileMutationVariables
   >(UpdateMyProfileDocument);
-  
-  const updateProfilePayload =
-    updateProfileMutationResult.data?.updateMyProfile;
-  
+
+  const updateProfilePayload = updateProfileMutationResult.data?.updateMyProfile;
+
   return {
     updateProfile,
     updateProfilePayload,

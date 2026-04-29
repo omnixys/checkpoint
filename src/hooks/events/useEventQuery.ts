@@ -37,26 +37,26 @@ export default function useEventQuery({
   loadEventMeta = false,
   loadMyEventList = false,
   loadActiveEvent = false,
-    loadEventSettings = false,
+  loadEventSettings = false,
 }: Props) {
-  const eventPageQueryResult = useQuery<
-    EventPageQuery,
-    EventPageQueryVariables
-  >(EventPageDocument, {
-    variables: { eventId: eventId! },
-    fetchPolicy: "cache-and-network",
-    skip: !isAuthenticated || !loadEventPage || !eventId,
-  });
+  const eventPageQueryResult = useQuery<EventPageQuery, EventPageQueryVariables>(
+    EventPageDocument,
+    {
+      variables: { eventId: eventId! },
+      fetchPolicy: "cache-and-network",
+      skip: !isAuthenticated || !loadEventPage || !eventId,
+    },
+  );
   const eventPage = eventPageQueryResult.data?.event;
 
-  const eventMetaInfoQueryResult = useQuery<
-    GetEventMetaQuery,
-    GetEventMetaQueryVariables
-  >(GetEventMetaDocument, {
-    variables: { eventId: eventId! },
-    fetchPolicy: "cache-and-network",
-    skip: !loadEventMeta || !eventId,
-  });
+  const eventMetaInfoQueryResult = useQuery<GetEventMetaQuery, GetEventMetaQueryVariables>(
+    GetEventMetaDocument,
+    {
+      variables: { eventId: eventId! },
+      fetchPolicy: "cache-and-network",
+      skip: !loadEventMeta || !eventId,
+    },
+  );
   const eventMetaInfo = eventMetaInfoQueryResult.data?.event;
 
   const myEventListQueryResult = useQuery<MyEventsQuery>(MyEventsDocument, {
@@ -66,10 +66,9 @@ export default function useEventQuery({
 
   const myEventList = myEventListQueryResult.data?.myEvents;
 
-  const activeEventQueryResult = useQuery<
-    GetActiveEventQuery,
-    GetActiveEventQueryVariables
-  >(GetActiveEventDocument, {
+  const activeEventQueryResult = useQuery<GetActiveEventQuery, GetActiveEventQueryVariables>(
+    GetActiveEventDocument,
+    {
       skip: !eventId || !loadActiveEvent,
       variables: { eventId: eventId! },
       fetchPolicy: "cache-and-network",
@@ -78,17 +77,16 @@ export default function useEventQuery({
 
   const activeEvent = activeEventQueryResult.data?.event;
 
-
-    const eventSettingsQueryResult = useQuery<
-      GetEventSettingsQuery,
-      GetEventSettingsQueryVariables
-    >(GetEventSettingsDocument, {
+  const eventSettingsQueryResult = useQuery<GetEventSettingsQuery, GetEventSettingsQueryVariables>(
+    GetEventSettingsDocument,
+    {
       variables: { eventId: eventId ?? "" },
       fetchPolicy: "cache-and-network",
       skip: !loadEventSettings || !eventId,
-    });
+    },
+  );
   const eventSettings = eventSettingsQueryResult.data?.event;
-  
+
   return {
     eventPage,
     eventPageLoading: eventPageQueryResult.loading,

@@ -9,11 +9,11 @@ query GetGeoLocationInfo($countryCode: String, $limit: Int, $text: String!) {
     stateId
     streetId
 
-        country
-        state
-        city
-        postalCode
-        street
-        houseNumber
+    country
+    state
+    city
+    postalCode
+    street
+    houseNumber
   }
 }

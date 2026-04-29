@@ -4,11 +4,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 
-export default function SwipeBackProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function SwipeBackProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   const startXRef = React.useRef(0);
@@ -17,12 +13,9 @@ export default function SwipeBackProvider({
   const opacity = useTransform(x, [0, 120], [1, 0.5]);
   const scale = useTransform(x, [0, 120], [1, 0.98]);
 
-  const onTouchStart = React.useCallback(
-    (e: React.TouchEvent<HTMLDivElement>) => {
-      startXRef.current = e.touches[0]?.clientX ?? 0;
-    },
-    [],
-  );
+  const onTouchStart = React.useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    startXRef.current = e.touches[0]?.clientX ?? 0;
+  }, []);
 
   const onTouchMove = React.useCallback(
     (e: React.TouchEvent<HTMLDivElement>) => {

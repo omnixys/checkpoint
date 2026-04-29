@@ -52,8 +52,7 @@ export async function generateMetadata({
 
   return buildMetadata({
     title: `RSVP • ${invitation.eventName}`,
-    description:
-      invitation.eventDescription ?? "Confirm your attendance for this event.",
+    description: invitation.eventDescription ?? "Confirm your attendance for this event.",
 
     page: "rsvp-invitation",
 

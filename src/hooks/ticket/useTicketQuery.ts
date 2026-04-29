@@ -17,23 +17,21 @@ interface Props {
   loadSecurityTicketPage?: boolean | undefined;
 }
 
-
 export default function useTicketQuery({
   eventId,
   loadTicketPage = false,
   loadSecurityTicketPage = false,
-}: Props){
-  const ticketPageQueryResult = useQuery<
-    TicketPageQuery,
-    TicketPageQueryVariables
-  >(TicketPageDocument, {
-    variables: { eventId },
-    fetchPolicy: "cache-and-network",
-    skip: !loadTicketPage || !eventId,
-  });
+}: Props) {
+  const ticketPageQueryResult = useQuery<TicketPageQuery, TicketPageQueryVariables>(
+    TicketPageDocument,
+    {
+      variables: { eventId },
+      fetchPolicy: "cache-and-network",
+      skip: !loadTicketPage || !eventId,
+    },
+  );
 
   const ticketPage = ticketPageQueryResult.data?.ticketsByEvent;
-
 
   const getTicketListQueryResult = useQuery<
     SecurityTicketPageQuery,
@@ -43,11 +41,11 @@ export default function useTicketQuery({
     fetchPolicy: "cache-and-network",
     skip: !loadSecurityTicketPage || !eventId,
   });
-  
-    const securityTicketList =
-      getTicketListQueryResult?.data?.ticketsByEvent.filter((t) => !t.revoked) ?? [];
-  
-  const securityTicketMap = new Map(securityTicketList?.map((ticket) => [ticket.id, ticket]))
+
+  const securityTicketList =
+    getTicketListQueryResult?.data?.ticketsByEvent.filter((t) => !t.revoked) ?? [];
+
+  const securityTicketMap = new Map(securityTicketList?.map((ticket) => [ticket.id, ticket]));
 
   return {
     ticketPage,

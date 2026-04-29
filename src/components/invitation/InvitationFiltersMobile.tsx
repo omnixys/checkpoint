@@ -20,28 +20,16 @@ import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 type StatusType = "PENDING" | "APPROVED" | "REJECTED" | "DECLINED" | "ACCEPTED";
 
-export default function InvitationFiltersMobile({
-  logic,
-}: {
-  logic: InvitationLogic;
-}) {
+export default function InvitationFiltersMobile({ logic }: { logic: InvitationLogic }) {
   const theme = useTheme();
   const tInvitation = useTypedTranslations("invitation");
   const tCommon = useTypedTranslations("common");
 
   const [open, setOpen] = useState(false);
 
-  const statuses: StatusType[] = [
-    "PENDING",
-    "APPROVED",
-    "REJECTED",
-    "DECLINED",
-    "ACCEPTED",
-  ];
+  const statuses: StatusType[] = ["PENDING", "APPROVED", "REJECTED", "DECLINED", "ACCEPTED"];
 
-  const subEvents = logic.subEvents?.filter(
-    (child) => logic.rootEventId !== child.id,
-  );
+  const subEvents = logic.subEvents?.filter((child) => logic.rootEventId !== child.id);
 
   const eventOptions = useMemo(() => {
     return [
@@ -65,8 +53,8 @@ export default function InvitationFiltersMobile({
           sx={{
             borderRadius: "14px",
             border: theme.palette.divider,
-            justifyContent: 'center',
-            alignItems: 'center',
+            justifyContent: "center",
+            alignItems: "center",
             letterSpacing: 2,
             mt: 1,
           }}
@@ -155,12 +143,8 @@ export default function InvitationFiltersMobile({
               sx={{ mt: 1 }}
             >
               <ToggleButton value="ALL">{tCommon("all")}</ToggleButton>
-              <ToggleButton value="PRIVATE">
-                {tInvitation("typePrivate")}
-              </ToggleButton>
-              <ToggleButton value="PUBLIC">
-                {tInvitation("typePublic")}
-              </ToggleButton>
+              <ToggleButton value="PRIVATE">{tInvitation("typePrivate")}</ToggleButton>
+              <ToggleButton value="PUBLIC">{tInvitation("typePublic")}</ToggleButton>
             </ToggleButtonGroup>
           </Box>
 
@@ -184,9 +168,7 @@ export default function InvitationFiltersMobile({
                     key={status}
                     label={tInvitation(`statusType.${status}`)}
                     color={active ? "primary" : "default"}
-                    onClick={() =>
-                      logic.setStatusFilter(active ? null : status)
-                    }
+                    onClick={() => logic.setStatusFilter(active ? null : status)}
                   />
                 );
               })}
@@ -194,12 +176,7 @@ export default function InvitationFiltersMobile({
           </Box>
 
           {/* CLOSE */}
-          <Button
-            fullWidth
-            variant="contained"
-            onClick={() => setOpen(false)}
-            sx={{ mt: 1 }}
-          >
+          <Button fullWidth variant="contained" onClick={() => setOpen(false)} sx={{ mt: 1 }}>
             {tCommon("done")}
           </Button>
         </Stack>

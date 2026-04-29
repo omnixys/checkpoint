@@ -25,10 +25,7 @@ import EventParticipationField from "@/checkpoint/components/EventParticipationF
 import LanguageSwitcher from "@/checkpoint/components/LanguageSwitcher";
 import ThemeToggleButton from "@/checkpoint/components/ThemeToggleButton";
 import { usePhoneNumbers } from "@/checkpoint/hooks/common/usePhoneNumbers";
-import {
-  EventSelectionNode,
-  useEventSelection,
-} from "@/checkpoint/hooks/events/useEventSelection";
+import { EventSelectionNode, useEventSelection } from "@/checkpoint/hooks/events/useEventSelection";
 import useEventTreeQuery from "@/checkpoint/hooks/events/useEventTreeQuery";
 import { usePlusOnes } from "@/checkpoint/hooks/invitation/usePlusOnes";
 import usePublicRsvpMutation from "@/checkpoint/hooks/invitation/usePublicRsvpMutation";
@@ -106,12 +103,9 @@ export default function RsvpClient({
   const [submitted, setSubmitted] = useState(false);
   const [validationMessages, setValidationMessages] = useState<string[]>([]);
   const [phoneDialogIndex, setPhoneDialogIndex] = useState<number | null>(null);
-  const [plusOneDialogIndex, setPlusOneDialogIndex] = useState<number | null>(
-    null,
-  );
+  const [plusOneDialogIndex, setPlusOneDialogIndex] = useState<number | null>(null);
 
-  const { phoneNumbers, addPhone, updatePhone, removePhone, getValidPhones } =
-    usePhoneNumbers();
+  const { phoneNumbers, addPhone, updatePhone, removePhone, getValidPhones } = usePhoneNumbers();
 
   const {
     plusOnes,
@@ -124,19 +118,15 @@ export default function RsvpClient({
     toGraphQL,
   } = usePlusOnes();
 
-  const { publicEventTree, publicEventTreeLoading, publicEventTreeError } =
-    useEventTreeQuery({
-      eventId: eventId ?? undefined,
-      loadPublicEventTree: true,
-    });
+  const { publicEventTree, publicEventTreeLoading, publicEventTreeError } = useEventTreeQuery({
+    eventId: eventId ?? undefined,
+    loadPublicEventTree: true,
+  });
 
-  const { createPublicInvitation, publicRsvpError, publicRsvpLoading } =
-    usePublicRsvpMutation({});
+  const { createPublicInvitation, publicRsvpError, publicRsvpLoading } = usePublicRsvpMutation({});
 
   const childEvents: EventSelectionNode[] = useMemo(() => {
-    const children = publicEventTree?.subEvents?.filter(
-      (child) => child.id !== eventId,
-    );
+    const children = publicEventTree?.subEvents?.filter((child) => child.id !== eventId);
     return (
       children?.map((item) => ({
         id: item.id,
@@ -157,23 +147,16 @@ export default function RsvpClient({
     return plusOnes[plusOneDialogIndex] ?? null;
   }, [plusOneDialogIndex, plusOnes]);
 
-  const {
-    selectedEventIds,
-    isRootSelected,
-    isChildSelected,
-    toggleRoot,
-    toggleChild,
-  } = useEventSelection({
-    rootEventId: eventId ?? "",
-    children: childEvents,
-  });
+  const { selectedEventIds, isRootSelected, isChildSelected, toggleRoot, toggleChild } =
+    useEventSelection({
+      rootEventId: eventId ?? "",
+      children: childEvents,
+    });
 
   /* ---------------- Guards ---------------- */
 
   if (!eventId) {
-    return (
-      <ErrorState title={t("invalidLink")} message={t("missingEventId")} />
-    );
+    return <ErrorState title={t("invalidLink")} message={t("missingEventId")} />;
   }
 
   if (publicEventTreeLoading) {
@@ -189,9 +172,7 @@ export default function RsvpClient({
   }
 
   if (!publicEventTree) {
-    return (
-      <ErrorState title={t("notFound")} message={t("eventNotAvailable")} />
-    );
+    return <ErrorState title={t("notFound")} message={t("eventNotAvailable")} />;
   }
 
   if (submitted) {
@@ -269,8 +250,7 @@ export default function RsvpClient({
           sx={{
             alignItems: "center",
             backdropFilter: "blur(22px) saturate(160%)",
-            backgroundColor: (theme) =>
-              alpha(theme.palette.background.paper, 0.72),
+            backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.72),
             border: "1px solid",
             borderColor: "divider",
             borderRadius: 999,
@@ -283,12 +263,10 @@ export default function RsvpClient({
             right: { xs: "auto", sm: 24 },
             top: { xs: 16, sm: 24 },
             transform: { xs: "translateX(-50%)", sm: "none" },
-            transition:
-              "transform 220ms ease, box-shadow 220ms ease, background-color 220ms ease",
+            transition: "transform 220ms ease, box-shadow 220ms ease, background-color 220ms ease",
             zIndex: (theme) => theme.zIndex.appBar + 1,
             "&:hover, &:focus-within": {
-              backgroundColor: (theme) =>
-                alpha(theme.palette.background.paper, 0.86),
+              backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.86),
               boxShadow: "0 22px 70px rgba(15, 23, 42, 0.24)",
               transform: {
                 xs: "translateX(-50%) translateY(-3px)",
@@ -333,9 +311,7 @@ export default function RsvpClient({
         <Card sx={{ width: "100%" }}>
           <CardContent>
             <Stack spacing={3}>
-              <Typography variant="h4">
-                {publicEventTree.rootEvent.name}
-              </Typography>
+              <Typography variant="h4">{publicEventTree.rootEvent.name}</Typography>
 
               <EventParticipationField
                 rootEventId={eventId}
@@ -396,15 +372,9 @@ export default function RsvpClient({
                 </Alert>
               )}
 
-              {publicRsvpError && (
-                <Alert severity="error"> {t("submitFailed")}</Alert>
-              )}
+              {publicRsvpError && <Alert severity="error"> {t("submitFailed")}</Alert>}
 
-              <Button
-                variant="contained"
-                onClick={handleSubmit}
-                disabled={publicRsvpLoading}
-              >
+              <Button variant="contained" onClick={handleSubmit} disabled={publicRsvpLoading}>
                 {t("submit")}
               </Button>
             </Stack>

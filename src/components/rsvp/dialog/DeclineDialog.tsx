@@ -24,9 +24,9 @@ export default function DeclineDialog({
   invitation: any;
   onConfirm: () => void;
   onCancel: () => void;
-  }) {
+}) {
   const t = useTypedTranslations("rsvp");
-  
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 

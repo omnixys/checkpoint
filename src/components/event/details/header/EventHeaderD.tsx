@@ -33,20 +33,12 @@ export default function EventHeaderD({ eventPageData: ev }: EventHeaderProps) {
   };
 
   const roleChipColor =
-    ev.myRole === "ADMIN"
-      ? "primary"
-      : ev.myRole === "SECURITY"
-        ? "success"
-        : "default";
+    ev.myRole === "ADMIN" ? "primary" : ev.myRole === "SECURITY" ? "success" : "default";
 
   const hero = getBestImage(ev.coverMedia, 1200) || "/event/event-default.png";
 
   return (
-    <motion.div
-      style={{ perspective: 1600 }}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
-    >
+    <motion.div style={{ perspective: 1600 }} onMouseMove={onMove} onMouseLeave={onLeave}>
       <motion.div
         style={{
           rotateX,
@@ -68,12 +60,7 @@ export default function EventHeaderD({ eventPageData: ev }: EventHeaderProps) {
           }}
         >
           {/* Background Image */}
-          <Image
-            src={hero}
-            alt={ev.name}
-            fill
-            style={{ objectFit: "cover", opacity: 0.75 }}
-          />
+          <Image src={hero} alt={ev.name} fill style={{ objectFit: "cover", opacity: 0.75 }} />
 
           {/* Fog Gradient */}
           <Box
@@ -108,11 +95,7 @@ export default function EventHeaderD({ eventPageData: ev }: EventHeaderProps) {
             </Typography>
 
             <Chip
-              label={
-                ev.myRole
-                  ? t(`header.role.${ev.myRole}`)
-                  : t("header.role.GUEST")
-              }
+              label={ev.myRole ? t(`header.role.${ev.myRole}`) : t("header.role.GUEST")}
               color={roleChipColor}
               sx={{
                 fontWeight: 700,

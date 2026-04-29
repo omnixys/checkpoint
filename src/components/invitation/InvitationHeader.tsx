@@ -2,11 +2,11 @@
 
 import { Box, useTheme } from "@mui/material";
 import { motion, AnimatePresence } from "framer-motion";
-import { InvitationHeaderBar }  from "./InvitationHeaderBar";
+import { InvitationHeaderBar } from "./InvitationHeaderBar";
 import { useHeaderCollapse } from "@/checkpoint/components/invitation/useHeaderCollapse";
 import InvitationFilters from "@/checkpoint/components/invitation/InvitationFilters";
 import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
-import { omnixysPresets } from '../../themes/colors/omnixysPresets';
+import { omnixysPresets } from "../../themes/colors/omnixysPresets";
 import { useDevice } from "@/checkpoint/providers/DeviceProvider";
 import InvitationFiltersMobile from "@/checkpoint/components/invitation/InvitationFiltersMobile";
 
@@ -29,10 +29,7 @@ export interface InvitationHeaderProp {
 /* ---------------------------------------------------------------------------
  * Header Factory (scroll reactive)
  * ------------------------------------------------------------------------- */
-export default function InvitationHeader({
-  logic,
-  scroll,
-}: InvitationHeaderProp) {
+export default function InvitationHeader({ logic, scroll }: InvitationHeaderProp) {
   const { isMobile } = useDevice();
   const theme = useTheme();
   const { collapsed, setCollapsed } = useHeaderCollapse();
@@ -50,10 +47,7 @@ export default function InvitationHeader({
         borderRadius: "16px",
         overflow: "hidden",
 
-        background:
-          theme.palette.mode === "dark"
-            ? "rgba(0,0,0,0.6)"
-            : "rgba(255,255,255,0.7)",
+        background: theme.palette.mode === "dark" ? "rgba(0,0,0,0.6)" : "rgba(255,255,255,0.7)",
 
         border: `1px solid ${theme.palette.divider}`,
       }}

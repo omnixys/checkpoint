@@ -7,8 +7,7 @@ import { motion } from "framer-motion";
 
 export default function RefreshArcButton({ onReload }: { onReload: any }) {
   const [spin, setSpin] = useState(false);
-    const theme = useTheme();
-  
+  const theme = useTheme();
 
   const trigger = async () => {
     setSpin(true);
@@ -49,13 +48,13 @@ export default function RefreshArcButton({ onReload }: { onReload: any }) {
         sx={{
           width: 42,
           height: 42,
-                    backdropFilter: "blur(12px)",
-                    background: alpha(theme.palette.primary.main, 0.15),
-                    border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
-                    boxShadow: theme.shadows[3],
-                    "&:hover": {
-                      background: alpha(theme.palette.primary.main, 0.25),
-                    },
+          backdropFilter: "blur(12px)",
+          background: alpha(theme.palette.primary.main, 0.15),
+          border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
+          boxShadow: theme.shadows[3],
+          "&:hover": {
+            background: alpha(theme.palette.primary.main, 0.25),
+          },
         }}
       >
         <RefreshRoundedIcon />

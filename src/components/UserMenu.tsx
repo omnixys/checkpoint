@@ -54,7 +54,9 @@ export default function UserMenu(): JSX.Element | null {
   if (!isAuthenticated || !currentUser) return null;
 
   const displayName =
-    [currentUser?.personalInfo?.firstName, currentUser?.personalInfo?.lastName].filter(Boolean).join(" ") ||
+    [currentUser?.personalInfo?.firstName, currentUser?.personalInfo?.lastName]
+      .filter(Boolean)
+      .join(" ") ||
     currentUser.username ||
     "User";
 

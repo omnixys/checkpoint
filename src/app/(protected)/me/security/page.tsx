@@ -36,9 +36,7 @@ export default function SecurityPage(): JSX.Element {
         paddingTop: "2rem",
       }}
     >
-      <Suspense
-        fallback={<Skeleton variant="rectangular" width={210} height={118} />}
-      >
+      <Suspense fallback={<Skeleton variant="rectangular" width={210} height={118} />}>
         <ChangePasswordClient />
       </Suspense>
     </Box>

@@ -13,7 +13,7 @@ import { useMemo } from "react";
  * This MUST NOT live inside components.
  */
 export function useFilteredEvents(params: {
-  events: MyEventsQuery['myEvents'];
+  events: MyEventsQuery["myEvents"];
   search: string;
   filter: EventsFilter;
   activeEventId: string | undefined;
@@ -40,10 +40,7 @@ export function useFilteredEvents(params: {
         ? filtered
         : filtered.filter((ev) => {
             const q = search.toLowerCase();
-            return (
-              ev.name.toLowerCase().includes(q) ||
-              (ev.id?.toLowerCase().includes(q) ?? false)
-            );
+            return ev.name.toLowerCase().includes(q) || (ev.id?.toLowerCase().includes(q) ?? false);
           });
 
     const sorted = [...searched].sort((a, b) => {

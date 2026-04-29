@@ -13,7 +13,6 @@ query GetEventTree($eventId: ID!) {
   }
 }
 
-
 query GetPublicEventTree($eventId: ID!) {
   publicEventTree(eventId: $eventId) {
     rootEvent {
@@ -29,8 +28,6 @@ query GetPublicEventTree($eventId: ID!) {
   }
 }
 
-
-
 query GetFullEventTreeInfo($eventId: ID!) {
   eventTree(eventId: $eventId) {
     rootEvent {
@@ -43,5 +40,3 @@ query GetFullEventTreeInfo($eventId: ID!) {
     }
   }
 }
-
-

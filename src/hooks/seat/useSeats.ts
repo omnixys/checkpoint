@@ -25,24 +25,18 @@ import { SeatFilter } from "@/checkpoint/types/seat.type";
 import { useMutation, useQuery } from "@apollo/client/react";
 import React from "react";
 
-export type QueryInvitation = NonNullable<
-  EventInvitationQuery["eventInvitation"]
->[number];
+export type QueryInvitation = NonNullable<EventInvitationQuery["eventInvitation"]>[number];
 
 export function useSeats(eventId: string) {
-
-  const { seatList, seatListLoading, seatListError, seatListRefetch } =
-    useSeatListQuery({
-      eventId,
-      loadSeatList: true,
-    });
-
+  const { seatList, seatListLoading, seatListError, seatListRefetch } = useSeatListQuery({
+    eventId,
+    loadSeatList: true,
+  });
 
   const [filter, setFilter] = React.useState<SeatFilter>({
     search: "",
     status: "all",
   });
-
 
   // -------------------------------------------
   // SEARCH + STATUS FILTER
@@ -99,10 +93,9 @@ export function useSeats(eventId: string) {
     [seatList],
   );
 
-
-    function isSeatOccupied(seat: SeatListQuery['seats'][number]): boolean {
-      return Boolean(seat.guestId) || Boolean(seat.invitationId);
-    }
+  function isSeatOccupied(seat: SeatListQuery["seats"][number]): boolean {
+    return Boolean(seat.guestId) || Boolean(seat.invitationId);
+  }
 
   // -------------------------------------------
   // GUEST MAP
@@ -120,14 +113,11 @@ export function useSeats(eventId: string) {
   // -------------------------------------------
   // SEAT LABEL
   // -------------------------------------------
-  const seatLabel = (seat: SeatListQuery["seats"][number]) =>
-    seat.number?.toString() ?? "—";
+  const seatLabel = (seat: SeatListQuery["seats"][number]) => seat.number?.toString() ?? "—";
 
   const [assignSeat] = useMutation<AssignSeatMutation, AssignSeatMutationVariables>(
     AssignSeatDocument,
   );
-
-  
 
   const { globalEventInvitationList, invitationMap } = useInvitationListQuery({
     loadGlobalEventInvitationList: true,

@@ -55,9 +55,9 @@ export default function InvitationClientPage({ countries }: { countries: Calling
 
       {/* CONTENT */}
       {/* <PullToRefresh onReload={logic.reload}> */}
-        <Box sx={{ px: { xs: 2, md: 3 }, pb: 12, pt: isMobile ? 6 : 0 }}>
-          <InvitationContent logic={logic} isMobile={isMobile} />
-        </Box>
+      <Box sx={{ px: { xs: 2, md: 3 }, pb: 12, pt: isMobile ? 6 : 0 }}>
+        <InvitationContent logic={logic} isMobile={isMobile} />
+      </Box>
       {/* </PullToRefresh> */}
 
       {/* FLOATING ELEMENTS */}
@@ -70,8 +70,8 @@ export default function InvitationClientPage({ countries }: { countries: Calling
       <InvitationBulkApproveDialog logic={logic} />
 
       {logic.activeInvitation && isMobile ? (
-            <InvitationDetailMobileDialog logic={logic} />
-      ):(
+        <InvitationDetailMobileDialog logic={logic} />
+      ) : (
         <InvitationDetailDialog logic={logic} />
       )}
     </Box>

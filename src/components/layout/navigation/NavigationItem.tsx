@@ -7,7 +7,10 @@ import { useRouter, usePathname } from "next/navigation";
 import { NavItem } from "../navigation.config";
 import { UserRoleType } from "@/checkpoint/generated/graphql";
 import { useTour } from "@/checkpoint/providers/TourProvider";
-import { getRoleColor, isActiveNavItem } from "@/checkpoint/components/layout/navigation/navigation.util";
+import {
+  getRoleColor,
+  isActiveNavItem,
+} from "@/checkpoint/components/layout/navigation/navigation.util";
 
 type Props = {
   item: NavItem;

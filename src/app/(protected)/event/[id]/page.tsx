@@ -4,8 +4,11 @@ import { Skeleton } from "@mui/material";
 import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
 import { Metadata } from "next";
 import { createServerClient } from "@/checkpoint/lib/apollo/server-client";
-import { GetEventNameQuery, GetEventNameQueryVariables, GetEventNameDocument } from "@/checkpoint/generated/graphql";
-
+import {
+  GetEventNameQuery,
+  GetEventNameQueryVariables,
+  GetEventNameDocument,
+} from "@/checkpoint/generated/graphql";
 
 /**
  * -------------------------------------------------------------
@@ -54,8 +57,7 @@ export async function generateMetadata({
    */
   return buildMetadata({
     title: event.name,
-    description:
-      event.description ?? `Join ${event.name} and secure your access.`,
+    description: event.description ?? `Join ${event.name} and secure your access.`,
 
     page: "event-detail",
 
@@ -88,26 +90,21 @@ async function getEventMetadata(eventId: string) {
 
   const client = await createServerClient();
 
-  const res = await client.query<GetEventNameQuery, GetEventNameQueryVariables>(
-    {
-      query: GetEventNameDocument,
-      variables: { eventId },
-      fetchPolicy: "no-cache",
-    },
-  );
+  const res = await client.query<GetEventNameQuery, GetEventNameQueryVariables>({
+    query: GetEventNameDocument,
+    variables: { eventId },
+    fetchPolicy: "no-cache",
+  });
 
   const event = res.data?.event;
   if (!event) return null;
 
   return {
     name: event.name,
-    description:
-      "An exclusive evening event with VIP access, live music, and premium experience.",
+    description: "An exclusive evening event with VIP access, live music, and premium experience.",
     ogImage: `/api/og?eventId=${eventId}`,
   };
 }
-export default function EventPage() { 
-  return (
-      <EventClientPage />
-  );
+export default function EventPage() {
+  return <EventClientPage />;
 }

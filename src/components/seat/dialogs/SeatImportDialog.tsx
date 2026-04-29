@@ -39,10 +39,7 @@ export default function SeatImportDialog({ open, onClose, onImport }: Props) {
     const reader = new FileReader();
 
     reader.onload = (loadEvent) => {
-      const text =
-        typeof loadEvent.target?.result === "string"
-          ? loadEvent.target.result
-          : "";
+      const text = typeof loadEvent.target?.result === "string" ? loadEvent.target.result : "";
 
       parseCSV(text);
     };
@@ -63,9 +60,7 @@ export default function SeatImportDialog({ open, onClose, onImport }: Props) {
       return;
     }
 
-    const missing = required.filter(
-      (requiredColumn) => !header.includes(requiredColumn),
-    );
+    const missing = required.filter((requiredColumn) => !header.includes(requiredColumn));
     if (missing.length > 0) {
       setErrors([`Fehlende Spalten: ${missing.join(", ")}`]);
       setRows([]);
@@ -116,10 +111,7 @@ export default function SeatImportDialog({ open, onClose, onImport }: Props) {
           {errors.length > 0 && (
             <Stack spacing={1} sx={{ p: 2 }}>
               {errors.map((error, index) => (
-                <Typography
-                  key={index}
-                  sx={{ color: theme.palette.error.main }}
-                >
+                <Typography key={index} sx={{ color: theme.palette.error.main }}>
                   {error}
                 </Typography>
               ))}
@@ -133,11 +125,7 @@ export default function SeatImportDialog({ open, onClose, onImport }: Props) {
       <DialogActions>
         <Button onClick={onClose}>Abbrechen</Button>
 
-        <Button
-          variant="contained"
-          onClick={() => onImport(rows)}
-          disabled={rows.length === 0}
-        >
+        <Button variant="contained" onClick={() => onImport(rows)} disabled={rows.length === 0}>
           Importieren
         </Button>
       </DialogActions>

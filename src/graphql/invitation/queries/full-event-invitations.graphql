@@ -4,7 +4,6 @@ query GetFullEventInvitation($eventIds: [ID!]!) {
   }
 }
 
-
 query GetGlobalEventInvitationList($eventIds: [ID!]!) {
   getFullByEventIds(eventIds: $eventIds) {
     id

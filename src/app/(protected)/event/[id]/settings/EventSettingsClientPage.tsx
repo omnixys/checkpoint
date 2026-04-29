@@ -11,11 +11,11 @@ import { Box, CircularProgress, Stack } from "@mui/material";
 import { useParams } from "next/navigation";
 
 export const centerStyle = {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100%",
-  };
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  height: "100%",
+};
 /**
  * Root Page
  *
@@ -28,7 +28,7 @@ export default function EventSettingsClientPage() {
   const { id } = useParams<{ id: string }>();
   const { meta, settings, timeline, roles, actions, loading, error } = useEventSettings(id);
 
-    const isReady = meta && settings && roles;
+  const isReady = meta && settings && roles;
 
   /**
    * CRITICAL:
@@ -43,13 +43,13 @@ export default function EventSettingsClientPage() {
   }
 
   // TODO visuell optimieren
-if (error) {
-  return <Box>Error loading event settings</Box>;
-}
+  if (error) {
+    return <Box>Error loading event settings</Box>;
+  }
 
-if (!isReady) {
-  return <Box>Event data incomplete</Box>;
-}
+  if (!isReady) {
+    return <Box>Event data incomplete</Box>;
+  }
 
   return (
     <Stack spacing={2}>

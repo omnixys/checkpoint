@@ -24,7 +24,6 @@ import { useMutation, useQuery } from "@apollo/client/react";
 
 interface Props {}
 
-
 export default function usePublicRsvpMutation({}: Props) {
   const [createPublicInvitation, publicRsvpMutationResult] = useMutation<
     CreateInvitationFromRsvpMutation,

@@ -59,9 +59,7 @@ export default function EventTabs({ active, onChange }: Props) {
                   px: 1,
                   py: 0.4,
                   fontWeight: selected ? 700 : 500,
-                  color: selected
-                    ? theme.palette.primary.main
-                    : theme.palette.text.secondary,
+                  color: selected ? theme.palette.primary.main : theme.palette.text.secondary,
                   transition: "0.25s ease",
                 }}
               >

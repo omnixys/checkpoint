@@ -29,9 +29,9 @@ export default function FinalScreens({
   type: "accepted" | "declined";
   invitation: any;
   plusOnes?: any[];
-  }) {
+}) {
   const t = useTypedTranslations("rsvp");
-  
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -99,10 +99,7 @@ export default function FinalScreens({
                   flexWrap: "wrap",
                 }}
               >
-                <Typography
-                  variant="subtitle1"
-                  sx={{ opacity: 0.85, fontWeight: 700 }}
-                >
+                <Typography variant="subtitle1" sx={{ opacity: 0.85, fontWeight: 700 }}>
                   {t("final.accepted.plusOnesTitle")}
                 </Typography>
 
@@ -157,10 +154,7 @@ export default function FinalScreens({
                         </Stack>
 
                         <Tooltip title={t("common.copy")}>
-                          <IconButton
-                            onClick={() => copyToClipboard(link)}
-                            sx={{ opacity: 0.7 }}
-                          >
+                          <IconButton onClick={() => copyToClipboard(link)} sx={{ opacity: 0.7 }}>
                             <ContentCopyIcon />
                           </IconButton>
                         </Tooltip>

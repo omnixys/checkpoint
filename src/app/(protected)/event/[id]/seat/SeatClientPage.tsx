@@ -66,8 +66,7 @@ export default function SeatsClientPage() {
           pb: 1,
           bgcolor: (theme) => alpha(theme.palette.background.default, 0.7),
           backdropFilter: "blur(16px)",
-          borderBottom: (theme) =>
-            `1px solid ${alpha(theme.palette.divider, 0.12)}`,
+          borderBottom: (theme) => `1px solid ${alpha(theme.palette.divider, 0.12)}`,
         }}
       >
         {/* Back Button */}
@@ -85,11 +84,7 @@ export default function SeatsClientPage() {
               size="small"
               variant="outlined"
               startIcon={<EditOutlined />}
-              onClick={() =>
-                router.push(
-                  `${env.CHECKPOINT_BASE_PATH}event/${eventId}/seat/edit`,
-                )
-              }
+              onClick={() => router.push(`${env.CHECKPOINT_BASE_PATH}event/${eventId}/seat/edit`)}
             >
               Sitzstruktur
             </Button>
@@ -101,9 +96,7 @@ export default function SeatsClientPage() {
         <SeatFilters filter={filter} onChange={setFilter} />
       </Box>
 
-      {activeRole === "ADMIN" && (
-        <SeatImportButton onOpen={() => setImportOpen(true)} />
-      )}
+      {activeRole === "ADMIN" && <SeatImportButton onOpen={() => setImportOpen(true)} />}
 
       <MapManager
         seats={seats}

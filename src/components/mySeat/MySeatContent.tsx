@@ -25,9 +25,10 @@ export default function MySeatContent(): JSX.Element {
 
   const ticket = activeEvent ? ticketEventIdMap.get(activeEvent.id) : undefined;
 
-  const { fullSeatInfo, fullSeatInfoLoading, fullSeatInfoError } = useSeatQuery(
-    { seatId: ticket?.seatId, loadFullSeatInfo: true },
-  );
+  const { fullSeatInfo, fullSeatInfoLoading, fullSeatInfoError } = useSeatQuery({
+    seatId: ticket?.seatId,
+    loadFullSeatInfo: true,
+  });
 
   // TODO implement i18N keys
   if (!activeEvent) {
@@ -67,8 +68,7 @@ export default function MySeatContent(): JSX.Element {
   }
 
   if (!ticket.seatId || !fullSeatInfo) {
-    const canChooseSeat =
-      activeEvent.settings?.allowGuestSeatSelection === true;
+    const canChooseSeat = activeEvent.settings?.allowGuestSeatSelection === true;
     const title = canChooseSeat
       ? "Noch keinen Sitzplatz ausgewählt"
       : "Dein Sitzplatz steht noch aus";
@@ -83,9 +83,7 @@ export default function MySeatContent(): JSX.Element {
             borderRadius: 4,
             border: "1px solid",
             borderColor: canChooseSeat ? "primary.light" : "divider",
-            bgcolor: canChooseSeat
-              ? "rgba(25, 118, 210, 0.08)"
-              : "background.paper",
+            bgcolor: canChooseSeat ? "rgba(25, 118, 210, 0.08)" : "background.paper",
             backdropFilter: "blur(14px)",
           }}
         >
@@ -105,9 +103,7 @@ export default function MySeatContent(): JSX.Element {
                   display: "grid",
                   placeItems: "center",
                   bgcolor: canChooseSeat ? "primary.main" : "action.hover",
-                  color: canChooseSeat
-                    ? "primary.contrastText"
-                    : "text.secondary",
+                  color: canChooseSeat ? "primary.contrastText" : "text.secondary",
                   flexShrink: 0,
                 }}
               >
@@ -149,8 +145,8 @@ export default function MySeatContent(): JSX.Element {
             >
               <EventSeatIcon />
               <Typography>
-                Bereich {fullSeatInfo?.section?.name} · Tisch{" "}
-                {fullSeatInfo.table?.name} · Sitz {fullSeatInfo.number}
+                Bereich {fullSeatInfo?.section?.name} · Tisch {fullSeatInfo.table?.name} · Sitz{" "}
+                {fullSeatInfo.number}
               </Typography>
             </Stack>
 

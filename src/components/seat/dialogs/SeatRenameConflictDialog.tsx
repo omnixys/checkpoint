@@ -49,8 +49,8 @@ export default function SeatRenameConflictDialog({ open, conflicts, onClose }: P
       <DialogContent>
         <Stack spacing={3} sx={{ mt: 1 }}>
           <Typography variant="body2" color="text.secondary">
-            Einige Namen existieren bereits und konnten nicht übernommen werden.
-            Bitte passe diese Einträge an.
+            Einige Namen existieren bereits und konnten nicht übernommen werden. Bitte passe diese
+            Einträge an.
           </Typography>
 
           {sections.length > 0 && (
@@ -75,12 +75,7 @@ export default function SeatRenameConflictDialog({ open, conflicts, onClose }: P
                 }}
               >
                 {sections.map((c) => (
-                  <Chip
-                    key={c.id}
-                    color="error"
-                    variant="outlined"
-                    label={c.name}
-                  />
+                  <Chip key={c.id} color="error" variant="outlined" label={c.name} />
                 ))}
               </Stack>
             </Box>
@@ -90,7 +85,6 @@ export default function SeatRenameConflictDialog({ open, conflicts, onClose }: P
             <Box>
               <Typography
                 variant="subtitle2"
-             
                 gutterBottom
                 sx={{
                   fontWeight: 700,
@@ -109,12 +103,7 @@ export default function SeatRenameConflictDialog({ open, conflicts, onClose }: P
                 }}
               >
                 {tables.map((c) => (
-                  <Chip
-                    key={c.id}
-                    color="error"
-                    variant="outlined"
-                    label={c.name}
-                  />
+                  <Chip key={c.id} color="error" variant="outlined" label={c.name} />
                 ))}
               </Stack>
             </Box>

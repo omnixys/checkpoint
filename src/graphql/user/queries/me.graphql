@@ -4,7 +4,6 @@ query Me {
   }
 }
 
-
 query MePage {
   me {
     id
@@ -16,7 +15,6 @@ query MePage {
     }
   }
 }
-
 
 query CurrentUser {
   me {

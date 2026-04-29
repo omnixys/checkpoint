@@ -25,31 +25,23 @@ export interface InvitationBulkApproveDialogProps {
 
 export default function InvitationBulkApproveDialog({ logic }: InvitationBulkApproveDialogProps) {
   const theme = useTheme();
-    const tInvitation = useTypedTranslations("invitation");
-      const tCommon = useTypedTranslations("common");
+  const tInvitation = useTypedTranslations("invitation");
+  const tCommon = useTypedTranslations("common");
 
-  
-const LOCALE_OPTIONS = [
-  { value: "en-US", label: tCommon("language.en-US") },
-  { value: "de-DE", label: tCommon("language.de-DE") },
-];
-  
+  const LOCALE_OPTIONS = [
+    { value: "en-US", label: tCommon("language.en-US") },
+    { value: "de-DE", label: tCommon("language.de-DE") },
+  ];
+
   return (
-    <Dialog
-      open={logic.approveOpen}
-      onClose={logic.closeBulkApproveDialog}
-      fullWidth
-      maxWidth="md"
-    >
+    <Dialog open={logic.approveOpen} onClose={logic.closeBulkApproveDialog} fullWidth maxWidth="md">
       <DialogTitle> {tInvitation("bulkApprove.title")}</DialogTitle>
 
       <DialogContent>
         <Stack spacing={2.5} sx={{ pt: 1 }}>
           {logic.bulkApproveInvitationList.map((invitation) => {
             const entry = logic.bulkApproveEntries[invitation.id];
-            const seatOptions = entry
-              ? (logic.seatOptionsByEventId[entry.eventId] ?? [])
-              : [];
+            const seatOptions = entry ? (logic.seatOptionsByEventId[entry.eventId] ?? []) : [];
 
             return (
               <Box
@@ -92,10 +84,7 @@ const LOCALE_OPTIONS = [
                         label={tInvitation("bulkApprove.locale")}
                         value={entry?.locale ?? "en-US"}
                         onChange={(event) =>
-                          logic.setBulkApproveLocale(
-                            invitation.id,
-                            event.target.value,
-                          )
+                          logic.setBulkApproveLocale(invitation.id, event.target.value)
                         }
                       >
                         {LOCALE_OPTIONS.map((locale) => (
@@ -116,10 +105,7 @@ const LOCALE_OPTIONS = [
                         label={tInvitation("bulkApprove.event")}
                         value={entry?.eventId ?? invitation.eventId}
                         onChange={async (event) => {
-                          await logic.setBulkApproveEvent(
-                            invitation.id,
-                            event.target.value,
-                          );
+                          await logic.setBulkApproveEvent(invitation.id, event.target.value);
                         }}
                       >
                         {logic.allEventOptions.map((eventOption) => (
@@ -147,9 +133,7 @@ const LOCALE_OPTIONS = [
                           )
                         }
                       >
-                        <MenuItem value="">
-                          {tInvitation("bulkApprove.noSeat")}
-                        </MenuItem>
+                        <MenuItem value="">{tInvitation("bulkApprove.noSeat")}</MenuItem>
 
                         {seatOptions.map((seatOption) => (
                           <MenuItem key={seatOption.id} value={seatOption.id}>
@@ -179,17 +163,13 @@ const LOCALE_OPTIONS = [
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={logic.closeBulkApproveDialog}>
-          {" "}
-          {tCommon("cancel")}
-        </Button>
+        <Button onClick={logic.closeBulkApproveDialog}> {tCommon("cancel")}</Button>
 
         <Button
           variant="contained"
           onClick={() => logic.bulkApprove()}
           disabled={
-            logic.bulkApproveMutationLoading ||
-            logic.bulkApproveInvitationList.length === 0
+            logic.bulkApproveMutationLoading || logic.bulkApproveInvitationList.length === 0
           }
         >
           {logic.bulkApproveMutationLoading

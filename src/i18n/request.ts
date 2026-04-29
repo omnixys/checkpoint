@@ -36,15 +36,14 @@ export default getRequestConfig(async () => {
     locale = detectLocaleFromHeader(acceptLanguage);
   }
 
-  const language = locale.split("-")[0] ?? 'en';
+  const language = locale.split("-")[0] ?? "en";
   // console.log({locale, language})
 
   const messages = {
     auth: (await import(`../../messages/${language}/auth.json`)).default,
     event: (await import(`../../messages/${language}/event.json`)).default,
     // calendar: (await import(`../../messages/${language}/calendar.json`)).default,
-    invitation: (await import(`../../messages/${language}/invitation.json`))
-      .default,
+    invitation: (await import(`../../messages/${language}/invitation.json`)).default,
     // ticket: (await import(`../../messages/${language}/ticket.json`)).default,
     // security: (await import(`../../messages/${language}/security.json`)).default,
     // settings: (await import(`../../messages/${language}/settings.json`)).default,

@@ -6,7 +6,6 @@ query TicketsByEvent($eventId: ID!) {
   }
 }
 
-
 query TicketPage($eventId: ID!) {
   ticketsByEvent(eventId: $eventId) {
     id
@@ -26,4 +25,3 @@ query SecurityTicketPage($eventId: ID!) {
     currentState
   }
 }
-

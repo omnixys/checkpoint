@@ -22,7 +22,11 @@ import { CreateEventWizardStep } from "@/checkpoint/app/(protected)/event/new/ty
 
 import { useCreateEvent } from "@/checkpoint/app/(protected)/event/new/context/CreateEventContext";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { CreateEventDocument, CreateEventMutation, CreateEventMutationVariables } from "@/checkpoint/generated/graphql";
+import {
+  CreateEventDocument,
+  CreateEventMutation,
+  CreateEventMutationVariables,
+} from "@/checkpoint/generated/graphql";
 import { mapEvent } from "@/checkpoint/app/(protected)/event/new/types/event/event-draft.type";
 import { useUploadMedia } from "@/checkpoint/hooks/common/useUploadMedia";
 import { useMutation } from "@apollo/client/react";
@@ -30,27 +34,16 @@ import { useMutation } from "@apollo/client/react";
 export default function CreateEventWizard() {
   const theme = useTheme();
   const t = useTypedTranslations("create");
-  const [eventId, setEventId] = useState<string | undefined>(undefined)
+  const [eventId, setEventId] = useState<string | undefined>(undefined);
 
   /**
    * -------------------------------------------------------------
    * Wizard State
    * -------------------------------------------------------------
    */
-  const {
-    activeStep,
-    nextStep,
-    previousStep,
-    progress,
-    goTo,
-  } = useCreateEventWizard();
+  const { activeStep, nextStep, previousStep, progress, goTo } = useCreateEventWizard();
 
-  const { draft } =
-    useCreateEvent();
-  
-  
-  
-    
+  const { draft } = useCreateEvent();
 
   /**
    * -------------------------------------------------------------
@@ -60,10 +53,11 @@ export default function CreateEventWizard() {
   const { form } = useCreateEvent();
 
   const { upload } = useUploadMedia();
-  const [create] = useMutation<CreateEventMutation, CreateEventMutationVariables>(CreateEventDocument)
+  const [create] = useMutation<CreateEventMutation, CreateEventMutationVariables>(
+    CreateEventDocument,
+  );
 
-  
-const { uploads, clearUploads, patchSettings } = useCreateEvent();
+  const { uploads, clearUploads, patchSettings } = useCreateEvent();
 
   const handleCreateEvent2 = useCallback(async () => {
     /**
@@ -86,7 +80,7 @@ const { uploads, clearUploads, patchSettings } = useCreateEvent();
     });
 
     const newEventId = res.data?.createEvent.id;
-    setEventId(newEventId)
+    setEventId(newEventId);
 
     if (!newEventId) {
       throw new Error("Event creation failed");
@@ -107,41 +101,41 @@ const { uploads, clearUploads, patchSettings } = useCreateEvent();
     nextStep();
   }, [draft, uploads, create, upload, form, clearUploads]);
 
-const handleCreateEvent = useCallback(async () => {
-  const result = form.validate();
+  const handleCreateEvent = useCallback(async () => {
+    const result = form.validate();
 
-  if (!result.valid) {
-    scrollToFirstError(form.errors);
-    return;
-  }
+    if (!result.valid) {
+      scrollToFirstError(form.errors);
+      return;
+    }
 
-  /**
-   * 1. CREATE EVENT
-   */
-  const res = await create({
-    variables: { input: mapEvent(draft) },
-  });
+    /**
+     * 1. CREATE EVENT
+     */
+    const res = await create({
+      variables: { input: mapEvent(draft) },
+    });
 
-  const eventId = res.data?.createEvent.id;
+    const eventId = res.data?.createEvent.id;
 
-  if (!eventId) {
-    throw new Error("Event creation failed");
-  }
+    if (!eventId) {
+      throw new Error("Event creation failed");
+    }
 
-  /**
-   * 2. UPLOAD FILES
-   */
-  const uploaded: Record<string, string> = {};
+    /**
+     * 2. UPLOAD FILES
+     */
+    const uploaded: Record<string, string> = {};
 
-  for (const item of uploads) {
-    const result = await upload(eventId, item.file, item.type);
-    uploaded[item.type] = result.url;
-  }
+    for (const item of uploads) {
+      const result = await upload(eventId, item.file, item.type);
+      uploaded[item.type] = result.url;
+    }
 
-  clearUploads();
-  nextStep();
-}, [draft, uploads, upload, create, form]);
-  
+    clearUploads();
+    nextStep();
+  }, [draft, uploads, upload, create, form]);
+
   const handleNext = useCallback(() => {
     const result = form.validate();
 
@@ -152,7 +146,6 @@ const handleCreateEvent = useCallback(async () => {
 
     nextStep();
   }, [form, nextStep]);
-
 
   const renderStep = () => {
     switch (activeStep) {
@@ -166,15 +159,13 @@ const handleCreateEvent = useCallback(async () => {
         return <SettingsStep />;
 
       case CreateEventWizardStep.VISIBILITY:
-        return <VisibilityStep  />;
+        return <VisibilityStep />;
 
       case CreateEventWizardStep.EXPERIENCE:
         return <ExperienceStep />;
 
       case CreateEventWizardStep.CHILDREN:
-        return (
-          <ChildrenStep />
-        );
+        return <ChildrenStep />;
 
       case CreateEventWizardStep.SUMMARY:
         return <SummaryStep draft={draft} onEdit={goTo} />;
@@ -219,9 +210,7 @@ const handleCreateEvent = useCallback(async () => {
           }}
         >
           {/* HEADER */}
-          {!isSuccess && (
-            <CreateEventHeader activeStep={activeStep} progress={progress} />
-          )}
+          {!isSuccess && <CreateEventHeader activeStep={activeStep} progress={progress} />}
 
           {/* STEP CONTENT */}
           <AnimatePresence mode="wait">

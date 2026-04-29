@@ -82,9 +82,7 @@ function datetimeValue(value?: string | null) {
 export default function EventSettingsSection({ settings, actions }: Props) {
   const theme = useTheme();
 
-  const [local, setLocal] = useState<SettingsType>(() =>
-    normalizeSettings(settings),
-  );
+  const [local, setLocal] = useState<SettingsType>(() => normalizeSettings(settings));
   const [dirty, setDirty] = useState(false);
 
   useEffect(() => {
@@ -92,10 +90,7 @@ export default function EventSettingsSection({ settings, actions }: Props) {
     setDirty(false);
   }, [settings]);
 
-  const update = <K extends keyof SettingsType>(
-    key: K,
-    value: SettingsType[K],
-  ) => {
+  const update = <K extends keyof SettingsType>(key: K, value: SettingsType[K]) => {
     setLocal((prev) => ({ ...prev, [key]: value }));
     setDirty(true);
   };
@@ -250,9 +245,7 @@ export default function EventSettingsSection({ settings, actions }: Props) {
               fullWidth
               label="Approval Mode"
               value={local.approvalMode ?? "MANUAL"}
-              onChange={(e) =>
-                update("approvalMode", e.target.value as InvitationApprovalMode)
-              }
+              onChange={(e) => update("approvalMode", e.target.value as InvitationApprovalMode)}
               sx={inputSx}
             >
               {APPROVAL_MODES.map((mode) => (
@@ -276,9 +269,7 @@ export default function EventSettingsSection({ settings, actions }: Props) {
               control={
                 <Switch
                   checked={Boolean(local.requireApprovalForPlusOnes)}
-                  onChange={(e) =>
-                    update("requireApprovalForPlusOnes", e.target.checked)
-                  }
+                  onChange={(e) => update("requireApprovalForPlusOnes", e.target.checked)}
                 />
               }
               label="Automatically Approve Plus Ones"
@@ -361,9 +352,7 @@ export default function EventSettingsSection({ settings, actions }: Props) {
               control={
                 <Switch
                   checked={Boolean(local.allowGuestSeatSelection)}
-                  onChange={(e) =>
-                    update("allowGuestSeatSelection", e.target.checked)
-                  }
+                  onChange={(e) => update("allowGuestSeatSelection", e.target.checked)}
                 />
               }
               label="Allow Guest Seat Selection"
@@ -372,9 +361,7 @@ export default function EventSettingsSection({ settings, actions }: Props) {
               control={
                 <Switch
                   checked={Boolean(local.allowSeatOverbooking)}
-                  onChange={(e) =>
-                    update("allowSeatOverbooking", e.target.checked)
-                  }
+                  onChange={(e) => update("allowSeatOverbooking", e.target.checked)}
                 />
               }
               label="Allow Seat Overbooking"
@@ -432,12 +419,7 @@ export default function EventSettingsSection({ settings, actions }: Props) {
       </Box>
 
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button
-          disabled={!dirty}
-          onClick={handleSave}
-          startIcon={<SaveIcon />}
-          variant="contained"
-        >
+        <Button disabled={!dirty} onClick={handleSave} startIcon={<SaveIcon />} variant="contained">
           Save Settings
         </Button>
       </Box>

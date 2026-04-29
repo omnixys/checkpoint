@@ -28,11 +28,7 @@ export function whatsappShareUrl(text: string): string {
 }
 
 /** mailto:-URL (optional) */
-export function mailtoUrl(
-  to: string | null,
-  subject: string,
-  body: string,
-): string {
+export function mailtoUrl(to: string | null, subject: string, body: string): string {
   const addr = to ?? "";
   const q = new URLSearchParams({ subject, body }).toString();
   return `mailto:${addr}?${q}`;
@@ -65,11 +61,7 @@ export async function copyToClipboard(text: string): Promise<boolean> {
 }
 
 /** Native Share (wenn verfügbar), sonst false zurück. */
-export async function tryNativeShare(
-  title: string,
-  text: string,
-  url: string,
-): Promise<boolean> {
+export async function tryNativeShare(title: string, text: string, url: string): Promise<boolean> {
   try {
     if ((navigator as any)?.share) {
       await (navigator as any).share({ title, text, url });

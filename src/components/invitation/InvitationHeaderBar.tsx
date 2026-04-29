@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  alpha,
-  Box,
-  IconButton,
-  Stack,
-  Tooltip,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { alpha, Box, IconButton, Stack, Tooltip, Typography, useTheme } from "@mui/material";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
@@ -47,10 +39,7 @@ export function InvitationHeaderBar({ collapsed, onToggle, logic }: Props) {
   const copyInvitationLink = async () => {
     if (!eventId) return;
 
-    const url = new URL(
-      `${env.CHECKPOINT_BASE_PATH}rsvp`,
-      window.location.origin,
-    );
+    const url = new URL(`${env.CHECKPOINT_BASE_PATH}rsvp`, window.location.origin);
     url.searchParams.set("eventId", eventId);
 
     await copyToClipboard(url.toString());
@@ -204,10 +193,7 @@ export function InvitationHeaderBar({ collapsed, onToggle, logic }: Props) {
                 py: 1,
               }}
             >
-              <Typography
-                variant={collapsed ? "h6" : "h5"}
-                sx={{ fontWeight: 700 }}
-              >
+              <Typography variant={collapsed ? "h6" : "h5"} sx={{ fontWeight: 700 }}>
                 {t("title")}
               </Typography>
 

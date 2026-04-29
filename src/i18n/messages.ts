@@ -16,9 +16,6 @@ import common from "../../messages/en/common.json";
 import create from "../../messages/en/create.json";
 import onboarding from "../../messages/en/onboarding.json";
 
-
-
-
 export const messages = {
   auth,
   event,
@@ -36,7 +33,7 @@ export const messages = {
   rsvp,
   common,
   create,
-  onboarding
+  onboarding,
 };
 
 export type Messages = typeof messages;

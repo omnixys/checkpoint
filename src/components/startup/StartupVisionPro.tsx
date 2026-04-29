@@ -23,7 +23,7 @@ import { omnixysPresets } from "@/checkpoint/themes/colors/omnixysPresets";
  */
 export default function StartupVisionPro(): JSX.Element | null {
   const { scheme, mode } = useThemeMode();
-  const theme = useTheme()
+  const theme = useTheme();
 
   /**
    * Resolve preset once → guarantees no undefined access
@@ -38,8 +38,7 @@ export default function StartupVisionPro(): JSX.Element | null {
   /**
    * Canvas reference
    */
-  const canvasRef: MutableRefObject<HTMLCanvasElement | null> =
-    useRef<HTMLCanvasElement>(null);
+  const canvasRef: MutableRefObject<HTMLCanvasElement | null> = useRef<HTMLCanvasElement>(null);
 
   /**
    * Viewport size tracking

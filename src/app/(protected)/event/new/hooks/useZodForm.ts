@@ -23,12 +23,10 @@ export type ValidationResult<T> =
       errors: ValidationErrors;
     };
 
-
 export type UseZodFormOptions<TSchema extends ZodTypeAny> = {
   schema: TSchema;
   getValues: () => unknown;
 };
-
 
 export type FieldProps = {
   error: boolean;
@@ -111,28 +109,28 @@ export function useZodForm<TSchema extends ZodTypeAny>({
    * Validate whole form
    * -------------------------------------------------------------
    */
-const validate = useCallback((): ValidationResult<zInfer<TSchema>> => {
-  const values = getValues();
-  const result = schema.safeParse(values);
+  const validate = useCallback((): ValidationResult<zInfer<TSchema>> => {
+    const values = getValues();
+    const result = schema.safeParse(values);
 
-  if (result.success) {
-    setErrors({});
+    if (result.success) {
+      setErrors({});
+      return {
+        valid: true,
+        data: result.data,
+        errors: {},
+      };
+    }
+
+    const mapped = mapZodErrors(result.error);
+    setErrors(mapped);
+
     return {
-      valid: true,
-      data: result.data,
-      errors: {},
+      valid: false,
+      data: null,
+      errors: mapped,
     };
-  }
-
-  const mapped = mapZodErrors(result.error);
-  setErrors(mapped);
-
-  return {
-    valid: false,
-    data: null,
-    errors: mapped,
-  };
-}, [schema, getValues]);
+  }, [schema, getValues]);
 
   /**
    * -------------------------------------------------------------

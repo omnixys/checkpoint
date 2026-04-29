@@ -43,7 +43,7 @@ export function VisionOSSuccessSheet({
             boxShadow: "0 15px 60px rgba(0,0,0,0.25), inset 0 0 40px rgba(255,255,255,0.3)",
           }}
         >
-          <Typography  sx={{ mb: 2, color: "rgba(0,0,0,0.85)",fontSize:26, fontWeight:700, }}>
+          <Typography sx={{ mb: 2, color: "rgba(0,0,0,0.85)", fontSize: 26, fontWeight: 700 }}>
             Import erfolgreich!
           </Typography>
 

@@ -6,7 +6,6 @@ import { OmnixysColorScheme } from "@/checkpoint/themes/paletteTypes";
 import { motion, useTransform } from "framer-motion";
 import { MotionValue } from "framer-motion";
 
-
 type Props = {
   tiltX: MotionValue<number>;
   tiltY: MotionValue<number>;

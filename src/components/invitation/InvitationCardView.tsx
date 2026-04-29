@@ -24,34 +24,28 @@ import { env } from "@/checkpoint/lib/env";
 import { useState } from "react";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
-export default function InvitationCardView({
-  logic,
-}: {
-  logic: InvitationLogic;
-}) {
+export default function InvitationCardView({ logic }: { logic: InvitationLogic }) {
   const theme = useTheme();
   const [copiedMap, setCopiedMap] = useState<Record<string, boolean>>({});
-  
-    const tInvitation = useTypedTranslations("invitation");
-    const tCommon = useTypedTranslations("common");
 
-    const handleCopy = (id: string) => {
-      navigator.clipboard.writeText(
-        `${window.location.origin}${env.CHECKPOINT_BASE_PATH}rsvp/${id}`,
-      );
+  const tInvitation = useTypedTranslations("invitation");
+  const tCommon = useTypedTranslations("common");
 
-      setCopiedMap((prev) => ({ ...prev, [id]: true }));
+  const handleCopy = (id: string) => {
+    navigator.clipboard.writeText(`${window.location.origin}${env.CHECKPOINT_BASE_PATH}rsvp/${id}`);
 
-      setTimeout(() => {
-        setCopiedMap((prev) => ({ ...prev, [id]: false }));
-      }, 900);
-    };
-  
+    setCopiedMap((prev) => ({ ...prev, [id]: true }));
+
+    setTimeout(() => {
+      setCopiedMap((prev) => ({ ...prev, [id]: false }));
+    }, 900);
+  };
+
   return (
     <Stack spacing={2}>
       {logic.invitations.map((inv) => {
         const copied = copiedMap[inv.id] ?? false;
-      
+
         return (
           <Paper
             key={inv.id}
@@ -80,10 +74,7 @@ export default function InvitationCardView({
                   {inv.firstName} {inv.lastName}
                 </Typography>
 
-                <InvitationStatusChip
-                  status={inv.status}
-                  rsvp={inv.rsvpChoice ?? undefined}
-                />
+                <InvitationStatusChip status={inv.status} rsvp={inv.rsvpChoice ?? undefined} />
               </Stack>
 
               {/* CONTACT */}
@@ -114,10 +105,7 @@ export default function InvitationCardView({
                   /rsvp/{inv.id.slice(0, 8)}...
                 </Typography>
 
-                <Tooltip
-                  title={copied ? tCommon("copy") : tInvitation("copyRsvp")}
-                  open={copied}
-                >
+                <Tooltip title={copied ? tCommon("copy") : tInvitation("copyRsvp")} open={copied}>
                   <IconButton
                     size="small"
                     onClick={(e) => {

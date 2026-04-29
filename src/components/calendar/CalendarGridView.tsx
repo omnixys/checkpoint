@@ -8,7 +8,7 @@ import { useTheme } from "@mui/material/styles";
 type Props = {
   date: Date;
   mode: "month" | "year";
-  events: GetMyEventCalendarDataQuery['myEvents'];
+  events: GetMyEventCalendarDataQuery["myEvents"];
   onSelectDay: (date: Date) => void;
   onSelectMonth: (month: number) => void;
 };
@@ -40,8 +40,7 @@ export default function CalendarGridView({
           const monthEvents = events.filter(
             (e) =>
               new Date(e.settings?.startsAt).getMonth() === m &&
-              new Date(e.settings?.startsAt).getFullYear() ===
-                date.getFullYear(),
+              new Date(e.settings?.startsAt).getFullYear() === date.getFullYear(),
           );
 
           return (
@@ -105,9 +104,7 @@ export default function CalendarGridView({
   );
 
   return (
-    <Box
-      sx={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 1 }}
-    >
+    <Box sx={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 1 }}>
       {days.map((d) => {
         const hasEvents = getEventsForDay(events, d).length > 0;
 

@@ -1,13 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  Box,
-  CircularProgress,
-  IconButton,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { Box, CircularProgress, IconButton, Tooltip, Typography } from "@mui/material";
 import FlashOffIcon from "@mui/icons-material/FlashOff";
 import FlashOnIcon from "@mui/icons-material/FlashOn";
 import { BrowserQRCodeReader, IScannerControls } from "@zxing/browser";
@@ -40,11 +34,7 @@ declare global {
 
   interface BarcodeDetector {
     detect(
-      source:
-        | HTMLVideoElement
-        | HTMLImageElement
-        | ImageBitmap
-        | HTMLCanvasElement,
+      source: HTMLVideoElement | HTMLImageElement | ImageBitmap | HTMLCanvasElement,
     ): Promise<DetectedBarcode[]>;
   }
 
@@ -109,8 +99,7 @@ export default function WebCameraScanner({ onDetect }: Props) {
     !!navigator.mediaDevices;
 
   const isSafari =
-    typeof navigator !== "undefined" &&
-    /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    typeof navigator !== "undefined" && /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
   /* -----------------------------------------------------------------------
    * Stop everything
@@ -157,21 +146,17 @@ export default function WebCameraScanner({ onDetect }: Props) {
         if (!supportsNativeBarcode) {
           const reader = new BrowserQRCodeReader();
 
-          const controls = await reader.decodeFromVideoDevice(
-            undefined,
-            video,
-            async (result) => {
-              if (!result || !active) return;
+          const controls = await reader.decodeFromVideoDevice(undefined, video, async (result) => {
+            if (!result || !active) return;
 
-              stop();
-              setState("VERIFYING");
+            stop();
+            setState("VERIFYING");
 
-              const ok = await onDetect(result.getText());
-              setVerdict(ok ? "success" : "error");
-              playBeep(ok ? "success" : "error");
-              setState("RESULT");
-            },
-          );
+            const ok = await onDetect(result.getText());
+            setVerdict(ok ? "success" : "error");
+            playBeep(ok ? "success" : "error");
+            setState("RESULT");
+          });
 
           controlsRef.current = controls;
           return;
@@ -320,12 +305,7 @@ export default function WebCameraScanner({ onDetect }: Props) {
         </Box>
       ) : null}
 
-      <video
-        ref={videoRef}
-        playsInline
-        muted
-        style={{ width: "100%", display: "block" }}
-      />
+      <video ref={videoRef} playsInline muted style={{ width: "100%", display: "block" }} />
 
       <Box
         sx={{

@@ -30,8 +30,7 @@ export default function SummaryStep({ draft, onEdit }: Props) {
    * Section Error Mapping
    * -------------------------------------------------------------
    */
-  const hasError = (prefix: string) =>
-    Object.keys(errors).some((k) => k.startsWith(prefix));
+  const hasError = (prefix: string) => Object.keys(errors).some((k) => k.startsWith(prefix));
 
   return (
     <Box sx={{ maxWidth: 1000, mx: "auto" }}>
@@ -61,10 +60,7 @@ export default function SummaryStep({ draft, onEdit }: Props) {
                 label={t("address.city")}
                 value={`${draft.address.postalCode ?? ""} ${draft.address.city ?? ""}`}
               />
-              <Item
-                label={t("address.country")}
-                value={draft.address.country}
-              />
+              <Item label={t("address.country")} value={draft.address.country} />
             </>
           ) : (
             <MutedText>{t("summary.noAddress")}</MutedText>
@@ -76,14 +72,8 @@ export default function SummaryStep({ draft, onEdit }: Props) {
           error={hasError("settings")}
           onClick={() => onEdit(CreateEventWizardStep.SETTINGS)}
         >
-          <Item
-            label={t("settings.maxSeats")}
-            value={String(draft.settings.maxSeats)}
-          />
-          <Item
-            label={t("settings.rotateSeconds")}
-            value={String(draft.settings.rotateSeconds)}
-          />
+          <Item label={t("settings.maxSeats")} value={String(draft.settings.maxSeats)} />
+          <Item label={t("settings.rotateSeconds")} value={String(draft.settings.rotateSeconds)} />
         </Section>
 
         <Section
@@ -91,10 +81,7 @@ export default function SummaryStep({ draft, onEdit }: Props) {
           error={hasError("settings.allowPublic")}
           onClick={() => onEdit(CreateEventWizardStep.VISIBILITY)}
         >
-          <BooleanItem
-            label={t("visibility.isPublic")}
-            value={draft.settings.isPublic}
-          />
+          <BooleanItem label={t("visibility.isPublic")} value={draft.settings.isPublic} />
           <BooleanItem
             label={t("visibility.allowPublicRsvp")}
             value={draft.settings.allowPublicRsvp}
@@ -110,11 +97,7 @@ export default function SummaryStep({ draft, onEdit }: Props) {
             label={t("experience.category")}
             value={
               draft.settings.category
-                ? formatEnum(
-                    t,
-                    "experience.categories",
-                    draft.settings.category,
-                  )
+                ? formatEnum(t, "experience.categories", draft.settings.category)
                 : null
             }
           />
@@ -127,12 +110,7 @@ export default function SummaryStep({ draft, onEdit }: Props) {
         >
           {draft.children?.length ? (
             draft.children.map((child) => {
-              const date = formatChildEventDateRange(
-                child.startsAt,
-                child.endsAt,
-                "de-DE",
-                t,
-              );
+              const date = formatChildEventDateRange(child.startsAt, child.endsAt, "de-DE", t);
 
               return (
                 <Box key={child.id}>
@@ -174,9 +152,7 @@ function Section({
       sx={{
         p: 3,
         borderRadius: 4,
-        border: `1px solid ${
-          error ? theme.palette.error.main : theme.palette.divider
-        }`,
+        border: `1px solid ${error ? theme.palette.error.main : theme.palette.divider}`,
         cursor: "pointer",
         transition: "all 0.2s ease",
 
@@ -189,9 +165,7 @@ function Section({
       <Stack direction="row" sx={{ justifyContent: "space-between", mb: 2 }}>
         <Typography sx={{ fontWeight: 600 }}>{title}</Typography>
 
-        {error && (
-          <Chip size="small" color="error" label={t("common.incomplete")} />
-        )}
+        {error && <Chip size="small" color="error" label={t("common.incomplete")} />}
       </Stack>
 
       <Stack spacing={1}>{children}</Stack>

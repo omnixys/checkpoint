@@ -23,7 +23,8 @@ export type ScanResult = {
     | "WRONG_EVENT"
     | "ALREADY_INSIDE"
     | "DEVICE_MISMATCH"
-    | "OK" | undefined;
+    | "OK"
+    | undefined;
 
   /**
    * Device binding (present only if ticket is known)

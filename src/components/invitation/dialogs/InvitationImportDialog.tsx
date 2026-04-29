@@ -28,11 +28,7 @@ import VisionPreviewTable from "@/checkpoint/components/vision/VisionPreviewTabl
 /* ---------------------------------------------------------------------------
  * COMPONENT
  * ------------------------------------------------------------------------- */
-export default function InvitationImportDialog({
-  logic,
-}: {
-  logic: InvitationLogic;
-}) {
+export default function InvitationImportDialog({ logic }: { logic: InvitationLogic }) {
   const logger = getLogger("InvitationImportDialog");
 
   const [file, setFile] = useState<File | null>(null);
@@ -41,10 +37,8 @@ export default function InvitationImportDialog({
   const [showDuplicateInfo, setShowDuplicateInfo] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const [importCount, setImportCount] = useState(0);
-    const [mappingOpen, setMappingOpen] = useState(false);
-    const [mapping, setMapping] = useState<Record<string, string>>({});
-    
-
+  const [mappingOpen, setMappingOpen] = useState(false);
+  const [mapping, setMapping] = useState<Record<string, string>>({});
 
   /* -----------------------------------------------------------------------
    * RESET STATE
@@ -60,78 +54,76 @@ export default function InvitationImportDialog({
   /* -----------------------------------------------------------------------
    * HANDLE FILE → UPLOAD + PREVIEW
    * --------------------------------------------------------------------- */
-async function handleFile(f: File | null) {
-  if (!f) return;
+  async function handleFile(f: File | null) {
+    if (!f) return;
 
-  setFile(f);
-  setErrors([]);
+    setFile(f);
+    setErrors([]);
 
-  try {
-    /**
-     * ---------------- Upload ----------------
-     */
-    const uploadResult = await logic.uploadFile(f);
+    try {
+      /**
+       * ---------------- Upload ----------------
+       */
+      const uploadResult = await logic.uploadFile(f);
 
-    if (!uploadResult?.key) {
-      throw new Error("Upload returned no key");
+      if (!uploadResult?.key) {
+        throw new Error("Upload returned no key");
+      }
+
+      /**
+       * ---------------- Preview ----------------
+       */
+      const preview = await logic.previewFile({
+        key: uploadResult.key,
+        type: uploadResult.type,
+      });
+
+      if (!preview) {
+        throw new Error("Preview returned no data");
+      }
+
+      /**
+       * ---------------- Mapping ----------------
+       */
+      if (preview?.mapping) {
+        const required = ["firstName", "lastName"];
+
+        const missing = required.filter((r) => !Object.values(preview.mapping).includes(r));
+
+        if (missing.length > 0) {
+          setMapping(preview.mapping);
+          setMappingOpen(true);
+        }
+      }
+
+      /**
+       * ---------------- Backend Validation ----------------
+       */
+      if (preview.errors?.length) {
+        setErrors(preview.errors);
+      }
+    } catch (err: unknown) {
+      console.error("🔥 FULL ERROR:", err);
+
+      let message = "Upload oder Preview fehlgeschlagen";
+
+      if (err instanceof Error) {
+        message = err.message;
+      } else if (typeof err === "string") {
+        message = err;
+      }
+
+      setErrors([message]);
+
+      logger.error("Upload/Preview failed", {
+        message,
+        raw: err,
+        fileName: f.name,
+        fileSize: f.size,
+        fileType: f.type,
+      });
     }
-
-    /**
-     * ---------------- Preview ----------------
-     */
-const preview = await logic.previewFile({
-  key: uploadResult.key,
-  type: uploadResult.type,
-});
-
-    if (!preview) {
-      throw new Error("Preview returned no data");
-    }
-
-    /**
-     * ---------------- Mapping ----------------
-     */
-if (preview?.mapping) {
-  const required = ["firstName", "lastName"];
-
-  const missing = required.filter(
-    (r) => !Object.values(preview.mapping).includes(r),
-  );
-
-  if (missing.length > 0) {
-    setMapping(preview.mapping);
-    setMappingOpen(true);
   }
-}
-
-    /**
-     * ---------------- Backend Validation ----------------
-     */
-    if (preview.errors?.length) {
-      setErrors(preview.errors);
-    }
-  } catch (err: unknown) {
-  console.error("🔥 FULL ERROR:", err);
-
-  let message = "Upload oder Preview fehlgeschlagen";
-
-  if (err instanceof Error) {
-    message = err.message;
-  } else if (typeof err === "string") {
-    message = err;
-  }
-
-  setErrors([message]);
-
-  logger.error("Upload/Preview failed", {
-    message,
-    raw: err,
-    fileName: f.name,
-    fileSize: f.size,
-    fileType: f.type,
-  });
-}
-}
 
   /* -----------------------------------------------------------------------
    * SUBMIT (IMPORT)
@@ -227,11 +219,7 @@ if (preview?.mapping) {
         <DialogActions>
           <Button onClick={() => logic.setImportOpen(false)}>Abbrechen</Button>
 
-          <Button
-            variant="contained"
-            disabled={!logic.key || !logic.preview}
-            onClick={submit}
-          >
+          <Button variant="contained" disabled={!logic.key || !logic.preview} onClick={submit}>
             Import starten
           </Button>
         </DialogActions>
@@ -262,10 +250,7 @@ if (preview?.mapping) {
         open={showDuplicateInfo}
         onClose={() => setShowDuplicateInfo(false)}
         title="Duplikate erkannt"
-        lines={[
-          "Einige Einträge existieren bereits.",
-          "Diese wurden automatisch übersprungen.",
-        ]}
+        lines={["Einige Einträge existieren bereits.", "Diese wurden automatisch übersprungen."]}
       />
     </>
   );

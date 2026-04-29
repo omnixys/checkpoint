@@ -44,7 +44,7 @@ import { useEffect, useMemo, useState } from "react";
 
 export default function GuestListClientPage() {
   const t = useTypedTranslations("event");
-  
+
   const { isMobile, isTablet, isDesktop } = useDevice();
 
   const { isAuthenticated } = useAuth();
@@ -119,12 +119,12 @@ export default function GuestListClientPage() {
     const hasOutside = guests.some((g) => g.presence !== "INSIDE");
     const hasNotArrived = guests.some((g) => !g.checkedInAt);
 
-return [
-  { key: "ALL", label: t("filter.all"), visible: true },
-  { key: "CHECKED_IN", label: t("filter.checkedIn"), visible: hasCheckedIn },
-  { key: "INSIDE", label: t("filter.inside"), visible: hasInside },
-  { key: "OUTSIDE", label: t("filter.outside"), visible: hasOutside },
-  { key: "NOT_ARRIVED", label: t("filter.notArrived"), visible: hasNotArrived },
+    return [
+      { key: "ALL", label: t("filter.all"), visible: true },
+      { key: "CHECKED_IN", label: t("filter.checkedIn"), visible: hasCheckedIn },
+      { key: "INSIDE", label: t("filter.inside"), visible: hasInside },
+      { key: "OUTSIDE", label: t("filter.outside"), visible: hasOutside },
+      { key: "NOT_ARRIVED", label: t("filter.notArrived"), visible: hasNotArrived },
     ].filter((f) => f.visible);
   }, [guests]);
 
@@ -155,8 +155,7 @@ return [
       checkedIn: guestsFiltered.filter((g) => g.status === "CHECKED_IN").length,
       inside: guestsFiltered.filter((g) => g.presence === "INSIDE").length,
       outside: guestsFiltered.filter((g) => g.presence === "OUTSIDE").length,
-      notArrived: guestsFiltered.filter((g) => g.status === "NOT_ARRIVED")
-        .length,
+      notArrived: guestsFiltered.filter((g) => g.status === "NOT_ARRIVED").length,
     };
   }, [guestsFiltered]);
 
@@ -361,14 +360,9 @@ return [
             />
 
             <FormControl sx={{ minWidth: 220 }}>
-              <Select
-                value={filter}
-                onChange={(e) => setFilter(e.target.value as Filter)}
-              >
+              <Select value={filter} onChange={(e) => setFilter(e.target.value as Filter)}>
                 <MenuItem value="ALL">{t("filter.allGuests")}</MenuItem>
-                <MenuItem value="NOT_ARRIVED">
-                  {t("filter.notArrived")}
-                </MenuItem>
+                <MenuItem value="NOT_ARRIVED">{t("filter.notArrived")}</MenuItem>
                 <MenuItem value="CHECKED_IN">{t("filter.checkedIn")}</MenuItem>
                 <MenuItem value="INSIDE">{t("filter.inside")}</MenuItem>
                 <MenuItem value="OUTSIDE">{t("filter.outside")}</MenuItem>
@@ -387,10 +381,7 @@ return [
 
             <FormControlLabel
               control={
-                <Switch
-                  checked={largeText}
-                  onChange={(e) => setLargeText(e.target.checked)}
-                />
+                <Switch checked={largeText} onChange={(e) => setLargeText(e.target.checked)} />
               }
               label={t("ui.largeText")}
             />
@@ -409,9 +400,7 @@ return [
               >
                 {t("guests.securityTitle")}
               </Typography>
-              <Typography color={apple.secondaryLabel}>
-                {t("guests.subtitle")}{" "}
-              </Typography>
+              <Typography color={apple.secondaryLabel}>{t("guests.subtitle")} </Typography>
             </Stack>
             <Stack
               direction={{ xs: "row", md: "row" }}
@@ -433,10 +422,7 @@ return [
 
               <FormControlLabel
                 control={
-                  <Switch
-                    checked={largeText}
-                    onChange={(e) => setLargeText(e.target.checked)}
-                  />
+                  <Switch checked={largeText} onChange={(e) => setLargeText(e.target.checked)} />
                 }
                 label={t("ui.largeText")}
               />
@@ -503,11 +489,8 @@ return [
                     cursor: "pointer",
                     backdropFilter: "blur(24px)",
                     backgroundColor:
-                      filter === opt.key
-                        ? apple.systemFill
-                        : "rgba(255,255,255,0.08)",
-                    color:
-                      filter === opt.key ? apple.label : apple.secondaryLabel,
+                      filter === opt.key ? apple.systemFill : "rgba(255,255,255,0.08)",
+                    color: filter === opt.key ? apple.label : apple.secondaryLabel,
                     border: `1px solid ${apple.separator}`,
                   }}
                 >
@@ -566,11 +549,7 @@ return [
               >
                 <Chip
                   size="small"
-                  label={
-                    guest.checkedInAt
-                      ? t("guests.checkedIn")
-                      : t("guests.notArrived")
-                  }
+                  label={guest.checkedInAt ? t("guests.checkedIn") : t("guests.notArrived")}
                   sx={{
                     bgcolor: guest.checkedInAt
                       ? theme.palette.success.light + "22"
@@ -584,11 +563,7 @@ return [
 
                 <Chip
                   size="small"
-                  label={
-                    guest.presence === "INSIDE"
-                      ? t("guests.inside")
-                      : t("guests.outside")
-                  }
+                  label={guest.presence === "INSIDE" ? t("guests.inside") : t("guests.outside")}
                 />
               </Stack>
             </Paper>
@@ -634,10 +609,7 @@ return [
 
             <FormControlLabel
               control={
-                <Switch
-                  checked={largeText}
-                  onChange={(e) => setLargeText(e.target.checked)}
-                />
+                <Switch checked={largeText} onChange={(e) => setLargeText(e.target.checked)} />
               }
               label={t("ui.largeText")}
             />

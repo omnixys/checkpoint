@@ -19,31 +19,28 @@ interface Props {
   loadGlobalEventInvitationList?: boolean | undefined;
 }
 
-
 export default function useInvitationListQuery({
   eventIds,
   loadGlobalEventInvitationList = false,
 }: Props) {
+  const globalEventInvitationListQueryResult = useQuery<
+    GetGlobalEventInvitationListQuery,
+    GetGlobalEventInvitationListQueryVariables
+  >(GetGlobalEventInvitationListDocument, {
+    variables: { eventIds: eventIds ?? [] },
+    skip: !eventIds || eventIds.length === 0 || !loadGlobalEventInvitationList,
+  });
 
-    const globalEventInvitationListQueryResult = useQuery<
-      GetGlobalEventInvitationListQuery,
-      GetGlobalEventInvitationListQueryVariables
-    >(GetGlobalEventInvitationListDocument, {
-      variables: { eventIds: eventIds ?? [] },
-      skip: !eventIds || eventIds.length === 0 || !loadGlobalEventInvitationList
-    });
-  
   const globalEventInvitationList = globalEventInvitationListQueryResult.data?.getFullByEventIds;
   const invitationMap = new Map(
     globalEventInvitationList?.map((invitation) => [invitation.id, invitation]) ?? [],
   );
-  
-  
+
   return {
     invitationMap,
     globalEventInvitationList,
     globalEventInvitationListLoading: globalEventInvitationListQueryResult.loading,
-    globalEventInvitationListError:   globalEventInvitationListQueryResult.error,
+    globalEventInvitationListError: globalEventInvitationListQueryResult.error,
     globalEventInvitationListRefetch: globalEventInvitationListQueryResult.refetch,
   };
 }

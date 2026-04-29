@@ -64,9 +64,7 @@ export default function SeatDetailDrawer({
           <Typography>Status: {seat.guestId ? "Besetzt" : "Frei"}</Typography>
           {seat.guestId && <Typography>Gast: {fullName(seat)}</Typography>}
 
-          {seat.invitationId && (
-            <Typography>Einladung: {fullName(seat)}</Typography>
-          )}
+          {seat.invitationId && <Typography>Einladung: {fullName(seat)}</Typography>}
 
           <Typography>Notiz: {seat.note ?? "Keine"}</Typography>
 

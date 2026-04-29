@@ -13,12 +13,11 @@ query GetSeatInfo($seatId: ID!) {
   }
 }
 
-
 query GetFullSeatInfo($seatId: ID!) {
   seat(id: $seatId) {
     label
     number
-    
+
     section {
       name
       id
@@ -30,5 +29,3 @@ query GetFullSeatInfo($seatId: ID!) {
     }
   }
 }
-
-

@@ -1,7 +1,4 @@
-import {
-  OmnixysColorScheme,
-  OmnixysPresetExtended,
-} from "@/checkpoint/themes/paletteTypes";
+import { OmnixysColorScheme, OmnixysPresetExtended } from "@/checkpoint/themes/paletteTypes";
 
 export const omnixysPresets: Record<OmnixysColorScheme, OmnixysPresetExtended> = {
   original: {

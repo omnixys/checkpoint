@@ -14,12 +14,8 @@ const MotionBox = motion.create(Box);
 export default function EventNotificationClientPage() {
   const theme = useTheme();
 
-  const [channel, setChannel] = useState<NotificationChannel>(
-    NotificationChannel.WHATSAPP,
-  );
-  const [selectedChatId, setSelectedChatId] = useState<string | null>(
-    "wa-chat-1",
-  );
+  const [channel, setChannel] = useState<NotificationChannel>(NotificationChannel.WHATSAPP);
+  const [selectedChatId, setSelectedChatId] = useState<string | null>("wa-chat-1");
 
   function handleChannelChange(nextChannel: NotificationChannel) {
     setChannel(nextChannel);
@@ -65,10 +61,7 @@ export default function EventNotificationClientPage() {
           flexDirection: "column",
         }}
       >
-        <NotificationChannelTabs
-          value={channel}
-          onChange={handleChannelChange}
-        />
+        <NotificationChannelTabs value={channel} onChange={handleChannelChange} />
 
         <Box
           sx={{
@@ -97,10 +90,7 @@ export default function EventNotificationClientPage() {
                 backgroundColor: tone.panelBg,
               }}
             >
-              <NotificationConversationPanel
-                channel={channel}
-                chatId={selectedChatId}
-              />
+              <NotificationConversationPanel channel={channel} chatId={selectedChatId} />
             </MotionBox>
           </AnimatePresence>
         </Box>

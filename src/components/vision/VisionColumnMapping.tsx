@@ -22,21 +22,9 @@ type Props = {
   onClose: () => void;
 };
 
-const TARGET_FIELDS = [
-  "firstName",
-  "lastName",
-  "phone",
-  "email",
-  "maxPlusOnes",
-];
+const TARGET_FIELDS = ["firstName", "lastName", "phone", "email", "maxPlusOnes"];
 
-export default function VisionColumnMapping({
-  open,
-  headers,
-  mapping,
-  onChange,
-  onClose,
-}: Props) {
+export default function VisionColumnMapping({ open, headers, mapping, onChange, onClose }: Props) {
   function update(header: string, value: string) {
     onChange({
       ...mapping,

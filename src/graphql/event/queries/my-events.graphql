@@ -1,6 +1,5 @@
 # import EventFull from "../fragments/event.fragment.graphql"
 
-
 query MyEvents {
   myEvents {
     id

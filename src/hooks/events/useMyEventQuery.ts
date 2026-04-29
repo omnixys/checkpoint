@@ -2,7 +2,6 @@ import {
   EventPageDocument,
   EventPageQuery,
   EventPageQueryVariables,
-
   GetEventMetaDocument,
   GetEventMetaQuery,
   GetEventMetaQueryVariables,
@@ -18,9 +17,7 @@ interface Props {
   loadMyEventCalendarData?: boolean | undefined;
 }
 
-export default function useMyEventQuery({
-  loadMyEventCalendarData = false,
-}: Props) {
+export default function useMyEventQuery({ loadMyEventCalendarData = false }: Props) {
   const myEventCalendarDataQueryResult = useQuery<
     GetMyEventCalendarDataQuery,
     GetMyEventCalendarDataQueryVariables

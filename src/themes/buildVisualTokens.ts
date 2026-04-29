@@ -3,7 +3,6 @@ import { OmnixysColorScheme } from "./paletteTypes";
 
 export type RGB = readonly [number, number, number];
 
-
 function hexToRgb(hex: string): RGB {
   const cleaned = hex.replace("#", "");
 
@@ -39,22 +38,18 @@ function hexToRgb(hex: string): RGB {
  *
  * This eliminates magic numbers across the UI layer.
  */
-export function buildVisualTokens(
-  mode: "light" | "dark",
-  scheme: OmnixysColorScheme,
-) {
+export function buildVisualTokens(mode: "light" | "dark", scheme: OmnixysColorScheme) {
   const isDark = mode === "dark";
 
-const schemeMap = Object.fromEntries(
-  Object.entries(omnixysPresets).map(([key, preset]) => {
-    return [key, hexToRgb(preset.light.primary)];
-  }),
-) as Record<OmnixysColorScheme, RGB>;
+  const schemeMap = Object.fromEntries(
+    Object.entries(omnixysPresets).map(([key, preset]) => {
+      return [key, hexToRgb(preset.light.primary)];
+    }),
+  ) as Record<OmnixysColorScheme, RGB>;
 
   const base = schemeMap[scheme];
 
-  const toRgba = (rgb: RGB, alpha: number) =>
-    `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha})`;
+  const toRgba = (rgb: RGB, alpha: number) => `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha})`;
 
   return {
     background: {

@@ -22,7 +22,7 @@ import useMeQuery from "@/checkpoint/hooks/user/useMeQuery";
  * - auth actions
  */
 interface AuthContextValue {
-  currentUser?: CurrentUserQuery['me'];
+  currentUser?: CurrentUserQuery["me"];
   isAuthenticated: boolean;
   currentUserLoading: boolean;
   logout: () => Promise<void>;
@@ -54,10 +54,8 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
  */
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const client = useApolloClient();
-const [authUser, setAuthUser] = useState<
-  CurrentUserQuery["me"] | null | undefined
->(undefined);
-  
+  const [authUser, setAuthUser] = useState<CurrentUserQuery["me"] | null | undefined>(undefined);
+
   /**
    * Fetch authenticated user
    *
@@ -65,8 +63,9 @@ const [authUser, setAuthUser] = useState<
    * - cache-first prevents duplicate requests
    * - still allows refetch on login/logout
    */
-  const { currentUser, currentUserLoading, currentUserRefetch } = useMeQuery({loadCurrentUser: true});
-
+  const { currentUser, currentUserLoading, currentUserRefetch } = useMeQuery({
+    loadCurrentUser: true,
+  });
 
   /* ------------------------------------------------------------------------ */
   /* Initialize AuthManager                                                   */
@@ -87,7 +86,7 @@ const [authUser, setAuthUser] = useState<
 
   useEffect(() => {
     if (!currentUser) return;
-    
+
     /**
      * This is REQUIRED for:
      * - x-actor-id header
@@ -158,7 +157,7 @@ const [authUser, setAuthUser] = useState<
      * Reset header context immediately
      */
     setCurrentUser(null);
-      setAuthUser(null);
+    setAuthUser(null);
 
     /**
      * Clear Apollo cache to avoid stale data
@@ -170,12 +169,12 @@ const [authUser, setAuthUser] = useState<
   /* Context Value                                                            */
   /* ------------------------------------------------------------------------ */
 
-const value = {
-  ...(currentUser !== undefined ? { currentUser } : {}),
-  isAuthenticated: !!authUser,
-  currentUserLoading,
-  logout,
-};
+  const value = {
+    ...(currentUser !== undefined ? { currentUser } : {}),
+    isAuthenticated: !!authUser,
+    currentUserLoading,
+    logout,
+  };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

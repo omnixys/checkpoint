@@ -2,7 +2,18 @@
 
 import { Drawer, Stack, Typography, Button, Divider, Box, Tooltip } from "@mui/material";
 
-import { AssignSeatDocument, AssignSeatMutation, AssignSeatMutationVariables, GetSeatByGuestAndEventDocument, GetSeatByGuestAndEventQuery, GetSeatByGuestAndEventQueryVariables, InvitationPayload, SeatsDocument, SeatsQuery, SeatsQueryVariables } from "@/checkpoint/generated/graphql";
+import {
+  AssignSeatDocument,
+  AssignSeatMutation,
+  AssignSeatMutationVariables,
+  GetSeatByGuestAndEventDocument,
+  GetSeatByGuestAndEventQuery,
+  GetSeatByGuestAndEventQueryVariables,
+  InvitationPayload,
+  SeatsDocument,
+  SeatsQuery,
+  SeatsQueryVariables,
+} from "@/checkpoint/generated/graphql";
 import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { useEffect, useState } from "react";
@@ -11,17 +22,11 @@ import { copyToClipboard, rsvpLinkForInvitationId } from "@/checkpoint/utils/inv
 import { useMutation, useLazyQuery } from "@apollo/client/react";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 
-
-export default function InvitationDetailMobileDialog({
-  logic,
-}: {
-  logic: InvitationLogic;
-  }) {
+export default function InvitationDetailMobileDialog({ logic }: { logic: InvitationLogic }) {
   const inv = logic.activeInvitation;
-  
-    const tInvitation = useTypedTranslations("invitation");
+
+  const tInvitation = useTypedTranslations("invitation");
   const tCommon = useTypedTranslations("common");
-  
 
   const [copied, setCopied] = useState(false);
   const [approveSeatOpen, setApproveSeatOpen] = useState(false);
@@ -61,45 +66,41 @@ export default function InvitationDetailMobileDialog({
 
   if (!inv) return null;
 
-    const freeSeats =
-      seatsData?.seats?.filter((s) => !s.guestId && !s.note) ?? [];
+  const freeSeats = seatsData?.seats?.filter((s) => !s.guestId && !s.note) ?? [];
 
-    const filteredSeats = freeSeats.filter((s) => {
-      const q = seatQuery.toLowerCase();
-      return (
-        s.section?.name?.toLowerCase().includes(q) ||
-        s.table?.name?.toLowerCase().includes(q) ||
-        s.number?.toString().includes(q)
-      );
-    });
+  const filteredSeats = freeSeats.filter((s) => {
+    const q = seatQuery.toLowerCase();
+    return (
+      s.section?.name?.toLowerCase().includes(q) ||
+      s.table?.name?.toLowerCase().includes(q) ||
+      s.number?.toString().includes(q)
+    );
+  });
 
-    const seatsBySection = filteredSeats.reduce<
-      Record<string, typeof filteredSeats>
-    >((acc, seat) => {
-      const key = seat.section?.name ?? "Andere";
-      acc[key] ??= [];
-      acc[key].push(seat);
-      return acc;
-    }, {});
+  const seatsBySection = filteredSeats.reduce<Record<string, typeof filteredSeats>>((acc, seat) => {
+    const key = seat.section?.name ?? "Andere";
+    acc[key] ??= [];
+    acc[key].push(seat);
+    return acc;
+  }, {});
 
-    const rsvpUrl = rsvpLinkForInvitationId(inv.id);
+  const rsvpUrl = rsvpLinkForInvitationId(inv.id);
 
-    const whatsappInviteText = [
-      `Hallo ${inv.firstName} ${inv.lastName}`,
-      "du bist herzlich eingeladen.",
-      "Bitte bestätige deine Teilnahme über diesen Link:",
-      rsvpUrl,
-    ].join(" ");
+  const whatsappInviteText = [
+    `Hallo ${inv.firstName} ${inv.lastName}`,
+    "du bist herzlich eingeladen.",
+    "Bitte bestätige deine Teilnahme über diesen Link:",
+    rsvpUrl,
+  ].join(" ");
 
-    const openWhatsapp = (text: string, phone?: string | null) => {
-      const params = new URLSearchParams();
-      params.set("text", text);
-      if (phone) params.set("phone", phone.replace(/\D/g, ""));
+  const openWhatsapp = (text: string, phone?: string | null) => {
+    const params = new URLSearchParams();
+    params.set("text", text);
+    if (phone) params.set("phone", phone.replace(/\D/g, ""));
 
-      const url = `https://api.whatsapp.com/send?${params.toString()}`;
-      window.open(url, "_blank", "noopener,noreferrer");
-    };
-
+    const url = `https://api.whatsapp.com/send?${params.toString()}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
 
   return (
     <Drawer
@@ -192,9 +193,7 @@ export default function InvitationDetailMobileDialog({
 
         {/* SHARE */}
         <Stack spacing={1}>
-          <Typography variant="subtitle2">
-            {tInvitation("detail.shareAndContact")}
-          </Typography>
+          <Typography variant="subtitle2">{tInvitation("detail.shareAndContact")}</Typography>
 
           <Button
             startIcon={<WhatsAppIcon />}
@@ -212,17 +211,12 @@ export default function InvitationDetailMobileDialog({
 
           <Button
             startIcon={<WhatsAppIcon />}
-            onClick={() =>
-              openWhatsapp(whatsappInviteText, inv.phoneNumber ?? null)
-            }
+            onClick={() => openWhatsapp(whatsappInviteText, inv.phoneNumber ?? null)}
           >
             {tInvitation("detail.whatsappInvitation")}
           </Button>
 
-          <Tooltip
-            title={copied ? tCommon("copy") : tInvitation("copyRsvp")}
-            open={copied}
-          >
+          <Tooltip title={copied ? tCommon("copy") : tInvitation("copyRsvp")} open={copied}>
             <Button
               startIcon={<ContentCopyRoundedIcon />}
               onClick={async () => {

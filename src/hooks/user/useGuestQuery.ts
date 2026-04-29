@@ -31,7 +31,6 @@ export default function useGuestQuery({
   loadGuestIdList = false,
   loadSecurityGuestIdList = false,
 }: Props) {
-
   const eventGuestIdListQueryResult = useQuery<
     EventGuestIdListQuery,
     EventGuestIdListQueryVariables
@@ -43,41 +42,38 @@ export default function useGuestQuery({
 
   const eventGuestIdList = eventGuestIdListQueryResult.data?.eventGuests;
 
-  const guestListQueryResult = useQuery<
-    GetGuestListQuery,
-    GetGuestListQueryVariables
-  >(GetGuestListDocument, {
-    variables: { guestIdList: eventGuestIdList!},
-    skip: !eventGuestIdList || !eventGuestIdList.length,
+  const guestListQueryResult = useQuery<GetGuestListQuery, GetGuestListQueryVariables>(
+    GetGuestListDocument,
+    {
+      variables: { guestIdList: eventGuestIdList! },
+      skip: !eventGuestIdList || !eventGuestIdList.length,
+      fetchPolicy: "cache-and-network",
+    },
+  );
+  const guestList = guestListQueryResult.data?.getUserList;
+
+  const guestMap = new Map(guestList?.map((guest) => [guest.id, guest]) ?? []);
+
+  const securityGuestListQueryResult = useQuery<
+    GetSecurityGuestInfoQuery,
+    GetSecurityGuestInfoQueryVariables
+  >(GetSecurityGuestInfoDocument, {
+    variables: { guestIdList: guestIdList! },
+    skip: !loadSecurityGuestIdList || !guestIdList || guestIdList.length === 0,
     fetchPolicy: "cache-and-network",
   });
-  const guestList = guestListQueryResult.data?.getUserList;
-  
-    const guestMap = new Map(
-      guestList?.map((guest) => [
-        guest.id,
-        guest,
-      ]) ?? [],
-    );
-  
-  
-  
-    const securityGuestListQueryResult = useQuery<
-      GetSecurityGuestInfoQuery,
-      GetSecurityGuestInfoQueryVariables
-    >(GetSecurityGuestInfoDocument, {
-      variables: { guestIdList: guestIdList!},
-      skip: !loadSecurityGuestIdList || !guestIdList || guestIdList.length === 0,
-      fetchPolicy: "cache-and-network",
-    });
   const securityGuestList = securityGuestListQueryResult.data?.getUserList;
-  const securityGuestMap = new Map(securityGuestList?.map((guest) => [guest.id, `${guest.personalInfo?.firstName} ${guest.personalInfo?.lastName}`]))
+  const securityGuestMap = new Map(
+    securityGuestList?.map((guest) => [
+      guest.id,
+      `${guest.personalInfo?.firstName} ${guest.personalInfo?.lastName}`,
+    ]),
+  );
 
-  
   return {
     guestList,
     guestMap,
 
-    securityGuestMap
+    securityGuestMap,
   };
 }

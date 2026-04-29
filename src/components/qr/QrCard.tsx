@@ -14,10 +14,7 @@ import {
 import useGenerateTokenMutation from "@/checkpoint/hooks/ticket/useGenerateTokenMutation";
 import { env } from "@/checkpoint/lib/env";
 import { loadPrivateKey } from "@/checkpoint/utils/ticket/device-utils";
-import {
-  hapticCritical,
-  hapticRotate,
-} from "@/checkpoint/utils/ticket/haptics";
+import { hapticCritical, hapticRotate } from "@/checkpoint/utils/ticket/haptics";
 import { qrBeatAnimation } from "@/checkpoint/utils/ticket/qr-beat";
 import { signQrMessage } from "@/checkpoint/utils/ticket/qr-signature";
 import { useMutation } from "@apollo/client/react";
@@ -60,7 +57,7 @@ type SignedQrPayload = {
 };
 
 type Props = {
-  ticket?: GetMyFullTicketListQuery['getMyTickets'][number] | undefined;
+  ticket?: GetMyFullTicketListQuery["getMyTickets"][number] | undefined;
   event?: any;
 };
 
@@ -99,9 +96,7 @@ export default function QrCard({ ticket, event }: Props) {
       return theme.palette.error.main;
     }
 
-    return ticket.currentState === "INSIDE"
-      ? theme.palette.success.main
-      : theme.palette.error.main;
+    return ticket.currentState === "INSIDE" ? theme.palette.success.main : theme.palette.error.main;
   }, [theme.palette.error.main, theme.palette.success.main, ticket]);
 
   const isRevoked = ticket?.revoked ?? false;
@@ -238,15 +233,9 @@ export default function QrCard({ ticket, event }: Props) {
       >
         <Stack spacing={3}>
           <Stack spacing={30} direction={"row"}>
-            <BackButtonBase
-              href={from ?? env.CHECKPOINT_BASE_PATH}
-              label={"zurück"}
-            />
+            <BackButtonBase href={from ?? env.CHECKPOINT_BASE_PATH} label={"zurück"} />
             <Stack spacing={1.5}>
-              <Typography
-                variant="h5"
-                sx={{ color: theme.palette.text.primary, fontWeight: 800 }}
-              >
+              <Typography variant="h5" sx={{ color: theme.palette.text.primary, fontWeight: 800 }}>
                 {event.name}
               </Typography>
 
@@ -275,9 +264,7 @@ export default function QrCard({ ticket, event }: Props) {
                       alignSelf: "flex-start",
                       fontWeight: 800,
                       bgcolor: `${isRevoked ? theme.palette.error.main : presenceColor}22`,
-                      color: isRevoked
-                        ? theme.palette.error.main
-                        : presenceColor,
+                      color: isRevoked ? theme.palette.error.main : presenceColor,
                       border: `1px solid ${isRevoked ? theme.palette.error.main : presenceColor}55`,
                     }}
                   />
@@ -307,8 +294,7 @@ export default function QrCard({ ticket, event }: Props) {
                 Ticket wurde deaktiviert
               </Typography>
               <Typography variant="body2" sx={{ mt: 0.5 }}>
-                {ticket.revokedReason ??
-                  "Bitte wende dich an den Veranstalter."}
+                {ticket.revokedReason ?? "Bitte wende dich an den Veranstalter."}
               </Typography>
             </Alert>
           ) : null}
@@ -324,9 +310,7 @@ export default function QrCard({ ticket, event }: Props) {
             </Alert>
           ) : null}
 
-          {!isRevoked && !isDeviceActivated ? (
-            <ActivateTicketButton ticketId={ticket.id} />
-          ) : null}
+          {!isRevoked && !isDeviceActivated ? <ActivateTicketButton ticketId={ticket.id} /> : null}
 
           {!isRevoked && isDeviceActivated ? (
             <Box
@@ -345,10 +329,7 @@ export default function QrCard({ ticket, event }: Props) {
                   justifyContent: "center",
                   p: { xs: 1.25, sm: 2.5 },
                   borderRadius: 4,
-                  bgcolor:
-                    theme.palette.mode === "light"
-                      ? apple.systemBackground
-                      : apple.gray6,
+                  bgcolor: theme.palette.mode === "light" ? apple.systemBackground : apple.gray6,
                   border: `1px solid ${apple.separator}`,
                 }}
               >
@@ -379,9 +360,7 @@ export default function QrCard({ ticket, event }: Props) {
                       inset: QR_INSET,
                       borderRadius: 4,
                       bgcolor:
-                        theme.palette.mode === "light"
-                          ? apple.systemBackground
-                          : apple.gray6,
+                        theme.palette.mode === "light" ? apple.systemBackground : apple.gray6,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -397,14 +376,8 @@ export default function QrCard({ ticket, event }: Props) {
                           alignItems: "center",
                         }}
                       >
-                        <CircularProgress
-                          size={34}
-                          sx={{ color: theme.palette.primary.main }}
-                        />
-                        <Typography
-                          variant="body2"
-                          sx={{ color: theme.palette.text.secondary }}
-                        >
+                        <CircularProgress size={34} sx={{ color: theme.palette.primary.main }} />
+                        <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
                           QR wird vorbereitet…
                         </Typography>
                       </Stack>
@@ -435,9 +408,7 @@ export default function QrCard({ ticket, event }: Props) {
                 }}
                 disabled={generateTokenLoading || isPreparingQr}
                 startIcon={
-                  generateTokenLoading || isPreparingQr ? undefined : (
-                    <RefreshRoundedIcon />
-                  )
+                  generateTokenLoading || isPreparingQr ? undefined : <RefreshRoundedIcon />
                 }
                 sx={{
                   borderRadius: 3,
@@ -455,10 +426,7 @@ export default function QrCard({ ticket, event }: Props) {
                 }}
               >
                 {generateTokenLoading || isPreparingQr ? (
-                  <CircularProgress
-                    size={22}
-                    sx={{ color: theme.palette.primary.main }}
-                  />
+                  <CircularProgress size={22} sx={{ color: theme.palette.primary.main }} />
                 ) : isQrActive ? (
                   "QR-Code jetzt erneuern"
                 ) : (

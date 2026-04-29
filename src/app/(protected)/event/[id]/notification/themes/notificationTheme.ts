@@ -5,17 +5,12 @@ function getBaseAlpha(theme: Theme, value: number) {
   // Dark → white overlay
   // Light → black overlay
   return alpha(
-    theme.palette.mode === "dark"
-      ? theme.palette.common.white
-      : theme.palette.common.black,
+    theme.palette.mode === "dark" ? theme.palette.common.white : theme.palette.common.black,
     value,
   );
 }
 
-export function getNotificationTone(
-  theme: Theme,
-  channel: NotificationChannel,
-) {
+export function getNotificationTone(theme: Theme, channel: NotificationChannel) {
   const accent =
     channel === NotificationChannel.WHATSAPP
       ? theme.palette.success.main

@@ -24,8 +24,9 @@ import { useMemo } from "react";
 export default function MyQrContent() {
   const { activeEvent } = useActiveEvent();
 
-  const { fullTicketEventIdMap, myFullTicketListLoading, myFullTicketListError } =
-    useMyTicketQuery({ eventId: activeEvent?.id, loadMyTicketList: true });
+  const { fullTicketEventIdMap, myFullTicketListLoading, myFullTicketListError } = useMyTicketQuery(
+    { eventId: activeEvent?.id, loadMyTicketList: true },
+  );
 
   /**
    * Extract ticket for current event
@@ -35,7 +36,6 @@ export default function MyQrContent() {
 
     return fullTicketEventIdMap.get(activeEvent.id);
   }, [fullTicketEventIdMap, activeEvent]);
-
 
   if (!activeEvent) return null;
 
@@ -78,9 +78,7 @@ export default function MyQrContent() {
             Mein Ticket
           </Typography>
 
-          <Typography sx={{ opacity: 0.75 }}>
-            Dein persönlicher QR-Code für dieses Event
-          </Typography>
+          <Typography sx={{ opacity: 0.75 }}>Dein persönlicher QR-Code für dieses Event</Typography>
         </Box>
 
         {/* Ticket Info */}

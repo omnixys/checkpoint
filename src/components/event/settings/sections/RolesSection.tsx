@@ -179,9 +179,9 @@ function RoleRow({
   actions,
   execute,
   loading,
-  name
+  name,
 }: {
-  name?: string | undefined
+  name?: string | undefined;
   role: EventRoleType;
   currentUserId?: string | undefined;
   ownerId: string;
@@ -212,9 +212,7 @@ function RoleRow({
         gap: 1,
         backdropFilter: "blur(10px)",
         backgroundColor:
-          theme.palette.mode === "dark"
-            ? "rgba(255,255,255,0.04)"
-            : "rgba(0,0,0,0.03)",
+          theme.palette.mode === "dark" ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
       }}
     >
       <Chip label={name} color={isOwner ? "primary" : "default"} />

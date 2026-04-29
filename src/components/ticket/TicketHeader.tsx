@@ -34,7 +34,7 @@ export default function TicketHeader({ total, onCreate, onFilter }: Props) {
         direction={{ xs: "column", sm: "row" }}
         spacing={2}
         sx={{
-          justifyContent : "space-between",
+          justifyContent: "space-between",
         }}
       >
         {/* Back Button */}
@@ -48,20 +48,13 @@ export default function TicketHeader({ total, onCreate, onFilter }: Props) {
           >
             Tickets verwalten
           </Typography>
-          <Typography
-            variant="body2"
-            sx={{ color: theme.palette.text.secondary }}
-          >
+          <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
             {total} Tickets
           </Typography>
         </Stack>
 
         <Stack direction="row" spacing={1.4}>
-          <Button
-            variant="outlined"
-            startIcon={<FilterListRoundedIcon />}
-            onClick={onFilter}
-          >
+          <Button variant="outlined" startIcon={<FilterListRoundedIcon />} onClick={onFilter}>
             Filter
           </Button>
 

@@ -38,7 +38,7 @@ function SegmentedButton({
   children: React.ReactNode;
   tooltip: string;
   disabled?: boolean;
-  }) {  
+}) {
   const theme = useTheme();
 
   return (
@@ -101,8 +101,7 @@ export default function ViewModeToggle({
   disabled,
 }: Props) {
   const theme = useTheme();
-    const t = useTypedTranslations("event");
-
+  const t = useTypedTranslations("event");
 
   const visualDisabled = disabled || viewMode === "list";
 

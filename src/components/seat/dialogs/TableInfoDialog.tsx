@@ -53,7 +53,7 @@ export default function TableInfoDialog({ open, tableName, seats, onClose, refet
   }, [data, refetch, onClose]);
 
   if (!tableId) return;
-  
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
       <DialogTitle>Tisch</DialogTitle>

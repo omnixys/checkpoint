@@ -134,16 +134,16 @@ function DesktopOption({
  * ------------------------------------------------------ */
 export default function EventVariantToggle({ variant, onChange }: Props) {
   const t = useTypedTranslations("event");
-  
+
   const { isMobile } = useDevice();
   const theme = useTheme();
 
-const OPTIONS: { label: string; value: VariantType }[] = [
-  { label: t("variant.A"), value: "A" },
-  { label: t("variant.B"), value: "B" },
-  { label: t("variant.C"), value: "C" },
-  { label: t("variant.D"), value: "D" },
-];
+  const OPTIONS: { label: string; value: VariantType }[] = [
+    { label: t("variant.A"), value: "A" },
+    { label: t("variant.B"), value: "B" },
+    { label: t("variant.C"), value: "C" },
+    { label: t("variant.D"), value: "D" },
+  ];
 
   return (
     <>

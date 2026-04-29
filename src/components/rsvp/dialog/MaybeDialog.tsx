@@ -24,9 +24,9 @@ export default function MaybeDialog({
 }: {
   invitationId: string;
   onBack: () => void;
-  }) {
+}) {
   const t = useTypedTranslations("rsvp");
-  
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -79,10 +79,7 @@ export default function MaybeDialog({
             {t("maybe.title")}
           </Typography>
 
-          <Typography
-            variant="body1"
-            sx={{ opacity: 0.8, mt: 1, textAlign: "center" }}
-          >
+          <Typography variant="body1" sx={{ opacity: 0.8, mt: 1, textAlign: "center" }}>
             {t("maybe.description")}
           </Typography>
 

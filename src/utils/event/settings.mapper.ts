@@ -11,7 +11,11 @@
  * - Reusable and safe transformations
  */
 
-import { EventCategory, SettingsPayload, UpdateSettingsInput } from "@/checkpoint/generated/graphql";
+import {
+  EventCategory,
+  SettingsPayload,
+  UpdateSettingsInput,
+} from "@/checkpoint/generated/graphql";
 
 type FullSettingsPatch = Partial<SettingsPayload> & {
   allowPublicRsvp?: boolean;
@@ -31,7 +35,9 @@ type FullSettingsPatch = Partial<SettingsPayload> & {
  * GraphQL responses contain fields that are NOT allowed in input types.
  * This mapper guarantees clean separation between read-model and write-model.
  */
-export function mapSettingsToUpdateInput(payload: SettingsPayload & FullSettingsPatch): UpdateSettingsInput {
+export function mapSettingsToUpdateInput(
+  payload: SettingsPayload & FullSettingsPatch,
+): UpdateSettingsInput {
   return {
     allowReEntry: payload.allowReEntry,
     rotateSeconds: payload.rotateSeconds,

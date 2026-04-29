@@ -2,20 +2,9 @@
 
 import { SeatPayload } from "@/checkpoint/generated/graphql";
 import { SeatListType } from "@/checkpoint/types/seat.type";
-import {
-  computeChairPositions,
-  seatLabel,
-} from "@/checkpoint/utils/seat/seating";
+import { computeChairPositions, seatLabel } from "@/checkpoint/utils/seat/seating";
 import SeatIcon from "@mui/icons-material/EventSeat";
-import {
-  Avatar,
-  Box,
-  Card,
-  CardContent,
-  CardHeader,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { Avatar, Box, Card, CardContent, CardHeader, Tooltip, Typography } from "@mui/material";
 
 type Props = {
   sectionName: string;
@@ -49,16 +38,8 @@ export default function TableCluster({
   const tableDiameterMd = 160;
   const chairSize = 36;
 
-  const chairsMobile = computeChairPositions(
-    seats.length,
-    containerSize,
-    tableDiameter,
-  );
-  const chairsMd = computeChairPositions(
-    seats.length,
-    containerSizeMd,
-    tableDiameterMd,
-  );
+  const chairsMobile = computeChairPositions(seats.length, containerSize, tableDiameter);
+  const chairsMd = computeChairPositions(seats.length, containerSizeMd, tableDiameterMd);
 
   const fullName = (seat: SeatListType) => getSeatHolderLabel(seat);
 
@@ -151,18 +132,14 @@ export default function TableCluster({
                   {seat.guestId && (
                     <>
                       <br />
-                      <Typography variant="caption">
-                        Gast: {fullName(seat)}
-                      </Typography>
+                      <Typography variant="caption">Gast: {fullName(seat)}</Typography>
                     </>
                   )}
 
                   {seat.invitationId && (
                     <>
                       <br />
-                      <Typography variant="caption">
-                        Einladung: {fullName(seat)}
-                      </Typography>
+                      <Typography variant="caption">Einladung: {fullName(seat)}</Typography>
                     </>
                   )}
 
@@ -192,12 +169,7 @@ export default function TableCluster({
               );
 
               return (
-                <Tooltip
-                  key={seat.id}
-                  arrow
-                  placement="top"
-                  title={tooltipContent}
-                >
+                <Tooltip key={seat.id} arrow placement="top" title={tooltipContent}>
                   <Avatar
                     onClick={() => onSeatClick?.(seat)}
                     sx={{

@@ -84,26 +84,20 @@ const DEFAULT_SETTINGS: CreateSettingsInput = {
  * useEventSettings (FINAL ENTERPRISE VERSION)
  */
 export function useEventSettings(eventId: string) {
+  const { eventSettings, eventSettingsLoading, eventSettingsError } = useEventQuery({
+    eventId,
+    loadEventSettings: true,
+  });
 
-  const { eventSettings, eventSettingsLoading, eventSettingsError } =
-    useEventQuery({
-      eventId,
-      loadEventSettings: true,
-    });
+  const staffRoles = useMemo(() => {
+    return (eventSettings?.userRoles ?? []).filter((role) => role.role !== "GUEST");
+  }, [eventSettings]);
 
-
-
-const staffRoles = useMemo(() => {
-  return (eventSettings?.userRoles ?? []).filter(
-    (role) => role.role !== "GUEST",
-  );
-}, [eventSettings]);
-
-useEffect(() => {
-  if (eventSettingsError) {
-    console.error(eventSettingsError);
-  }
-}, [eventSettingsError]);
+  useEffect(() => {
+    if (eventSettingsError) {
+      console.error(eventSettingsError);
+    }
+  }, [eventSettingsError]);
   // ─────────────────────────────
   // MUTATIONS
   // ─────────────────────────────
@@ -123,8 +117,7 @@ useEffect(() => {
   // ACTIONS
   // ─────────────────────────────
 
-  const actions =
-  {
+  const actions = {
     updateSettings: (patch: UpdateSettingsInput) => {
       const normalized = {
         ...patch,

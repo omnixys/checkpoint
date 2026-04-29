@@ -5,7 +5,6 @@ import RsvpClient from "./RsvpClient";
 import RsvpLoading from "./loading";
 import { createServerClient } from "@/checkpoint/lib/apollo/server-client";
 import {
-
   GetAllCallingCodesDocument,
   GetAllCallingCodesQuery,
   GetAllCallingCodesQueryVariables,
@@ -68,8 +67,7 @@ export async function generateMetadata({
 
   return buildMetadata({
     title: `RSVP • ${event.name}`,
-    description:
-      event.description ?? `Confirm your attendance for ${event.name}.`,
+    description: event.description ?? `Confirm your attendance for ${event.name}.`,
 
     page: "rsvp",
 

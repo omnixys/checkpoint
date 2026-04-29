@@ -71,10 +71,7 @@ export default function ActivateTicketButton({ ticketId }: Props) {
       }}
     >
       {loading ? (
-        <CircularProgress
-          size={22}
-          sx={{ color: theme.palette.text.primary }}
-        />
+        <CircularProgress size={22} sx={{ color: theme.palette.text.primary }} />
       ) : (
         "Ticket auf diesem Gerät aktivieren"
       )}

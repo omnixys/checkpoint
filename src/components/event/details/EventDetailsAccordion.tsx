@@ -56,10 +56,7 @@ function AccordionSection({ icon, title, value }: SectionProps) {
 
         <Box sx={{ flex: 1 }} />
 
-        <motion.div
-          animate={{ rotate: open ? 180 : 0 }}
-          transition={{ duration: 0.25 }}
-        >
+        <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.25 }}>
           <ExpandMoreIcon />
         </motion.div>
       </Stack>

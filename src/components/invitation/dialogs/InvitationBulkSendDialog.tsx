@@ -23,10 +23,10 @@ import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
  * Bulk Send Dialog with Locale Selection
  * ------------------------------------------------------------------------- */
 export default function InvitationBulkSendDialog({ logic }: { logic: InvitationLogic }) {
-  const theme = useTheme()
+  const theme = useTheme();
   const open = logic.sendOpen;
   const tInvitation = useTypedTranslations("invitation");
-    const tCommon = useTypedTranslations("common");
+  const tCommon = useTypedTranslations("common");
 
   if (!open) return null;
 
@@ -35,12 +35,7 @@ export default function InvitationBulkSendDialog({ logic }: { logic: InvitationL
   );
 
   return (
-    <Dialog
-      open={open}
-      onClose={logic.closeBulkSendDialog}
-      maxWidth="sm"
-      fullWidth
-    >
+    <Dialog open={open} onClose={logic.closeBulkSendDialog} maxWidth="sm" fullWidth>
       <DialogTitle> {tInvitation("bulkSend.title")}</DialogTitle>
 
       <DialogContent>
@@ -51,7 +46,7 @@ export default function InvitationBulkSendDialog({ logic }: { logic: InvitationL
               sx={{
                 p: 2,
                 borderRadius: 2,
-             border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
               }}
             >
               <Stack spacing={1}>
@@ -84,9 +79,7 @@ export default function InvitationBulkSendDialog({ logic }: { logic: InvitationL
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={logic.closeBulkSendDialog}>
-          {tCommon("cancel")}
-        </Button>
+        <Button onClick={logic.closeBulkSendDialog}>{tCommon("cancel")}</Button>
 
         <Button
           variant="contained"

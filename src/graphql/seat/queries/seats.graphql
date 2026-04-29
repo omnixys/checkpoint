@@ -4,7 +4,6 @@ query Seats($id: ID!) {
   }
 }
 
-
 query SeatList($id: ID!) {
   seats(eventId: $id) {
     id

@@ -20,7 +20,6 @@ export function MobileNavCarousel({ items, eventId }: Props) {
   const pathname = usePathname();
   const theme = useTheme();
   const { mode } = useThemeMode();
-  
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
@@ -54,7 +53,7 @@ export function MobileNavCarousel({ items, eventId }: Props) {
         backdropFilter: "blur(20px)",
         backgroundColor: "rgba(20,20,20,0.75)",
         borderTop: "1px solid rgba(255,255,255,0.08)",
-        borderRadius: 0
+        borderRadius: 0,
       }}
     >
       <Box ref={emblaRef} sx={{ overflow: "hidden" }}>
@@ -69,10 +68,7 @@ export function MobileNavCarousel({ items, eventId }: Props) {
             return (
               <Box
                 key={item.path}
-                onClick={() =>
-                  !item.disabled &&
-                  router.push(item.path)
-                }
+                onClick={() => !item.disabled && router.push(item.path)}
                 sx={{
                   flex: "0 0 25%", // 👈 max 4 sichtbar
                   py: 1,
@@ -93,8 +89,7 @@ export function MobileNavCarousel({ items, eventId }: Props) {
                     backgroundColor: "primary.main",
                     opacity: active ? 1 : 0,
                     scaleX: active ? 1 : 0,
-                    transition:
-                      "opacity 200ms ease, transform 260ms cubic-bezier(.4,0,.2,1)",
+                    transition: "opacity 200ms ease, transform 260ms cubic-bezier(.4,0,.2,1)",
                   }}
                 />
 

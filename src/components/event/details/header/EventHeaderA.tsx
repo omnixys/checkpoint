@@ -10,11 +10,7 @@ export default function EventHeaderA({ ev }: Props) {
   const theme = useTheme();
 
   const roleChipColor =
-    ev.myRole === "ADMIN"
-      ? "primary"
-      : ev.myRole === "SECURITY"
-        ? "success"
-        : "default";
+    ev.myRole === "ADMIN" ? "primary" : ev.myRole === "SECURITY" ? "success" : "default";
 
   return (
     <Box

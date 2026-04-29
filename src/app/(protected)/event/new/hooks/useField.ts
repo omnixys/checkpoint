@@ -55,16 +55,14 @@ function normalizeValue(value: unknown): unknown {
  * -------------------------------------------------------------
  */
 export function useField(path: string) {
-  const { draft, form, patch } = useCreateEvent(); 
+  const { draft, form, patch } = useCreateEvent();
 
   /**
    * -------------------------------------------------------------
    * Value Resolver
    * -------------------------------------------------------------
    */
-  const value = path
-    .split(".")
-    .reduce((acc: any, key) => acc?.[key], draft);
+  const value = path.split(".").reduce((acc: any, key) => acc?.[key], draft);
 
   /**
    * -------------------------------------------------------------
@@ -73,7 +71,7 @@ export function useField(path: string) {
    */
   const setValue = (val: any) => {
     const next = structuredClone(draft);
-    
+
     setDeep(next, path, val);
 
     patch(next); // ✅ FULL PATCH
@@ -99,8 +97,8 @@ export function useField(path: string) {
 
     onChange: (e: any) => {
       const val = e?.target ? e.target.value : e;
-     const normalized = normalizeValue(val);
-    setValue(normalized);
+      const normalized = normalizeValue(val);
+      setValue(normalized);
     },
 
     onBlur: () => form.validateField(path),

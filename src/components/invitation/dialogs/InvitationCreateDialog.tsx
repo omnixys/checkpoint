@@ -44,8 +44,8 @@ function Section({
   theme,
 }: {
   title?: string | undefined;
-    children: React.ReactNode;
-    theme: Theme;
+  children: React.ReactNode;
+  theme: Theme;
 }) {
   return (
     <Box
@@ -75,12 +75,9 @@ function Section({
  * - Handle form state
  * - Submit data via InvitationLogic
  */
-export default function InvitationCreateDialog({
-  logic,
-  callingCodeCountries,
-}: Props) {  
+export default function InvitationCreateDialog({ logic, callingCodeCountries }: Props) {
   const tInvitation = useTypedTranslations("invitation");
-      const tCommon = useTypedTranslations("common");
+  const tCommon = useTypedTranslations("common");
 
   const theme = useTheme();
   const params = useParams();
@@ -227,12 +224,7 @@ export default function InvitationCreateDialog({
               label={tInvitation("createInv.maxInvitees")}
               fullWidth
               value={values.maxInvitees}
-              onChange={(e) =>
-                setField(
-                  "maxInvitees",
-                  Math.max(0, Number(e.target.value) || 0),
-                )
-              }
+              onChange={(e) => setField("maxInvitees", Math.max(0, Number(e.target.value) || 0))}
             />
 
             <TextField
@@ -248,8 +240,7 @@ export default function InvitationCreateDialog({
               </MenuItem>
 
               {logic.events?.map((event) => {
-                const name =
-                  event.name?.trim() || tInvitation("createInv.unknown");
+                const name = event.name?.trim() || tInvitation("createInv.unknown");
 
                 return (
                   <MenuItem key={event.id} value={event.id}>
@@ -301,9 +292,7 @@ export default function InvitationCreateDialog({
             px: 3,
           }}
         >
-          {loading
-            ? tInvitation("createInv.creating")
-            : tInvitation("createInv.submit")}
+          {loading ? tInvitation("createInv.creating") : tInvitation("createInv.submit")}
         </Button>
       </DialogActions>
     </Dialog>

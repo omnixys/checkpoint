@@ -17,24 +17,19 @@ interface Props {
   loadUserName?: boolean | undefined;
 }
 
-
-export default function useUserQuery({
-  userId,
-  loadUserName = false,
-}: Props){
-
-  const userNameQueryResult = useQuery<
-    GetUserNameQuery,
-    GetUserNameQueryVariables
-    >(GetUserNameDocument, {
+export default function useUserQuery({ userId, loadUserName = false }: Props) {
+  const userNameQueryResult = useQuery<GetUserNameQuery, GetUserNameQueryVariables>(
+    GetUserNameDocument,
+    {
       variables: {
-      id: userId
-    },
+        id: userId,
+      },
       fetchPolicy: "cache-first",
-    skip: !loadUserName || !userId,
-  });
+      skip: !loadUserName || !userId,
+    },
+  );
 
-    const userInfo = userNameQueryResult.data?.user;
+  const userInfo = userNameQueryResult.data?.user;
 
   return {
     userInfo,

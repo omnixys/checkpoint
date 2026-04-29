@@ -61,10 +61,12 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const { execute, loading, error, success, reset } = useMutationHandler();
-  const { subEventNameList, subEventNameListError, subEventNameListLoading } = useSubEventListQuery({
-    eventId: meta.id,
-    loadChildrenSettings: true,
-  });
+  const { subEventNameList, subEventNameListError, subEventNameListLoading } = useSubEventListQuery(
+    {
+      eventId: meta.id,
+      loadChildrenSettings: true,
+    },
+  );
 
   const { userInfo, userInfoLoading } = useUserQuery({
     userId: meta.owner,
@@ -77,12 +79,11 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
   // TODO visuell optimieren mit error und loader
   if (subEventNameListLoading || userInfoLoading) {
     return (
-           <Box sx={centerStyle}>
-             <CircularProgress />
-           </Box>
-    )
+      <Box sx={centerStyle}>
+        <CircularProgress />
+      </Box>
+    );
   }
-
 
   /**
    * Handles creation of a child event
@@ -132,8 +133,7 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
     }
   };
 
-      const ownerInfo = userInfo?.personalInfo?.firstName + ' ' + userInfo?.personalInfo?.lastName
-
+  const ownerInfo = userInfo?.personalInfo?.firstName + " " + userInfo?.personalInfo?.lastName;
 
   return (
     <>
@@ -147,9 +147,7 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
             borderRadius: 3,
             backdropFilter: "blur(10px)",
             backgroundColor:
-              theme.palette.mode === "dark"
-                ? "rgba(255,255,255,0.04)"
-                : "rgba(0,0,0,0.03)",
+              theme.palette.mode === "dark" ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
           }}
         >
           <Stack spacing={1}>
@@ -228,9 +226,7 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
         onClose={() => setDialogOpen(false)}
         currentOwnerId={meta.owner}
         onTransfer={(newOwnerId) =>
-          execute(
-            () => actions.transferOwner?.(newOwnerId) ?? Promise.resolve(),
-          )
+          execute(() => actions.transferOwner?.(newOwnerId) ?? Promise.resolve())
         }
       />
 
@@ -257,7 +253,7 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
  * Pure UI component
  * No business logic allowed
  */
-function ChildRow({ child }: { child: GetSubEventNameListQuery['eventChildren'][number] }) {
+function ChildRow({ child }: { child: GetSubEventNameListQuery["eventChildren"][number] }) {
   const theme = useTheme();
   const formatDateTime = (value?: string | null) => {
     if (!value) return "n/a";
@@ -284,9 +280,7 @@ function ChildRow({ child }: { child: GetSubEventNameListQuery['eventChildren'][
         gap: 1.5,
         backdropFilter: "blur(10px)",
         backgroundColor:
-          theme.palette.mode === "dark"
-            ? "rgba(255,255,255,0.04)"
-            : "rgba(0,0,0,0.03)",
+          theme.palette.mode === "dark" ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
       }}
     >
       <Typography sx={{ flex: 1, fontWeight: 600 }}>{child.name}</Typography>
@@ -300,9 +294,7 @@ function ChildRow({ child }: { child: GetSubEventNameListQuery['eventChildren'][
             minWidth: 112,
             borderRadius: 2,
             backgroundColor:
-              theme.palette.mode === "dark"
-                ? "rgba(76, 175, 80, 0.14)"
-                : "rgba(76, 175, 80, 0.10)",
+              theme.palette.mode === "dark" ? "rgba(76, 175, 80, 0.14)" : "rgba(76, 175, 80, 0.10)",
           }}
         >
           <Typography variant="caption" color="text.secondary" sx={{ display: "block" }}>
@@ -320,9 +312,7 @@ function ChildRow({ child }: { child: GetSubEventNameListQuery['eventChildren'][
             minWidth: 112,
             borderRadius: 2,
             backgroundColor:
-              theme.palette.mode === "dark"
-                ? "rgba(244, 67, 54, 0.14)"
-                : "rgba(244, 67, 54, 0.10)",
+              theme.palette.mode === "dark" ? "rgba(244, 67, 54, 0.14)" : "rgba(244, 67, 54, 0.10)",
           }}
         >
           <Typography variant="caption" color="text.secondary" sx={{ display: "block" }}>

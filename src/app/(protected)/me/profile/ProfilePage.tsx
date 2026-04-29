@@ -37,9 +37,7 @@ export default function ProfileClientPage() {
   });
 
   const [savedState, setSavedState] = useState(form);
-  const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">(
-    "idle",
-  );
+  const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
 
   /* ------------------------------------------------------------
    * Sync initial data
@@ -131,9 +129,7 @@ export default function ProfileClientPage() {
         <Typography variant="h4" sx={{ fontWeight: 700 }}>
           Edit Profile
         </Typography>
-        <Typography color="text.secondary">
-          Update your personal information
-        </Typography>
+        <Typography color="text.secondary">Update your personal information</Typography>
       </Box>
 
       {/* 🔥 FORM */}
@@ -212,10 +208,9 @@ export default function ProfileClientPage() {
             direction="row"
             spacing={2}
             sx={{
-                          alignItems:"center",
-            justifyContent:"space-between"
+              alignItems: "center",
+              justifyContent: "space-between",
             }}
-
           >
             {/* STATUS */}
             <Typography variant="body2" color="text.secondary">

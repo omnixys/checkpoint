@@ -25,41 +25,31 @@ const eventApi = env.EVENT_API;
 export function useUploadMedia() {
   const [loading, setLoading] = useState(false);
 
-  const upload2 = useCallback(
-    async (eventId: string, file: File): Promise<UploadResult2> => {
-      setLoading(true);
+  const upload2 = useCallback(async (eventId: string, file: File): Promise<UploadResult2> => {
+    setLoading(true);
 
-      try {
-        const formData = new FormData();
-        formData.append("file", file);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
 
-        const res = await fetch(
-          `${eventApi}/upload?eventId=${eventId}`,
-          {
-            method: "POST",
-            body: formData,
-            credentials: "include", // 🔥 wegen CookieAuthGuard
-          },
-        );
+      const res = await fetch(`${eventApi}/upload?eventId=${eventId}`, {
+        method: "POST",
+        body: formData,
+        credentials: "include", // 🔥 wegen CookieAuthGuard
+      });
 
-        if (!res.ok) {
-          throw new Error("Upload failed");
-        }
-
-        return await res.json();
-      } finally {
-        setLoading(false);
+      if (!res.ok) {
+        throw new Error("Upload failed");
       }
-    },
-    [],
-  );
+
+      return await res.json();
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   const upload = useCallback(
-    async (
-      eventId: string,
-      file: File,
-      type: MediaType,
-    ): Promise<UploadResult> => {
+    async (eventId: string, file: File, type: MediaType): Promise<UploadResult> => {
       setLoading(true);
 
       try {
@@ -103,25 +93,22 @@ export function useUploadMedia() {
          * STEP 3: COMPLETE
          * -----------------------------------------------------
          */
-        const completeRes = await fetch(
-          `${eventApi}/complete`,
-          {
-            method: "POST",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              key: data.key,
-              url: data.fileUrl,
-              filename: file.name,
-              mimetype: file.type,
-              size: file.size,
-              eventId,
-              type,
-            }),
+        const completeRes = await fetch(`${eventApi}/complete`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
           },
-        );
+          body: JSON.stringify({
+            key: data.key,
+            url: data.fileUrl,
+            filename: file.name,
+            mimetype: file.type,
+            size: file.size,
+            eventId,
+            type,
+          }),
+        });
 
         if (!completeRes.ok) {
           throw new Error("Complete upload failed");

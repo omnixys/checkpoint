@@ -31,7 +31,7 @@ import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
  * Local derived types
  * ------------------------------------------------------------------------- */
 type InvitationRow = NonNullable<InvitationLogic["invitations"]>[number];
-type RsvpType = 'PRIVATE' | 'PUBLIC';
+type RsvpType = "PRIVATE" | "PUBLIC";
 
 /* ---------------------------------------------------------------------------
  * Desktop Table view for Invitations
@@ -137,9 +137,7 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
               {/* PARENT ROW */}
               <TableRow
                 hover
-                onClick={() =>
-                  logic.openInvitation(parent as InvitationPayload)
-                }
+                onClick={() => logic.openInvitation(parent as InvitationPayload)}
                 sx={{
                   cursor: "pointer",
                   transition: "transform .25s ease, box-shadow .25s ease",
@@ -165,9 +163,7 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
                 </TableCell>
 
                 {/* Type */}
-                <TableCell>
-                  {t(`rsvpType.${parent.type as RsvpType}`)}
-                </TableCell>
+                <TableCell>{t(`rsvpType.${parent.type as RsvpType}`)}</TableCell>
 
                 {/* NAME + EXPAND */}
                 <TableCell>
@@ -186,9 +182,7 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
                           toggleExpand(parent.id);
                         }}
                         sx={{
-                          transform: isExpanded
-                            ? "rotate(180deg)"
-                            : "rotate(0deg)",
+                          transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
                           transition: "transform .25s ease",
                         }}
                       >
@@ -235,10 +229,7 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
                 </TableCell>
 
                 {/* Actions */}
-                <TableCell
-                  align="right"
-                  onClick={(event) => event.stopPropagation()}
-                >
+                <TableCell align="right" onClick={(event) => event.stopPropagation()}>
                   <Tooltip title={t("delete")}>
                     <IconButton
                       color="error"
@@ -284,11 +275,7 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
                           {children.map((plusOne) => (
                             <Box
                               key={plusOne.id}
-                              onClick={() =>
-                                logic.openInvitation(
-                                  plusOne as InvitationPayload,
-                                )
-                              }
+                              onClick={() => logic.openInvitation(plusOne as InvitationPayload)}
                               sx={{
                                 px: 2,
                                 py: 1.2,
@@ -320,8 +307,7 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
                                       fontWeight: 500,
                                     }}
                                   >
-                                    {plusOne.firstName ?? "-"}{" "}
-                                    {plusOne.lastName ?? ""}
+                                    {plusOne.firstName ?? "-"} {plusOne.lastName ?? ""}
                                   </Typography>
                                 </Stack>
 

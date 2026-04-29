@@ -30,15 +30,11 @@ export default function BasicsStep() {
       {/* HEADER */}
       <Stack spacing={1} sx={{ mb: 4 }}>
         <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-          <Typography sx={{ fontSize: 28, fontWeight: 700 }}>
-            {t("basics.title")}
-          </Typography>
+          <Typography sx={{ fontSize: 28, fontWeight: 700 }}>{t("basics.title")}</Typography>
           <AutoAwesomeRoundedIcon color="primary" />
         </Stack>
 
-        <Typography sx={{ color: theme.palette.text.secondary }}>
-          {t("basics.subtitle")}
-        </Typography>
+        <Typography sx={{ color: theme.palette.text.secondary }}>{t("basics.subtitle")}</Typography>
       </Stack>
 
       {/* FORM */}
@@ -54,19 +50,9 @@ export default function BasicsStep() {
         />
 
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-          <TextField
-            type="datetime-local"
-            label={t("basics.startsAt")}
-            fullWidth
-            {...startsAt}
-          />
+          <TextField type="datetime-local" label={t("basics.startsAt")} fullWidth {...startsAt} />
 
-          <TextField
-            type="datetime-local"
-            label={t("basics.endsAt")}
-            fullWidth
-            {...endsAt}
-          />
+          <TextField type="datetime-local" label={t("basics.endsAt")} fullWidth {...endsAt} />
         </Stack>
       </Stack>
     </Box>

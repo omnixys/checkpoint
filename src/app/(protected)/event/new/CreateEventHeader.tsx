@@ -16,10 +16,7 @@ interface CreateEventHeaderProps {
   progress: number;
 }
 
-export default function CreateEventHeader({
-  activeStep,
-  progress,
-}: CreateEventHeaderProps) {
+export default function CreateEventHeader({ activeStep, progress }: CreateEventHeaderProps) {
   const theme = useTheme();
   const t = useTypedTranslations("create");
 

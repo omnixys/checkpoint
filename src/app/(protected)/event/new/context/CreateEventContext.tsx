@@ -77,8 +77,8 @@ const initialState: State = {
       endsAt: null,
       category: "GENERAL",
 
-      logoUrl: '',
-      coverImageUrl: '',
+      logoUrl: "",
+      coverImageUrl: "",
     },
     children: [],
   },
@@ -93,7 +93,6 @@ const initialState: State = {
  */
 function reducer(state: State, action: Action): State {
   switch (action.type) {
-    
     case "PATCH":
       return {
         ...state,
@@ -217,11 +216,7 @@ const Context = createContext<CreateEventContextType | null>(null);
  * Provider
  * -------------------------------------------------------------
  */
-export function CreateEventProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function CreateEventProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   /**
@@ -249,8 +244,7 @@ export function CreateEventProvider({
 
     removeChild: (i) => dispatch({ type: "REMOVE_CHILD", index: i }),
 
-    updateChild: (i, p) =>
-      dispatch({ type: "UPDATE_CHILD", index: i, patch: p }),
+    updateChild: (i, p) => dispatch({ type: "UPDATE_CHILD", index: i, patch: p }),
 
     addUpload2: (file, type) =>
       dispatch({
@@ -264,8 +258,7 @@ export function CreateEventProvider({
     clearUploads2: () => dispatch({ type: "CLEAR_UPLOADS_2" }),
 
     uploads: state.uploads,
-    addUpload: (file, type) =>
-      dispatch({ type: "ADD_UPLOAD", item: { file, type } }),
+    addUpload: (file, type) => dispatch({ type: "ADD_UPLOAD", item: { file, type } }),
     clearUploads: () => dispatch({ type: "CLEAR_UPLOADS" }),
   };
 

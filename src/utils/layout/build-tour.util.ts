@@ -11,8 +11,7 @@ type BuildTourParams = {
 function buildNavDescription(tourId: string, t: any): string {
   const map: Record<string, string> = {
     "sidebar.home": t("tour.home") ?? "Übersicht über dein Event",
-    "sidebar.notifications":
-      t("tour.notifications") ?? "Benachrichtigungen verwalten",
+    "sidebar.notifications": t("tour.notifications") ?? "Benachrichtigungen verwalten",
     "sidebar.scanner": t("tour.scanner") ?? "QR Codes scannen",
     "sidebar.event": t("tour.eventPage") ?? "Event Details",
     "sidebar.invitations": t("tour.invitations") ?? "Einladungen verwalten",
@@ -39,9 +38,7 @@ export function buildTour({ role, activeEvent, t }: BuildTourParams) {
       id: "event-selector",
       target: "event.selector",
       title: t("tour.event.title") ?? "Event auswählen",
-      description:
-        t("tour.event.description") ??
-        "Wähle zuerst ein Event aus, um fortzufahren",
+      description: t("tour.event.description") ?? "Wähle zuerst ein Event aus, um fortzufahren",
       allowInteraction: true,
     });
 
@@ -75,8 +72,7 @@ export function buildTour({ role, activeEvent, t }: BuildTourParams) {
       id: "ui.themeToggle",
       target: "ui.themeToggle",
       title: t("tour.theme.title") ?? "Dark Mode",
-      description:
-        t("tour.theme.description") ?? "Wechsle zwischen hell und dunkel",
+      description: t("tour.theme.description") ?? "Wechsle zwischen hell und dunkel",
     },
     {
       id: "ui.language",

@@ -14,7 +14,6 @@ export function useEventPage({ eventId, isAuthenticated }: Props) {
   const { active, changeTab } = useEventTabs();
   const { variant, changeVariant } = useEventVariant();
 
-
   const { eventPage, eventPageLoading, eventPageError } = useEventQuery({
     eventId,
     isAuthenticated,
@@ -47,6 +46,15 @@ export function useEventPage({ eventId, isAuthenticated }: Props) {
       eventPageLoading,
       eventPageError,
     }),
-    [active, changeTab, variant, changeVariant, handleDescriptionChange, eventPage, eventPageError, eventPageLoading],
+    [
+      active,
+      changeTab,
+      variant,
+      changeVariant,
+      handleDescriptionChange,
+      eventPage,
+      eventPageError,
+      eventPageLoading,
+    ],
   );
 }

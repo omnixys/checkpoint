@@ -10,7 +10,7 @@ export type CalendarMode = "month" | "year";
  * Central calendar state management.
  * This is the single source of truth for all calendar behavior.
  */
-export function useCalendar(events: GetMyEventCalendarDataQuery['myEvents'] | undefined) {
+export function useCalendar(events: GetMyEventCalendarDataQuery["myEvents"] | undefined) {
   const [view, setView] = useState<CalendarView>("list");
   const [mode, setMode] = useState<CalendarMode>("month");
   const [visibleDate, setVisibleDate] = useState<Date>(new Date());

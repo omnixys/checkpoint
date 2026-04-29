@@ -47,10 +47,7 @@ export function useEventFormatting(ev: any) {
    * Hero image fallback logic
    */
   const heroImage = useMemo(() => {
-    return (
-      (ev as unknown as { imageUrl?: string }).imageUrl ||
-      "/event/event-default.png"
-    );
+    return (ev as unknown as { imageUrl?: string }).imageUrl || "/event/event-default.png";
   }, [ev]);
 
   return {

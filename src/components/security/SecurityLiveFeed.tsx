@@ -68,9 +68,7 @@ function FeedItem({
           }}
         >
           <Stack>
-            <Typography sx={{ fontSize: "1rem", fontWeight: 600 }}>
-              {f.name}
-            </Typography>
+            <Typography sx={{ fontSize: "1rem", fontWeight: 600 }}>{f.name}</Typography>
             <Typography sx={{ opacity: 0.65, fontSize: "0.82rem" }}>
               Seat {f.seat} — {f.gate}
             </Typography>
@@ -78,7 +76,7 @@ function FeedItem({
 
           <Stack
             sx={{
-              alignItems: "flex-end"
+              alignItems: "flex-end",
             }}
           >
             <Typography
@@ -91,9 +89,7 @@ function FeedItem({
               {f.verdict}
             </Typography>
 
-            <Typography sx={{ opacity: 0.55, fontSize: "0.75rem" }}>
-              {f.time}
-            </Typography>
+            <Typography sx={{ opacity: 0.55, fontSize: "0.75rem" }}>{f.time}</Typography>
           </Stack>
         </Stack>
       </Box>

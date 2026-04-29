@@ -1,4 +1,3 @@
-
 query Event($id: ID!) {
   event(id: $id) {
     ...EventFull
@@ -32,7 +31,6 @@ query EventPage($eventId: ID!) {
   }
 }
 
-
 query GetEventMeta($eventId: ID!) {
   event(id: $eventId) {
     id
@@ -51,20 +49,16 @@ query GetEventName($eventId: ID!) {
   }
 }
 
-
-
 query GetActiveEvent($eventId: ID!) {
   event(id: $eventId) {
     id
     name
     myRole
     settings {
-    allowGuestSeatSelection
+      allowGuestSeatSelection
     }
   }
 }
-
-
 
 query GetEventSettings($eventId: ID!) {
   event(id: $eventId) {

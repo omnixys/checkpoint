@@ -21,11 +21,11 @@ export default function InitialView({
   onMaybe,
   onDecline,
 }: {
-  invitation: GetInvitationQuery['invitation'];
+  invitation: GetInvitationQuery["invitation"];
   onAccept: () => void;
   onMaybe: () => void;
   onDecline: () => void;
-  }) {
+}) {
   const { eventMetaInfo } = useEventQuery({
     eventId: invitation.eventId,
     loadEventMeta: true,
@@ -39,7 +39,7 @@ export default function InitialView({
   const lastName = invitation?.lastName ?? "";
 
   const eventTitle = eventMetaInfo?.name ?? t("eventFallback");
-  const bannerUrl = eventMetaInfo?.coverMedia?.url?? null;
+  const bannerUrl = eventMetaInfo?.coverMedia?.url ?? null;
 
   return (
     <Stack spacing={3}>
@@ -81,17 +81,11 @@ export default function InitialView({
               {t("initial.greeting", { firstName, lastName })}
             </Typography>
 
-            <Typography
-              variant="body1"
-              sx={{ opacity: 0.85, textAlign: "center" }}
-            >
+            <Typography variant="body1" sx={{ opacity: 0.85, textAlign: "center" }}>
               {t("initial.waitingForResponse", { eventTitle })}
             </Typography>
 
-            <Typography
-              variant="body2"
-              sx={{ opacity: 0.65, mt: 1, textAlign: "center" }}
-            >
+            <Typography variant="body2" sx={{ opacity: 0.65, mt: 1, textAlign: "center" }}>
               {t("initial.finalDecisionHint")}
             </Typography>
 

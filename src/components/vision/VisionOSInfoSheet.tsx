@@ -17,7 +17,6 @@ export function VisionOSInfoSheet({ open, onClose, title, lines }: VisionOSInfoS
       slotProps={{
         transition: DialogTransition,
       }}
-
       onClose={onClose}
       maxWidth="xs"
       fullWidth
@@ -32,12 +31,7 @@ export function VisionOSInfoSheet({ open, onClose, title, lines }: VisionOSInfoS
           ))}
         </Box>
 
-        <Button
-          variant="contained"
-          onClick={onClose}
-          fullWidth
-          sx={{ mt: 2, borderRadius: 3 }}
-        >
+        <Button variant="contained" onClick={onClose} fullWidth sx={{ mt: 2, borderRadius: 3 }}>
           Verstanden
         </Button>
       </DialogContent>

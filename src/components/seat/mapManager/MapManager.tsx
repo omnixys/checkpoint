@@ -2,9 +2,7 @@
 
 import SectionInfoDialog from "@/checkpoint/components/seat/dialogs/SectionInfoDialog";
 import TableInfoDialog from "@/checkpoint/components/seat/dialogs/TableInfoDialog";
-import MapSwitcher, {
-  MapType,
-} from "@/checkpoint/components/seat/mapManager/MapSwitcher";
+import MapSwitcher, { MapType } from "@/checkpoint/components/seat/mapManager/MapSwitcher";
 import SeatListView from "@/checkpoint/components/seat/mapManager/SeatListView";
 import SeatMapRegular from "@/checkpoint/components/seat/mapManager/SeatMapRegular";
 import { SeatListType } from "@/checkpoint/types/seat.type";
@@ -64,12 +62,8 @@ export default function MapManager({
             getSeatHolderLabel={getSeatHolderLabel}
             // onSelectSeat={onSelect}
             onSelect={onSelect}
-            onSectionClick={(sectionName, seats) =>
-              setSectionDialog({ name: sectionName, seats })
-            }
-            onTableClick={(tableName, seats) =>
-              setTableDialog({ name: tableName, seats })
-            }
+            onSectionClick={(sectionName, seats) => setSectionDialog({ name: sectionName, seats })}
+            onTableClick={(tableName, seats) => setTableDialog({ name: tableName, seats })}
           />
         )}
 

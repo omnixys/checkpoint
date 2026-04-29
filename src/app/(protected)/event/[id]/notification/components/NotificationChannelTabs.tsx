@@ -132,9 +132,7 @@ export function NotificationChannelTabs({ value, onChange }: Props) {
                     borderRadius: 3,
                     px: 2,
                     py: 1.5,
-                    border: `1px solid ${
-                      active ? tone.cardBorderSelected : tone.cardBorder
-                    }`,
+                    border: `1px solid ${active ? tone.cardBorderSelected : tone.cardBorder}`,
                     backgroundColor: active ? tone.cardBgSelected : tone.cardBg,
                     transition: "all 160ms ease",
                   }}
@@ -155,15 +153,11 @@ export function NotificationChannelTabs({ value, onChange }: Props) {
                           borderRadius: 2,
                           display: "grid",
                           placeItems: "center",
-                          color: active
-                            ? tone.accent
-                            : theme.palette.text.primary,
+                          color: active ? tone.accent : theme.palette.text.primary,
                           backgroundColor: active
                             ? alpha(tone.accent, 0.14)
                             : alpha(theme.palette.common.white, 0.04),
-                          border: `1px solid ${
-                            active ? tone.accentBorder : tone.cardBorder
-                          }`,
+                          border: `1px solid ${active ? tone.accentBorder : tone.cardBorder}`,
                           flexShrink: 0,
                         }}
                       >
@@ -222,10 +216,7 @@ export function NotificationChannelTabs({ value, onChange }: Props) {
                               width: 10,
                               height: 10,
                               borderRadius: "50%",
-                              backgroundColor: alpha(
-                                theme.palette.text.primary,
-                                0.16,
-                              ),
+                              backgroundColor: alpha(theme.palette.text.primary, 0.16),
                             }}
                           />
                         </MotionDiv>

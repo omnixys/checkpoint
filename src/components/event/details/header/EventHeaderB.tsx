@@ -6,10 +6,7 @@ import Image from "next/image";
 import { EventHeaderProps } from "../EventActions";
 import { CoverMediaType } from "@/checkpoint/types/event.type";
 
-export function getBestImage(
-  media: CoverMediaType,
-  targetWidth: number,
-): string | null {
+export function getBestImage(media: CoverMediaType, targetWidth: number): string | null {
   if (!media) return null;
 
   if (!media.variants?.length) return media.url;
@@ -36,8 +33,7 @@ export default function EventHeaderB({ eventPageData }: EventHeaderProps) {
         ? "success"
         : "default";
 
-  const hero =
-    getBestImage(eventPageData.coverMedia, 1200) || "/event/event-default.png";
+  const hero = getBestImage(eventPageData.coverMedia, 1200) || "/event/event-default.png";
 
   return (
     <Box
@@ -87,20 +83,14 @@ export default function EventHeaderB({ eventPageData }: EventHeaderProps) {
           }}
         />
 
-        <Typography
-          variant="body1"
-          sx={{ color: theme.palette.primary.contrastText }}
-        >
+        <Typography variant="body1" sx={{ color: theme.palette.primary.contrastText }}>
           {new Date(eventPageData.settings?.startsAt).toLocaleString("de-DE", {
             dateStyle: "medium",
             timeStyle: "short",
           })}
         </Typography>
 
-        <Typography
-          variant="body2"
-          sx={{ color: theme.palette.primary.contrastText }}
-        >
+        <Typography variant="body2" sx={{ color: theme.palette.primary.contrastText }}>
           bis{" "}
           {new Date(eventPageData.settings?.endsAt).toLocaleString("de-DE", {
             dateStyle: "medium",

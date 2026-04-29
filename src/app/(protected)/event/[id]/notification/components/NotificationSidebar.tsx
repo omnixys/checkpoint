@@ -24,11 +24,7 @@ import {
   WhatsAppChat,
 } from "../types/notification.models";
 import { useNotificationItems } from "@/checkpoint/app/(protected)/event/[id]/notification/hooks/useNotificationMocks";
-import {
-  getNotificationTone,
-  getPriorityColor,
-  getStatusColor,
-} from "../themes/notificationTheme";
+import { getNotificationTone, getPriorityColor, getStatusColor } from "../themes/notificationTheme";
 
 type Props = {
   channel: NotificationChannel;
@@ -85,11 +81,7 @@ function getLeadingIcon(item: NotificationListItem) {
   return <AlternateEmailRoundedIcon sx={{ fontSize: 16 }} />;
 }
 
-export function NotificationSidebar({
-  channel,
-  selectedChatId,
-  onSelect,
-}: Props) {
+export function NotificationSidebar({ channel, selectedChatId, onSelect }: Props) {
   const theme = useTheme();
   const tone = getNotificationTone(theme, channel);
   const { items } = useNotificationItems(channel);
@@ -164,18 +156,12 @@ export function NotificationSidebar({
                   cursor: "pointer",
                   borderRadius: 3,
                   p: 1.5,
-                  border: `1px solid ${
-                    selected ? tone.cardBorderSelected : tone.cardBorder
-                  }`,
+                  border: `1px solid ${selected ? tone.cardBorderSelected : tone.cardBorder}`,
                   backgroundColor: selected ? tone.cardBgSelected : tone.cardBg,
                   transition: "all 160ms ease",
                 }}
               >
-                <Stack
-                  direction="row"
-                  spacing={1.5}
-                  sx={{ alignItems: "flex-start" }}
-                >
+                <Stack direction="row" spacing={1.5} sx={{ alignItems: "flex-start" }}>
                   <Badge
                     color="primary"
                     badgeContent={item.unreadCount > 0 ? item.unreadCount : 0}
@@ -254,11 +240,7 @@ export function NotificationSidebar({
                     </Typography>
 
                     {isWhatsApp(item) ? (
-                      <Stack
-                        direction="row"
-                        spacing={0.75}
-                        sx={{ mt: 1, flexWrap: "wrap" }}
-                      >
+                      <Stack direction="row" spacing={0.75} sx={{ mt: 1, flexWrap: "wrap" }}>
                         {item.labels.map((label) => (
                           <Chip
                             key={label}
@@ -267,10 +249,7 @@ export function NotificationSidebar({
                             sx={{
                               height: 22,
                               color: theme.palette.text.primary,
-                              backgroundColor: alpha(
-                                theme.palette.success.main,
-                                0.14,
-                              ),
+                              backgroundColor: alpha(theme.palette.success.main, 0.14),
                               border: `1px solid ${alpha(theme.palette.success.main, 0.28)}`,
                             }}
                           />
@@ -286,10 +265,7 @@ export function NotificationSidebar({
                           sx={{
                             height: 22,
                             color: theme.palette.text.primary,
-                            backgroundColor: alpha(
-                              getPriorityColor(theme, item.priority),
-                              0.14,
-                            ),
+                            backgroundColor: alpha(getPriorityColor(theme, item.priority), 0.14),
                             border: `1px solid ${alpha(
                               getPriorityColor(theme, item.priority),
                               0.28,
@@ -302,14 +278,8 @@ export function NotificationSidebar({
                           sx={{
                             height: 22,
                             color: theme.palette.text.primary,
-                            backgroundColor: alpha(
-                              getStatusColor(theme, item.status),
-                              0.14,
-                            ),
-                            border: `1px solid ${alpha(
-                              getStatusColor(theme, item.status),
-                              0.28,
-                            )}`,
+                            backgroundColor: alpha(getStatusColor(theme, item.status), 0.14),
+                            border: `1px solid ${alpha(getStatusColor(theme, item.status), 0.28)}`,
                           }}
                         />
                       </Stack>
@@ -327,19 +297,12 @@ export function NotificationSidebar({
                           sx={{
                             height: 22,
                             color: theme.palette.text.primary,
-                            backgroundColor: alpha(
-                              theme.palette.secondary.main,
-                              0.14,
-                            ),
+                            backgroundColor: alpha(theme.palette.secondary.main, 0.14),
                             border: `1px solid ${alpha(theme.palette.secondary.main, 0.28)}`,
                           }}
                         />
                         {item.hasAttachment ? (
-                          <Stack
-                            direction="row"
-                            spacing={0.5}
-                            sx={{ alignItems: "center" }}
-                          >
+                          <Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
                             <AttachFileRoundedIcon
                               sx={{
                                 fontSize: 15,

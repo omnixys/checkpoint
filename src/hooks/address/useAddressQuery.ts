@@ -31,8 +31,8 @@ export function useEventAddressQuery(eventId?: string | undefined) {
     GetEventAddressesByEventIdQuery,
     GetEventAddressesByEventIdQueryVariables
   >(GetEventAddressesByEventIdDocument, {
-    variables: { eventId: eventId ?? '' },
-    skip: !eventId
+    variables: { eventId: eventId ?? "" },
+    skip: !eventId,
   });
 
   /**

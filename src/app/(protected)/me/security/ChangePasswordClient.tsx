@@ -32,14 +32,11 @@ export default function ChangePasswordCard() {
     confirm: "",
   });
 
-  const [status, setStatus] = useState<"idle" | "saving" | "success" | "error">(
-    "idle",
-  );
+  const [status, setStatus] = useState<"idle" | "saving" | "success" | "error">("idle");
 
-  const [changePassword] = useMutation<
-    ChangeMyPasswordMutation,
-    ChangeMyPasswordMutationVariables
-  >(ChangeMyPasswordDocument);
+  const [changePassword] = useMutation<ChangeMyPasswordMutation, ChangeMyPasswordMutationVariables>(
+    ChangeMyPasswordDocument,
+  );
 
   /* ------------------------------------------------------------
    * Validation
@@ -51,8 +48,7 @@ export default function ChangePasswordCard() {
     };
   }, [form]);
 
-  const disabled =
-    !form.oldPassword || !form.newPassword || errors.mismatch || errors.weak;
+  const disabled = !form.oldPassword || !form.newPassword || errors.mismatch || errors.weak;
 
   /* ------------------------------------------------------------
    * Submit
@@ -135,9 +131,7 @@ export default function ChangePasswordCard() {
               label="Current password"
               type="password"
               value={form.oldPassword}
-              onChange={(e) =>
-                setForm({ ...form, oldPassword: e.target.value })
-              }
+              onChange={(e) => setForm({ ...form, oldPassword: e.target.value })}
               fullWidth
             />
 
@@ -145,13 +139,9 @@ export default function ChangePasswordCard() {
               label="New password"
               type="password"
               value={form.newPassword}
-              onChange={(e) =>
-                setForm({ ...form, newPassword: e.target.value })
-              }
+              onChange={(e) => setForm({ ...form, newPassword: e.target.value })}
               error={errors.weak}
-              helperText={
-                errors.weak ? "Password must be at least 8 characters" : " "
-              }
+              helperText={errors.weak ? "Password must be at least 8 characters" : " "}
               fullWidth
             />
 

@@ -34,19 +34,16 @@ import NavigationItem from "@/checkpoint/components/layout/navigation/Navigation
 export default function NavigationDesktop(): JSX.Element {
   const [collapsed, setCollapsed] = useState(false);
   const theme = useTheme();
-    const t = useTypedTranslations("layout");
-
+  const t = useTypedTranslations("layout");
 
   const { isAuthenticated } = useAuth();
   const { activeEvent } = useActiveEvent();
 
-  const selectorRef = useTourAnchor("event.selector"); 
+  const selectorRef = useTourAnchor("event.selector");
   const colorRef = useTourAnchor("ui.colorSwitcher");
   const toggleRef = useTourAnchor("ui.themeToggle");
   const userMenuRef = useTourAnchor("ui.userMenu");
-    const languageRef = useTourAnchor("ui.language");
-
-
+  const languageRef = useTourAnchor("ui.language");
 
   const role = activeEvent?.myRole ?? "GUEST";
   const items = createNavigation(role, t, activeEvent?.id);
@@ -107,12 +104,7 @@ export default function NavigationDesktop(): JSX.Element {
           <Divider sx={{ my: 2 }} />
           <List sx={{ flexGrow: 1 }}>
             {items.map((item) => (
-              <NavigationItem
-                key={item.path}
-                item={item}
-                items={items}
-                role={role}
-              />
+              <NavigationItem key={item.path} item={item} items={items} role={role} />
             ))}
           </List>
         </>

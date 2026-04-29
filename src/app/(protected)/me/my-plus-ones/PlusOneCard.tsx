@@ -12,16 +12,7 @@ import EventSeatRoundedIcon from "@mui/icons-material/EventSeatRounded";
 import HourglassEmptyRoundedIcon from "@mui/icons-material/HourglassEmptyRounded";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import PhoneIphoneRoundedIcon from "@mui/icons-material/PhoneIphoneRounded";
-import {
-  alpha,
-  Box,
-  Chip,
-  IconButton,
-  Stack,
-  Tooltip,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { alpha, Box, Chip, IconButton, Stack, Tooltip, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
 
 type Props = {
@@ -33,20 +24,14 @@ type Props = {
 
 const MotionBox = motion.create(Box);
 
-export default function PlusOneCard({
-  plusOne,
-  index,
-  onEdit,
-  onDelete,
-}: Props) {
+export default function PlusOneCard({ plusOne, index, onEdit, onDelete }: Props) {
   const theme = useTheme();
   const t = useTypedTranslations("invitation");
 
   const fullName = `${plusOne.firstName} ${plusOne.lastName}`.trim();
 
   const primaryPhone =
-    plusOne.phoneNumbers.find((phone) => phone.isPrimary) ??
-    plusOne.phoneNumbers[0];
+    plusOne.phoneNumbers.find((phone) => phone.isPrimary) ?? plusOne.phoneNumbers[0];
 
   const statusLabel = plusOne.status
     ? formatEnum(t, "plusOnes.status", plusOne.status)

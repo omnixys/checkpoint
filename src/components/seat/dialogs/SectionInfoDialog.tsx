@@ -25,13 +25,7 @@ type Props = {
 
 // TODO conflict handling im frontend
 
-export default function SectionInfoDialog({
-  open,
-  sectionName,
-  seats,
-  onClose,
-  refetch,
-}: Props) {
+export default function SectionInfoDialog({ open, sectionName, seats, onClose, refetch }: Props) {
   const [name, setName] = useState(sectionName);
 
   const { renameSection, data } = useSeatMutation();

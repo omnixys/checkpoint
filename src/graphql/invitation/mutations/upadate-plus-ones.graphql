@@ -20,4 +20,3 @@ mutation UpdatePlusOne($input: UpdatePlusOneInput!) {
     }
   }
 }
-

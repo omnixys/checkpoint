@@ -6,15 +6,11 @@ type Locale = (typeof SUPPORTED_LOCALES)[number];
 
 function detectLocale(header: string | null): Locale {
   if (!header) return DEFAULT_LOCALE;
-  const languages = header
-    .split(",")
-    .map((l) => l.split(";")[0]?.trim().toLowerCase() ?? "");
-  
-
+  const languages = header.split(",").map((l) => l.split(";")[0]?.trim().toLowerCase() ?? "");
 
   for (const lang of languages) {
     for (const supported of SUPPORTED_LOCALES) {
-      if (lang.startsWith(supported.toLowerCase().split("-")[0] ?? '')) {
+      if (lang.startsWith(supported.toLowerCase().split("-")[0] ?? "")) {
         return supported;
       }
     }

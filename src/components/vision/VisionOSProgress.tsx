@@ -53,9 +53,12 @@ export function VisionOSProgress({ progress }: { progress: number }) {
         transition={{ duration: 0.4 }}
       >
         <Typography
-
-          sx={{ color: "white", textShadow: "0 0 20px rgba(255,255,255,0.7)",          fontSize:32,
-          fontWeight:600, }}
+          sx={{
+            color: "white",
+            textShadow: "0 0 20px rgba(255,255,255,0.7)",
+            fontSize: 32,
+            fontWeight: 600,
+          }}
         >
           {progress}%
         </Typography>

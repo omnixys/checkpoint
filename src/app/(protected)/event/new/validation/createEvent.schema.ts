@@ -32,18 +32,8 @@ export const createSettingsSchema = z.object({
     .or(z.literal("")),
   isActive: z.boolean(),
   isPublic: z.boolean(),
-  coverImageUrl: z
-    .string()
-    .trim()
-    .url("Please enter a valid URL.")
-    .optional()
-    .or(z.literal("")),
-  logoUrl: z
-    .string()
-    .trim()
-    .url("Please enter a valid URL.")
-    .optional()
-    .or(z.literal("")),
+  coverImageUrl: z.string().trim().url("Please enter a valid URL.").optional().or(z.literal("")),
+  logoUrl: z.string().trim().url("Please enter a valid URL.").optional().or(z.literal("")),
   dressCode: z.string().trim().optional(),
   description: z.string().trim().optional(),
   startsAt: z.string().optional(),
@@ -62,22 +52,19 @@ export const createEventWizardSchema = z
   .superRefine((value, ctx) => {
     if (
       value.settings.allowPublicRsvpWebsite &&
-      (!value.settings.publicRsvpWebsite ||
-        value.settings.publicRsvpWebsite.trim().length === 0)
+      (!value.settings.publicRsvpWebsite || value.settings.publicRsvpWebsite.trim().length === 0)
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["settings", "publicRsvpWebsite"],
-        message:
-          "Public RSVP website is required when public RSVP website is enabled.",
+        message: "Public RSVP website is required when public RSVP website is enabled.",
       });
     }
 
     if (
       value.settings.startsAt &&
       value.settings.endsAt &&
-      new Date(value.settings.startsAt).getTime() >
-        new Date(value.settings.endsAt).getTime()
+      new Date(value.settings.startsAt).getTime() > new Date(value.settings.endsAt).getTime()
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -90,6 +77,4 @@ export const createEventWizardSchema = z
 export type ChildEventFormValue = z.infer<typeof childEventSchema>;
 export type EventAddressFormValue = z.infer<typeof eventAddressSchema>;
 export type CreateSettingsFormValue = z.infer<typeof createSettingsSchema>;
-export type CreateEventWizardFormValue = z.infer<
-  typeof createEventWizardSchema
->;
+export type CreateEventWizardFormValue = z.infer<typeof createEventWizardSchema>;

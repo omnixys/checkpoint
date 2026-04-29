@@ -71,9 +71,7 @@ export default function EventCardPro({
         sx={{
           borderRadius: 5,
           overflow: "hidden",
-          bgcolor: isActive
-            ? alpha(theme.palette.primary.main, 0.08)
-            : "background.paper",
+          bgcolor: isActive ? alpha(theme.palette.primary.main, 0.08) : "background.paper",
           boxShadow: isActive
             ? `
                 0 0 0 2px ${theme.palette.primary.main},
@@ -113,19 +111,12 @@ export default function EventCardPro({
               />
 
               {typeof ev.settings.maxSeats === "number" && (
-                <Chip
-                  size="small"
-                  label={t("details.maxSeats", { count: ev.settings.maxSeats })}
-                />
+                <Chip size="small" label={t("details.maxSeats", { count: ev.settings.maxSeats })} />
               )}
 
               <Chip
                 size="small"
-                label={t(
-                  ev.settings.allowReEntry
-                    ? "details.reEntryOn"
-                    : "details.reEntryOff",
-                )}
+                label={t(ev.settings.allowReEntry ? "details.reEntryOn" : "details.reEntryOff")}
                 color={ev.settings.allowReEntry ? "success" : "default"}
                 variant={ev.settings.allowReEntry ? "filled" : "outlined"}
               />

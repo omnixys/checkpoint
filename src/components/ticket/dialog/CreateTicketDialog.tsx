@@ -21,20 +21,16 @@ export default function CreateTicketDialog({ onCancel, onConfirm }: Props) {
         Neues Ticket erstellen
       </Typography>
 
-      <Typography
-        variant="body2"
-        sx={{ mt: 1, color: theme.palette.text.secondary }}
-      >
+      <Typography variant="body2" sx={{ mt: 1, color: theme.palette.text.secondary }}>
         Möchtest du ein neues Ticket für dieses Event erstellen?
       </Typography>
 
       <Stack
         direction="row"
         spacing={1.5}
-    
         sx={{
           justifyContent: "flex-end",
-              mt:3,
+          mt: 3,
         }}
       >
         <Button onClick={onCancel}>Abbrechen</Button>

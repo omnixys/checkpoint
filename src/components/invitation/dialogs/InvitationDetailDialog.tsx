@@ -34,10 +34,9 @@ import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 export default function InvitationDetailDialog({ logic }: { logic: InvitationLogic }) {
   const inv = logic.activeInvitation;
-  
-    const tInvitation = useTypedTranslations("invitation");
+
+  const tInvitation = useTypedTranslations("invitation");
   const tCommon = useTypedTranslations("common");
-  
 
   const [copied, setCopied] = useState(false);
   const [approveSeatOpen, setApproveSeatOpen] = useState(false);
@@ -134,9 +133,13 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
           <Stack spacing={3}>
             {/* ACTIONS */}
             <Box>
-              <Typography variant="h5" gutterBottom sx={{
-                pb: 2
-              }}>
+              <Typography
+                variant="h5"
+                gutterBottom
+                sx={{
+                  pb: 2,
+                }}
+              >
                 {tInvitation("detail.title", { firstName: inv.firstName })}
               </Typography>
               <Stack
@@ -229,17 +232,12 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
 
                 <Button
                   startIcon={<WhatsAppIcon />}
-                  onClick={() =>
-                    openWhatsapp(whatsappInviteText, inv.phoneNumber ?? null)
-                  }
+                  onClick={() => openWhatsapp(whatsappInviteText, inv.phoneNumber ?? null)}
                 >
                   {tInvitation("detail.whatsappInvitation")}
                 </Button>
 
-                <Tooltip
-                  title={copied ? tCommon("copy") : tInvitation("copyRsvp")}
-                  open={copied}
-                >
+                <Tooltip title={copied ? tCommon("copy") : tInvitation("copyRsvp")} open={copied}>
                   <Button
                     startIcon={<ContentCopyRoundedIcon />}
                     onClick={async () => {
@@ -248,7 +246,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                       setTimeout(() => setCopied(false), 900);
                     }}
                   >
-                    {tInvitation('copyRsvp')}
+                    {tInvitation("copyRsvp")}
                   </Button>
                 </Tooltip>
               </Stack>
@@ -259,7 +257,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
             {/* SYSTEM */}
             <Box>
               <Typography variant="subtitle2" gutterBottom>
-               {tCommon('management')}
+                {tCommon("management")}
               </Typography>
               <Stack direction="row" spacing={2}>
                 <Button
@@ -272,7 +270,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                       .then(() => logic.closeInvitation())
                   }
                 >
-                 {tCommon('delete')}
+                  {tCommon("delete")}
                 </Button>
               </Stack>
             </Box>
@@ -316,7 +314,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                 fontSize: 16,
               }}
             >
-              {tCommon('chooseSeat')}
+              {tCommon("chooseSeat")}
             </Typography>
           </Stack>
         </DialogTitle>
@@ -363,10 +361,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                     }}
                   >
                     <Divider sx={{ flex: 1 }} />
-                    <Typography
-                      variant="caption"
-                      sx={{ opacity: 0.6, letterSpacing: 1 }}
-                    >
+                    <Typography variant="caption" sx={{ opacity: 0.6, letterSpacing: 1 }}>
                       {section.toUpperCase()}
                     </Typography>
                     <Divider sx={{ flex: 1 }} />
@@ -416,11 +411,8 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                             </Typography>
 
                             {selected && (
-                              <Typography
-                                variant="caption"
-                                sx={{ color: "#7ecbff" }}
-                              >
-                                {tCommon('chosen')}
+                              <Typography variant="caption" sx={{ color: "#7ecbff" }}>
+                                {tCommon("chosen")}
                               </Typography>
                             )}
                           </Stack>

@@ -15,7 +15,7 @@ export default function RsvpPageClient({
   callingCodeCountry,
 }: {
   callingCodeCountry: CallingCodeCountry[];
-  }) {
+}) {
   const t = useTypedTranslations("rsvp");
   const logger = getLogger("RsvpPage");
 

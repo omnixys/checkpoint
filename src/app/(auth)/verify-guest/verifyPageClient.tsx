@@ -74,7 +74,7 @@ function mapVerifyMessage(
 /* -------------------------------------------------------------------------- */
 
 export default function VerifyPageClient() {
-    const t = useTypedTranslations("auth");
+  const t = useTypedTranslations("auth");
 
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
@@ -258,7 +258,7 @@ function CenteredContainer({ children }: { children: React.ReactNode }) {
  */
 function CredentialCard({
   user,
-  t
+  t,
 }: {
   user: {
     userId: string;
@@ -287,18 +287,10 @@ function CredentialCard({
             {t("verify.credentials.title")}
           </Typography>
 
-          <Field
-            label={t("verify.credentials.username")}
-            value={user.username}
-          />
-          <Field
-            label={t("verify.credentials.password")}
-            value={user.password}
-          />
+          <Field label={t("verify.credentials.username")} value={user.username} />
+          <Field label={t("verify.credentials.password")} value={user.password} />
 
-          {user.email && (
-            <Field label={t("verify.credentials.email")} value={user.email} />
-          )}
+          {user.email && <Field label={t("verify.credentials.email")} value={user.email} />}
         </Stack>
       </CardContent>
     </Card>

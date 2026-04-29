@@ -11,24 +11,25 @@ export function getDateKey(date: Date | string): string {
 /**
  * Groups events by day for efficient rendering.
  */
-export function groupEventsByDay(events: GetMyEventCalendarDataQuery['myEvents'] | undefined): Map<string, any[]> | undefined{
+export function groupEventsByDay(
+  events: GetMyEventCalendarDataQuery["myEvents"] | undefined,
+): Map<string, any[]> | undefined {
   const map = new Map<string, any[]>();
 
   if (!events || events?.length === 0) {
-    return
+    return;
   }
-    for (const event of events) {
-      const key = getDateKey(event.settings?.startsAt);
+  for (const event of events) {
+    const key = getDateKey(event.settings?.startsAt);
 
-      if (!map.has(key)) {
-        map.set(key, []);
-      }
-
-      map.get(key)!.push(event);
+    if (!map.has(key)) {
+      map.set(key, []);
     }
 
-    return map;
+    map.get(key)!.push(event);
+  }
 
+  return map;
 }
 
 /**

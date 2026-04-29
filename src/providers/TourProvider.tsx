@@ -33,11 +33,7 @@ export function useTour() {
   return ctx;
 }
 
-export default function TourProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function TourProvider({ children }: { children: React.ReactNode }) {
   const [anchors, setAnchors] = useState<AnchorMap>({});
   const [steps, setSteps] = useState<TourStep[]>([]);
   const [stepIndex, setStepIndex] = useState(0);
