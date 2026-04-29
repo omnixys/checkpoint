@@ -1,18 +1,28 @@
 "use client";
 
 import TicketCard from "@/checkpoint/components/ticket/TicketCard";
-import { PresenceState, TicketPayload } from "@/checkpoint/generated/graphql";
+import { PresenceState, TicketPageQuery, TicketPayload } from "@/checkpoint/generated/graphql";
+import useSeatQuery from "@/checkpoint/hooks/seat/useSeatQuery";
 import { Grid } from "@mui/material";
 import { motion } from "framer-motion";
 
 type Props = {
-  tickets: TicketPayload[];
+  tickets: TicketPageQuery["ticketsByEvent"];
   onOpen: (id: string) => void;
   onDelete: (id: string) => void;
   onFilter: () => void;
 };
 
 export default function TicketList({ tickets, onOpen, onDelete }: Props) {
+
+  const {seatMap} = useSeatQuery({
+    seatIdList: tickets.map((ticket) => ticket.seatId),
+    loadSeatIdList: true,
+  });
+
+const getSeatLabel = (seatId: string) => {
+  return seatMap.get(seatId)?.label ?? "—";
+};
   return (
     <Grid
       container
@@ -46,9 +56,9 @@ export default function TicketList({ tickets, onOpen, onDelete }: Props) {
         >
           <TicketCard
             code={t.id}
-            status={"ACTIVE"}
-            seatLabel={t.seatId}
-            presence={t.currentState as PresenceState} // TODO optimieren!!
+            status={t.revoked ? "REVOKED" : "ACTIVE"}
+            seatLabel={getSeatLabel(t.seatId)}
+            presence={t.currentState}
             onOpen={() => onOpen(t.id)}
             onDelete={() => onDelete(t.id)}
           />

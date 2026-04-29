@@ -8,6 +8,8 @@ import {
   UpdateMyProfileMutationVariables,
   UpdateMyProfileDocument,
 } from "@/checkpoint/generated/graphql";
+import useMeMutation from "@/checkpoint/hooks/user/useMeMutation";
+import useMeQuery from "@/checkpoint/hooks/user/useMeQuery";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { Alert, Button, Card, CardContent, Snackbar, Stack, TextField } from "@mui/material";
 import { useRouter } from "next/navigation";
@@ -16,11 +18,9 @@ import { useEffect, useState } from "react";
 export default function ProfileClientPage() {
   const router = useRouter();
 
-  /* ------------------------------------------------------------
-   * Load current user
-   * ------------------------------------------------------------ */
-  const { data, loading: meLoading } = useQuery<MeQuery, MeQueryVariables>(MeDocument);
-
+  const { mePage, mePageLoading } = useMeQuery({
+    loadMePage: true,
+  });
   /* ------------------------------------------------------------
    * Form state
    * ------------------------------------------------------------ */
@@ -48,59 +48,56 @@ export default function ProfileClientPage() {
    * Sync form once ME is loaded
    * ------------------------------------------------------------ */
   useEffect(() => {
-    if (data?.me) {
+    if (mePage) {
       setForm({
-        username: data.me.username,
-        firstName: data.me.personalInfo?.firstName ?? "",
-        lastName: data.me.personalInfo?.lastName ?? "",
-        email: data.me.personalInfo?.email ?? "",
+        username: mePage.username,
+        firstName: mePage.personalInfo?.firstName ?? "",
+        lastName: mePage.personalInfo?.lastName ?? "",
+        email: mePage.personalInfo?.email ?? "",
       });
     }
-  }, [data]);
+  }, [mePage]);
 
-  /* ------------------------------------------------------------
-   * Mutation
-   * ------------------------------------------------------------ */
-  const [updateProfile, { loading: saving }] = useMutation<
-    UpdateMyProfileMutation,
-    UpdateMyProfileMutationVariables
-  >(UpdateMyProfileDocument, {
-    onCompleted(result) {
-      const payload = result.updateMyProfile;
+  const {updateProfileLoading, updateProfile} = useMeMutation();
 
-      if (!payload.ok) {
-        setFeedback({
-          type: "error",
-          message: payload.message || "Profile update failed",
-        });
-        return;
-      }
+  const update = async () => {
+                    const { data, error } = await updateProfile({
+                      variables: { input: form },
+                    });
+    
+    const payload = data?.updateMyProfile;
+    
+          if (!payload?.ok) {
+            setFeedback({
+              type: "error",
+              message: payload?.message || "Profile update failed",
+            });
+            return;
+          }
 
-      setFeedback({
-        type: "success",
-        message: payload.message || "Profile updated successfully",
-      });
+          setFeedback({
+            type: "success",
+            message: payload.message || "Profile updated successfully",
+          });
 
-      // Redirect after short confirmation
-      setTimeout(() => {
-        router.push("/me");
-      }, 1500);
-    },
+          // Redirect after short confirmation
+          setTimeout(() => {
+            router.push("/me");
+          }, 1500);
+    
+    if (error) {
+            setFeedback({
+              type: "error",
+              message: error.message ?? "Profile update failed",
+            });
+    }
 
-    onError(error) {
-      setFeedback({
-        type: "error",
-        message: error.message ?? "Profile update failed",
-      });
-    },
-
-    refetchQueries: [MeDocument],
-  });
+  }
 
   /* ------------------------------------------------------------
    * Loading guard
    * ------------------------------------------------------------ */
-  if (meLoading) {
+  if (mePageLoading) {
     return null;
   }
 
@@ -133,20 +130,20 @@ export default function ProfileClientPage() {
 
             <Button
               variant="contained"
-              disabled={saving}
-              onClick={() =>
-                updateProfile({
-                  variables: { input: form },
-                })
-              }
+              disabled={updateProfileLoading}
+              onClick={update}
             >
-              {saving ? "Saving…" : "Save Changes"}
+              {updateProfileLoading ? "Saving…" : "Save Changes"}
             </Button>
           </Stack>
         </CardContent>
       </Card>
 
-      <Snackbar open={!!feedback} autoHideDuration={3000} onClose={() => setFeedback(null)}>
+      <Snackbar
+        open={!!feedback}
+        autoHideDuration={3000}
+        onClose={() => setFeedback(null)}
+      >
         <Alert severity={feedback?.type}>{feedback?.message}</Alert>
       </Snackbar>
     </>

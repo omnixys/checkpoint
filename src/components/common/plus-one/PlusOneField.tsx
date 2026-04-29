@@ -1,18 +1,18 @@
 "use client";
 
 import PhoneNumberField from "@/checkpoint/components/common/phoneNumber/PhoneNumberField";
-import type { Country, PhoneNumberInput } from "@/checkpoint/generated/graphql";
-import type { PlusOneModel } from "@/checkpoint/hooks/invitation/usePlusOnes";
+import type { PhoneNumberInput } from "@/checkpoint/generated/graphql";
 import { CallingCodeCountry } from "@/checkpoint/types/country.type";
+import { NormalizedPlusOne } from "@/checkpoint/types/event.type";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Box, Button, IconButton, Stack, TextField } from "@mui/material";
 
 type Props = {
-  value: PlusOneModel;
+  value: NormalizedPlusOne;
   index: number;
   countries: CallingCodeCountry[];
 
-  onChange: <K extends keyof PlusOneModel>(index: number, field: K, value: PlusOneModel[K]) => void;
+  onChange: <K extends keyof NormalizedPlusOne>(index: number, field: K, value: NormalizedPlusOne[K]) => void;
 
   onRemove: (index: number) => void;
 

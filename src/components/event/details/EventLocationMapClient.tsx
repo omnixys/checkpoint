@@ -4,7 +4,6 @@ import { Box, useTheme, alpha, ToggleButtonGroup, ToggleButton } from "@mui/mate
 import { motion } from "framer-motion";
 import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import { useEffect, useState } from "react";
-import { useEventAddress } from "@/checkpoint/components/event/settings/address/useEventAddress";
 import "leaflet/dist/leaflet.css";
 
 import MapIcon from "@mui/icons-material/Map";
@@ -12,6 +11,7 @@ import SatelliteIcon from "@mui/icons-material/SatelliteAlt";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 
 import { useMapMarker } from "@/checkpoint/hooks/theme/useMapMarker";
+import { useEventAddressQuery } from "@/checkpoint/hooks/address/useAddressQuery";
 
 /* --------------------------------------------------------
  * Map Styles
@@ -45,7 +45,10 @@ export default function EventLocationMapClient({ eventId }: { eventId: string })
   const theme = useTheme();
   const markerIcon = useMapMarker();
 
-  const { address, loading } = useEventAddress(eventId);
+  const {
+    address,
+    loading,
+  } = useEventAddressQuery(eventId)
 
   const [style, setStyle] = useState<MapStyle>("satellite");
 

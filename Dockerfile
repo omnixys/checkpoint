@@ -11,19 +11,33 @@
 # ---------------------------------------------------------------------------------------
 # syntax=docker/dockerfile:1.14.0
 
-# ---------------------------------------------------------------------------------------
-# Build arguments (via docker-bake.hcl)
-# ---------------------------------------------------------------------------------------
 ARG NODE_VERSION=25.8.2
-ARG APP_NAME=checkpoint-ui
-ARG APP_VERSION=0.0.0-dev
-ARG CREATED
-ARG REVISION
+
 
 # ---------------------------------------------------------------------------------------
 # Stage 1: Build
 # ---------------------------------------------------------------------------------------
 FROM node:${NODE_VERSION}-bookworm-slim AS build
+
+ARG NEXT_PUBLIC_BACKEND_SERVER_URL
+ARG NEXT_PUBLIC_BACKEND_WS_URL
+ARG NEXT_PUBLIC_BASE_URL
+ARG NEXT_PUBLIC_APP_URL
+ARG NEXT_PUBLIC_EVENT_API
+ARG NEXT_PUBLIC_INVITATION_API
+ARG NEXT_PUBLIC_EVENT_ID
+ARG NEXT_PUBLIC_CHECKPOINT_BASE_PATH
+ARG NEXT_PUBLIC_FALLBACK_URL
+
+ENV NEXT_PUBLIC_BACKEND_SERVER_URL=$NEXT_PUBLIC_BACKEND_SERVER_URL \
+    NEXT_PUBLIC_BACKEND_WS_URL=$NEXT_PUBLIC_BACKEND_WS_URL \
+    NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL \
+    NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL \
+    NEXT_PUBLIC_EVENT_API=$NEXT_PUBLIC_EVENT_API \
+    NEXT_PUBLIC_INVITATION_API=$NEXT_PUBLIC_INVITATION_API \
+    NEXT_PUBLIC_EVENT_ID=$NEXT_PUBLIC_EVENT_ID \
+    NEXT_PUBLIC_CHECKPOINT_BASE_PATH=$NEXT_PUBLIC_CHECKPOINT_BASE_PATH \
+    NEXT_PUBLIC_FALLBACK_URL=$NEXT_PUBLIC_FALLBACK_URL
 
 ENV NODE_ENV=production
 ENV DOCKER=true
@@ -99,7 +113,7 @@ WORKDIR /opt/app
 USER root
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-      dumb-init \
+      dumb-init wget \
       ca-certificates && \
     rm -rf /var/lib/apt/lists/* /tmp/* && \
     chown -R node:node /opt/app
@@ -115,8 +129,8 @@ COPY --from=build --chown=node:node /app/public ./public
 EXPOSE 3000
 
 # ---- Healthcheck ----
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
-  CMD node -e "fetch('http://localhost:3000').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+HEALTHCHECK --interval=10s --timeout=5s --start-period=20s \
+  CMD wget -q --spider http://127.0.0.1:3000/api/health || exit 1
 
 # ---- Start ----
 ENTRYPOINT ["dumb-init", "--"]

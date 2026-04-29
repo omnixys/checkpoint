@@ -1,7 +1,106 @@
-# import EventFull from "../fragments/event.fragment.graphql"
 
 query Event($id: ID!) {
   event(id: $id) {
     ...EventFull
+  }
+}
+
+query EventPage($eventId: ID!) {
+  event(id: $eventId) {
+    id
+    name
+    myRole
+    timeline {
+      id
+      eventId
+      type
+      timestamp
+      label
+    }
+    coverMedia {
+      id
+      url
+      variants {
+        url
+        width
+      }
+    }
+    settings {
+      startsAt
+      endsAt
+    }
+  }
+}
+
+
+query GetEventMeta($eventId: ID!) {
+  event(id: $eventId) {
+    id
+    name
+    myRole
+    coverMedia {
+      id
+      url
+    }
+  }
+}
+
+query GetEventName($eventId: ID!) {
+  event(id: $eventId) {
+    name
+  }
+}
+
+
+
+query GetActiveEvent($eventId: ID!) {
+  event(id: $eventId) {
+    id
+    name
+    myRole
+  }
+}
+
+
+
+query GetEventSettings($eventId: ID!) {
+  event(id: $eventId) {
+    id
+    name
+    myRole
+    owner
+    parentId
+    userRoles {
+      role
+      userId
+    }
+    timeline {
+      id
+      eventId
+      type
+      timestamp
+      label
+    }
+    coverMedia {
+      id
+      url
+      variants {
+        url
+        width
+      }
+    }
+    settings {
+      id
+      allowReEntry
+      rotateSeconds
+      maxSeats
+      dressCode
+      description
+      isActive
+      startsAt
+      endsAt
+      createdAt
+      updatedAt
+    }
   }
 }

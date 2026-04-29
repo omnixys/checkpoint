@@ -4,14 +4,17 @@ import { Box, Button, Stack, Typography, useTheme } from "@mui/material";
 import { useState } from "react";
 import AddressForm, { FormState } from "./AddressForm";
 import AddressMapPreview from "./AddressMapPreview";
-import { useEventAddress } from "@/checkpoint/components/event/settings/address/useEventAddress";
 import AddressSummaryCard from "@/checkpoint/components/event/settings/address/AddressSummaryCard";
+import { useEventAddressMutation } from "@/checkpoint/hooks/address/useAddressMutation";
+import { useEventAddressQuery } from "@/checkpoint/hooks/address/useAddressQuery";
 
 export default function EventAddressSection({ eventId }: { eventId: string }) {
   const theme = useTheme();
 
-  const { createAddress, deleteAddress, resolveGeo, address, loading, refetch } =
-    useEventAddress(eventId);
+  const {  resolveGeo, address, loading, refetch } =
+    useEventAddressQuery(eventId);
+  
+  const { createAddressMutation, deleteAddressMutation } = useEventAddressMutation();
 
   const [form, setForm] = useState<FormState | null>(null);
   const [geo, setGeo] = useState<any>(null);
@@ -38,8 +41,10 @@ export default function EventAddressSection({ eventId }: { eventId: string }) {
   };
 
   const handleDelete = async () => {
-    await deleteAddress();
-    await refetch(); // 🔥 wichtig → UI reset
+    await deleteAddressMutation({
+      variables: { eventId },
+    });
+    await refetch();
   };
 
   /**
@@ -50,20 +55,24 @@ export default function EventAddressSection({ eventId }: { eventId: string }) {
   const handleCreate = async () => {
     if (!form || !geo) return;
 
-    await createAddress({
-      eventId,
 
-      cityId: geo.cityId,
-      postalCodeId: geo.postalCodeId,
-      stateId: geo.stateId,
-      countryId: geo.countryId,
-      streetId: geo.streetId,
-      houseNumberId: geo.houseNumberId,
+        const createPayload = await createAddressMutation({
+          variables: {
+            input: {
+              eventId,
 
-      additionalInfo: "",
-    });
+              cityId: geo.cityId,
+              postalCodeId: geo.postalCodeId,
+              stateId: geo.stateId,
+              countryId: geo.countryId,
+              streetId: geo.streetId,
+              houseNumberId: geo.houseNumberId,
 
-    await refetch(); // 🔥 CRITICAL
+              additionalInfo: "",
+            },
+          },
+        });
+  
   };
 
   return (

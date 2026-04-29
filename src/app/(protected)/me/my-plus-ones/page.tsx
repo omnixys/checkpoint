@@ -1,6 +1,18 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import PlusOneCard from "@/checkpoint/app/(protected)/me/my-plus-ones/PlusOneCard";
+import PlusOneDialog from "@/checkpoint/app/(protected)/me/my-plus-ones/PlusOneDialog";
+import { usePlusOnes } from "@/checkpoint/app/(protected)/me/my-plus-ones/hooks/usePlusOnes";
+import type {
+  PlusOneItem,
+  UpdatePlusOneInput,
+} from "@/checkpoint/app/(protected)/me/my-plus-ones/types/plusOne.types";
+import { CreatePlusOneInput } from "@/checkpoint/generated/graphql";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import DeleteSweepRoundedIcon from "@mui/icons-material/DeleteSweepRounded";
+import EventSeatRoundedIcon from "@mui/icons-material/EventSeatRounded";
+import GroupRoundedIcon from "@mui/icons-material/GroupRounded";
 import {
   alpha,
   Box,
@@ -11,20 +23,8 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import GroupRoundedIcon from "@mui/icons-material/GroupRounded";
-import EventSeatRoundedIcon from "@mui/icons-material/EventSeatRounded";
-import DeleteSweepRoundedIcon from "@mui/icons-material/DeleteSweepRounded";
 import { AnimatePresence, motion } from "framer-motion";
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import PlusOneDialog from "@/checkpoint/app/(protected)/my-plus-ones/PlusOneDialog";
-import PlusOneCard from "@/checkpoint/app/(protected)/my-plus-ones/PlusOneCard";
-import { usePlusOnes } from "@/checkpoint/app/(protected)/my-plus-ones/hooks/usePlusOnes";
-import type {
-  PlusOneItem,
-  UpdatePlusOneInput,
-} from "@/checkpoint/app/(protected)/my-plus-ones/types/plusOne.types";
-import { CreatePlusOneInput } from "@/checkpoint/generated/graphql";
+import { useMemo, useState } from "react";
 
 const MotionBox = motion.create(Box);
 
@@ -44,7 +44,9 @@ export default function MyPlusOnesPage() {
   } = usePlusOnes();
 
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingPlusOne, setEditingPlusOne] = useState<PlusOneItem | null>(null);
+  const [editingPlusOne, setEditingPlusOne] = useState<PlusOneItem | null>(
+    null,
+  );
 
   const usedSlots = plusOnes.length;
 

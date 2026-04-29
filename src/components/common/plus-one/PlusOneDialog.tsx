@@ -3,20 +3,24 @@
 import { Dialog, DialogContent, DialogTitle } from "@mui/material";
 
 import type { Country, PhoneNumberInput } from "@/checkpoint/generated/graphql";
-import type { PlusOneModel } from "@/checkpoint/hooks/invitation/usePlusOnes";
 
 import PlusOneField from "@/checkpoint/components/common/plus-one/PlusOneField";
 import { CallingCodeCountry } from "@/checkpoint/types/country.type";
+import { NormalizedPlusOne } from "@/checkpoint/types/event.type";
 
 type Props = {
   open: boolean;
   index: number | null;
-  value: PlusOneModel | null;
+  value: NormalizedPlusOne | null;
   countries: CallingCodeCountry[];
 
   onClose: () => void;
 
-  onChange: <K extends keyof PlusOneModel>(index: number, field: K, value: PlusOneModel[K]) => void;
+  onChange: <K extends keyof NormalizedPlusOne>(
+    index: number,
+    field: K,
+    value: NormalizedPlusOne[K],
+  ) => void;
 
   onAddPhone: (index: number, phone: PhoneNumberInput) => void;
 

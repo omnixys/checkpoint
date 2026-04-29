@@ -1,7 +1,23 @@
 # import EventFull from "../fragments/event.fragment.graphql"
 
+
 query MyEvents {
   myEvents {
-    ...EventFull
+    id
+    name
+    settings {
+      startsAt
+      endsAt
+    }
+  }
+}
+
+query GetMyEventCalendarData {
+  myEvents {
+    id
+    name
+    settings {
+      startsAt
+    }
   }
 }

@@ -1,7 +1,6 @@
-import QrClientPage from "@/checkpoint/app/(protected)/my-qr/QrClientPage";
+import QrClientPage from "@/checkpoint/app/(protected)/me/my-qr/QrClientPage";
 import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
 import { Skeleton } from "@mui/material";
-import type { Metadata } from "next";
 import { Suspense } from "react";
 
 export const metadata = buildMetadata({
@@ -28,11 +27,11 @@ export const metadata = buildMetadata({
 });
 
 export default function QRPage() {
-    return (
-      <Suspense
-        fallback={<Skeleton variant="rectangular" width="100%" height="100vh" />}
-      >
-        <QrClientPage />
-      </Suspense>
-    );
+  return (
+    <Suspense
+      fallback={<Skeleton variant="rectangular" width="100%" height="100vh" />}
+    >
+      <QrClientPage />
+    </Suspense>
+  );
 }

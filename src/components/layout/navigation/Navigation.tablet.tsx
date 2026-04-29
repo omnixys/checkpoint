@@ -97,7 +97,7 @@ export default function NavigationTablet(): JSX.Element {
                   item.path,
                   items.map((i) => i.path),
                 )}
-                onClick={() => router.push(env.CHECKPOINT_BASE_PATH + item.path)}
+                onClick={() => router.push(item.path)}
                 sx={{
                   position: "relative",
                   borderRadius: 2,

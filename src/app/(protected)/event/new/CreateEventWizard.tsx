@@ -22,10 +22,10 @@ import { CreateEventWizardStep } from "@/checkpoint/app/(protected)/event/new/ty
 
 import { useCreateEvent } from "@/checkpoint/app/(protected)/event/new/context/CreateEventContext";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { useMutation } from "@/checkpoint/hooks/core/useMutation";
 import { CreateEventDocument, CreateEventMutation, CreateEventMutationVariables } from "@/checkpoint/generated/graphql";
 import { mapEvent } from "@/checkpoint/app/(protected)/event/new/types/event/event-draft.type";
 import { useUploadMedia } from "@/checkpoint/hooks/common/useUploadMedia";
+import { useMutation } from "@apollo/client/react";
 
 export default function CreateEventWizard() {
   const theme = useTheme();

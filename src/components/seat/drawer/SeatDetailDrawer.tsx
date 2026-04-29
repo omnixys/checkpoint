@@ -1,7 +1,7 @@
 "use client";
 
 import { SeatPayload, UserRoleType } from "@/checkpoint/generated/graphql";
-import { QuerySeat } from "@/checkpoint/hooks/seat/useSeats";
+import { SeatListType } from "@/checkpoint/types/seat.type";
 import { alpha, Button, Divider, Drawer, Stack, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -15,15 +15,15 @@ export default function SeatDetailDrawer({
   role,
 }: {
   open: boolean;
-  seat: QuerySeat | undefined;
+  seat: SeatListType | undefined;
   onClose: () => void;
   onEdit: () => void;
-  getSeatHolderLabel: (SeatPayload: QuerySeat) => string;
+  getSeatHolderLabel: (SeatPayload: SeatListType) => string;
   role: UserRoleType | undefined;
 }) {
   const theme = useTheme();
   const [seatId, setSeatId] = useState<string | null>(null);
-  const fullName = (SeatPayload: QuerySeat) => getSeatHolderLabel(SeatPayload);
+  const fullName = (SeatPayload: SeatListType) => getSeatHolderLabel(SeatPayload);
 
   return (
     <Drawer

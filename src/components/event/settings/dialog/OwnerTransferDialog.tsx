@@ -16,6 +16,7 @@ import {
 import { useTheme } from "@mui/material/styles";
 import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
 import { UserRolePayload } from "@/checkpoint/generated/graphql";
+import { EventRoleType } from "@/checkpoint/types/event.type";
 
 /**
  * OwnerTransferDialog
@@ -32,7 +33,7 @@ type Props = {
   open: boolean;
   onClose: () => void;
   currentOwnerId: string;
-  roles: UserRolePayload[];
+  roles: EventRoleType[];
   onTransfer: (newOwnerId: string) => void;
 };
 

@@ -5,3 +5,21 @@ mutation RemovePlusOneInvitation($id: ID!) {
     ...InvitationFull
   }
 }
+
+
+mutation RemovePlusOne($id: ID!) {
+  removePlusOneInvitation(id: $id) {
+    id
+    firstName
+    lastName
+    email
+    status
+    phoneNumbers {
+      countryCode
+      number
+      type
+      label
+      isPrimary
+    }
+  }
+}

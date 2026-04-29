@@ -1,7 +1,7 @@
 import { PhoneNumberPayload, PhoneNumberInput } from "@/checkpoint/generated/graphql";
 
 export function mapPhoneNumbersToInput(
-  phoneNumbers?: PhoneNumberPayload[],
+  phoneNumbers?: Omit<PhoneNumberPayload, "createdAt" | "id" | "infoId" | "updatedAt">[],
 ): PhoneNumberInput[] | null {
   if (!phoneNumbers || phoneNumbers.length === 0) {
     return null;

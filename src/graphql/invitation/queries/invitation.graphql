@@ -5,3 +5,59 @@ query Invitation($invitationId: ID!) {
     ...InvitationFull
   }
 }
+
+query GetInvitation($invitationId: ID!) {
+  invitation(id: $invitationId) {
+    id
+    status
+    eventId
+
+    firstName
+    lastName
+    email
+
+    phoneNumbers {
+      countryCode
+      number
+      type
+      label
+      isPrimary
+    }
+
+    approvedAt
+    plusOnes {
+      id
+
+      lastName
+      firstName
+      email
+      phoneNumbers {
+        countryCode
+        number
+        type
+        label
+        isPrimary
+      }
+    }
+  }
+}
+
+query PlusOneInvitations($invitationId: ID!) {
+  invitation(id: $invitationId) {
+    plusOnes {
+      id
+      firstName
+      lastName
+      email
+      status
+      phoneNumbers {
+        countryCode
+        number
+        type
+        label
+        isPrimary
+      }
+    }
+    maxInvitees
+  }
+}

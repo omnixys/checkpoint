@@ -49,7 +49,9 @@ export default function GuestListClientPage() {
 
   const { isAuthenticated } = useAuth();
   const router = useRouter();
-  const { id: eventId } = useParams();
+  const { id } = useParams();
+
+  const eventId = id as string;
 
   const theme = useTheme();
   const omni = theme.palette.omnixys;
@@ -62,7 +64,7 @@ export default function GuestListClientPage() {
 
   const [filterAnchor, setFilterAnchor] = useState<HTMLElement | null>(null);
 
-  const { guests, reload } = useSecurityGuests(eventId as string);
+  const { guests, reload } = useSecurityGuests(eventId);
   const [axis, setAxis] = useState<"x" | "y">("x");
 
   /* ------------------------------------------------------------------ */
@@ -551,8 +553,7 @@ return [
                   }}
                   color={apple.secondaryLabel}
                 >
-                  {guest.seat.section} · {guest.seat.table} ·{" "}
-                  {guest.seat.number}
+                  {guest.seat.label}
                 </Typography>
               )}
 

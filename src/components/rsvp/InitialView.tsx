@@ -5,6 +5,8 @@ import { Box, Stack, Typography, Button, useTheme, useMediaQuery } from "@mui/ma
 import { motion } from "framer-motion";
 import ParallaxBanner from "@/checkpoint/components/ParallaxBanner";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { GetInvitationQuery } from "@/checkpoint/generated/graphql";
+import useEventQuery from "@/checkpoint/hooks/events/useEventQuery";
 
 /**
  * InitialView
@@ -19,21 +21,25 @@ export default function InitialView({
   onMaybe,
   onDecline,
 }: {
-  invitation: any;
+  invitation: GetInvitationQuery['invitation'];
   onAccept: () => void;
   onMaybe: () => void;
   onDecline: () => void;
   }) {
+  const { eventMetaInfo } = useEventQuery({
+    eventId: invitation.eventId,
+    loadEventMeta: true,
+  });
   const t = useTypedTranslations("rsvp");
-  
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const firstName = invitation?.firstName ?? "";
   const lastName = invitation?.lastName ?? "";
 
-const eventTitle = invitation?.event?.title ?? t("eventFallback");
-  const bannerUrl = invitation?.event?.bannerUrl ?? null;
+  const eventTitle = eventMetaInfo?.name ?? t("eventFallback");
+  const bannerUrl = eventMetaInfo?.coverMedia?.filename?? null;
 
   return (
     <Stack spacing={3}>

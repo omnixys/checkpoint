@@ -42,7 +42,7 @@ export default function UserMenu(): JSX.Element | null {
   const router = useRouter();
   const { device } = useDevice();
 
-  const { user, isAuthenticated, loading, logout } = useAuth();
+  const { currentUser, isAuthenticated, currentUserLoading, logout } = useAuth();
   const { activeEvent } = useActiveEvent();
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
@@ -50,12 +50,12 @@ export default function UserMenu(): JSX.Element | null {
 
   const eventRole: EventRole = activeEvent?.myRole ?? "GUEST";
 
-  if (loading) return null;
-  if (!isAuthenticated || !user) return null;
+  if (currentUserLoading) return null;
+  if (!isAuthenticated || !currentUser) return null;
 
   const displayName =
-    [user?.personalInfo?.firstName, user?.personalInfo?.lastName].filter(Boolean).join(" ") ||
-    user.username ||
+    [currentUser?.personalInfo?.firstName, currentUser?.personalInfo?.lastName].filter(Boolean).join(" ") ||
+    currentUser.username ||
     "User";
 
   const initials = displayName

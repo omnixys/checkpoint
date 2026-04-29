@@ -7,8 +7,8 @@ import CalendarGridView from "./CalendarGridView";
 import CalendarAgendaView from "./CalendarAgendaView";
 import CalendarDaySheet from "./CalendarDaySheet";
 import { useCalendar } from "@/checkpoint/hooks/calendar/useCalendar";
-import { useCalendarData } from "@/checkpoint/hooks/calendar/useCalendarData";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import useMyEventQuery from "@/checkpoint/hooks/events/useMyEventQuery";
 
 export default function MyCalendarContent() {
   const theme = useTheme();
@@ -16,52 +16,57 @@ export default function MyCalendarContent() {
   const tCommon = useTypedTranslations("common");
   const tErrors = useTypedTranslations("error");
 
-  const { events, loading, error } = useCalendarData();
-  const calendar = useCalendar(events);
+  const { myEventCalendarData, myEventCalendarDataError, myEventCalendarDataLoading } = useMyEventQuery({loadMyEventCalendarData: true});
+  const calendar = useCalendar(myEventCalendarData);
 
-if (loading) return <Typography>{tCommon("loading")}</Typography>;
-if (error) return <Typography>{tErrors("generic")}</Typography>;
+if (myEventCalendarDataLoading) return <Typography>{tCommon("loading")}</Typography>;
+  if (myEventCalendarDataError) return <Typography>{tErrors("generic")}</Typography>;
+  
+  if (!myEventCalendarData) return;
+  if (!calendar.groupedEvents) return;
 
-  return (
-    <Box sx={{ p: 2 }}>
-      <CalendarToolbar
-        date={calendar.visibleDate}
-        mode={calendar.mode}
-        view={calendar.view}
-        onNavigate={calendar.navigate}
-        onChangeView={calendar.setView}
-        onChangeMode={calendar.setMode}
-        onToday={calendar.goToday}
-      />
-
-      {calendar.view === "list" ? (
-        <CalendarAgendaView
-          grouped={calendar.groupedEvents}
-          onSelectDay={calendar.setSelectedDay}
-        />
-      ) : (
-        <CalendarGridView
+    return (
+      <Box sx={{ p: 2 }}>
+        <CalendarToolbar
           date={calendar.visibleDate}
           mode={calendar.mode}
-          events={events}
-          // onSelectDay={calendar.setSelectedDay}
-          onSelectDay={(date) => {
-            calendar.setSelectedDay(date);
-            calendar.setView("grid"); // switch to day grid automatically
-          }}
-          onSelectMonth={(m) => {
-            calendar.setVisibleDate(new Date(calendar.visibleDate.getFullYear(), m, 1));
-            calendar.setMode("month");
-          }}
+          view={calendar.view}
+          onNavigate={calendar.navigate}
+          onChangeView={calendar.setView}
+          onChangeMode={calendar.setMode}
+          onToday={calendar.goToday}
         />
-      )}
 
-      <CalendarDaySheet
-        open={!!calendar.selectedDay}
-        date={calendar.selectedDay}
-        events={events}
-        onClose={() => calendar.setSelectedDay(null)}
-      />
-    </Box>
-  );
+        {calendar.view === "list" ? (
+          <CalendarAgendaView
+            grouped={calendar.groupedEvents}
+            onSelectDay={calendar.setSelectedDay}
+          />
+        ) : (
+          <CalendarGridView
+            date={calendar.visibleDate}
+            mode={calendar.mode}
+            events={myEventCalendarData}
+            // onSelectDay={calendar.setSelectedDay}
+            onSelectDay={(date) => {
+              calendar.setSelectedDay(date);
+              calendar.setView("grid"); // switch to day grid automatically
+            }}
+            onSelectMonth={(m) => {
+              calendar.setVisibleDate(
+                new Date(calendar.visibleDate.getFullYear(), m, 1),
+              );
+              calendar.setMode("month");
+            }}
+          />
+        )}
+
+        <CalendarDaySheet
+          open={!!calendar.selectedDay}
+          date={calendar.selectedDay}
+          events={myEventCalendarData}
+          onClose={() => calendar.setSelectedDay(null)}
+        />
+      </Box>
+    );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { MyEventsQuery } from "@/checkpoint/generated/graphql";
 import { EventsFilter } from "@/checkpoint/types/event.type";
 import { useMemo } from "react";
 
@@ -12,7 +13,7 @@ import { useMemo } from "react";
  * This MUST NOT live inside components.
  */
 export function useFilteredEvents(params: {
-  events: any[] | undefined;
+  events: MyEventsQuery['myEvents'];
   search: string;
   filter: EventsFilter;
   activeEventId: string | undefined;
@@ -46,8 +47,8 @@ export function useFilteredEvents(params: {
           });
 
     const sorted = [...searched].sort((a, b) => {
-      const aStart = new Date(a.settings.startsAt).getTime();
-      const bStart = new Date(b.settings.startsAt).getTime();
+      const aStart = new Date(a.settings?.startsAt).getTime();
+      const bStart = new Date(b.settings?.startsAt).getTime();
       return aStart - bStart;
     });
 

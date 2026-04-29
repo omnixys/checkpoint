@@ -1,7 +1,19 @@
-# import EventFull from "../fragments/event.fragment.graphql"
-
 query EventChildren($id: ID!) {
   eventChildren(eventId: $id) {
     ...EventBase
   }
 }
+
+
+
+query GetSubEventNameList($eventId: ID!) {
+  eventChildren(eventId: $eventId) {
+    id
+    name
+    settings {
+      startsAt
+      endsAt
+    }
+  }
+}
+

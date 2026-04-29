@@ -15,11 +15,10 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-
-import { PlusOneModel } from "@/checkpoint/hooks/invitation/usePlusOnes";
+import { NormalizedPlusOne } from "@/checkpoint/types/event.type";
 
 type Props = {
-  values: PlusOneModel[];
+  values: NormalizedPlusOne[];
   onAdd: () => void;
   onEdit: (index: number) => void;
   onRemove: (index: number) => void;

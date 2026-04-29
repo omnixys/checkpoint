@@ -1,13 +1,14 @@
 "use client";
 
 import CalendarEventCard from "@/checkpoint/components/calendar/CalendarEventCard";
+import { GetMyEventCalendarDataQuery } from "@/checkpoint/generated/graphql";
 import { getEventsForDay } from "@/checkpoint/utils/calendar/calendar.utils";
 import { Box, Drawer, Typography } from "@mui/material";
 
 type Props = {
   open: boolean;
   date: Date | null;
-  events: readonly any[];
+  events: GetMyEventCalendarDataQuery['myEvents'];
   onClose: () => void;
 };
 

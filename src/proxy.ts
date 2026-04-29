@@ -67,6 +67,7 @@ export function proxy(req: NextRequest): NextResponse {
   const isProtectedRoute =
     pathname.startsWith("/event") ||
     pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/scan") ||
     pathname.startsWith("/me");
 
   if (pathname.startsWith("/_next") || pathname.startsWith("/api") || pathname.includes(".")) {

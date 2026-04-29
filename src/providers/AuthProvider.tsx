@@ -3,11 +3,11 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 import { useApolloClient } from "@apollo/client/react";
-import { UserPayload } from "@/checkpoint/generated/graphql";
-import { useMe } from "@/checkpoint/hooks/user/useMe";
+import { CurrentUserQuery, UserPayload } from "@/checkpoint/generated/graphql";
 import { setCurrentUser } from "@/checkpoint/lib/apollo/auth-context";
 import { AuthManager, AuthEventsBus } from "@/checkpoint/lib/auth/AuthManager";
 import { CurrentUser } from "@/checkpoint/lib/auth/auth.types";
+import useMeQuery from "@/checkpoint/hooks/user/useMeQuery";
 
 /* -------------------------------------------------------------------------- */
 /* Types                                                                      */
@@ -22,9 +22,9 @@ import { CurrentUser } from "@/checkpoint/lib/auth/auth.types";
  * - auth actions
  */
 interface AuthContextValue {
-  user?: UserPayload | null;
+  currentUser?: CurrentUserQuery['me'];
   isAuthenticated: boolean;
-  loading: boolean;
+  currentUserLoading: boolean;
   logout: () => Promise<void>;
 }
 
@@ -54,7 +54,10 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
  */
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const client = useApolloClient();
-
+const [authUser, setAuthUser] = useState<
+  CurrentUserQuery["me"] | null | undefined
+>(undefined);
+  
   /**
    * Fetch authenticated user
    *
@@ -62,12 +65,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
    * - cache-first prevents duplicate requests
    * - still allows refetch on login/logout
    */
-  const { user, loading, refetch } = useMe();
+  const { currentUser, currentUserLoading, currentUserRefetch } = useMeQuery({loadCurrentUser: true});
 
-  /**
-   * Derived authentication state
-   */
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   /* ------------------------------------------------------------------------ */
   /* Initialize AuthManager                                                   */
@@ -83,26 +82,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [client]);
 
   /* ------------------------------------------------------------------------ */
-  /* Sync authentication state                                                */
-  /* ------------------------------------------------------------------------ */
-
-  useEffect(() => {
-    setIsAuthenticated(Boolean(user));
-  }, [user]);
-
-  /* ------------------------------------------------------------------------ */
   /* CRITICAL: Sync user to Apollo header layer                               */
   /* ------------------------------------------------------------------------ */
 
   useEffect(() => {
-    if (!user) return;
-
-    const currentUser: CurrentUser = {
-      id: user.id,
-      username: user.username,
-      email: user.personalInfo?.email,
-      role: user.role ?? undefined
-    };
+    if (!currentUser) return;
     
     /**
      * This is REQUIRED for:
@@ -110,8 +94,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
      * - Kafka context propagation
      * - audit logging
      */
-    setCurrentUser(currentUser ?? null);
-  }, [user]);
+    setCurrentUser(currentUser);
+    setAuthUser(currentUser ?? null);
+  }, [currentUser]);
 
   /* ------------------------------------------------------------------------ */
   /* Auth event handling                                                      */
@@ -124,7 +109,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
      * - ensures fresh user data
      */
     const handleLogin = async (): Promise<void> => {
-      await refetch();
+      await currentUserRefetch();
     };
 
     /**
@@ -132,7 +117,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
      * - reset local state
      */
     const handleLogout = (): void => {
-      setIsAuthenticated(false);
       setCurrentUser(null);
     };
 
@@ -141,7 +125,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
      * - refresh user data (e.g. profile update)
      */
     const handleUserChanged = async (): Promise<void> => {
-      await refetch();
+      await currentUserRefetch();
     };
 
     AuthEventsBus.on("auth:login", handleLogin);
@@ -153,7 +137,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       AuthEventsBus.off("auth:logout", handleLogout);
       AuthEventsBus.off("user:changed", handleUserChanged);
     };
-  }, [refetch]);
+  }, [currentUserRefetch]);
 
   /* ------------------------------------------------------------------------ */
   /* Actions                                                                  */
@@ -174,6 +158,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
      * Reset header context immediately
      */
     setCurrentUser(null);
+      setAuthUser(null);
 
     /**
      * Clear Apollo cache to avoid stale data
@@ -185,15 +170,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   /* Context Value                                                            */
   /* ------------------------------------------------------------------------ */
 
-const value = useMemo<AuthContextValue>(
-  () => ({
-    ...(user !== undefined ? { user } : {}),
-    isAuthenticated,
-    loading,
-    logout,
-  }),
-  [user, isAuthenticated, loading],
-);
+const value = {
+  ...(currentUser !== undefined ? { currentUser } : {}),
+  isAuthenticated: !!authUser,
+  currentUserLoading,
+  logout,
+};
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

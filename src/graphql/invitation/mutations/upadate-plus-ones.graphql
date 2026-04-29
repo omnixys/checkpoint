@@ -3,3 +3,21 @@ mutation UpdatePlusOnesInvitation($input: UpdatePlusOneInput!) {
     id
   }
 }
+
+mutation UpdatePlusOne($input: UpdatePlusOneInput!) {
+  updatePlusOnesInvitation(input: $input) {
+    id
+    firstName
+    lastName
+    email
+    status
+    phoneNumbers {
+      countryCode
+      number
+      type
+      label
+      isPrimary
+    }
+  }
+}
+

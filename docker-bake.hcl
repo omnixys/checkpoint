@@ -21,12 +21,12 @@
 # ---------------------------------------------------------------------------------------
 
 variable "APP_NAME" {
-  default = "checkpoint-ui"
+  default = "checkpoint"
 }
 
 # Automatically use today's date (YYYY-MM-DD) as version tag
 variable "APP_VERSION" {
-  default = "0.0.0-dev"
+  default = "dev"
 }
 
 variable "NODE_VERSION" {
@@ -59,6 +59,16 @@ target "build" {
     APP_VERSION  = "${APP_VERSION}"
     CREATED      = "${CREATED}"
     REVISION     = "${REVISION}"
+
+    NEXT_PUBLIC_BACKEND_SERVER_URL = "https://api-dev.omnixys.com/graphql"
+    NEXT_PUBLIC_BACKEND_WS_URL     = "wss://api-dev.omnixys.com/ws"
+    NEXT_PUBLIC_BASE_URL           = "ui.omnixys.com"
+    NEXT_PUBLIC_APP_URL            = "https://ui.omnixys.com"
+    NEXT_PUBLIC_EVENT_API          = "https://api-dev.omnixys.com/event/media"
+    NEXT_PUBLIC_INVITATION_API     = "https://api-dev.omnixys.com/invitation/invitation"
+    NEXT_PUBLIC_EVENT_ID           = "7569a53c-49da-41b4-8f4f-a44379c59f7b"
+    NEXT_PUBLIC_CHECKPOINT_BASE_PATH = "/"
+    NEXT_PUBLIC_FALLBACK_URL         = "https://ui.omnixys.com"
   }
 
   labels = {
@@ -73,8 +83,7 @@ target "build" {
   }
 
   tags = [
-    "omnixys/${APP_NAME}-service:latest",
-    "omnixys/${APP_NAME}-service:${APP_VERSION}"
+    "omnixys/${APP_NAME}:${APP_VERSION}"
   ]
 
 platforms = ["linux/arm64"]

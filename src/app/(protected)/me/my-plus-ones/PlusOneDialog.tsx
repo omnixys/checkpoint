@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 import {
   alpha,
   Box,
@@ -16,14 +18,16 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 import { AnimatePresence, motion } from "framer-motion";
-import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
+import { useEffect, useMemo, useState } from "react";
 
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { PlusOneItem,  PlusOnePhoneNumberType, UpdatePlusOneInput } from "@/checkpoint/app/(protected)/my-plus-ones/types/plusOne.types";
+import {
+  PlusOneItem,
+  PlusOnePhoneNumberType,
+  UpdatePlusOneInput,
+} from "@/checkpoint/app/(protected)/me/my-plus-ones/types/plusOne.types";
 import { CreatePlusOneInput } from "@/checkpoint/generated/graphql";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 type PlusOneDialogMode = "create" | "edit";
 
@@ -57,7 +61,7 @@ export default function PlusOneDialog({
 }: Props) {
   const theme = useTheme();
   const tInvitation = useTypedTranslations("invitation");
-    const tCommon = useTypedTranslations("common");
+  const tCommon = useTypedTranslations("common");
 
   const [submitting, setSubmitting] = useState(false);
 
@@ -127,8 +131,8 @@ export default function PlusOneDialog({
     try {
       if (mode === "create") {
         await onCreate({
-          eventId: '',
-          invitedByInvitationId: '',
+          eventId: "",
+          invitedByInvitationId: "",
           firstName: firstName.trim(),
           lastName: lastName.trim(),
           email: email?.trim() ?? null,

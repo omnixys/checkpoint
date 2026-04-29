@@ -3,3 +3,28 @@ query Seats($id: ID!) {
     ...SeatFull
   }
 }
+
+
+query SeatList($id: ID!) {
+  seats(eventId: $id) {
+    id
+    eventId
+    label
+    status
+    note
+    guestId
+    invitationId
+
+    number
+
+    section {
+      name
+      id
+    }
+
+    table {
+      name
+      id
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import MySeatClientPage from "@/checkpoint/app/(protected)/my-seat/MySeatPageClient";
+import MySeatClientPage from "@/checkpoint/app/(protected)/me/my-seat/MySeatPageClient";
 import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
 import { Box, Skeleton } from "@mui/material";
 import { Metadata } from "next";

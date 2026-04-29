@@ -135,7 +135,7 @@ export default function InvitationDetailMobileDialog({
             variant="contained"
             onClick={() =>
               logic
-                .approveInvitation({
+                .approveInvitationMutation({
                   variables: {
                     input: {
                       //TODO optimieren!!!
@@ -168,7 +168,7 @@ export default function InvitationDetailMobileDialog({
             color="warning"
             onClick={() =>
               logic
-                .approveInvitation({
+                .approveInvitationMutation({
                   //TODO optimieren!!!!
                   variables: {
                     input: {
@@ -244,7 +244,7 @@ export default function InvitationDetailMobileDialog({
           color="error"
           onClick={() =>
             logic
-              .deleteInvitation({ variables: { id: inv.id } })
+              .deleteInvitationMutation({ variables: { id: inv.id } })
               .then(() => logic.reload())
               .then(() => logic.closeInvitation())
           }

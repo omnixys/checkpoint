@@ -1,7 +1,7 @@
 "use client";
 
 import { SeatPayload } from "@/checkpoint/generated/graphql";
-import { QuerySeat } from "@/checkpoint/hooks/seat/useSeats";
+import { SeatListType } from "@/checkpoint/types/seat.type";
 import {
   Alert,
   Box,
@@ -14,14 +14,14 @@ import {
 } from "@mui/material";
 
 type Props = {
-  seats: QuerySeat[];
+  seats: SeatListType[];
   seatsLoading?: boolean;
   occupiedSeatIds: Set<string>;
   seatGuestMap: Map<string, string>;
-  onSelectSeat: (SeatPayload: QuerySeat, guestId?: string) => void;
-  seatLabel: (SeatPayload: QuerySeat) => string;
+  onSelectSeat: (SeatPayload: SeatListType, guestId?: string) => void;
+  seatLabel: (SeatPayload: SeatListType) => string;
   eventId: string;
-  getSeatHolderLabel: (SeatPayload: QuerySeat) => string;
+  getSeatHolderLabel: (SeatPayload: SeatListType) => string;
 };
 
 export default function SeatListView({
@@ -47,7 +47,7 @@ export default function SeatListView({
     <Stack spacing={1} sx={{ mt: 1 }}>
       {seats.map((s) => {
         const guestId = seatGuestMap.get(s.id);
-        const fullName = (SeatPayload: QuerySeat) =>
+        const fullName = (SeatPayload: SeatListType) =>
           getSeatHolderLabel(SeatPayload);
 
         return (

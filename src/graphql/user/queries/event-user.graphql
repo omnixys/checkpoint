@@ -3,3 +3,36 @@ query GetUserList($guesIdList: [ID!]!) {
     ...UserFull
   }
 }
+
+
+query GetGuestList($guestIdList: [ID!]!) {
+  getUserList(userIds: $guestIdList) {
+    id
+    username
+    role
+
+    personalInfo {
+      email
+      firstName
+      lastName
+
+      phoneNumbers {
+        number
+        type
+        label
+        isPrimary
+        countryCode
+      }
+    }
+  }
+}
+
+query GetSecurityGuestInfo($guestIdList: [ID!]!) {
+  getUserList(userIds: $guestIdList) {
+  id
+    personalInfo {
+      firstName
+      lastName
+    }
+  }
+}

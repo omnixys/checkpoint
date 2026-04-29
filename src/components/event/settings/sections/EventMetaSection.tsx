@@ -1,14 +1,18 @@
 "use client";
 
+import { centerStyle } from "@/checkpoint/app/(protected)/event/[id]/settings/EventSettingsClientPage";
 import OwnerTransferDialog from "@/checkpoint/components/event/settings/dialog/OwnerTransferDialog";
 import {
   CreateEventInput,
+  GetSubEventNameListQuery,
   UserRolePayload,
 } from "@/checkpoint/generated/graphql";
 import { useMutationHandler } from "@/checkpoint/hooks/core/useMutationHandler";
+import useSubEventListQuery from "@/checkpoint/hooks/events/useEventChildrenQuery";
+import useUserQuery from "@/checkpoint/hooks/user/useUserQuery";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
-import { EventMetaDTO } from "@/checkpoint/types/event.type";
+import { EventMetaDTO, EventRoleType } from "@/checkpoint/types/event.type";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
@@ -16,6 +20,7 @@ import {
   Box,
   Button,
   Chip,
+  CircularProgress,
   IconButton,
   Snackbar,
   Stack,
@@ -32,7 +37,7 @@ type Props = {
     addChild: (payload: CreateEventInput) => Promise<any>;
     transferOwner?: (userId: string) => Promise<any>;
   };
-  roles: UserRolePayload[];
+  roles: EventRoleType[];
   currentUserId?: string;
 };
 
@@ -56,10 +61,28 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const { execute, loading, error, success, reset } = useMutationHandler();
+  const { subEventNameList, subEventNameListError, subEventNameListLoading } = useSubEventListQuery({
+    eventId: meta.id,
+    loadChildrenSettings: true,
+  });
+
+  const { userInfo, userInfoLoading } = useUserQuery({
+    userId: meta.owner,
+    loadUserName: true,
+  });
 
   const currentUserId = user?.id;
-
   const isOwner = currentUserId === meta.owner;
+
+  // TODO visuell optimieren mit error und loader
+  if (subEventNameListLoading || userInfoLoading) {
+    return (
+           <Box sx={centerStyle}>
+             <CircularProgress />
+           </Box>
+    )
+  }
+
 
   /**
    * Handles creation of a child event
@@ -90,6 +113,7 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
         isPublic: true,
         publicRsvpWebsite: "",
         category: "GENERAL",
+        allowPlusOneUpdate: false,
       },
       children: [],
     };
@@ -100,6 +124,9 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
       setChildName("");
     }
   };
+
+      const ownerInfo = userInfo?.personalInfo?.firstName + ' ' + userInfo?.personalInfo?.lastName
+
 
   return (
     <>
@@ -127,9 +154,9 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
               {meta.name}
             </Typography>
 
-            <Typography variant="caption" color="text.secondary">
+            {/* <Typography variant="caption" color="text.secondary">
               Event ID: {meta.id}
-            </Typography>
+            </Typography> */}
 
             <Stack
               direction="row"
@@ -138,7 +165,7 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
                 alignItems: "center",
               }}
             >
-              <Chip label={`Owner: ${meta.owner}`} color="primary" />
+              <Chip label={`Owner: ${ownerInfo}`} color="primary" />
 
               {isOwner && (
                 <Button size="small" onClick={() => setDialogOpen(true)}>
@@ -171,7 +198,7 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
 
           <Stack spacing={1}>
             <AnimatePresence>
-              {(meta.children ?? []).map((child) => (
+              {(subEventNameList ?? []).map((child) => (
                 <motion.div
                   key={child.id}
                   initial={{ opacity: 0, y: 8 }}
@@ -223,8 +250,22 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
  * Pure UI component
  * No business logic allowed
  */
-function ChildRow({ child }: { child: { id: string; name: string } }) {
+function ChildRow({ child }: { child: GetSubEventNameListQuery['eventChildren'][number] }) {
   const theme = useTheme();
+  const formatDateTime = (value?: string | null) => {
+    if (!value) return "n/a";
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+
+    return new Intl.DateTimeFormat("de-DE", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(date);
+  };
 
   return (
     <Box
@@ -233,7 +274,7 @@ function ChildRow({ child }: { child: { id: string; name: string } }) {
         borderRadius: 3,
         display: "flex",
         alignItems: "center",
-        gap: 1,
+        gap: 1.5,
         backdropFilter: "blur(10px)",
         backgroundColor:
           theme.palette.mode === "dark"
@@ -241,9 +282,50 @@ function ChildRow({ child }: { child: { id: string; name: string } }) {
             : "rgba(0,0,0,0.03)",
       }}
     >
-      <Typography sx={{ flex: 1 }}>{child.name}</Typography>
+      <Typography sx={{ flex: 1, fontWeight: 600 }}>{child.name}</Typography>
 
-      <Chip label={child.id} size="small" />
+      {/* <Chip label={child.id} size="small" /> */}
+      <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", justifyContent: "flex-end" }}>
+        <Box
+          sx={{
+            px: 1.25,
+            py: 0.75,
+            minWidth: 112,
+            borderRadius: 2,
+            backgroundColor:
+              theme.palette.mode === "dark"
+                ? "rgba(76, 175, 80, 0.14)"
+                : "rgba(76, 175, 80, 0.10)",
+          }}
+        >
+          <Typography variant="caption" color="text.secondary" sx={{ display: "block" }}>
+            Start
+          </Typography>
+          <Typography variant="body2" sx={{ fontWeight: 600, lineHeight: 1.2 }}>
+            {formatDateTime(child.settings?.startsAt)}
+          </Typography>
+        </Box>
+
+        <Box
+          sx={{
+            px: 1.25,
+            py: 0.75,
+            minWidth: 112,
+            borderRadius: 2,
+            backgroundColor:
+              theme.palette.mode === "dark"
+                ? "rgba(244, 67, 54, 0.14)"
+                : "rgba(244, 67, 54, 0.10)",
+          }}
+        >
+          <Typography variant="caption" color="text.secondary" sx={{ display: "block" }}>
+            Ende
+          </Typography>
+          <Typography variant="body2" sx={{ fontWeight: 600, lineHeight: 1.2 }}>
+            {formatDateTime(child.settings?.endsAt)}
+          </Typography>
+        </Box>
+      </Stack>
 
       <IconButton disabled>
         <DeleteIcon />

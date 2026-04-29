@@ -2,11 +2,12 @@
 
 import SectionInfoDialog from "@/checkpoint/components/seat/dialogs/SectionInfoDialog";
 import TableInfoDialog from "@/checkpoint/components/seat/dialogs/TableInfoDialog";
-import MapSwitcher, { MapType } from "@/checkpoint/components/seat/mapManager/MapSwitcher";
+import MapSwitcher, {
+  MapType,
+} from "@/checkpoint/components/seat/mapManager/MapSwitcher";
 import SeatListView from "@/checkpoint/components/seat/mapManager/SeatListView";
 import SeatMapRegular from "@/checkpoint/components/seat/mapManager/SeatMapRegular";
-import { SeatPayload } from "@/checkpoint/generated/graphql";
-import { QuerySeat } from "@/checkpoint/hooks/seat/useSeats";
+import { SeatListType } from "@/checkpoint/types/seat.type";
 import { Box, Stack, useTheme } from "@mui/material";
 import { useState } from "react";
 
@@ -22,15 +23,15 @@ export default function MapManager({
   getSeatHolderLabel,
   refetch,
 }: {
-  seats: QuerySeat[];
-  grouped: Record<string, Record<string, QuerySeat[]>>;
+  seats: SeatListType[];
+  grouped: Record<string, Record<string, SeatListType[]>>;
   seatsLoading: boolean;
   occupiedSeatIds: Set<string>;
   seatGuestMap: Map<string, string>;
-  onSelect: (SeatPayload: QuerySeat) => void;
-  seatLabel: (SeatPayload: QuerySeat) => string;
+  onSelect: (SeatPayload: SeatListType) => void;
+  seatLabel: (SeatPayload: SeatListType) => string;
   eventId: string;
-  getSeatHolderLabel: (SeatPayload: QuerySeat) => string;
+  getSeatHolderLabel: (SeatPayload: SeatListType) => string;
   refetch: () => void;
 }) {
   const theme = useTheme();
@@ -38,12 +39,12 @@ export default function MapManager({
 
   const [sectionDialog, setSectionDialog] = useState<{
     name: string;
-    seats: QuerySeat[];
+    seats: SeatListType[];
   } | null>(null);
 
   const [tableDialog, setTableDialog] = useState<{
     name: string;
-    seats: QuerySeat[];
+    seats: SeatListType[];
   } | null>(null);
 
   return (

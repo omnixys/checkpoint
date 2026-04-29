@@ -5,3 +5,25 @@ query TicketsByEvent($eventId: ID!) {
     ...TicketBasic
   }
 }
+
+
+query TicketPage($eventId: ID!) {
+  ticketsByEvent(eventId: $eventId) {
+    id
+    seatId
+    currentState
+    revoked
+  }
+}
+
+query SecurityTicketPage($eventId: ID!) {
+  ticketsByEvent(eventId: $eventId) {
+    id
+    revoked
+    guestProfileId
+    seatId
+    checkedInAt
+    currentState
+  }
+}
+

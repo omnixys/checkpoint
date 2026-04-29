@@ -9,6 +9,8 @@ import {
   SeatQueryVariables,
   SeatDocument,
 } from "@/checkpoint/generated/graphql";
+import useSeatQuery from "@/checkpoint/hooks/seat/useSeatQuery";
+import useMyTicketQuery from "@/checkpoint/hooks/ticket/useMyTicketQuery";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { useQuery } from "@apollo/client/react";
 import EventSeatIcon from "@mui/icons-material/EventSeat";
@@ -25,32 +27,17 @@ export default function MySeatContent(): JSX.Element {
    * Hooks (ALWAYS executed)
    * ----------------------------------------------------- */
   const { activeEvent } = useActiveEvent();
+  const { ticketEventIdMap, myTicketListLoading } = useMyTicketQuery({eventId: activeEvent?.id, loadMyTicketList: true});
 
-  const { data: ticketData, loading: ticketLoading } = useQuery<
-    GetMyTicketsQuery,
-    GetMyTicketsQueryVariables
-  >(GetMyTicketsDocument);
-
-  const tickets: readonly TicketPayload[] = ticketData?.getMyTickets ?? [];
-
-  const ticket: TicketPayload | undefined = activeEvent
-    ? tickets.find((t) => t.eventId === activeEvent.id)
+  const ticket = activeEvent
+    ? ticketEventIdMap.get(activeEvent.id)
     : undefined;
 
-  const seatId: string | null = ticket?.seatId ?? null;
+  const { fullSeatInfo, fullSeatInfoLoading, fullSeatInfoError } = useSeatQuery(
+    { seatId: ticket?.seatId, loadFullSeatInfo: true },
+  );
 
-  const {
-    data: seatData,
-    loading: seatLoading,
-    error: seatError,
-  } = useQuery<SeatQuery, SeatQueryVariables>(SeatDocument, {
-    variables: seatId ? { seatId } : { seatId: "undefined " },
-    skip: !seatId,
-  });
-
-  /* -------------------------------------------------------
-   * UI states (AFTER hooks)
-   * ----------------------------------------------------- */
+  // TODO implement i18N keys
   if (!activeEvent) {
     return (
       <Box sx={{ p: 4 }}>
@@ -59,7 +46,7 @@ export default function MySeatContent(): JSX.Element {
     );
   }
 
-  if (ticketLoading) {
+  if (myTicketListLoading) {
     return (
       <Box sx={{ p: 4 }}>
         <Typography>Lade Ticket…</Typography>
@@ -75,7 +62,7 @@ export default function MySeatContent(): JSX.Element {
     );
   }
 
-  if (!seatId) {
+  if (!fullSeatInfo) {
     return (
       <Box sx={{ p: 4 }}>
         <Typography>Noch kein Sitzplatz zugewiesen.</Typography>
@@ -83,7 +70,7 @@ export default function MySeatContent(): JSX.Element {
     );
   }
 
-  if (seatLoading) {
+  if (fullSeatInfoLoading) {
     return (
       <Box sx={{ p: 4 }}>
         <Typography>Lade Sitzplatz…</Typography>
@@ -91,7 +78,7 @@ export default function MySeatContent(): JSX.Element {
     );
   }
 
-  if (seatError || !seatData?.seat) {
+  if (fullSeatInfoError || !fullSeatInfo) {
     return (
       <Box sx={{ p: 4 }}>
         <Typography>Sitzplatz konnte nicht geladen werden.</Typography>
@@ -99,13 +86,11 @@ export default function MySeatContent(): JSX.Element {
     );
   }
 
-  const seat = seatData.seat;
-
   /* -------------------------------------------------------
    * UI
    * ----------------------------------------------------- */
   return (
-    <Box sx={{ p: 2, pt:30 }}>
+    <Box sx={{ p: 2, pt: 30 }}>
       <Card
         sx={{
           borderRadius: 4,
@@ -125,11 +110,12 @@ export default function MySeatContent(): JSX.Element {
             >
               <EventSeatIcon />
               <Typography>
-                Bereich {seat?.section?.name} · Tisch {seat.table?.name} · Sitz {seat.number}
+                Bereich {fullSeatInfo?.section?.name} · Tisch{" "}
+                {fullSeatInfo.table?.name} · Sitz {fullSeatInfo.number}
               </Typography>
             </Stack>
 
-            {seat.label && (
+            {fullSeatInfo.label && (
               <Stack
                 direction="row"
                 spacing={1}
@@ -138,7 +124,7 @@ export default function MySeatContent(): JSX.Element {
                 }}
               >
                 <LocationOnIcon />
-                <Typography>{seat.label}</Typography>
+                <Typography>{fullSeatInfo.label}</Typography>
               </Stack>
             )}
           </Stack>

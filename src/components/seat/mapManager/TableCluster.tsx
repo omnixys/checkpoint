@@ -1,7 +1,7 @@
 "use client";
 
 import { SeatPayload } from "@/checkpoint/generated/graphql";
-import { QuerySeat } from "@/checkpoint/hooks/seat/useSeats";
+import { SeatListType } from "@/checkpoint/types/seat.type";
 import {
   computeChairPositions,
   seatLabel,
@@ -20,12 +20,12 @@ import {
 type Props = {
   sectionName: string;
   tableName: string;
-  seats: QuerySeat[];
+  seats: SeatListType[];
   occupiedSeatIds?: Set<string>;
   seatGuestMap?: Map<string, string>;
-  onSeatClick?: (seat: QuerySeat) => void;
-  onTableClick?: (tableName: string, seats: QuerySeat[]) => void;
-  getSeatHolderLabel: (seat: QuerySeat) => string;
+  onSeatClick?: (seat: SeatListType) => void;
+  onTableClick?: (tableName: string, seats: SeatListType[]) => void;
+  getSeatHolderLabel: (seat: SeatListType) => string;
 };
 
 type ChairPosition = {
@@ -60,7 +60,7 @@ export default function TableCluster({
     tableDiameterMd,
   );
 
-  const fullName = (seat: QuerySeat) => getSeatHolderLabel(seat);
+  const fullName = (seat: SeatListType) => getSeatHolderLabel(seat);
 
   return (
     <Card variant="outlined" sx={{ borderRadius: 3 }}>

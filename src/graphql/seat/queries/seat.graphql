@@ -5,3 +5,30 @@ query Seat($seatId: ID!) {
     ...SeatFull
   }
 }
+
+query GetSeatInfo($seatId: ID!) {
+  seat(id: $seatId) {
+    label
+    number
+  }
+}
+
+
+query GetFullSeatInfo($seatId: ID!) {
+  seat(id: $seatId) {
+    label
+    number
+    
+    section {
+      name
+      id
+    }
+
+    table {
+      name
+      id
+    }
+  }
+}
+
+

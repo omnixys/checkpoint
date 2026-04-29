@@ -5,3 +5,27 @@ query GetMyTickets {
     ...TicketFull
   }
 }
+
+
+query GetMyTicketList {
+  getMyTickets {
+    eventId
+    seatId
+  }
+}
+
+
+query GetMyFullTicketList {
+  getMyTickets {
+    eventId
+    seatId
+
+    deviceId
+    devicePublicKey
+    deviceActivationAt
+    currentState
+    revoked
+    id
+    revokedReason
+  }
+}

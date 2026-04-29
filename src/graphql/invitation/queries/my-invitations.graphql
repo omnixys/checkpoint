@@ -5,3 +5,10 @@ query MyInvitations {
     ...InvitationBase
   }
 }
+
+query MyInvitationsId {
+  myInvitations {
+    id
+    eventId
+  }
+}

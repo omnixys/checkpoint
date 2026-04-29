@@ -11,7 +11,17 @@
  * - Reusable and safe transformations
  */
 
-import { SettingsPayload, UpdateSettingsInput } from "@/checkpoint/generated/graphql";
+import { EventCategory, SettingsPayload, UpdateSettingsInput } from "@/checkpoint/generated/graphql";
+
+type FullSettingsPatch = Partial<SettingsPayload> & {
+  allowPublicRsvp?: boolean;
+  allowPublicPlusOne?: boolean;
+  allowPublicRsvpWebsite?: boolean;
+  allowPlusOneUpdate?: boolean;
+  publicRsvpWebsite?: string | null;
+  isPublic?: boolean;
+  category?: EventCategory;
+};
 
 /**
  * Maps SettingsPayload (GraphQL response)
@@ -21,7 +31,7 @@ import { SettingsPayload, UpdateSettingsInput } from "@/checkpoint/generated/gra
  * GraphQL responses contain fields that are NOT allowed in input types.
  * This mapper guarantees clean separation between read-model and write-model.
  */
-export function mapSettingsToUpdateInput(payload: SettingsPayload): UpdateSettingsInput {
+export function mapSettingsToUpdateInput(payload: SettingsPayload & FullSettingsPatch): UpdateSettingsInput {
   return {
     allowReEntry: payload.allowReEntry,
     rotateSeconds: payload.rotateSeconds,
@@ -37,6 +47,22 @@ export function mapSettingsToUpdateInput(payload: SettingsPayload): UpdateSettin
      */
     startsAt: payload.startsAt ? new Date(payload.startsAt) : undefined,
     endsAt: payload.endsAt ? new Date(payload.endsAt) : undefined,
+
+    ...(payload.allowPublicRsvp !== undefined && { allowPublicRsvp: payload.allowPublicRsvp }),
+    ...(payload.allowPublicPlusOne !== undefined && {
+      allowPublicPlusOne: payload.allowPublicPlusOne,
+    }),
+    ...(payload.allowPublicRsvpWebsite !== undefined && {
+      allowPublicRsvpWebsite: payload.allowPublicRsvpWebsite,
+    }),
+    ...(payload.allowPlusOneUpdate !== undefined && {
+      allowPlusOneUpdate: payload.allowPlusOneUpdate,
+    }),
+    ...(payload.publicRsvpWebsite !== undefined && {
+      publicRsvpWebsite: payload.publicRsvpWebsite,
+    }),
+    ...(payload.isPublic !== undefined && { isPublic: payload.isPublic }),
+    ...(payload.category !== undefined && { category: payload.category }),
   };
 }
 
@@ -50,9 +76,9 @@ export function mapSettingsToUpdateInput(payload: SettingsPayload): UpdateSettin
  */
 export function mapSettingsPatchToInput(
   current: SettingsPayload,
-  patch: Partial<SettingsPayload>,
+  patch: FullSettingsPatch,
 ): UpdateSettingsInput {
-  const merged: SettingsPayload = {
+  const merged: SettingsPayload & FullSettingsPatch = {
     ...current,
     ...patch,
   };

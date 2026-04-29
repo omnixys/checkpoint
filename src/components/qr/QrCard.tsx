@@ -8,8 +8,10 @@ import {
   GenerateTokenDocument,
   GenerateTokenMutation,
   GenerateTokenMutationVariables,
+  GetMyFullTicketListQuery,
   TicketPayload,
 } from "@/checkpoint/generated/graphql";
+import useGenerateTokenMutation from "@/checkpoint/hooks/ticket/useGenerateTokenMutation";
 import { env } from "@/checkpoint/lib/env";
 import { loadPrivateKey } from "@/checkpoint/utils/ticket/device-utils";
 import {
@@ -58,7 +60,7 @@ type SignedQrPayload = {
 };
 
 type Props = {
-  ticket?: TicketPayload;
+  ticket?: GetMyFullTicketListQuery['getMyTickets'][number] | undefined;
   event?: any;
 };
 
@@ -82,10 +84,7 @@ export default function QrCard({ ticket, event }: Props) {
   const hasStartedRef = useRef(false);
   const criticalHapticFiredRef = useRef(false);
 
-  const [generateToken, { loading: loadingToken }] = useMutation<
-    GenerateTokenMutation,
-    GenerateTokenMutationVariables
-  >(GenerateTokenDocument);
+  const { generateToken, generateTokenLoading } = useGenerateTokenMutation();
 
   const isDeviceActivated = useMemo((): boolean => {
     return (
@@ -434,9 +433,9 @@ export default function QrCard({ ticket, event }: Props) {
                 onClick={() => {
                   void generateSignedQrPayload();
                 }}
-                disabled={loadingToken || isPreparingQr}
+                disabled={generateTokenLoading || isPreparingQr}
                 startIcon={
-                  loadingToken || isPreparingQr ? undefined : (
+                  generateTokenLoading || isPreparingQr ? undefined : (
                     <RefreshRoundedIcon />
                   )
                 }
@@ -455,7 +454,7 @@ export default function QrCard({ ticket, event }: Props) {
                   },
                 }}
               >
-                {loadingToken || isPreparingQr ? (
+                {generateTokenLoading || isPreparingQr ? (
                   <CircularProgress
                     size={22}
                     sx={{ color: theme.palette.primary.main }}

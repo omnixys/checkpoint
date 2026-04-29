@@ -3,3 +3,20 @@ mutation RemoveAllPlusOnesByInvitationId($id: ID!) {
     ...InvitationFull
   }
 }
+
+mutation RemoveAllPlusOnes($id: ID!) {
+  removeAllPlusOnesByInvitationId(invitedByInvitationId: $id) {
+    id
+    firstName
+    lastName
+    email
+    status
+    phoneNumbers {
+      countryCode
+      number
+      type
+      label
+      isPrimary
+    }
+  }
+}

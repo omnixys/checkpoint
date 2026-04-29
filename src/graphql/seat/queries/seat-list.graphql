@@ -3,3 +3,31 @@ query GetSeatList($seatIdList: [ID!]!) {
     ...SeatBasic
   }
 }
+
+query GetSeatInfoList($seatIdList: [ID!]!) {
+  getSeatList(seatIds: $seatIdList) {
+  id
+    label
+    number
+  }
+}
+
+
+query GetFullSeatInfoList($seatIdList: [ID!]!) {
+  getSeatList(seatIds: $seatIdList) {
+    id
+    label
+    number
+
+    section {
+      name
+      id
+    }
+
+    table {
+      name
+      id
+    }
+  }
+}
+

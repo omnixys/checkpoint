@@ -2,16 +2,7 @@
 
 import { useCallback, useMemo, useState } from "react";
 import type { PublicPlusOneInput, PhoneNumberInput } from "@/checkpoint/generated/graphql";
-
-/**
- * Domain model for PlusOne (UI layer)
- */
-export interface PlusOneModel {
-  firstName: string;
-  lastName: string;
-  email?: string | null;
-  phoneNumbers: PhoneNumberInput[];
-}
+import { NormalizedPlusOne } from "@/checkpoint/types/event.type";
 
 /**
  * Strongly typed handler contracts
@@ -29,7 +20,7 @@ export interface PlusOnePhoneHandlers {
 }
 
 export function usePlusOnes() {
-  const [plusOnes, setPlusOnes] = useState<PlusOneModel[]>([]);
+  const [plusOnes, setPlusOnes] = useState< NormalizedPlusOne []>([]);
 
   const add = useCallback(() => {
     setPlusOnes((prev) => [
@@ -48,7 +39,7 @@ export function usePlusOnes() {
   }, []);
 
   const update = useCallback(
-    <K extends keyof PlusOneModel>(index: number, field: K, value: PlusOneModel[K]) => {
+    <K extends keyof  NormalizedPlusOne >(index: number, field: K, value:  NormalizedPlusOne [K]) => {
       setPlusOnes((prev) => prev.map((p, i) => (i === index ? { ...p, [field]: value } : p)));
     },
     [],

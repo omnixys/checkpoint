@@ -3,6 +3,8 @@ import EventClientPage from "./EventClientPage";
 import { Skeleton } from "@mui/material";
 import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
 import { Metadata } from "next";
+import { createServerClient } from "@/checkpoint/lib/apollo/server-client";
+import { GetEventNameQuery, GetEventNameQueryVariables, GetEventNameDocument } from "@/checkpoint/generated/graphql";
 
 
 /**
@@ -18,9 +20,9 @@ import { Metadata } from "next";
 export async function generateMetadata({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }): Promise<Metadata> {
-  const eventId = params?.id;
+  const { id: eventId } = await params;
 
   /**
    * -------------------------------------------------------------
@@ -53,8 +55,7 @@ export async function generateMetadata({
   return buildMetadata({
     title: event.name,
     description:
-      event.description ??
-      `Join ${event.name} and secure your access.`,
+      event.description ?? `Join ${event.name} and secure your access.`,
 
     page: "event-detail",
 
@@ -71,9 +72,7 @@ export async function generateMetadata({
      */
     openGraph: {
       title: event.name,
-      description:
-        event.description ??
-        "Join this event now.",
+      description: event.description ?? "Join this event now.",
       image: event.ogImage,
     },
   });
@@ -85,10 +84,23 @@ export async function generateMetadata({
  * -------------------------------------------------------------
  */
 async function getEventMetadata(eventId: string) {
-  // TODO: Prisma / GraphQL call
+  if (!eventId) return null;
+
+  const client = await createServerClient();
+
+  const res = await client.query<GetEventNameQuery, GetEventNameQueryVariables>(
+    {
+      query: GetEventNameDocument,
+      variables: { eventId },
+      fetchPolicy: "no-cache",
+    },
+  );
+
+  const event = res.data?.event;
+  if (!event) return null;
 
   return {
-    name: "Summer Gala 2026",
+    name: event.name,
     description:
       "An exclusive evening event with VIP access, live music, and premium experience.",
     ogImage: `/api/og?eventId=${eventId}`,
@@ -96,10 +108,6 @@ async function getEventMetadata(eventId: string) {
 }
 export default function EventPage() { 
   return (
-    <Suspense
-      fallback={<Skeleton variant="rectangular" width="100%" height="100vh" />}
-    >
       <EventClientPage />
-    </Suspense>
   );
 }

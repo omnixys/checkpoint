@@ -7,6 +7,7 @@ import {
   GetMyTicketsQueryVariables,
   GetMyTicketsDocument,
 } from "@/checkpoint/generated/graphql";
+import useMyTicketQuery from "@/checkpoint/hooks/ticket/useMyTicketQuery";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { useQuery } from "@apollo/client/react";
 import { Box, Stack, Typography, CircularProgress, Alert } from "@mui/material";
@@ -27,39 +28,23 @@ import { useMemo } from "react";
 export default function MyQrContent() {
   const { activeEvent } = useActiveEvent();
 
-  /**
-   * Prevent query execution if no active event
-   *
-   * Why:
-   * Avoid unnecessary requests + rate limit issues
-   */
-  const { data, loading, error } = useQuery<GetMyTicketsQuery, GetMyTicketsQueryVariables>(
-    GetMyTicketsDocument,
-    {
-      skip: !activeEvent,
-      fetchPolicy: "cache-first",
-      nextFetchPolicy: "cache-first",
-    },
-  );
+  const { fullTicketEventIdMap, myFullTicketListLoading, myFullTicketListError } =
+    useMyTicketQuery({ eventId: activeEvent?.id, loadMyTicketList: true });
 
   /**
    * Extract ticket for current event
    */
   const ticket = useMemo(() => {
-    if (!data?.getMyTickets || !activeEvent) return null;
+    if (!fullTicketEventIdMap || !activeEvent) return null;
 
-    return data.getMyTickets.find((t) => t.eventId === activeEvent.id) ?? null;
-  }, [data, activeEvent]);
+    return fullTicketEventIdMap.get(activeEvent.id);
+  }, [fullTicketEventIdMap, activeEvent]);
 
-  /**
-   * No active event → no UI
-   */
+
   if (!activeEvent) return null;
 
-  /**
-   * Loading state
-   */
-  if (loading) {
+  // TODO implement i18N keys
+  if (myFullTicketListLoading) {
     return (
       <Box sx={{ p: 4, display: "flex", justifyContent: "center" }}>
         <CircularProgress />
@@ -67,18 +52,14 @@ export default function MyQrContent() {
     );
   }
 
-  /**
-   * Error state
-   */
-  if (error) {
+  if (myFullTicketListError) {
     return <Alert severity="error">Ticket konnte nicht geladen werden.</Alert>;
   }
 
-  /**
-   * No ticket for event
-   */
   if (!ticket) {
-    return <Alert severity="info">Kein Ticket für dieses Event vorhanden.</Alert>;
+    return (
+      <Alert severity="info">Kein Ticket für dieses Event vorhanden.</Alert>
+    );
   }
 
   return (
@@ -103,7 +84,9 @@ export default function MyQrContent() {
             Mein Ticket
           </Typography>
 
-          <Typography sx={{ opacity: 0.75 }}>Dein persönlicher QR-Code für dieses Event</Typography>
+          <Typography sx={{ opacity: 0.75 }}>
+            Dein persönlicher QR-Code für dieses Event
+          </Typography>
         </Box>
 
         {/* Ticket Info */}

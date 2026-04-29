@@ -24,12 +24,12 @@ export default function EventHeaderFactory({ ev, variant }: Props) {
     case "A":
       return <EventHeaderA ev={ev} />;
     case "B":
-      return <EventHeaderB ev={ev} />;
+      return <EventHeaderB eventPageData={ev} />;
     case "C":
-      return <EventHeaderC ev={ev} />;
+      return <EventHeaderC eventPageData={ev} />;
     case "D":
-      return <EventHeaderD ev={ev} />;
+      return <EventHeaderD eventPageData={ev} />;
     default:
-      return <EventHeaderC ev={ev} />;
+      return <EventHeaderC eventPageData={ev} />;
   }
 }

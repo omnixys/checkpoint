@@ -9,49 +9,43 @@ import EventTabs from "@/checkpoint/components/event/details/EventTabs";
 import EventVariantToggle from "@/checkpoint/components/event/details/EventVariantToggle";
 import EventTabContent from "@/checkpoint/components/event/EventTabContent";
 import { useEventPage } from "@/checkpoint/hooks/events/useEventPage";
-import { useAuth } from "@/checkpoint/providers/AuthProvider";
-import { useQuery } from "@apollo/client/react";
-import { EventDocument, EventQuery, EventQueryVariables } from "@/checkpoint/generated/graphql";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { useAuth } from "@/checkpoint/providers/AuthProvider";
 
 export default function EventPage() {
   const tCommon = useTypedTranslations("common");
   const tErrors = useTypedTranslations("error");
-  
+
   const { id } = useParams<{ id: string }>();
   const { isAuthenticated } = useAuth();
 
-  const { data, loading, error } = useQuery<EventQuery, EventQueryVariables>(EventDocument, {
-    variables: { id },
-    fetchPolicy: "cache-and-network",
-    skip: !isAuthenticated,
+  const {
+    activeTab,
+    changeTab,
+    variant,
+    changeVariant,
+    handleDescriptionChange,
+
+    eventPage,
+    eventPageLoading,
+    eventPageError,
+  } = useEventPage({
+    eventId: id,
+    isAuthenticated,
   });
-
-  const ev = data?.event;
-
-  /**
-   * Centralized page logic
-   */
-  const { activeTab, changeTab, variant, changeVariant, handleDescriptionChange } = useEventPage(
-    ev ??
-      ({
-        id: "",
-        timeline: [],
-        createdAt: new Date().toISOString(),
-      } as any), // später sauber typisieren
-  );
 
   /**
    * AFTER hooks → conditional rendering
    */
   if (!isAuthenticated) return null;
+  // TODO statt text ein skeleton oder loader
+  if (eventPageLoading) return <div>{tCommon("loading")}</div>;
 
-if (loading) return <div>{tCommon("loading")}</div>;
-
-  if (error || !ev) {
-if (error || !ev) {
-  return <div>{tErrors("eventNotFound")}</div>;
-}
+  // TODO statt text etwas bessere
+  if (eventPageError || !eventPage) {
+    if (eventPageError || !eventPage) {
+      return <div>{tErrors("eventNotFound")}</div>;
+    }
   }
 
   return (
@@ -61,17 +55,21 @@ if (error || !ev) {
         <EventVariantToggle variant={variant} onChange={changeVariant} />
 
         {/* Dynamic Header */}
-        <EventHeaderFactory ev={ev} variant={variant} />
+        <EventHeaderFactory ev={eventPage} variant={variant} />
 
         {/* Tabs */}
         <EventTabs active={activeTab} onChange={changeTab} />
 
         {/* Content */}
-        <EventTabContent ev={ev} active={activeTab} onDescriptionChange={handleDescriptionChange} />
+        <EventTabContent
+          ev={eventPage}
+          active={activeTab}
+          onDescriptionChange={handleDescriptionChange}
+        />
       </Stack>
 
       {/* Actions */}
-      <EventActions ev={ev} />
+      <EventActions eventPageData={eventPage} />
     </Box>
   );
 }

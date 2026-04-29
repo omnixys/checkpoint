@@ -188,10 +188,11 @@ const LOCALE_OPTIONS = [
           variant="contained"
           onClick={() => logic.bulkApprove()}
           disabled={
-            logic.bulkApproving || logic.bulkApproveInvitationList.length === 0
+            logic.bulkApproveMutationLoading ||
+            logic.bulkApproveInvitationList.length === 0
           }
         >
-          {logic.bulkApproving
+          {logic.bulkApproveMutationLoading
             ? tInvitation("bulkApprove.loading")
             : tInvitation("bulkApprove.submit", {
                 count: logic.bulkApproveInvitationList.length,

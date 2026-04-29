@@ -9,10 +9,12 @@ import PlusOneDialog from "@/checkpoint/components/common/plus-one/PlusOneDialog
 import PlusOneListAccordion from "@/checkpoint/components/common/plus-one/PlusOneListAccordion";
 import { useRsvpForm } from "@/checkpoint/hooks/invitation/useRsvpForm";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { GetInvitationQuery } from "@/checkpoint/generated/graphql";
+import { CallingCodeCountry } from "@/checkpoint/types/country.type";
 
 type AcceptFormProps = {
-  invitation: any;
-  countries: any[];
+  invitation: GetInvitationQuery['invitation'];
+  countries: CallingCodeCountry[];
   onAccepted: () => void;
 };
 

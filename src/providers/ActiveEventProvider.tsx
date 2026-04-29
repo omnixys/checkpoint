@@ -2,24 +2,29 @@
 
 import {
   EventFullFragment,
-  UserRoleType,
+  GetActiveEventQuery,
+  GetEventMetaQuery,
   MyEventsQuery,
-  MyEventsDocument,
-  EventQuery,
-  EventQueryVariables,
-  EventDocument,
+  UserRoleType,
 } from "@/checkpoint/generated/graphql";
+import useEventQuery from "@/checkpoint/hooks/events/useEventQuery";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { getLogger } from "@/checkpoint/utils/logger";
-import { useQuery } from "@apollo/client/react";
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 /* ---------------------------------------------------------------------
  * Context Type
  * ------------------------------------------------------------------- */
 interface ActiveEventContextValue {
-  events: EventFullFragment[];
-  activeEvent?: EventFullFragment | undefined;
+  myEventList: MyEventsQuery['myEvents'];
+  activeEvent?: GetActiveEventQuery['event'] | undefined;
   activeEventId?: string | undefined;
   activeRole?: UserRoleType | undefined;
   loading: boolean;
@@ -31,7 +36,9 @@ interface ActiveEventContextValue {
 /* ---------------------------------------------------------------------
  * Context
  * ------------------------------------------------------------------- */
-const ActiveEventContext = createContext<ActiveEventContextValue | undefined>(undefined);
+const ActiveEventContext = createContext<ActiveEventContextValue | undefined>(
+  undefined,
+);
 
 /* ---------------------------------------------------------------------
  * Storage
@@ -41,7 +48,11 @@ const STORAGE_KEY = "checkpoint.activeEventId";
 /* ---------------------------------------------------------------------
  * Provider
  * ------------------------------------------------------------------- */
-export function ActiveEventProvider({ children }: { children: React.ReactNode }) {
+export function ActiveEventProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const logger = getLogger("ActiveEventProvider");
   const { isAuthenticated } = useAuth();
 
@@ -62,26 +73,13 @@ export function ActiveEventProvider({ children }: { children: React.ReactNode })
     }
   }, []);
 
-  /* -------------------------------------------------
-   * Fetch events
-   * ------------------------------------------------- */
-  const eventsQuery = useQuery<MyEventsQuery>(MyEventsDocument, {
-    skip: !isAuthenticated,
-    fetchPolicy: "cache-and-network",
-  });
-
-  const events = eventsQuery.data?.myEvents ?? [];
-
-  /* -------------------------------------------------
-   * Fetch active event (derived state)
-   * ------------------------------------------------- */
-  const AdminGetEventQuery = useQuery<EventQuery, EventQueryVariables>(EventDocument, {
-    skip: !activeEventId,
-    variables: { id: activeEventId ?? "" },
-    fetchPolicy: "cache-and-network",
-  });
-
-  const activeEvent = AdminGetEventQuery.data?.event ?? undefined;
+  const { myEventList, activeEvent, myEventListLoading, activeEventLoading } =
+    useEventQuery({
+      eventId: activeEventId,
+      loadActiveEvent: !activeEventId ? false : true,
+      loadMyEventList: !activeEventId ? true : false,
+      isAuthenticated,
+    });
 
   /* -------------------------------------------------
    * Select event
@@ -124,16 +122,16 @@ export function ActiveEventProvider({ children }: { children: React.ReactNode })
   /* -------------------------------------------------
    * Auto-select if exactly 1 event
    * ------------------------------------------------- */
-useEffect(() => {
-  if (!isAuthenticated) return;
+  useEffect(() => {
+    if (!isAuthenticated) return;
 
-  if (events.length === 1 && !activeEventId) {
-    const event = events[0];
-    if (!event) return;
+    if (myEventList?.length === 1 && !activeEventId) {
+      const event = myEventList[0];
+      if (!event) return;
 
-    selectEvent(event.id);
-  }
-}, [events, isAuthenticated, activeEventId, selectEvent]);
+      selectEvent(event.id);
+    }
+  }, [myEventList, isAuthenticated, activeEventId, selectEvent]);
 
   /* -------------------------------------------------
    * Derived role
@@ -143,14 +141,16 @@ useEffect(() => {
   /* -------------------------------------------------
    * Loading
    * ------------------------------------------------- */
-  const loading = eventsQuery.loading || AdminGetEventQuery.loading;
+  const loading = myEventListLoading || activeEventLoading;
 
+
+  
   /* -------------------------------------------------
    * Context value
    * ------------------------------------------------- */
   const value = useMemo<ActiveEventContextValue>(
     () => ({
-      events,
+      myEventList: myEventList ?? [],
       activeEvent,
       activeEventId,
       activeRole,
@@ -158,10 +158,22 @@ useEffect(() => {
       selectEvent,
       clearEvent,
     }),
-    [events, activeEvent, activeEventId, activeRole, loading, selectEvent, clearEvent],
+    [
+      myEventList,
+      activeEvent,
+      activeEventId,
+      activeRole,
+      loading,
+      selectEvent,
+      clearEvent,
+    ],
   );
 
-  return <ActiveEventContext.Provider value={value}>{children}</ActiveEventContext.Provider>;
+  return (
+    <ActiveEventContext.Provider value={value}>
+      {children}
+    </ActiveEventContext.Provider>
+  );
 }
 
 /* ---------------------------------------------------------------------

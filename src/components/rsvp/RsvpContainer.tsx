@@ -1,5 +1,7 @@
 "use client";
 
+// TODO implementen optimistic fetch 
+
 import { useQuery } from "@apollo/client/react";
 import { Box, CircularProgress, Stack, useTheme } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
@@ -22,6 +24,7 @@ import DeclineDialog from "@/checkpoint/components/rsvp/dialog/DeclineDialog";
 import InvitationAlreadyAcceptedDialog from "@/checkpoint/components/rsvp/dialog/InvitationAlreadyAcceptedDialog";
 import InvitationAlreadyDeclinedDialog from "@/checkpoint/components/rsvp/dialog/InvitationAlreadyDeclinedDialog";
 import { CallingCodeCountry } from "@/checkpoint/types/country.type";
+import useInvitationQuery from "@/checkpoint/hooks/invitation/useInvitationQuery";
 
 /**
  * RSVP State Machine
@@ -53,32 +56,7 @@ export default function RsvpContainer({
   const [screen, setScreen] = useState<RsvpScreen>("initial");
   const [invalidDialogOpen, setInvalidDialogOpen] = useState(false);
 
-  // Data queries
-  const {
-    data: invitationData,
-    loading: invitationLoading,
-    error: invitationError,
-    refetch: refetchInvitation,
-  } = useQuery<InvitationQuery, InvitationQueryVariables>(InvitationDocument, {
-    variables: { invitationId },
-    fetchPolicy: "network-only",
-  });
-
-  const {
-    data: plusOnesData,
-    loading: plusOnesLoading,
-    refetch: refetchPlusOnes,
-  } = useQuery<GetPlusOnesByInvitationQuery, GetPlusOnesByInvitationQueryVariables>(
-    GetPlusOnesByInvitationDocument,
-    {
-      variables: { invitationId },
-      fetchPolicy: "network-only",
-    },
-  );
-
-  // Derived data
-  const invitation = useMemo(() => invitationData?.invitation, [invitationData]);
-  const plusOnes = useMemo(() => plusOnesData?.getPlusOnesByInvitation ?? [], [plusOnesData]);
+  const { invitation, invitationError, invitationLoading, invitationRefetch } = useInvitationQuery({invitationId, loadInvitation: true});
 
   /**
    * Validate invitation when loaded.
@@ -93,12 +71,6 @@ export default function RsvpContainer({
       return;
     }
 
-    // Invalid states:
-    // - Declined
-    // - Rejected
-    // - Canceled
-    // - Expired
-    // - Not approved but requires approval
     const status = invitation?.status;
     // const requiresApproval = invitation.approved === false;
 
@@ -152,8 +124,7 @@ export default function RsvpContainer({
    * On success of Accept RSVP
    */
   const handleAccepted = async () => {
-    await refetchInvitation();
-    await refetchPlusOnes();
+    await invitationRefetch();
     setScreen("accepted");
   };
 
@@ -167,7 +138,7 @@ export default function RsvpContainer({
   /**
    * Loading state
    */
-  if (invitationLoading || plusOnesLoading || !invitation) {
+  if (invitationLoading || !invitation) {
     return (
       <Stack
         sx={{
@@ -211,7 +182,7 @@ export default function RsvpContainer({
       )}
 
       {screen === "accepted" && (
-        <FinalScreens type="accepted" invitation={invitation} plusOnes={plusOnes} />
+        <FinalScreens type="accepted" invitation={invitation} />
       )}
 
       {screen === "maybe" && (

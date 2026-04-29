@@ -1,4 +1,5 @@
 "use client";
+// TODO optimieren mit InvitationFilters
 
 import {
   Box,
@@ -38,7 +39,7 @@ export default function InvitationFiltersMobile({
     "ACCEPTED",
   ];
 
-  const children = logic.childEvents.filter(
+  const subEvents = logic.subEvents?.filter(
     (child) => logic.rootEventId !== child.id,
   );
 
@@ -49,9 +50,9 @@ export default function InvitationFiltersMobile({
         id: logic.rootEventId,
         label: tInvitation("mainEvent", { name: logic.rootEventName }),
       },
-      ...children.map((e) => ({ id: e.id, label: e.name })),
+      ...(subEvents?.map((e) => ({ id: e.id, label: e.name })) ?? []),
     ];
-  }, [logic.childEvents, logic.rootEventId, logic.rootEventName]);
+  }, [logic.subEvents, logic.rootEventId, logic.rootEventName]);
 
   return (
     <>

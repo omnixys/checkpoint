@@ -1,6 +1,7 @@
 "use client";
 
 import { MediaType } from "@/checkpoint/generated/graphql";
+import { env } from "@/checkpoint/lib/env";
 import { useCallback, useState } from "react";
 
 type UploadResult2 = {
@@ -19,6 +20,8 @@ type PresignedResponse = {
   fileUrl: string;
 };
 
+const eventApi = env.EVENT_API;
+
 export function useUploadMedia() {
   const [loading, setLoading] = useState(false);
 
@@ -31,7 +34,7 @@ export function useUploadMedia() {
         formData.append("file", file);
 
         const res = await fetch(
-          `http://localhost:7406/media/upload?eventId=${eventId}`,
+          `${eventApi}/upload?eventId=${eventId}`,
           {
             method: "POST",
             body: formData,
@@ -66,7 +69,7 @@ export function useUploadMedia() {
          * -----------------------------------------------------
          */
         const res = await fetch(
-          `http://localhost:7406/media/presigned-url?eventId=${eventId}&filename=${encodeURIComponent(file.name)}&type=${file.type}`,
+          `${eventApi}/presigned-url?eventId=${eventId}&filename=${encodeURIComponent(file.name)}&type=${file.type}`,
           {
             credentials: "include",
           },
@@ -101,7 +104,7 @@ export function useUploadMedia() {
          * -----------------------------------------------------
          */
         const completeRes = await fetch(
-          "http://localhost:7406/media/complete",
+          `${eventApi}/complete`,
           {
             method: "POST",
             credentials: "include",

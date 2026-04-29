@@ -1,12 +1,11 @@
-import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Inter } from "next/font/google";
-import "./globals.css";
-import StartupVisionPro from "@/checkpoint/components/startup/StartupVisionPro";
-import Provider from "@/checkpoint/providers/Provider";
-import { baseMetadata } from "@/checkpoint/lib/metadata/base.metadata";
 import { env } from "@/checkpoint/lib/env";
+import { baseMetadata } from "@/checkpoint/lib/metadata/base.metadata";
+import Provider from "@/checkpoint/providers/Provider";
+import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
+import { Geist, Geist_Mono, Inter } from "next/font/google";
+import "./globals.css";
 
 export const viewport: Viewport = {
   themeColor: "#6A4BBC", // MUST match omnixys primary :contentReference[oaicite:0]{index=0}
@@ -30,7 +29,7 @@ export const metadata: Metadata = {
   creator: "Omnixys",
   publisher: "Omnixys",
 
-  metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
+  metadataBase: new URL(env.APP_URL),
 
   openGraph: {
     title: "Checkpoint – Secure Access Platform",
@@ -116,7 +115,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const messages = await getMessages();
-  
+
   return (
     <html lang="de" className={inter.variable}>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>

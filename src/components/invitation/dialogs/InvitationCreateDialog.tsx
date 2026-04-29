@@ -24,7 +24,6 @@ import PhoneNumberListAccordion from "@/checkpoint/components/common/phoneNumber
 import { useInvitationForm } from "@/checkpoint/hooks/invitation/useInvitationForm";
 import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
 import { CallingCodeCountry } from "@/checkpoint/types/country.type";
-import { EventListItem } from "@/checkpoint/types/event.type";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 /**
@@ -122,13 +121,13 @@ export default function InvitationCreateDialog({
     try {
       setLoading(true);
 
-      await logic.createInvitation({
+      await logic.createInvitationMutation({
         variables: {
           input: buildCreateInput(),
         },
       });
 
-      await logic.refetch();
+      await logic.reload();
       handleClose();
     } catch (error) {
       console.error("Failed to create invitation", error);
@@ -248,7 +247,7 @@ export default function InvitationCreateDialog({
                 <em>{tInvitation("createInv.noAssignment")}</em>
               </MenuItem>
 
-              {logic.events?.map((event: EventListItem) => {
+              {logic.events?.map((event) => {
                 const name =
                   event.name?.trim() || tInvitation("createInv.unknown");
 

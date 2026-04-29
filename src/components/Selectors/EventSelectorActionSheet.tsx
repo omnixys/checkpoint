@@ -14,7 +14,7 @@ export default function EventSelectorActionSheet({
   open,
   onClose,
 }: Props): JSX.Element {
-  const { events, activeEventId, selectEvent } = useActiveEvent();
+  const { myEventList: events, activeEventId, selectEvent } = useActiveEvent();
   const [search, setSearch] = React.useState("");
   const filtered = events.filter((ev) =>
     ev.name.toLowerCase().includes(search.toLowerCase()),

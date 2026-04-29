@@ -3,3 +3,27 @@ query GetFullEventInvitation($eventIds: [ID!]!) {
     ...InvitationFull
   }
 }
+
+
+query GetGlobalEventInvitationList($eventIds: [ID!]!) {
+  getFullByEventIds(eventIds: $eventIds) {
+    id
+    eventId
+    type
+    status
+    firstName
+    lastName
+    email
+    phoneNumber
+    phoneNumbers {
+      countryCode
+      number
+      type
+      label
+      isPrimary
+    }
+    maxInvitees
+    invitedByInvitationId
+    rsvpChoice
+  }
+}

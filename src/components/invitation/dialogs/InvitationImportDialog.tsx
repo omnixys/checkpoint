@@ -162,7 +162,7 @@ if (preview?.mapping) {
       setImportCount(result.imported);
 
       /* ---------------- Refresh ---------------- */
-      await logic.refetch();
+      await logic.reload();
 
       /* ---------------- Success UX ---------------- */
       setTimeout(() => {

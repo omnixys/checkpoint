@@ -12,7 +12,7 @@ import AddressForm, {
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 import { useCreateEvent } from "@/checkpoint/app/(protected)/event/new/context/CreateEventContext";
-import { useEventAddress } from "@/checkpoint/app/(protected)/event/new/hooks/useEventAddress";
+import { useEventAddressQuery } from "@/checkpoint/hooks/address/useAddressQuery";
 
 /**
  * -------------------------------------------------------------
@@ -24,7 +24,9 @@ export default function AddressStep() {
   const t = useTypedTranslations("create");
 
   const { draft, patch } = useCreateEvent();
-  const { resolveGeo } = useEventAddress();
+  const {
+    resolveGeo,
+  } = useEventAddressQuery()
 
   const [input, setInput] = useState<FormState | null>(null);
 

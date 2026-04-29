@@ -3,3 +3,30 @@ query Me {
     ...UserFull
   }
 }
+
+
+query MePage {
+  me {
+    id
+    username
+    personalInfo {
+      email
+      firstName
+      lastName
+    }
+  }
+}
+
+
+query CurrentUser {
+  me {
+    id
+    username
+    role
+    personalInfo {
+      email
+      firstName
+      lastName
+    }
+  }
+}

@@ -2,6 +2,6 @@
 
 mutation CreateInvitationFromRsvp($input: PublicRsvpInput!) {
   createInvitationFromRsvp(input: $input) {
-    ...InvitationFull
+    id
   }
 }

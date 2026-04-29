@@ -1,4 +1,8 @@
-import { EventInvitationQuery, SeatsQuery } from "@/checkpoint/generated/graphql";
+import {
+  EventInvitationQuery,
+  SeatListQuery,
+  SeatsQuery,
+} from "@/checkpoint/generated/graphql";
 
 export type SeatStatus = "free" | "taken" | "reserved" | "blocked";
 
@@ -15,26 +19,9 @@ export type RenameConflict = {
 
 export type SeatFilterStatus = "all" | SeatStatus;
 
-export interface Seat {
-  id: string;
-  status: string;
-  eventId: string;
-  number: number;
-  label: string;
-  note: string;
-
-  section: {
-    name: string;
-    id: string;
-  };
-
-  table: {
-    name: string;
-    id: string;
-  };
-}
-
-export type QuerySeat = NonNullable<SeatsQuery["seats"]>[number];
+// TODO name optimieren
+export type SeatListType = NonNullable<SeatListQuery["seats"]>[number];
 export type QueryInvitation = NonNullable<
   EventInvitationQuery["eventInvitation"]
 >[number];
+

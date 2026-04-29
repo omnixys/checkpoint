@@ -1,13 +1,15 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
-import { useMutation, useQuery } from "@apollo/client/react";
-import { useSnackbar } from "notistack";
+import { UpdatePlusOneInput } from "@/checkpoint/app/(protected)/me/my-plus-ones/types/plusOne.types";
+import { CreatePlusOneInput } from "@/checkpoint/generated/graphql";
+import useInvitationMutation from "@/checkpoint/hooks/invitation/useInvitationMutation";
+import useInvitationQuery from "@/checkpoint/hooks/invitation/useInvitationQuery";
+import useMyInvitationQuery from "@/checkpoint/hooks/invitation/useMyInvitationQuery";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { MyInvitationsQuery, MyInvitationsQueryVariables, MyInvitationsDocument, InvitationQuery, InvitationDocument, CreatePlusOnesInvitationMutation, CreatePlusOnesInvitationMutationVariables, CreatePlusOnesInvitationDocument, RemovePlusOneInvitationMutation, RemovePlusOneInvitationMutationVariables, RemovePlusOneInvitationDocument, RemoveAllPlusOnesByInvitationIdMutation, RemoveAllPlusOnesByInvitationIdMutationVariables, RemoveAllPlusOnesByInvitationIdDocument, UpdatePlusOnesInvitationMutation, UpdatePlusOnesInvitationMutationVariables, UpdatePlusOnesInvitationDocument, CreatePlusOneInput } from "@/checkpoint/generated/graphql";
-import {  UpdatePlusOneInput } from "@/checkpoint/app/(protected)/my-plus-ones/types/plusOne.types";
-
-
+import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
+import { useSnackbar } from "notistack";
+import { useCallback, useMemo } from "react";
+import { RemoveAllPlusOnesMutation } from '../../../../../generated/graphql';
 
 type InvitationQueryVariables = {
   invitationId: string;
@@ -25,46 +27,33 @@ type UsePlusOnesResult = {
 };
 
 export const usePlusOnes = (): UsePlusOnesResult => {
+  const { activeEvent } = useActiveEvent();
+  const eventId = activeEvent?.id;
   const { enqueueSnackbar } = useSnackbar();
   const t = useTypedTranslations("invitation");
 
-    const { data:kp } = useQuery<
-      MyInvitationsQuery,
-      MyInvitationsQueryVariables
-    >(MyInvitationsDocument, {
-      fetchPolicy: "cache-and-network",
-    });
-  
-  const invitationId = kp?.myInvitations[0]?.id
-  
-  const { data, loading, refetch } = useQuery<InvitationQuery, InvitationQueryVariables>(InvitationDocument,{
-    variables: { invitationId: kp?.myInvitations[0]?.id ?? '' },
-    skip: invitationId === undefined,
-    fetchPolicy: "cache-and-network",
+  const { myInvitationIdMap } = useMyInvitationQuery({
+    loadMyInvitationIdList: true,
   });
+  const getInvitationId = (eventId: string) => {
+    return myInvitationIdMap.get(eventId)?.id ?? "—";
+  };
+  const invitationId = getInvitationId(eventId ?? "");
 
-  const [create] = useMutation<
-    CreatePlusOnesInvitationMutation,
-    CreatePlusOnesInvitationMutationVariables
-    >(CreatePlusOnesInvitationDocument);
-    const [update] = useMutation<
-      UpdatePlusOnesInvitationMutation,
-      UpdatePlusOnesInvitationMutationVariables
-    >(UpdatePlusOnesInvitationDocument);
-  const [remove] = useMutation<
-    RemovePlusOneInvitationMutation,
-    RemovePlusOneInvitationMutationVariables
-  >(RemovePlusOneInvitationDocument);
-  const [removeAll] = useMutation<
-    RemoveAllPlusOnesByInvitationIdMutation,
-    RemoveAllPlusOnesByInvitationIdMutationVariables
-  >(RemoveAllPlusOnesByInvitationIdDocument);
+  const { plusOneInvitationList, plusOneInvitationListLoading } =
+    useInvitationQuery({
+      loadPlusOneInvitationList: true,
+    });
 
+  const {
+    createPlusOneMutation,
+    updatePlusOneMutation,
+    removePlusOneMutation,
+    removeAllPlusOneMutation,
+  } = useInvitationMutation();
 
   const plusOnes = useMemo(() => {
-    const entries = data?.invitation?.plusOnes ?? [];
-
-    return entries.map((entry) => ({
+    return plusOneInvitationList?.plusOnes.map((entry) => ({
       id: entry.id,
       firstName: entry.firstName ?? "",
       lastName: entry.lastName ?? "",
@@ -85,13 +74,13 @@ export const usePlusOnes = (): UsePlusOnesResult => {
       //     }
       //   : null,
     }));
-  }, [data]);
+  }, [plusOneInvitationList]);
 
-  const remaining = data?.invitation?.maxInvitees ?? 0;
+  const remaining = plusOneInvitationList?.maxInvitees ?? 0;
 
   const createPlusOne = useCallback(
     async (input: CreatePlusOneInput) => {
-      if (!invitationId || !data?.invitation?.eventId) {
+      if (!invitationId || !eventId) {
         enqueueSnackbar(t("plusOnes.errorMissingInvitation"), {
           variant: "error",
         });
@@ -99,10 +88,10 @@ export const usePlusOnes = (): UsePlusOnesResult => {
       }
 
       try {
-        await create({
+        await createPlusOneMutation({
           variables: {
             input: {
-              eventId: data.invitation.eventId,
+              eventId,
               invitedByInvitationId: invitationId,
               firstName: input.firstName.trim(),
               lastName: input.lastName.trim(),
@@ -115,21 +104,19 @@ export const usePlusOnes = (): UsePlusOnesResult => {
         enqueueSnackbar(t("plusOnes.created"), {
           variant: "success",
         });
-
-        await refetch();
       } catch {
         enqueueSnackbar(t("plusOnes.errorCreate"), {
           variant: "error",
         });
       }
     },
-    [create, data, enqueueSnackbar, invitationId, refetch, t],
+    [createPlusOneMutation, plusOneInvitationList, enqueueSnackbar, invitationId, t],
   );
 
   const updatePlusOne = useCallback(
     async (input: UpdatePlusOneInput) => {
       try {
-        await update({
+        await updatePlusOneMutation({
           variables: {
             input: {
               id: input.id,
@@ -144,21 +131,19 @@ export const usePlusOnes = (): UsePlusOnesResult => {
         enqueueSnackbar(t("plusOnes.updated"), {
           variant: "success",
         });
-
-        await refetch();
       } catch {
         enqueueSnackbar(t("plusOnes.errorUpdate"), {
           variant: "error",
         });
       }
     },
-    [enqueueSnackbar, refetch, t, update],
+    [enqueueSnackbar, t, updatePlusOneMutation],
   );
 
   const removePlusOne = useCallback(
     async (id: string) => {
       try {
-        await remove({
+        const kp = await removePlusOneMutation({
           variables: {
             id,
           },
@@ -167,15 +152,13 @@ export const usePlusOnes = (): UsePlusOnesResult => {
         enqueueSnackbar(t("plusOnes.removed"), {
           variant: "success",
         });
-
-        await refetch();
       } catch {
         enqueueSnackbar(t("plusOnes.errorRemove"), {
           variant: "error",
         });
       }
     },
-    [enqueueSnackbar, refetch, remove, t],
+    [enqueueSnackbar, removePlusOneMutation, t],
   );
 
   const removeAllPlusOnes = useCallback(async () => {
@@ -187,7 +170,7 @@ export const usePlusOnes = (): UsePlusOnesResult => {
     }
 
     try {
-      await removeAll({
+      await removeAllPlusOneMutation({
         variables: {
           id: invitationId,
         },
@@ -196,20 +179,19 @@ export const usePlusOnes = (): UsePlusOnesResult => {
       enqueueSnackbar(t("plusOnes.removedAll"), {
         variant: "success",
       });
-
-      await refetch();
     } catch {
       enqueueSnackbar(t("plusOnes.errorRemoveAll"), {
         variant: "error",
       });
     }
-  }, [enqueueSnackbar, invitationId, refetch, removeAll, t]);
+  }, [enqueueSnackbar, invitationId, removeAllPlusOneMutation, t]);
 
   return {
     plusOnes,
     remaining,
-    loading,
+    loading: plusOneInvitationListLoading,
     hasRootInvitation: Boolean(invitationId),
+
     createPlusOne,
     updatePlusOne,
     removePlusOne,

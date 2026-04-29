@@ -5,3 +5,12 @@ query User($id: ID!) {
     ...UserFull
   }
 }
+
+query GetUserName($id: ID!) {
+  user(id: $id) {
+    personalInfo {
+      firstName
+      lastName
+    }
+  }
+}

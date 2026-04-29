@@ -4,7 +4,7 @@ import TableCluster from "@/checkpoint/components/seat/mapManager/TableCluster";
 import VisionStrip from "@/checkpoint/components/vision/VisionStrip";
 import VisionStripItem from "@/checkpoint/components/vision/VisionStripItem";
 import { SeatPayload } from "@/checkpoint/generated/graphql";
-import { QuerySeat } from "@/checkpoint/hooks/seat/useSeats";
+import { SeatListType } from "@/checkpoint/types/seat.type";
 import {
   Alert,
   Card,
@@ -16,15 +16,15 @@ import {
 } from "@mui/material";
 
 type Props = {
-  seats: QuerySeat[];
+  seats: SeatListType[];
   seatsLoading?: boolean;
-  grouped: Record<string, Record<string, QuerySeat[]>>;
+  grouped: Record<string, Record<string, SeatListType[]>>;
   occupiedSeatIds: Set<string>;
   seatGuestMap: Map<string, string>;
-  onSelect: (seat: QuerySeat, guestId?: string, invitationId?: string) => void;
-  getSeatHolderLabel: (seat: QuerySeat) => string;
-  onSectionClick?: (sectionName: string, seats: QuerySeat[]) => void;
-  onTableClick?: (tableName: string, seats: QuerySeat[]) => void;
+  onSelect: (seat: SeatListType, guestId?: string, invitationId?: string) => void;
+  getSeatHolderLabel: (seat: SeatListType) => string;
+  onSectionClick?: (sectionName: string, seats: SeatListType[]) => void;
+  onTableClick?: (tableName: string, seats: SeatListType[]) => void;
 };
 
 export default function SeatMapRegular({

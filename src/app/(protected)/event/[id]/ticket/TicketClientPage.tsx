@@ -13,6 +13,7 @@ import {
   RevokeTicketDocument,
   TicketPayload,
 } from "@/checkpoint/generated/graphql";
+import useTicketQuery from "@/checkpoint/hooks/ticket/useTicketQuery";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { getLogger } from "@/checkpoint/utils/logger";
 import { useMutation, useQuery } from "@apollo/client/react";
@@ -38,16 +39,10 @@ export default function TicketClientPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [openRotate, setOpenRotate] = useState(false);
 
-  /** -----------------------------------------------------------
-   * Query: Tickets for this event
-   * --------------------------------------------------------- */
-  const { data, loading, error, subscribeToMore } = useQuery<
-    TicketsByEventQuery,
-    TicketsByEventQueryVariables
-  >(TicketsByEventDocument, {
-    variables: { eventId },
-    fetchPolicy: "cache-and-network",
-  });
+  const {ticketPage, ticketPageLoading, ticketPageError} = useTicketQuery({
+    eventId,
+    loadTicketPage: true,
+  })
 
   /** -----------------------------------------------------------
    * Mutations
@@ -55,8 +50,6 @@ export default function TicketClientPage() {
   const [revokeTicket] = useMutation<RevokeTicketMutation, RevokeTicketMutationVariables>(
     RevokeTicketDocument,
   );
-
-  const tickets = data?.ticketsByEvent ?? [];
 
   /** -----------------------------------------------------------
    * HANDLERS
@@ -67,10 +60,12 @@ export default function TicketClientPage() {
     await revokeTicket({ variables: { input: { ticketId: deleteId, reason: "Einfach SO" } } });
     setDeleteId(null);
   }, [revokeTicket, deleteId]);
+
+
   /** -----------------------------------------------------------
    * Loading & Error States
    * --------------------------------------------------------- */
-  if (loading) {
+  if (ticketPageLoading) {
     return (
       <Box
         sx={{
@@ -85,13 +80,14 @@ export default function TicketClientPage() {
     );
   }
 
-  if (error) {
+  if (ticketPageError || !ticketPage) {
     return (
       <Box sx={{ color: theme.palette.error.main, textAlign: "center", mt: 4 }}>
         Fehler beim Laden der Tickets.
       </Box>
     );
   }
+
 
   /** -----------------------------------------------------------
    * RENDER
@@ -109,14 +105,14 @@ export default function TicketClientPage() {
     >
       {/* ---------------- HEADER ---------------- */}
       <TicketHeader
-        total={tickets.length}
+        total={ticketPage.length}
         onCreate={() => setOpenCreate(true)}
         onFilter={() => logger.debug("filter logic")}
       />
 
       {/* ---------------- LISTE ---------------- */}
       <TicketList
-        tickets={tickets as TicketPayload[]} //TODO Request optimieren!!
+        tickets={ticketPage} //TODO Request optimieren!!
         onOpen={(id) => logger.debug("open ticket", id)}
         onDelete={(id) => setDeleteId(id)}
         onFilter={() => logger.debug("filter logic")}

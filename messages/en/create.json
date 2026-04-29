@@ -57,7 +57,7 @@
   },
 
   "children": {
-    "category": "kp",
+    "category": "Category",
     "description": "Add child events when the main event contains multiple areas, time slots or sub-formats.",
     "add": "Add child event",
     "empty": "There are currently no child events/Sessions yet. Add your first.",

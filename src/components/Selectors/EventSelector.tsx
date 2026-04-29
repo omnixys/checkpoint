@@ -13,7 +13,7 @@ import {
 import { JSX } from "react";
 
 export default function EventSelector(): JSX.Element {
-  const { events, activeEventId, selectEvent } = useActiveEvent();
+  const { myEventList, activeEventId, selectEvent } = useActiveEvent();
   const { isAuthenticated } = useAuth();
 
   const handleChange = async (e: SelectChangeEvent<string>) => {
@@ -32,7 +32,7 @@ export default function EventSelector(): JSX.Element {
     );
   }
 
-  if (!events || events.length === 0) {
+  if (!myEventList || myEventList.length === 0) {
     return (
       <Typography
         variant="body2"
@@ -58,7 +58,7 @@ export default function EventSelector(): JSX.Element {
             },
           }}
         >
-          {events.map((ev: any) => (
+          {myEventList.map((ev: any) => (
             <MenuItem key={ev.id} value={ev.id}>
               {ev.name}
             </MenuItem>

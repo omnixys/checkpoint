@@ -1,13 +1,7 @@
 "use client";
 
-import {
-  SeatPayload,
-  RenameSectionMutation,
-  RenameSectionMutationVariables,
-  RenameSectionDocument,
-} from "@/checkpoint/generated/graphql";
-import { QuerySeat } from "@/checkpoint/hooks/seat/useSeats";
-import { useMutation } from "@apollo/client/react";
+import useSeatMutation from "@/checkpoint/hooks/seat/useSeatMutation";
+import { SeatListType } from "@/checkpoint/types/seat.type";
 import {
   Button,
   Chip,
@@ -24,20 +18,23 @@ import { useEffect, useState } from "react";
 type Props = {
   open: boolean;
   sectionName: string;
-  seats: QuerySeat[];
+  seats: SeatListType[];
   onClose: () => void;
   refetch: () => void;
 };
 
 // TODO conflict handling im frontend
 
-export default function SectionInfoDialog({ open, sectionName, seats, onClose, refetch }: Props) {
+export default function SectionInfoDialog({
+  open,
+  sectionName,
+  seats,
+  onClose,
+  refetch,
+}: Props) {
   const [name, setName] = useState(sectionName);
 
-  const [renameSection, { data }] = useMutation<
-    RenameSectionMutation,
-    RenameSectionMutationVariables
-  >(RenameSectionDocument);
+  const { renameSection, data } = useSeatMutation();
 
   const occupied = seats.filter((s) => s.guestId || s.invitationId).length;
   const free = seats.length - occupied;

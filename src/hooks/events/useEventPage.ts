@@ -1,20 +1,25 @@
 "use client";
 
+import useEventQuery from "@/checkpoint/hooks/events/useEventQuery";
 import { useEventTabs } from "@/checkpoint/hooks/events/useEventTabs";
 import { useEventVariant } from "@/checkpoint/hooks/events/useEventVariant";
 import { useCallback, useMemo } from "react";
 
-/**
- * Main orchestration hook for Event Page
- *
- * WHY:
- * - Keeps page 100% UI-only
- * - Centralizes ALL logic
- * - Easier testing + scaling
- */
-export function useEventPage(ev: any) {
+interface Props {
+  eventId: string;
+  isAuthenticated: boolean;
+}
+
+export function useEventPage({ eventId, isAuthenticated }: Props) {
   const { active, changeTab } = useEventTabs();
   const { variant, changeVariant } = useEventVariant();
+
+
+  const { eventPage, eventPageLoading, eventPageError } = useEventQuery({
+    eventId,
+    isAuthenticated,
+    loadEventPage: true,
+  });
 
   /**
    * Description change handler
@@ -37,7 +42,11 @@ export function useEventPage(ev: any) {
       variant,
       changeVariant,
       handleDescriptionChange,
+
+      eventPage,
+      eventPageLoading,
+      eventPageError,
     }),
-    [active, changeTab, variant, changeVariant, handleDescriptionChange],
+    [active, changeTab, variant, changeVariant, handleDescriptionChange, eventPage, eventPageError, eventPageLoading],
   );
 }

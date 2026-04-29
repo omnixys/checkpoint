@@ -22,33 +22,18 @@ import { useMutation, useLazyQuery, useQuery } from "@apollo/client/react";
  * Event Address Hook
  * -------------------------------------------------------------
  */
-export function useEventAddress(eventId: string) {
-  /**
-   * CREATE
-   */
-  const [createAddressMutation] = useMutation<
-    CreateEventAddressMutation,
-    CreateEventAddressMutationVariables
-  >(CreateEventAddressDocument);
-
-  /**
-   * GEO → ✅ FIX: useLazyQuery (NOT mutation)
-   */
+export function useEventAddressQuery(eventId?: string | undefined) {
   const [loadGeo] = useLazyQuery<GetGeoLocationInfoQuery, GetGeoLocationInfoQueryVariables>(
     GetGeoLocationInfoDocument,
   );
 
-  const { data, loading, refetch } = useQuery<
+  const { data, loading, refetch, error } = useQuery<
     GetEventAddressesByEventIdQuery,
     GetEventAddressesByEventIdQueryVariables
   >(GetEventAddressesByEventIdDocument, {
-    variables: { eventId },
+    variables: { eventId: eventId ?? '' },
+    skip: !eventId
   });
-
-  const [deleteAddressMutation] = useMutation<
-    DeleteEventAddressByEventIdMutation,
-    DeleteEventAddressByEventIdMutationVariables
-  >(DeleteEventAddressByEventIdDocument);
 
   /**
    * Resolve Geo
@@ -61,27 +46,11 @@ export function useEventAddress(eventId: string) {
     return res.data?.getGeoLocationInfo ?? null;
   };
 
-  /**
-   * Create Address
-   */
-  const createAddress = async (input: CreateEventAddressMutationVariables["input"]) => {
-    return createAddressMutation({
-      variables: { input },
-    });
-  };
-
-  const deleteAddress = async () => {
-    await deleteAddressMutation({
-      variables: { eventId },
-    });
-  };
-
   return {
-    createAddress,
-    deleteAddress,
     resolveGeo,
     address: data?.getEventAddressByEventId ?? null,
     loading,
     refetch,
+    error,
   };
 }

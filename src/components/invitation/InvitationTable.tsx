@@ -99,11 +99,11 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
   };
 
   const handleDelete = async (invitationId: string) => {
-    await logic.deleteInvitation({
+    await logic.deleteInvitationMutation({
       variables: { id: invitationId },
     });
 
-    await logic.refetch();
+    await logic.reload();
   };
 
   return (

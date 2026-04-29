@@ -20,7 +20,7 @@ fragment EventFull on EventPayload {
 
   coverMedia {
     url
-    filename
+    url
     variants {
       width
       url

@@ -1,4 +1,4 @@
-import { MeQuery, MeDocument } from "@/checkpoint/generated/graphql";
+import { MeQuery, MeDocument, CurrentUserQuery, CurrentUserDocument } from "@/checkpoint/generated/graphql";
 import { createServerClient } from "@/checkpoint/lib/apollo/server-client";
 import { CurrentUser } from "@/checkpoint/lib/auth/auth.types";
 
@@ -11,23 +11,18 @@ import { CurrentUser } from "@/checkpoint/lib/auth/auth.types";
  *
  * Returns null if not authenticated.
  */
-export async function getCurrentUser(): Promise<CurrentUser | null> {
+export async function getCurrentUser()  {
   try {
     const client = await createServerClient();
 
-    const { data } = await client.query<MeQuery>({
-      query: MeDocument,
+    const { data } = await client.query<CurrentUserQuery>({
+      query: CurrentUserDocument,
       fetchPolicy: "cache-first",
     });
 
     if (!data?.me) return null;
 
-    return {
-      id: data.me.id,
-      username: data.me.username,
-      email: data.me.personalInfo?.email,
-      role: data.me.role ?? undefined,
-    };
+    return data.me;
   } catch {
     return null;
   }

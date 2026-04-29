@@ -3,23 +3,23 @@
 import { useMemo, useState } from "react";
 import { useMutation } from "@apollo/client/react";
 import {
+  GetInvitationQuery,
   InvitationPayload,
-  PhoneNumberInput,
+  PhoneNumberPayload,
   PublicPlusOneInput,
   ReplyInvitationDocument,
   ReplyInvitationMutation,
   ReplyInvitationMutationVariables,
 } from "@/checkpoint/generated/graphql";
-import { PlusOneModel } from "@/checkpoint/hooks/invitation/usePlusOnes";
+import { NormalizedPlusOne } from "@/checkpoint/types/event.type";
 
-type InvitationPlusOne = NonNullable<InvitationPayload["plusOnes"]>[number];
 
 type RsvpFormState = {
   firstName: string;
   lastName: string;
   email: string;
   phoneNumbers: PhoneNumberInput[];
-  plusOnes: PlusOneModel[];
+  plusOnes: NormalizedPlusOne[];
 };
 
 function createEmptyPhone(): PhoneNumberInput {
@@ -32,7 +32,7 @@ function createEmptyPhone(): PhoneNumberInput {
   };
 }
 
-function createEmptyPlusOne(): PlusOneModel {
+function createEmptyPlusOne(): NormalizedPlusOne {
   return {
     firstName: "",
     lastName: "",
@@ -41,8 +41,16 @@ function createEmptyPlusOne(): PlusOneModel {
   };
 }
 
+
+
+type PhoneNumberInput = Omit<
+  InvitationPayload["phoneNumbers"][number],
+  "id" | "createdAt" | "updatedAt" | "infoId" | "__typename"
+>;
+
+
 function normalizePhoneNumbers(
-  phoneNumbers: InvitationPayload["phoneNumbers"],
+  phoneNumbers: PhoneNumberInput[]
 ): PhoneNumberInput[] {
   return (phoneNumbers ?? []).map((phone) => ({
     type: phone.type,
@@ -53,7 +61,9 @@ function normalizePhoneNumbers(
   }));
 }
 
-function normalizePlusOne(input: InvitationPlusOne): PlusOneModel {
+function normalizePlusOne(
+  input: GetInvitationQuery["invitation"]["plusOnes"][number]
+): NormalizedPlusOne {
   return {
     firstName: input.firstName ?? "",
     lastName: input.lastName ?? "",
@@ -62,7 +72,8 @@ function normalizePlusOne(input: InvitationPlusOne): PlusOneModel {
   };
 }
 
-function toGraphQlPlusOne(input: PlusOneModel): PublicPlusOneInput {
+
+function toGraphQlPlusOne(input: NormalizedPlusOne): PublicPlusOneInput {
   return {
     firstName: input.firstName.trim(),
     lastName: input.lastName.trim(),
@@ -80,7 +91,7 @@ function toGraphQlPlusOne(input: PlusOneModel): PublicPlusOneInput {
  * - submission
  * - mapping to GraphQL DTO
  */
-export function useRsvpForm(invitation: InvitationPayload) {
+export function useRsvpForm(invitation: GetInvitationQuery['invitation']) {
   const [state, setState] = useState<RsvpFormState>({
     firstName: invitation.firstName ?? "",
     lastName: invitation.lastName ?? "",
@@ -154,10 +165,10 @@ export function useRsvpForm(invitation: InvitationPayload) {
     }));
   }
 
-  function updatePlusOne<K extends keyof PlusOneModel>(
+  function updatePlusOne<K extends keyof NormalizedPlusOne>(
     index: number,
     field: K,
-    value: PlusOneModel[K],
+    value: NormalizedPlusOne[K],
   ) {
     setState((prev) => {
       const nextPlusOnes = [...prev.plusOnes];

@@ -1,4 +1,5 @@
 "use client";
+// TODO optimieren mit InvitationFiltersMobile
 
 import React, { useMemo } from "react";
 import {
@@ -36,9 +37,10 @@ export default function InvitationFilters({ logic }: { logic: InvitationLogic })
     "ACCEPTED",
   ];
 
-  const children = logic.childEvents.filter(
+  const subEvents = logic.subEvents?.filter(
     (child) => logic.rootEventId !== child.id,
   );
+
   const eventOptions = useMemo<InvitationEventFilterOption[]>(() => {
     return [
       {
@@ -49,12 +51,12 @@ export default function InvitationFilters({ logic }: { logic: InvitationLogic })
         id: logic.rootEventId,
         label: tInvitation("mainEvent", { name: logic.rootEventName }),
       },
-      ...children.map((event) => ({
+      ...(subEvents?.map((event) => ({
         id: event.id,
         label: event.name,
-      })),
+      })) ?? []),
     ];
-  }, [logic.childEvents, logic.rootEventId, logic.rootEventName]);
+  }, [logic.subEvents, logic.rootEventId, logic.rootEventName]);
 
   return (
     <Box

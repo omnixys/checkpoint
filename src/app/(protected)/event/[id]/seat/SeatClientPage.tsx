@@ -29,18 +29,18 @@ export default function SeatsClientPage() {
 
   const {
     seats,
-    seatsLoading,
+    seatListLoading,
     grouped,
     occupiedSeatIds,
     seatGuestMap,
     seatLabel,
     filter,
     setFilter,
-    refetch,
     getSeatHolderLabel,
     assignSeat,
     invitationList,
     guestList,
+    seatListRefetch,
   } = useSeats(eventId);
   const router = useRouter();
   const drawer = useSeatDetailDrawer();
@@ -66,7 +66,8 @@ export default function SeatsClientPage() {
           pb: 1,
           bgcolor: (theme) => alpha(theme.palette.background.default, 0.7),
           backdropFilter: "blur(16px)",
-          borderBottom: (theme) => `1px solid ${alpha(theme.palette.divider, 0.12)}`,
+          borderBottom: (theme) =>
+            `1px solid ${alpha(theme.palette.divider, 0.12)}`,
         }}
       >
         {/* Back Button */}
@@ -84,7 +85,11 @@ export default function SeatsClientPage() {
               size="small"
               variant="outlined"
               startIcon={<EditOutlined />}
-              onClick={() => router.push(`${env.CHECKPOINT_BASE_PATH}event/${eventId}/seat/edit`)}
+              onClick={() =>
+                router.push(
+                  `${env.CHECKPOINT_BASE_PATH}event/${eventId}/seat/edit`,
+                )
+              }
             >
               Sitzstruktur
             </Button>
@@ -96,12 +101,14 @@ export default function SeatsClientPage() {
         <SeatFilters filter={filter} onChange={setFilter} />
       </Box>
 
-      {activeRole === "ADMIN" && <SeatImportButton onOpen={() => setImportOpen(true)} />}
+      {activeRole === "ADMIN" && (
+        <SeatImportButton onOpen={() => setImportOpen(true)} />
+      )}
 
       <MapManager
         seats={seats}
         grouped={grouped}
-        seatsLoading={seatsLoading}
+        seatsLoading={seatListLoading}
         occupiedSeatIds={occupiedSeatIds}
         seatGuestMap={seatGuestMap}
         getSeatHolderLabel={getSeatHolderLabel}
@@ -110,7 +117,7 @@ export default function SeatsClientPage() {
         onSelect={(seat) => {
           drawer.show(seat); // 🔥 IMMER
         }}
-        refetch={refetch}
+        refetch={seatListRefetch}
       />
 
       <SeatDetailDrawer
@@ -122,7 +129,7 @@ export default function SeatsClientPage() {
         role={activeRole}
       />
 
-      {drawer.editing && drawer.seatId && (
+      {drawer.editing && drawer.seatId && guestList && (
         <SeatEditDialog
           open={drawer.editing}
           seat={selectedSeat as SeatPayload}
@@ -133,7 +140,7 @@ export default function SeatsClientPage() {
             await assignSeat({ variables: { input } });
 
             // 🔁 danach UI aktualisieren
-            await refetch(); // aus useSeats(eventId)
+            await seatListRefetch(); // aus useSeats(eventId)
             drawer.stopEditing();
           }}
         />

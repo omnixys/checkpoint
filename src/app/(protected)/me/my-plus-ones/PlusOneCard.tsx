@@ -1,5 +1,17 @@
 "use client";
 
+import { PlusOneItem } from "@/checkpoint/app/(protected)/me/my-plus-ones/types/plusOne.types";
+import { formatEnum } from "@/checkpoint/i18n/format-enum";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import BlockRoundedIcon from "@mui/icons-material/BlockRounded";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
+import EditRoundedIcon from "@mui/icons-material/EditRounded";
+import EmailRoundedIcon from "@mui/icons-material/EmailRounded";
+import EventSeatRoundedIcon from "@mui/icons-material/EventSeatRounded";
+import HourglassEmptyRoundedIcon from "@mui/icons-material/HourglassEmptyRounded";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
+import PhoneIphoneRoundedIcon from "@mui/icons-material/PhoneIphoneRounded";
 import {
   alpha,
   Box,
@@ -10,20 +22,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
-import EditRoundedIcon from "@mui/icons-material/EditRounded";
-import EventSeatRoundedIcon from "@mui/icons-material/EventSeatRounded";
-import EmailRoundedIcon from "@mui/icons-material/EmailRounded";
-import PhoneIphoneRoundedIcon from "@mui/icons-material/PhoneIphoneRounded";
-import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
-import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
-import BlockRoundedIcon from "@mui/icons-material/BlockRounded";
-import HourglassEmptyRoundedIcon from "@mui/icons-material/HourglassEmptyRounded";import { motion } from "framer-motion";
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { PlusOneItem } from "@/checkpoint/app/(protected)/my-plus-ones/types/plusOne.types";
-import { formatEnum } from "@/checkpoint/i18n/format-enum";
-import InvitationStatusChip from "@/checkpoint/components/invitation/InvitationStatusChip";
-import { InvitationStatus } from "@/checkpoint/generated/graphql";
+import { motion } from "framer-motion";
 
 type Props = {
   plusOne: PlusOneItem;
@@ -59,8 +58,7 @@ export default function PlusOneCard({
     ) : plusOne.status === "PENDING" ? (
       <HourglassEmptyRoundedIcon fontSize="small" />
     ) : (
-  
-          <BlockRoundedIcon fontSize="small" />
+      <BlockRoundedIcon fontSize="small" />
     );
 
   return (

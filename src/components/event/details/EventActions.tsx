@@ -1,23 +1,24 @@
 "use client";
 
-import { EventFullFragment } from "@/checkpoint/generated/graphql";
+import { EventPageQuery } from "@/checkpoint/generated/graphql";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
+import { Safe } from "@/checkpoint/types/core/core.type";
 import { getLogger } from "@/checkpoint/utils/logger";
 import { Button, Stack } from "@mui/material";
 import Link from "next/link";
 
 export type EventHeaderProps = {
-  ev: EventFullFragment;
+  eventPageData: Safe<EventPageQuery["event"]>;
 };
 
 const basePath = env.CHECKPOINT_BASE_PATH;
 
-export default function EventActions({ ev }: EventHeaderProps) {
+export default function EventActions({ eventPageData }: EventHeaderProps) {
   const t = useTypedTranslations("event");
-  
+
   const logger = getLogger("EventActions");
-  logger.debug({ ev });
+  logger.debug({ ev: eventPageData });
   return (
     <Stack
       spacing={1.5}
@@ -36,13 +37,13 @@ export default function EventActions({ ev }: EventHeaderProps) {
         {t("actions.description")}
       </Button>
       {/* Guest */}
-      {ev.myRole === "GUEST" && (
+      {eventPageData?.myRole === "GUEST" && (
         <>
           <Button
             fullWidth
             variant="contained"
             component={Link}
-            href={`${basePath}my-qr?eventId=${ev.id}`}
+            href={`${basePath}my-qr?eventId=${eventPageData.id}`}
             sx={{ borderRadius: 3, fontWeight: 600 }}
           >
             {t("actions.myTicket")}
@@ -52,7 +53,7 @@ export default function EventActions({ ev }: EventHeaderProps) {
             fullWidth
             variant="outlined"
             component={Link}
-            href={`${basePath}my-seat?eventId=${ev.id}`}
+            href={`${basePath}my-seat?eventId=${eventPageData.id}`}
             sx={{ borderRadius: 3 }}
           >
             {t("actions.mySeat")}
@@ -61,13 +62,13 @@ export default function EventActions({ ev }: EventHeaderProps) {
       )}
 
       {/* Security */}
-      {ev.myRole === "SECURITY" && (
+      {eventPageData?.myRole === "SECURITY" && (
         <>
           <Button
             fullWidth
             variant="contained"
             component={Link}
-            href={`${basePath}scan?eventId=${ev.id}`}
+            href={`${basePath}scan?eventId=${eventPageData.id}`}
             sx={{ borderRadius: 3 }}
           >
             {t("actions.scanner")}
@@ -75,7 +76,7 @@ export default function EventActions({ ev }: EventHeaderProps) {
 
           <Button
             component={Link}
-            href={`${basePath}event/${ev.id}/scans`}
+            href={`${basePath}event/${eventPageData.id}/scans`}
             fullWidth
             variant="outlined"
             sx={{ borderRadius: 3 }}
@@ -87,7 +88,7 @@ export default function EventActions({ ev }: EventHeaderProps) {
             fullWidth
             variant="outlined"
             component={Link}
-            href={`${basePath}event/${ev.id}/guest`}
+            href={`${basePath}event/${eventPageData.id}/guest`}
             sx={{ borderRadius: 3 }}
           >
             {t("actions.guestList")}
@@ -97,7 +98,7 @@ export default function EventActions({ ev }: EventHeaderProps) {
             fullWidth
             variant="outlined"
             component={Link}
-            href={`${basePath}event/${ev.id}/seat`}
+            href={`${basePath}event/${eventPageData.id}/seat`}
             sx={{ borderRadius: 3 }}
           >
             {t("actions.seats")}
@@ -106,13 +107,13 @@ export default function EventActions({ ev }: EventHeaderProps) {
       )}
 
       {/* Admin */}
-      {ev.myRole === "ADMIN" && (
+      {eventPageData?.myRole === "ADMIN" && (
         <>
           <Button
             fullWidth
             variant="contained"
             component={Link}
-            href={`${basePath}event/${ev.id}/invitation`}
+            href={`${basePath}event/${eventPageData.id}/invitation`}
             sx={{ borderRadius: 3 }}
           >
             {t("actions.manageInvitations")}
@@ -122,7 +123,7 @@ export default function EventActions({ ev }: EventHeaderProps) {
             fullWidth
             variant="outlined"
             component={Link}
-            href={`${basePath}event/${ev.id}/seat`}
+            href={`${basePath}event/${eventPageData.id}/seat`}
             sx={{ borderRadius: 3 }}
           >
             {t("actions.manageSeats")}
@@ -132,7 +133,7 @@ export default function EventActions({ ev }: EventHeaderProps) {
             fullWidth
             variant="outlined"
             component={Link}
-            href={`${basePath}event/${ev.id}/ticket`}
+            href={`${basePath}event/${eventPageData.id}/ticket`}
             sx={{ borderRadius: 3 }}
           >
             {t("actions.manageTickets")}
@@ -142,7 +143,7 @@ export default function EventActions({ ev }: EventHeaderProps) {
             fullWidth
             variant="outlined"
             component={Link}
-            href={`${basePath}event/${ev.id}/security`}
+            href={`${basePath}event/${eventPageData.id}/security`}
             sx={{ borderRadius: 3 }}
           >
             {t("actions.securityDashboard")}
@@ -150,7 +151,7 @@ export default function EventActions({ ev }: EventHeaderProps) {
 
           <Button
             component={Link}
-            href={`${basePath}event/${ev.id}/scans`}
+            href={`${basePath}event/${eventPageData.id}/scans`}
             fullWidth
             variant="outlined"
             sx={{ borderRadius: 3 }}
@@ -163,7 +164,7 @@ export default function EventActions({ ev }: EventHeaderProps) {
             fullWidth
             variant="outlined"
             component={Link}
-            href={`${basePath}event/${ev.id}/guest`}
+            href={`${basePath}event/${eventPageData.id}/guest`}
             sx={{ borderRadius: 3 }}
           >
             {t("actions.guestList")}
@@ -173,7 +174,7 @@ export default function EventActions({ ev }: EventHeaderProps) {
             fullWidth
             variant="outlined"
             component={Link}
-            href={`${basePath}event/${ev.id}/settings`}
+            href={`${basePath}event/${eventPageData.id}/settings`}
             sx={{ borderRadius: 3 }}
           >
             {t("actions.settings")}
@@ -183,7 +184,7 @@ export default function EventActions({ ev }: EventHeaderProps) {
             fullWidth
             variant="outlined"
             component={Link}
-            href={`${basePath}event/${ev.id}/notification`}
+            href={`${basePath}event/${eventPageData.id}/notification`}
             sx={{ borderRadius: 3 }}
           >
             {t("actions.notifications")}

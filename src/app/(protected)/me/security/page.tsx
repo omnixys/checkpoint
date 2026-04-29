@@ -1,12 +1,8 @@
-
-
 import ChangePasswordClient from "@/checkpoint/app/(protected)/me/security/ChangePasswordClient";
-import MySeatClientPage from "@/checkpoint/app/(protected)/my-seat/MySeatPageClient";
 import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
 import { Box, Skeleton } from "@mui/material";
 import { Metadata } from "next";
 import { JSX, Suspense } from "react";
-
 
 export const metadata: Metadata = buildMetadata({
   title: "Security Settings",

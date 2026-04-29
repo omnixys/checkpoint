@@ -1,7 +1,7 @@
 "use client";
 
 import { SeatPayload } from "@/checkpoint/generated/graphql";
-import { QuerySeat } from "@/checkpoint/hooks/seat/useSeats";
+import { SeatListType } from "@/checkpoint/types/seat.type";
 import React from "react";
 
 /**
@@ -24,7 +24,7 @@ export function useSeatDetailDrawer() {
     editing,
     seatId,
 
-    show: (seat: QuerySeat) => {
+    show: (seat: SeatListType) => {
       setSeatId(seat.id);
       setOpen(true);
     },

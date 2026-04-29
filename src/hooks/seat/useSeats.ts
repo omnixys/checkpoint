@@ -1,5 +1,5 @@
 "use client";
-
+// TODO kein any
 import {
   SeatsQuery,
   SeatsQueryVariables,
@@ -11,44 +11,44 @@ import {
   EventInvitationQuery,
   EventInvitationQueryVariables,
   EventInvitationDocument,
-  EventGuestsQuery,
-  EventGuestsQueryVariables,
-  EventGuestsDocument,
   GetUserListQuery,
   GetUserListQueryVariables,
   GetUserListDocument,
   InvitationPayload,
   UserPayload,
+  SeatListQuery,
 } from "@/checkpoint/generated/graphql";
-import { Seat, SeatFilter } from "@/checkpoint/types/seat.type";
+import useInvitationListQuery from "@/checkpoint/hooks/invitation/useInvitationListQuery";
+import useSeatListQuery from "@/checkpoint/hooks/seat/useSeatListQuery";
+import useGuestQuery from "@/checkpoint/hooks/user/useGuestQuery";
+import { SeatFilter } from "@/checkpoint/types/seat.type";
 import { useMutation, useQuery } from "@apollo/client/react";
 import React from "react";
 
-export type QuerySeat = NonNullable<SeatsQuery["seats"]>[number];
 export type QueryInvitation = NonNullable<
   EventInvitationQuery["eventInvitation"]
 >[number];
 
 export function useSeats(eventId: string) {
-  const { data, loading, refetch } = useQuery<SeatsQuery, SeatsQueryVariables>(SeatsDocument, {
-    variables: { id: eventId },
-    fetchPolicy: "cache-and-network",
-  });
+
+  const { seatList, seatListLoading, seatListError, seatListRefetch } =
+    useSeatListQuery({
+      eventId,
+      loadSeatList: true,
+    });
+
 
   const [filter, setFilter] = React.useState<SeatFilter>({
     search: "",
     status: "all",
   });
 
-  const seatsRaw: QuerySeat[] = data?.seats ?? [];
-
-  const seatsLoading = loading;
 
   // -------------------------------------------
   // SEARCH + STATUS FILTER
   // -------------------------------------------
   const seats = React.useMemo(() => {
-    let result = [...seatsRaw];
+    let result = [...(seatList ?? [])];
 
     // SEARCH
     if (filter.search.trim().length > 0) {
@@ -70,13 +70,13 @@ export function useSeats(eventId: string) {
     }
 
     return result;
-  }, [seatsRaw, filter]);
+  }, [seatList, filter]);
 
   // -------------------------------------------
   // GROUPED (Section -> Table)
   // -------------------------------------------
   const grouped = React.useMemo(() => {
-    const sectionMap: Record<string, Record<string, QuerySeat[]>> = {};
+    const sectionMap: Record<string, Record<string, any[]>> = {};
 
     for (const s of seats) {
       const section = s.section.name ?? "—";
@@ -95,12 +95,12 @@ export function useSeats(eventId: string) {
   // OCCUPIED IDS
   // -------------------------------------------
   const occupiedSeatIds = React.useMemo(
-    () => new Set(seatsRaw.filter(isSeatOccupied).map((s) => s.id)),
-    [seatsRaw],
+    () => new Set(seatList?.filter(isSeatOccupied).map((s) => s.id)),
+    [seatList],
   );
 
 
-    function isSeatOccupied(seat: QuerySeat): boolean {
+    function isSeatOccupied(seat: SeatListQuery['seats'][number]): boolean {
       return Boolean(seat.guestId) || Boolean(seat.invitationId);
     }
 
@@ -109,61 +109,34 @@ export function useSeats(eventId: string) {
   // -------------------------------------------
   const seatGuestMap = React.useMemo(() => {
     const map = new Map<string, string>();
-    for (const s of seatsRaw) {
+    if (!seatList) return map;
+
+    for (const s of seatList) {
       if (s.guestId) map.set(s.id, s.guestId);
     }
     return map;
-  }, [seatsRaw]);
+  }, [seatList]);
 
   // -------------------------------------------
   // SEAT LABEL
   // -------------------------------------------
-  const seatLabel = (seat: QuerySeat) => seat.number?.toString() ?? "—";
+  const seatLabel = (seat: SeatListQuery["seats"][number]) =>
+    seat.number?.toString() ?? "—";
 
   const [assignSeat] = useMutation<AssignSeatMutation, AssignSeatMutationVariables>(
     AssignSeatDocument,
   );
 
-  const { data: invitationData } = useQuery<EventInvitationQuery, EventInvitationQueryVariables>(
-    EventInvitationDocument,
-    {
-      variables: { eventId },
-    },
-  );
+  
 
-  const { data: guestIdsData } = useQuery<EventGuestsQuery, EventGuestsQueryVariables>(
-    EventGuestsDocument,
-    {
-      variables: { id: eventId },
-    },
-  );
-
-  const { data: guestData } = useQuery<GetUserListQuery, GetUserListQueryVariables>(
-    GetUserListDocument,
-    {
-      variables: { guesIdList: guestIdsData?.eventGuests ?? [] },
-      skip: !guestIdsData?.eventGuests?.length,
-    },
-  );
-
-  const guestList = guestData?.getUserList ?? [];
-  const invitationList = invitationData?.eventInvitation ?? [];
-
-  const invitationMap = React.useMemo(() => {
-    const map = new Map<string, QueryInvitation>();
-    for (const inv of invitationList) {
-      map.set(inv.id, inv);
-    }
-    return map;
-  }, [invitationList]);
-
-  const guestMap = React.useMemo(() => {
-    const map = new Map<string, UserPayload>();
-    for (const g of guestList) {
-      map.set(g.id, g);
-    }
-    return map;
-  }, [guestList]);
+  const { globalEventInvitationList, invitationMap } = useInvitationListQuery({
+    loadGlobalEventInvitationList: true,
+    eventIds: [eventId],
+  });
+  const { guestList, guestMap } = useGuestQuery({
+    eventId,
+    loadGuestIdList: true,
+  });
 
   const getSeatHolderName = (id?: string | null): string => {
     if (!id) return "—";
@@ -186,23 +159,23 @@ export function useSeats(eventId: string) {
     return "—";
   };
 
-  const getSeatHolderLabel = (seat: QuerySeat) =>
+  const getSeatHolderLabel = (seat: SeatListQuery["seats"][number]) =>
     getSeatHolderName(seat.guestId ?? seat.invitationId);
 
   return {
     seats,
-    seatsLoading,
+    seatListLoading,
     grouped,
     occupiedSeatIds,
     seatGuestMap,
     seatLabel,
     filter,
     setFilter,
-    refetch,
+    seatListRefetch,
     getSeatHolderLabel,
     getSeatHolderName,
     assignSeat,
     guestList,
-    invitationList,
+    invitationList: globalEventInvitationList,
   };
 }

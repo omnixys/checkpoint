@@ -1,3 +1,4 @@
+import { CurrentUserQuery } from "@/checkpoint/generated/graphql";
 import { CurrentUser } from "@/checkpoint/lib/auth/auth.types";
 
 /**
@@ -27,7 +28,9 @@ let context: InternalAuthContext = {
  *
  * This is used by Apollo Link to inject headers.
  */
-export function setCurrentUser(user: CurrentUser | null): void {
+export function setCurrentUser(
+  user: Omit<CurrentUserQuery["me"], "__typename"> | null
+): void {
   context = {
     actorId: user?.id ?? null,
     tenantId: "omnixys",

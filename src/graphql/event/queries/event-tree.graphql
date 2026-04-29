@@ -1,7 +1,47 @@
-# import EventFull from "../fragments/event.fragment.graphql"
-
-query EventTree($id: ID!) {
-  eventTree(eventId: $id) {
-    ...EventFull
+query GetEventTree($eventId: ID!) {
+  eventTree(eventId: $eventId) {
+    rootEvent {
+      id
+      name
+    }
+    subEvents {
+      id
+      name
+      parentId
+      depth
+    }
   }
 }
+
+
+query GetPublicEventTree($eventId: ID!) {
+  publicEventTree(eventId: $eventId) {
+    rootEvent {
+      id
+      name
+    }
+    subEvents {
+      id
+      name
+      parentId
+      depth
+    }
+  }
+}
+
+
+
+query GetFullEventTreeInfo($eventId: ID!) {
+  eventTree(eventId: $eventId) {
+    rootEvent {
+      id
+      name
+    }
+    subEvents {
+      id
+      name
+    }
+  }
+}
+
+

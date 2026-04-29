@@ -11,7 +11,7 @@ export function getBaseUrl(): string {
   if (typeof window !== "undefined" && window.location?.origin) {
     return window.location.origin;
   }
-  return env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  return env.BASE_URL || "http://localhost:3000";
 }
 
 /**
@@ -28,7 +28,11 @@ export function whatsappShareUrl(text: string): string {
 }
 
 /** mailto:-URL (optional) */
-export function mailtoUrl(to: string | null, subject: string, body: string): string {
+export function mailtoUrl(
+  to: string | null,
+  subject: string,
+  body: string,
+): string {
   const addr = to ?? "";
   const q = new URLSearchParams({ subject, body }).toString();
   return `mailto:${addr}?${q}`;
@@ -61,7 +65,11 @@ export async function copyToClipboard(text: string): Promise<boolean> {
 }
 
 /** Native Share (wenn verfügbar), sonst false zurück. */
-export async function tryNativeShare(title: string, text: string, url: string): Promise<boolean> {
+export async function tryNativeShare(
+  title: string,
+  text: string,
+  url: string,
+): Promise<boolean> {
   try {
     if ((navigator as any)?.share) {
       await (navigator as any).share({ title, text, url });

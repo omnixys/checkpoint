@@ -1,6 +1,5 @@
-import { SeatPayload } from "@/checkpoint/generated/graphql";
 import { useDevice } from "@/checkpoint/providers/DeviceProvider";
-import { QuerySeat } from "@/checkpoint/types/seat.type";
+import { SeatListType } from "@/checkpoint/types/seat.type";
 
 export type PolarPoint = { left: number; top: number };
 
@@ -28,7 +27,7 @@ export function computeChairPositions(
 }
 
 /** Label-Logik für einen Sitz: bevorzugt number */
-export function seatLabel(seat: QuerySeat): string {
+export function seatLabel(seat: SeatListType): string {
   const n = seat.number?.toString();
   return n && n.length > 0 ? n : "•";
 }

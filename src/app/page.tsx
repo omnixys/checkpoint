@@ -1,5 +1,12 @@
 "use client";
 
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { env } from "@/checkpoint/lib/env";
+import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
+import { useAuth } from "@/checkpoint/providers/AuthProvider";
+import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
+import EventIcon from "@mui/icons-material/Event";
+import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 import {
   Box,
   Button,
@@ -11,16 +18,9 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import { JSX } from "react";
-import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
-import EventIcon from "@mui/icons-material/Event";
-import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
-import { env } from "@/checkpoint/lib/env";
-import { useAuth } from "@/checkpoint/providers/AuthProvider";
-import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 const basePath = env.CHECKPOINT_BASE_PATH;
-const EVENT_ID = env.NEXT_PUBLIC_EVENT_ID;
+const EVENT_ID = env.EVENT_ID;
 
 export default function HomePage(): JSX.Element {
   const theme = useTheme();
@@ -126,7 +126,7 @@ export default function HomePage(): JSX.Element {
           sx={{ color: theme.palette.text.secondary }}
         >
           {activeEvent
-            ? t("header.activeEvent", { event: activeEvent.name})
+            ? t("header.activeEvent", { event: activeEvent.name })
             : t("header.noEvent")}
         </Typography>
       </Stack>

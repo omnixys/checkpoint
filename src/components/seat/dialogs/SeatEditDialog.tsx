@@ -6,6 +6,7 @@ import {
   SeatPayload,
   UserPayload,
 } from "@/checkpoint/generated/graphql";
+import { GuestType } from "@/checkpoint/types/event.type";
 import {
   Button,
   Dialog,
@@ -28,7 +29,7 @@ export default function SeatEditDialog({
   open: boolean;
   seat?: SeatPayload;
   invitationList: InvitationPayload[];
-  guestList: UserPayload[];
+  guestList: GuestType[];
   onClose: () => void;
   onSave: (input: AssignSeatInput) => void;
 }) {
@@ -37,7 +38,9 @@ export default function SeatEditDialog({
   const [note, setNote] = React.useState<string>("");
 
   const safeInvitationId =
-    invitationId && invitationList.some((i) => i.id === invitationId) ? invitationId : "";
+    invitationId && invitationList.some((i) => i.id === invitationId)
+      ? invitationId
+      : "";
 
   React.useEffect(() => {
     setInvitationId(seat?.invitationId ?? "");

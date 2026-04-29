@@ -6,7 +6,7 @@ import {
   RenameTableMutationVariables,
   RenameTableDocument,
 } from "@/checkpoint/generated/graphql";
-import { QuerySeat } from "@/checkpoint/hooks/seat/useSeats";
+import { SeatListType } from "@/checkpoint/types/seat.type";
 import { useMutation } from "@apollo/client/react";
 import {
   Button,
@@ -25,7 +25,7 @@ import { useEffect, useState } from "react";
 type Props = {
   open: boolean;
   tableName: string;
-  seats: QuerySeat[];
+  seats: SeatListType[];
   onClose: () => void;
   refetch: () => void;
 };

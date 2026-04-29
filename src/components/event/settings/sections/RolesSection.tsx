@@ -22,19 +22,17 @@ import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { UserRoleType } from "@/checkpoint/generated/graphql";
 import { useMutationHandler } from "@/checkpoint/hooks/core/useMutationHandler";
-export type RoleItem = {
-  userId: string;
-  role: UserRoleType;
-};
+import { EventRoleType } from "@/checkpoint/types/event.type";
+import useGuestQuery from "@/checkpoint/hooks/user/useGuestQuery";
 
 /**
  * Props
  */
 type Props = {
-  roles: RoleItem[];
+  roles: EventRoleType[];
   meta: { owner: string };
   actions: {
-    assignRole: (role: RoleItem) => Promise<any>;
+    assignRole: (role: EventRoleType) => Promise<any>;
     removeRole: (userId: string) => Promise<any>;
   };
 };
@@ -54,7 +52,12 @@ export default function RolesSection({ roles, meta, actions }: Props) {
   const { execute, loading, error, success, reset } = useMutationHandler();
 
   const [newUserId, setNewUserId] = useState("");
-  const [newRole, setNewRole] = useState<RoleItem["role"]>("GUEST");
+  const [newRole, setNewRole] = useState<UserRoleType>("GUEST");
+
+  const { securityGuestMap } = useGuestQuery({
+    guestIdList: roles.map((role) => role.userId),
+    loadSecurityGuestIdList: true,
+  });
 
   /**
    * Permissions
@@ -97,7 +100,7 @@ export default function RolesSection({ roles, meta, actions }: Props) {
 
           <Select
             value={newRole}
-            onChange={(e) => setNewRole(e.target.value as RoleItem["role"])}
+            onChange={(e) => setNewRole(e.target.value as UserRoleType)}
             sx={{ minWidth: 140 }}
           >
             <MenuItem value="ADMIN">Admin</MenuItem>
@@ -122,6 +125,7 @@ export default function RolesSection({ roles, meta, actions }: Props) {
                 transition={{ duration: 0.2 }}
               >
                 <RoleRow
+                  name={securityGuestMap.get(role.userId)}
                   role={role}
                   currentUserId={user?.id}
                   ownerId={meta.owner}
@@ -175,15 +179,17 @@ function RoleRow({
   actions,
   execute,
   loading,
+  name
 }: {
-  role: RoleItem;
+  name?: string | undefined
+  role: EventRoleType;
   currentUserId?: string | undefined;
   ownerId: string;
   isOwner: boolean;
   canEdit: boolean;
   canDelete: boolean;
   actions: {
-    assignRole: (role: RoleItem) => Promise<any>;
+    assignRole: (role: EventRoleType) => Promise<any>;
     removeRole: (userId: string) => Promise<any>;
   };
   execute: <T>(fn: () => Promise<T>) => Promise<T | null>;
@@ -206,10 +212,12 @@ function RoleRow({
         gap: 1,
         backdropFilter: "blur(10px)",
         backgroundColor:
-          theme.palette.mode === "dark" ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
+          theme.palette.mode === "dark"
+            ? "rgba(255,255,255,0.04)"
+            : "rgba(0,0,0,0.03)",
       }}
     >
-      <Chip label={role.userId} color={isOwner ? "primary" : "default"} />
+      <Chip label={name} color={isOwner ? "primary" : "default"} />
 
       <Select
         value={role.role}
@@ -218,7 +226,7 @@ function RoleRow({
           execute(() =>
             actions.assignRole({
               userId: role.userId,
-              role: e.target.value as RoleItem["role"],
+              role: e.target.value as UserRoleType,
             }),
           )
         }

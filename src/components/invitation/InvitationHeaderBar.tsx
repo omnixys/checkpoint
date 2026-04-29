@@ -14,6 +14,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import ArrowCircleLeftIcon from "@mui/icons-material/ArrowCircleLeft";
 import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
+import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
 
 import { motion } from "framer-motion";
 import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
@@ -24,6 +25,8 @@ import { useParams } from "next/navigation";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { useDevice } from "@/checkpoint/providers/DeviceProvider";
+import { env } from "@/checkpoint/lib/env";
+import { copyToClipboard } from "@/checkpoint/utils/invitation/link";
 
 type Props = {
   collapsed: boolean;
@@ -36,9 +39,22 @@ export function InvitationHeaderBar({ collapsed, onToggle, logic }: Props) {
   const theme = useTheme();
   const params = useParams();
   const id = params?.id;
-  const { user } = useAuth();
+  const eventId = Array.isArray(id) ? id[0] : id;
+  const { currentUser } = useAuth();
 
   const { isMobile } = useDevice();
+
+  const copyInvitationLink = async () => {
+    if (!eventId) return;
+
+    const url = new URL(
+      `${env.CHECKPOINT_BASE_PATH}rsvp`,
+      window.location.origin,
+    );
+    url.searchParams.set("eventId", eventId);
+
+    await copyToClipboard(url.toString());
+  };
 
   return (
     <Box
@@ -156,7 +172,6 @@ export function InvitationHeaderBar({ collapsed, onToggle, logic }: Props) {
           </Stack>
         </Stack>
       ) : (
-        /* 💻 DESKTOP (dein bestehendes Layout leicht verbessert) */
         <Stack
           direction="row"
           sx={{
@@ -248,11 +263,33 @@ export function InvitationHeaderBar({ collapsed, onToggle, logic }: Props) {
               <RefreshArcButton onReload={logic.reload} />
             </Box>
 
-            {user?.role === "ADMIN" && (
+            {currentUser?.role === "ADMIN" && (
               <Box>
                 <UserCreationInbox logic={logic} />
               </Box>
             )}
+
+            <Tooltip title={t("copyLink")}>
+              <motion.div whileTap={{ scale: 0.9 }}>
+                <IconButton
+                  disabled={!eventId}
+                  onClick={() => {
+                    void copyInvitationLink();
+                  }}
+                  sx={{
+                    backdropFilter: "blur(12px)",
+                    background: alpha(theme.palette.secondary.main, 0.15),
+                    border: `1px solid ${alpha(theme.palette.secondary.main, 0.3)}`,
+                    boxShadow: theme.shadows[3],
+                    "&:hover": {
+                      background: alpha(theme.palette.secondary.main, 0.25),
+                    },
+                  }}
+                >
+                  <ContentCopyRoundedIcon />
+                </IconButton>
+              </motion.div>
+            </Tooltip>
 
             <Box>
               <Tooltip title={collapsed ? t("showFilters") : t("hideFilters")}>

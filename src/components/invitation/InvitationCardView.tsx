@@ -141,7 +141,7 @@ export default function InvitationCardView({
                   onClick={(e) => {
                     e.stopPropagation();
                     logic
-                      .approveInvitation({
+                      .approveInvitationMutation({
                         variables: {
                           input: {
                             invitationId: inv.id,
@@ -152,7 +152,7 @@ export default function InvitationCardView({
                           },
                         },
                       })
-                      .then(() => logic.refetch());
+                      .then(() => logic.reload());
                   }}
                 >
                   <CheckCircleRoundedIcon />
@@ -163,10 +163,10 @@ export default function InvitationCardView({
                   onClick={(e) => {
                     e.stopPropagation();
                     logic
-                      .deleteInvitation({
+                      .deleteInvitationMutation({
                         variables: { id: inv.id },
                       })
-                      .then(() => logic.refetch());
+                      .then(() => logic.reload());
                   }}
                 >
                   <DeleteForeverRoundedIcon />
