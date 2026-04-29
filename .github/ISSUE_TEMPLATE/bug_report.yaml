@@ -14,9 +14,9 @@
 # For more information, visit <https://www.gnu.org/licenses/>.
 
 name: 🐛 Checkpoint Bug Report
-description: Report a reproducible issue or unexpected behavior in the Event microservice
-title: "[Event Bug] "
-labels: [bug, event, needs-triage]
+description: Report a reproducible issue or unexpected behavior in the Checkpoint App
+title: "[Checkpoint Bug] "
+labels: [bug, checkpoint, needs-triage]
 assignees: []
 body:
   - type: markdown
@@ -51,7 +51,6 @@ body:
       label: Steps to reproduce
       description: How can we reproduce the bug?
       placeholder: |
-        1. Start the event-service with `pnpm run start:dev`
         2. Send a login mutation via GraphQL
         3. Observe error response
     validations:
