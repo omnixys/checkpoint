@@ -13,9 +13,9 @@
 #
 # For more information, visit <https://www.gnu.org/licenses/>.
 
-name: 🆘 Event Service Support Request
-description: Get help with setup, configuration, or usage of the Event Service
-title: '[Event Support] '
+name: 🆘 Checkpoint Support Request
+description: Get help with setup, configuration, or usage of the Checkpoint
+title: "[Event Support] "
 labels: [support, question, event]
 body:
   - type: markdown

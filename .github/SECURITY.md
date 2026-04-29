@@ -1,6 +1,6 @@
 # 🔒 Security Policy
 
-If you discover a vulnerability in the **Omnixys Event Service**, please follow the responsible disclosure process below.  
+If you discover a vulnerability in the **Omnixys Checkpoint**, please follow the responsible disclosure process below.  
 Do **not** open public issues for sensitive security reports.
 
 ---

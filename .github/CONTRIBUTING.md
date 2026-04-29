@@ -1,6 +1,6 @@
-# 🤝 Contributing to Omnixys Event Service
+# 🤝 Contributing to Omnixys Checkpoint
 
-Thank you for your interest in contributing to the **Omnixys Event Service**!  
+Thank you for your interest in contributing to the **Omnixys Checkpoint**!  
 This document defines our contribution workflow, coding standards, and pull request guidelines.
 
 ---

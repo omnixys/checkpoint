@@ -13,10 +13,10 @@
 #
 # For more information, visit <https://www.gnu.org/licenses/>.
 
-# name: ❓ Event Service Question or Support Request
-# description: Ask a question or request help with setup, deployment, or usage of the Event Service.
-labels: ['question', 'event']
-title: '[Event Question] '
+# name: ❓ Checkpoint Question or Support Request
+# description: Ask a question or request help with setup, deployment, or usage of the Checkpoint.
+labels: ["question", "event"]
+title: "[Event Question] "
 # category: "❓ Questions & Support"
 
 body:
@@ -46,7 +46,7 @@ body:
       placeholder: |
         Provide relevant background such as:
         - Environment (Docker Compose, Local Node, Kubernetes)
-        - Event Service version and dependencies
+        - Checkpoint version and dependencies
         - Any related error messages or logs
     validations:
       required: true

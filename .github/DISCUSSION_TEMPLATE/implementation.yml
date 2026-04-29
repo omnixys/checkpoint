@@ -14,9 +14,9 @@
 # For more information, visit <https://www.gnu.org/licenses/>.
 
 # name: 🧪 Implementation or Architecture Discussion
-# description: Discuss technical design, architecture, or integration details for the Event Service.
-labels: ['🧪 Implementation', 'event']
-title: '[Event Implementation] '
+# description: Discuss technical design, architecture, or integration details for the Checkpoint.
+labels: ["🧪 Implementation", "event"]
+title: "[Event Implementation] "
 # category: "🧪 Implementation Details"
 
 body:

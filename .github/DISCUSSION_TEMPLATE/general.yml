@@ -14,9 +14,9 @@
 # For more information, visit <https://www.gnu.org/licenses/>.
 
 # name: 🧵 General Discussion
-# description: Start an open discussion or share general feedback about the Event Service.
-labels: ['general', 'event']
-title: '[Event Service Discussion] '
+# description: Start an open discussion or share general feedback about the Checkpoint.
+labels: ["general", "event"]
+title: "[Checkpoint Discussion] "
 # category: "🧵 General"
 
 body:
@@ -24,7 +24,7 @@ body:
     attributes:
       value: |
         ## 💬 Topic
-        This space is for open conversations, brainstorming, and general feedback related to the Event Service.
+        This space is for open conversations, brainstorming, and general feedback related to the Checkpoint.
 
   - type: textarea
     id: topic

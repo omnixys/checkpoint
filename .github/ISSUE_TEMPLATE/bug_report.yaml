@@ -13,9 +13,9 @@
 #
 # For more information, visit <https://www.gnu.org/licenses/>.
 
-name: 🐛 Event Service Bug Report
+name: 🐛 Checkpoint Bug Report
 description: Report a reproducible issue or unexpected behavior in the Event microservice
-title: '[Event Bug] '
+title: "[Event Bug] "
 labels: [bug, event, needs-triage]
 assignees: []
 body:

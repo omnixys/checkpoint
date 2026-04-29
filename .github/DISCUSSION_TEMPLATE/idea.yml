@@ -13,10 +13,10 @@
 #
 # For more information, visit <https://www.gnu.org/licenses/>.
 
-# name: 💡 Event Service Idea or Proposal
+# name: 💡 Checkpoint Idea or Proposal
 # description: Share an idea or suggestion to improve the Event microservice.
-labels: ['idea', 'event']
-title: '[Event Service Idea] '
+labels: ["idea", "event"]
+title: "[Checkpoint Idea] "
 # category: "💡 Ideas & Suggestions"
 
 body:
@@ -24,7 +24,7 @@ body:
     attributes:
       value: |
         ## 💭 Description
-        Propose an improvement, feature, or workflow enhancement for the Event Service.
+        Propose an improvement, feature, or workflow enhancement for the Checkpoint.
 
   - type: textarea
     id: idea

@@ -13,9 +13,9 @@
 #
 # For more information, visit <https://www.gnu.org/licenses/>.
 
-name: 💡 Event Service Feature Request
+name: 💡 Checkpoint Feature Request
 description: Suggest a new feature or enhancement for the Event microservice
-title: '[Event Feature] '
+title: "[Event Feature] "
 labels: [enhancement, event]
 body:
   - type: markdown

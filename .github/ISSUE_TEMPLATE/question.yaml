@@ -13,10 +13,10 @@
 #
 # For more information, visit <https://www.gnu.org/licenses/>.
 
-name: ❓ Event Service Question or Help Request
-description: Ask a question or request help regarding setup, configuration, or usage of the Event Service.
-title: '[Event Question] '
-labels: ['question', 'event', 'needs-triage']
+name: ❓ Checkpoint Question or Help Request
+description: Ask a question or request help regarding setup, configuration, or usage of the Checkpoint.
+title: "[Event Question] "
+labels: ["question", "event", "needs-triage"]
 assignees: []
 body:
   - type: markdown
@@ -44,7 +44,7 @@ body:
       label: Context
       placeholder: |
         Describe what you were working on:
-        - Which version of the Event Service?
+        - Which version of the Checkpoint?
         - Are you running via Docker Compose, local Node, or Kubernetes?
         - Any relevant dependencies (Keycloak, Redis, Kafka)?
     validations:
