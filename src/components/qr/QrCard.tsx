@@ -8,6 +8,7 @@ import {
   GenerateTokenDocument,
   GenerateTokenMutation,
   GenerateTokenMutationVariables,
+  GetActiveEventQuery,
   GetMyFullTicketListQuery,
   TicketPayload,
 } from "@/checkpoint/generated/graphql";
@@ -58,7 +59,7 @@ type SignedQrPayload = {
 
 type Props = {
   ticket?: GetMyFullTicketListQuery["getMyTickets"][number] | undefined;
-  event?: any;
+  event?: GetActiveEventQuery['event'];
 };
 
 export default function QrCard({ ticket, event }: Props) {
@@ -231,6 +232,7 @@ export default function QrCard({ ticket, event }: Props) {
               : "0 24px 80px rgba(0, 0, 0, 0.45)",
         }}
       >
+        {/* TODO visuell optimieren + datum als I18N mit deutsche /englischen format dd/mm/yyyy oder yyyy/mmm/dd oder .... */}
         <Stack spacing={3}>
           <Stack spacing={30} direction={"row"}>
             <BackButtonBase href={from ?? env.CHECKPOINT_BASE_PATH} label={"zurück"} />

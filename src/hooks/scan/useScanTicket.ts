@@ -4,6 +4,8 @@ import {
   ScanTokenDocument,
   ScanPayload,
 } from "@/checkpoint/generated/graphql";
+import useSeatQuery from "@/checkpoint/hooks/seat/useSeatQuery";
+import useUserQuery from "@/checkpoint/hooks/user/useUserQuery";
 import { ScanResult } from "@/checkpoint/types/scan.type";
 import { useMutation } from "@apollo/client/react";
 
@@ -81,6 +83,15 @@ export function useScanTicket() {
 
     const res: ScanPayload = data.scanToken;
 
+    const { fullSeatInfo } = useSeatQuery({
+      seatId: res.ticket.seatId,
+      loadFullSeatInfo: true,
+    });
+    const { userInfo } = useUserQuery({
+      userId: res.ticket.guestProfileId,
+      loadUserName: true,
+    });
+
     return {
       status: res.verdict === "OK" ? "SUCCESS" : "ERROR",
       message: res.message,
@@ -88,6 +99,8 @@ export function useScanTicket() {
       deviceMatched: res.verdict !== "DEVICE_MISMATCH",
       reason: mapReason(res.verdict),
       ticket: res.ticket,
+      guest: userInfo,
+      seat: fullSeatInfo,
     };
   };
 }

@@ -9,10 +9,11 @@ import {
   Typography,
   Alert,
   Button,
+  alpha,
 } from "@mui/material";
 
 import { useMutation } from "@apollo/client/react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import jsPDF from "jspdf";
@@ -23,6 +24,10 @@ import {
   VerifyGuestSignUpDocument,
 } from "@/checkpoint/generated/graphql";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { AuthManager } from "@/checkpoint/lib/auth/AuthManager";
+import { getCurrentUser } from "@/checkpoint/lib/auth/get-current-user";
+import { setCurrentUser } from "@/checkpoint/lib/apollo/auth-context";
+import { env } from "@/checkpoint/lib/env";
 
 /* -------------------------------------------------------------------------- */
 /* Helper: Message Mapping                                                    */
@@ -74,12 +79,17 @@ function mapVerifyMessage(
 /* -------------------------------------------------------------------------- */
 
 export default function VerifyPageClient() {
+    const router = useRouter();
+  
   const t = useTypedTranslations("auth");
 
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    const [error, setError] = useState<string | null>(null);
+const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const [verifyGuest, { data, loading }] = useMutation<
     VerifyGuestSignUpMutation,
@@ -99,7 +109,7 @@ export default function VerifyPageClient() {
     }).catch((err) => {
       setErrorMessage(err?.message ?? "Verification failed. Please try again.");
     });
-  }, [token]);
+  }, [token, verifyGuest]);
 
   /* ------------------------------------------------------------------------ */
   /* PDF Download Logic                                                       */
@@ -128,6 +138,26 @@ export default function VerifyPageClient() {
 
     pdf.save("guest-credentials.pdf");
   };
+
+  const login = async (username: string, password: string) => {
+        if (loading) return;
+    
+        try {
+          setIsLoggingIn(true);
+          setError(null);
+    
+          await AuthManager.login({ username, password });
+          const user = await getCurrentUser();
+    
+          setCurrentUser(user);
+    
+          router.replace(env.CHECKPOINT_BASE_PATH);
+        } catch (e) {
+          setError(t("login.error"));
+        } finally {
+          setIsLoggingIn(false);
+        }
+  }
 
   /* ------------------------------------------------------------------------ */
   /* UI States                                                                */
@@ -163,7 +193,11 @@ export default function VerifyPageClient() {
         <Stack spacing={2}>
           <Alert severity="error">{errorMessage}</Alert>
 
-          <Button variant="contained" onClick={() => window.location.reload()}>
+          <Button variant="contained" onClick={() => {
+            executedRef.current = false;
+            setErrorMessage(null);
+            verifyGuest({ variables: { token } });
+          }}>
             {t("verify.retry")}
           </Button>
         </Stack>
@@ -171,17 +205,24 @@ export default function VerifyPageClient() {
     );
   }
 
+
   const result = data?.verifyGuestSignUp;
 
-  if (!result) {
-    return (
-      <CenteredContainer>
-        <Alert severity="error">{t("verify.unexpected")}</Alert>
-      </CenteredContainer>
-    );
-  }
+if (
+  !result ||
+  !result.results ||
+  result.results.length === 0 ||
+  !result.results[0]
+) {
+  return (
+    <CenteredContainer>
+      <Alert severity="error">{t("verify.unexpected")}</Alert>
+    </CenteredContainer>
+  );
+}
 
   const mapped = mapVerifyMessage(result.message ?? "SUCCESS", t);
+  const rootInvitee = result.results[0];
 
   /* ------------------------------------------------------------------------ */
   /* Render                                                                   */
@@ -208,9 +249,18 @@ export default function VerifyPageClient() {
 
         {/* Download Button */}
         {mapped.severity === "success" && (
-          <Button variant="contained" onClick={handleDownload}>
-            {t("verify.download")}
-          </Button>
+          <>
+            <Button variant="contained" onClick={handleDownload}>
+              {t("verify.download")}
+            </Button>
+            <Button
+              variant="contained"
+              disabled={isLoggingIn}
+              onClick={() => login(rootInvitee.username, rootInvitee.password)}
+            >
+              {isLoggingIn ? <CircularProgress size={20} /> : t("verify.login")}
+            </Button>
+          </>
         )}
       </Stack>
     </CenteredContainer>
@@ -221,24 +271,23 @@ export default function VerifyPageClient() {
 /* Layout                                                                     */
 /* -------------------------------------------------------------------------- */
 
-/**
- * Centered layout wrapper
- *
- * WHY:
- * - Consistent page structure
- * - Clean UX
- */
 function CenteredContainer({ children }: { children: React.ReactNode }) {
   return (
     <Box
-      sx={{
+      sx={(theme) => ({
         minHeight: "100dvh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         px: 2,
         py: 4,
-      }}
+
+        background: `linear-gradient(
+          180deg,
+          ${theme.palette.background.default} 0%,
+          ${theme.palette.background.paper} 100%
+        )`,
+      })}
     >
       {children}
     </Box>
@@ -270,11 +319,17 @@ function CredentialCard({
 }) {
   return (
     <Card
-      sx={{
+      sx={(theme) => ({
         width: "100%",
-        borderRadius: 3,
-        backdropFilter: "blur(14px)",
-      }}
+        borderRadius: 4,
+
+        background: alpha(theme.palette.background.paper, 0.6),
+        backdropFilter: "blur(20px)",
+
+        border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+
+        boxShadow: `0 20px 60px ${alpha(theme.palette.common.black, 0.25)}`,
+      })}
     >
       <CardContent>
         <Stack spacing={1.5}>
@@ -287,10 +342,18 @@ function CredentialCard({
             {t("verify.credentials.title")}
           </Typography>
 
-          <Field label={t("verify.credentials.username")} value={user.username} />
-          <Field label={t("verify.credentials.password")} value={user.password} />
+          <Field
+            label={t("verify.credentials.username")}
+            value={user.username}
+          />
+          <Field
+            label={t("verify.credentials.password")}
+            value={user.password}
+          />
 
-          {user.email && <Field label={t("verify.credentials.email")} value={user.email} />}
+          {user.email && (
+            <Field label={t("verify.credentials.email")} value={user.email} />
+          )}
         </Stack>
       </CardContent>
     </Card>
@@ -317,10 +380,16 @@ function Field({ label, value }: { label: string; value: string }) {
 
       <Typography
         variant="body1"
-        sx={{
+        sx={(theme) => ({
           fontFamily: "monospace",
           wordBreak: "break-all",
-        }}
+
+          px: 1.2,
+          py: 0.6,
+          borderRadius: 1.5,
+
+          background: alpha(theme.palette.background.default, 0.6),
+        })}
       >
         {value}
       </Typography>

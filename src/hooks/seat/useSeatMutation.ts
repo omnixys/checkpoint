@@ -24,7 +24,7 @@ import { useLazyQuery, useMutation, useQuery } from "@apollo/client/react";
 
 interface Props {}
 
-export default function useSeatQuery() {
+export default function useSeatMutation() {
   const [renameSection, { data }] = useMutation<
     RenameSectionMutation,
     RenameSectionMutationVariables

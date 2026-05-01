@@ -25,7 +25,7 @@ export default function MyQrContent() {
   const { activeEvent } = useActiveEvent();
 
   const { fullTicketEventIdMap, myFullTicketListLoading, myFullTicketListError } = useMyTicketQuery(
-    { eventId: activeEvent?.id, loadMyTicketList: true },
+    { eventId: activeEvent?.id, loadMyFullTicketList: true },
   );
 
   /**
@@ -49,6 +49,7 @@ export default function MyQrContent() {
   }
 
   if (myFullTicketListError) {
+    console.error(myFullTicketListError)
     return <Alert severity="error">Ticket konnte nicht geladen werden.</Alert>;
   }
 

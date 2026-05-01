@@ -71,7 +71,7 @@ const initialState: State = {
       isPublic: false,
       publicRsvpWebsite: "",
       dressCode: "",
-      description: "sdf",
+      description: "",
       // descriptionLong: '',
       startsAt: null,
       endsAt: null,

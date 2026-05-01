@@ -71,7 +71,7 @@ export default function ScanResultCard({ result }: { result: ScanResult }) {
                 <>
                   <Divider />
                   <Typography>
-                    <b>Gast:</b> {result.guest.firstName} {result.guest.lastName}
+                    <b>Gast:</b> {result.guest.personalInfo?.firstName} {result.guest.personalInfo?.lastName}
                   </Typography>
                 </>
               )}
@@ -79,8 +79,8 @@ export default function ScanResultCard({ result }: { result: ScanResult }) {
               {/* SEAT */}
               {result.seat && (
                 <Typography>
-                  <b>Sitz:</b> {result.seat.sectionName}
-                  {result.seat.tableName && ` · Tisch ${result.seat.tableName}`}
+                  <b>Sitz:</b> {result.seat.section.name}
+                  {result.seat.table?.name && ` · Tisch ${result.seat.label}`}
                   {result.seat.number && ` · Platz ${result.seat.number}`}
                 </Typography>
               )}
@@ -89,9 +89,9 @@ export default function ScanResultCard({ result }: { result: ScanResult }) {
               {result.ticket && (
                 <>
                   <Divider />
-                  <Typography variant="body2">
+                  {/* <Typography variant="body2">
                     <b>Ticket:</b> {result.ticket.id}
-                  </Typography>
+                  </Typography> */}
                   <Typography variant="caption" sx={{ opacity: 0.7 }}>
                     Status: {result.ticket.currentState} ·{" "}
                     {result.ticket.revoked ? "Widerrufen" : "Aktiv"}

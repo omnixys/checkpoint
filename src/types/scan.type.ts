@@ -1,4 +1,4 @@
-import { PresenceState, TicketPayload, UserRoleType } from "@/checkpoint/generated/graphql";
+import { GetFullSeatInfoQuery, GetSeatInfoQuery, GetUserNameQuery, PresenceState, TicketPayload, UserRoleType } from "@/checkpoint/generated/graphql";
 
 /**
  * Result returned by /api/scan
@@ -38,16 +38,7 @@ export type ScanResult = {
 
   ticket?: TicketPayload;
 
-  guest?: {
-    firstName?: string;
-    lastName?: string;
-    roles?: UserRoleType[];
-  };
+  guest?: GetUserNameQuery["user"] | undefined;
 
-  seat?: {
-    label?: string;
-    number?: number;
-    sectionName?: string;
-    tableName?: string;
-  };
+  seat?: GetFullSeatInfoQuery['seat'] | undefined;
 };

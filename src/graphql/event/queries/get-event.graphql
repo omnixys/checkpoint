@@ -56,6 +56,8 @@ query GetActiveEvent($eventId: ID!) {
     myRole
     settings {
       allowGuestSeatSelection
+      startsAt
+      endsAt
     }
   }
 }
