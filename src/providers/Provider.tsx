@@ -8,7 +8,6 @@ import { ActiveEventProvider } from "./ActiveEventProvider";
 import { AuthProvider } from "./AuthProvider";
 import DateProvider from "./DateProvider";
 import { DeviceProvider } from "./DeviceProvider";
-import SwipeBackProvider from "./SwipeBackProvider";
 import ThemeModeProvider from "./ThemeModeProvider";
 import OnboardingModal from "@/checkpoint/components/onboarding/OnboardingModal";
 import { ApolloRootProvider } from "@/checkpoint/providers/ApolloProvider";
@@ -17,6 +16,7 @@ import { env } from "@/checkpoint/lib/env";
 import ThemeRegistry from "@/checkpoint/lib/mui/ThemeRegistry";
 import OnboardingProvider from "@/checkpoint/providers/OnboardingProvider";
 import TourProvider from "@/checkpoint/providers/TourProvider";
+import SwipeBackProvider  from "@/checkpoint/providers/SwipeBackProvider";
 
 type ProviderProps = { children: React.ReactNode };
 

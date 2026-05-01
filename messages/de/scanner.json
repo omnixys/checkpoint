@@ -1,0 +1,35 @@
+{
+  "title": "QR-Scanner",
+  "webSubtitle": "Browser-Scanner mit sicherer Ticketprüfung",
+  "nativeSubtitle": "Nativer Scanner mit sicherer Ticketprüfung",
+  "scanAgain": "Erneut scannen",
+  "success": "Ticket akzeptiert",
+  "error": "Scan abgelehnt",
+  "verifying": "Ticket wird geprüft",
+  "scanning": "Scannen",
+  "paused": "Kamera pausiert",
+  "cameraUnavailable": "Kamera nicht verfügbar",
+  "cameraStartFailed": "Kamera konnte nicht gestartet werden.",
+  "invalidQr": "Ungültiger QR-Code",
+  "scanFailed": "Scan fehlgeschlagen",
+  "scanButton": "QR-Code scannen",
+  "wait": "Bitte warten",
+  "ready": "Bereit für den nächsten Gast",
+  "retry": "Erneut versuchen",
+  "granted": "Freigabe erteilt",
+  "failed": "Prüfung fehlgeschlagen",
+  "scannerLabel": "QR-Code Scanner",
+  "torchOn": "Licht einschalten",
+  "torchOff": "Licht ausschalten",
+  "torchOnTooltip": "Licht an",
+  "torchOffTooltip": "Licht aus",
+  "header": {
+    "subtitle": "Live-Zutrittsprüfung",
+    "noEvent": "Kein aktives Event",
+    "live": {
+      "websocket": "WebSocket",
+      "queue": "Warteschlange",
+      "api": "API"
+    }
+  }
+}

@@ -1,23 +1,18 @@
+import { useQuery } from "@apollo/client/react";
 import {
-  EventPageDocument,
-  EventPageQuery,
-  EventPageQueryVariables,
+  GetFullSeatInfoDocument,
   GetFullSeatInfoListDocument,
-  GetFullSeatInfoListQuery,
-  GetFullSeatInfoListQueryVariables,
-  GetFullSeatInfoQuery,
-  GetFullSeatInfoQueryVariables,
+  type GetFullSeatInfoListQuery,
+  type GetFullSeatInfoListQueryVariables,
+  type GetFullSeatInfoQuery,
+  type GetFullSeatInfoQueryVariables,
   GetSeatInfoDocument,
   GetSeatInfoListDocument,
-  GetSeatInfoListQuery,
-  GetSeatInfoListQueryVariables,
-  GetSeatInfoQuery,
-  GetSeatInfoQueryVariables,
-  SeatListDocument,
-  SeatListQuery,
-  SeatListQueryVariables,
+  type GetSeatInfoListQuery,
+  type GetSeatInfoListQueryVariables,
+  type GetSeatInfoQuery,
+  type GetSeatInfoQueryVariables,
 } from "@/checkpoint/generated/graphql";
-import { useLazyQuery, useQuery } from "@apollo/client/react";
 
 interface Props {
   seatId?: string | undefined;
@@ -53,14 +48,14 @@ export default function useSeatQuery({
     {
       variables: { seatIdList: seatIdList ?? [] },
       fetchPolicy: "cache-and-network",
-      skip: !seatIdList || seatIdList.length > 0 || !loadSeatIdList,
+      skip: !seatIdList || seatIdList.length === 0 || !loadSeatIdList,
     },
   );
   const seatInfoList = seatInfoListQueryResult.data?.getSeatList;
   const seatMap = new Map(seatInfoList?.map((s) => [s.id, s]) ?? []);
 
   const fullSeatInfoQueryResult = useQuery<GetFullSeatInfoQuery, GetFullSeatInfoQueryVariables>(
-    GetSeatInfoDocument,
+    GetFullSeatInfoDocument,
     {
       variables: { seatId: seatId ?? "" },
       fetchPolicy: "cache-and-network",
@@ -75,7 +70,7 @@ export default function useSeatQuery({
   >(GetFullSeatInfoListDocument, {
     variables: { seatIdList: seatIdList ?? [] },
     fetchPolicy: "cache-and-network",
-    skip: !seatIdList || seatIdList.length > 0 || !loadFullSeatIdList,
+    skip: !seatIdList || seatIdList.length === 0 || !loadFullSeatIdList,
   });
   const fullSeatInfoList = fullSeatInfoListQueryResult.data?.getSeatList;
   const fullSeatMap = new Map(fullSeatInfoList?.map((s) => [s.id, s]) ?? []);
@@ -93,14 +88,14 @@ export default function useSeatQuery({
     seatInfoListRefetch: seatInfoListQueryResult.refetch,
 
     fullSeatInfo,
-    fullSeatInfoLoading: seatInfoQueryResult.loading,
-    fullSeatInfoError: seatInfoQueryResult.error,
-    fullSeatInfoRefetch: seatInfoQueryResult.refetch,
+    fullSeatInfoLoading: fullSeatInfoQueryResult.loading,
+    fullSeatInfoError: fullSeatInfoQueryResult.error,
+    fullSeatInfoRefetch: fullSeatInfoQueryResult.refetch,
 
     fullSeatMap,
     fullSeatInfoList,
-    fullSeatInfoListLoading: fullSeatInfoQueryResult.loading,
-    fullSeatInfoListError: fullSeatInfoQueryResult.error,
-    fullSeatInfoListRefetch: fullSeatInfoQueryResult.refetch,
+    fullSeatInfoListLoading: fullSeatInfoListQueryResult.loading,
+    fullSeatInfoListError: fullSeatInfoListQueryResult.error,
+    fullSeatInfoListRefetch: fullSeatInfoListQueryResult.refetch,
   };
 }

@@ -15,7 +15,7 @@ function getClientEnv(key: string, fallback: string): string {
     key === "NEXT_PUBLIC_BACKEND_SERVER_URL"
       ? process.env.NEXT_PUBLIC_BACKEND_SERVER_URL
       : key === "NEXT_PUBLIC_BACKEND_WS_URL"
-        ? process.env.NEXT_PUBLIC_BACKEND_WS_URL
+        ? process.env.NEXT_PUBLIC_GRAPHQL_WS_URL
         : key === "NEXT_PUBLIC_CHECKPOINT_BASE_PATH"
           ? process.env.NEXT_PUBLIC_CHECKPOINT_BASE_PATH
           : key === "NEXT_PUBLIC_EVENT_ID"
@@ -44,7 +44,10 @@ export const env = {
     "http://localhost:8000/graphql",
   ),
 
-  BACKEND_WS_URL: getClientEnv("NEXT_PUBLIC_BACKEND_WS_URL", "http://localhost:8000/ws"),
+  BACKEND_WS_URL: getClientEnv(
+    "NEXT_PUBLIC_GRAPHQL_WS_URL",
+    "http://localhost:8000/ws",
+  ),
 
   CHECKPOINT_BASE_PATH: getClientEnv("NEXT_PUBLIC_CHECKPOINT_BASE_PATH", "/"),
 
@@ -52,9 +55,15 @@ export const env = {
 
   BASE_URL: getClientEnv("NEXT_PUBLIC_BASE_URL", "localhost:3000"),
 
-  INVITATION_API: getClientEnv("NEXT_PUBLIC_INVITATION_API", "http://localhost:7407/invitation"),
+  INVITATION_API: getClientEnv(
+    "NEXT_PUBLIC_INVITATION_API",
+    "http://localhost:7407/invitation",
+  ),
 
-  EVENT_API: getClientEnv("NEXT_PUBLIC_EVENT_API", "http://localhost:7406/media"),
+  EVENT_API: getClientEnv(
+    "NEXT_PUBLIC_EVENT_API",
+    "http://localhost:7406/media",
+  ),
 
   APP_URL: getClientEnv("NEXT_PUBLIC_APP_URL", "http://localhost:3000"),
 } as const;

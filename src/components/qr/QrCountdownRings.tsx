@@ -1,22 +1,17 @@
 "use client";
 
-import React, { useMemo } from "react";
-import { motion } from "framer-motion";
 import { Box, useTheme } from "@mui/material";
+import { alpha } from "@mui/material/styles";
+import { motion } from "framer-motion";
+import { useMemo } from "react";
 
 type Props = {
-  /** Lifetime of the nonce (seconds) */
   nonceSeconds: number;
-  /** Lifetime of the signature validity (seconds) */
   signatureSeconds: number;
-  /** Overall size (diameter) */
   size: number;
-  /** Stroke widths */
   outerStroke?: number;
   innerStroke?: number;
-  /** Restart animations when this key changes */
   cycleKey?: string | number;
-  /** When remaining seconds <= this value → critical glow */
   criticalThresholdSeconds?: number;
 };
 
@@ -30,47 +25,44 @@ export default function QrCountdownRings({
   criticalThresholdSeconds = 5,
 }: Props) {
   const theme = useTheme();
-  const omni = theme.palette.omnixys;
-  const apple = theme.palette.apple;
-
   const outerRadius = useMemo(() => (size - outerStroke) / 2, [size, outerStroke]);
   const innerRadius = useMemo(() => outerRadius - outerStroke - 6, [outerRadius, outerStroke]);
-
   const outerCirc = useMemo(() => 2 * Math.PI * outerRadius, [outerRadius]);
   const innerCirc = useMemo(() => 2 * Math.PI * innerRadius, [innerRadius]);
-
-  // Safety floors
-  const nonceDur = Math.max(nonceSeconds, 1);
-  const sigDur = Math.max(signatureSeconds, 1);
+  const nonceDuration = Math.max(nonceSeconds, 1);
+  const signatureDuration = Math.max(signatureSeconds, 1);
 
   return (
     <Box
       sx={{
         position: "absolute",
         inset: 0,
-        borderRadius: 3,
-        bgcolor: theme.palette.mode === "light" ? apple.systemBackground : apple.gray6,
+        borderRadius: 999,
+        backgroundColor: alpha(theme.palette.background.paper, 0.72),
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        boxShadow: `0 12px 32px rgba(0,0,0,0.25)`,
+        boxShadow: `0 ${theme.spacing(1.5)} ${theme.spacing(4)} ${alpha(
+          theme.palette.common.black,
+          theme.palette.mode === "dark" ? 0.32 : 0.14,
+        )}`,
         pointerEvents: "none",
       }}
     >
       <svg
-        width={size}
-        height={size}
+        aria-hidden={true}
+        focusable="false"
+        width="100%"
+        height="100%"
         viewBox={`0 0 ${size} ${size}`}
         style={{ transform: "rotate(-90deg)" }}
       >
-        {/* ---- Tracks ---- */}
         <circle
           cx={size / 2}
           cy={size / 2}
           r={outerRadius}
           fill="none"
-          stroke={apple.separator}
-          strokeOpacity={0.35}
+          stroke={alpha(theme.palette.divider, 0.72)}
           strokeWidth={outerStroke}
         />
         <circle
@@ -78,12 +70,10 @@ export default function QrCountdownRings({
           cy={size / 2}
           r={innerRadius}
           fill="none"
-          stroke={apple.separator}
-          strokeOpacity={0.25}
+          stroke={alpha(theme.palette.divider, 0.52)}
           strokeWidth={innerStroke}
         />
 
-        {/* ---- Nonce Ring (outer) ---- */}
         <motion.circle
           key={`nonce-${cycleKey}`}
           cx={size / 2}
@@ -96,12 +86,11 @@ export default function QrCountdownRings({
           strokeDasharray={outerCirc}
           initial={{ strokeDashoffset: 0 }}
           animate={{ strokeDashoffset: outerCirc }}
-          transition={{ duration: nonceDur, ease: "linear" }}
+          transition={{ duration: nonceDuration, ease: "linear" }}
         />
 
-        {/* ---- Signature Ring (inner) ---- */}
         <motion.circle
-          key={`sig-${cycleKey}`}
+          key={`signature-${cycleKey}`}
           cx={size / 2}
           cy={size / 2}
           r={innerRadius}
@@ -112,22 +101,17 @@ export default function QrCountdownRings({
           strokeDasharray={innerCirc}
           initial={{ strokeDashoffset: 0 }}
           animate={{ strokeDashoffset: innerCirc }}
-          transition={{ duration: sigDur, ease: "linear" }}
+          transition={{ duration: signatureDuration, ease: "linear" }}
         />
       </svg>
 
-      {/* ---- Critical Phase Glow (last seconds) ---- */}
       <motion.div
-        // starts pulsing near the end without timers:
-        // we delay the glow animation so it begins at (nonceSeconds - threshold)
         initial={{ opacity: 0 }}
-        animate={{
-          opacity: [0.35, 0.75, 0.35],
-        }}
+        animate={{ opacity: [0.32, 0.72, 0.32] }}
         transition={{
-          delay: Math.max(nonceDur - criticalThresholdSeconds, 0),
+          delay: Math.max(nonceDuration - criticalThresholdSeconds, 0),
           duration: 0.9,
-          repeat: Infinity,
+          repeat: Number.POSITIVE_INFINITY,
           ease: "easeInOut",
         }}
         style={{
@@ -135,7 +119,10 @@ export default function QrCountdownRings({
           inset: 0,
           borderRadius: "50%",
           filter: "blur(10px)",
-          background: `radial-gradient(circle, ${theme.palette.error.main}55 0%, transparent 70%)`,
+          background: `radial-gradient(circle, ${alpha(
+            theme.palette.error.main,
+            0.24,
+          )} 0%, ${alpha(theme.palette.background.default, 0)} 70%)`,
         }}
       />
     </Box>

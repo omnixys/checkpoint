@@ -18,7 +18,9 @@ import {
 import { alpha, useTheme } from "@mui/material/styles";
 import { BrowserQRCodeReader, type IScannerControls } from "@zxing/browser";
 import { AnimatePresence, motion } from "framer-motion";
+import type { RefObject } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 type ScannerState = "IDLE" | "SCANNING" | "VERIFYING" | "RESULT";
 type Verdict = "success" | "error" | null;
@@ -26,6 +28,7 @@ type FinalVerdict = Exclude<Verdict, null>;
 
 type Props = {
   onDetect: (qrText: string) => Promise<boolean>;
+  onRestart?: (() => void) | undefined;
 };
 
 type LastScan = {
@@ -158,10 +161,7 @@ function drawScanRegion(video: HTMLVideoElement, canvas: HTMLCanvasElement) {
   return canvas;
 }
 
-function playScanTone(
-  audioContextRef: React.MutableRefObject<AudioContext | null>,
-  verdict: FinalVerdict,
-) {
+function playScanTone(audioContextRef: RefObject<AudioContext | null>, verdict: FinalVerdict) {
   if (typeof window === "undefined") return;
 
   const AudioContextCtor = window.AudioContext ?? window.webkitAudioContext;
@@ -207,8 +207,9 @@ function pulseDevice(verdict: FinalVerdict) {
   navigator.vibrate(verdict === "success" ? [18, 32, 18] : [46, 36, 46]);
 }
 
-export default function WebCameraScanner({ onDetect }: Props) {
+export default function WebCameraScanner({ onDetect, onRestart }: Props) {
   const theme = useTheme();
+  const tScanner = useTypedTranslations("scanner");
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -225,6 +226,7 @@ export default function WebCameraScanner({ onDetect }: Props) {
   const lastScanRef = useRef<LastScan | null>(null);
   const lastDetectionAtRef = useRef<number>(0);
   const onDetectRef = useRef<Props["onDetect"]>(onDetect);
+  const onRestartRef = useRef<Props["onRestart"]>(onRestart);
   const stateRef = useRef<ScannerState>("IDLE");
 
   const [state, setState] = useState<ScannerState>("IDLE");
@@ -232,7 +234,7 @@ export default function WebCameraScanner({ onDetect }: Props) {
   const [loading, setLoading] = useState<boolean>(true);
   const [torchSupported, setTorchSupported] = useState<boolean>(false);
   const [torchOn, setTorchOn] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  const [cameraError, setCameraError] = useState<boolean>(false);
   const [paused, setPaused] = useState<boolean>(false);
   const [isSafari, setIsSafari] = useState<boolean>(false);
 
@@ -241,11 +243,11 @@ export default function WebCameraScanner({ onDetect }: Props) {
     setState(nextState);
   }, []);
 
-  const isCurrentSession = useCallback((sessionId: number) => {
-    return (
-      activeRef.current && sessionIdRef.current === sessionId && !pausedByVisibilityRef.current
-    );
-  }, []);
+  const isCurrentSession = useCallback(
+    (sessionId: number) =>
+      activeRef.current && sessionIdRef.current === sessionId && !pausedByVisibilityRef.current,
+    [],
+  );
 
   const stopScannerResources = useCallback(() => {
     if (rafRef.current !== null) {
@@ -320,7 +322,7 @@ export default function WebCameraScanner({ onDetect }: Props) {
 
       stopScannerResources();
       setLoading(false);
-      setError(null);
+      setCameraError(false);
       setVerdict(null);
       setScannerState("VERIFYING");
 
@@ -417,7 +419,7 @@ export default function WebCameraScanner({ onDetect }: Props) {
       scanningRef.current = true;
       updateTorchSupport();
       setLoading(false);
-      setError(null);
+      setCameraError(false);
       setScannerState("SCANNING");
       runBarcodeDetectorLoop(detector, sessionId);
     },
@@ -459,7 +461,7 @@ export default function WebCameraScanner({ onDetect }: Props) {
       scanningRef.current = true;
       updateTorchSupport();
       setLoading(false);
-      setError(null);
+      setCameraError(false);
       setScannerState("SCANNING");
     },
     [handleDetected, isCurrentSession, setScannerState, updateTorchSupport],
@@ -485,7 +487,7 @@ export default function WebCameraScanner({ onDetect }: Props) {
     pausedByVisibilityRef.current = false;
     setPaused(false);
     setIsSafari(isSafariBrowser());
-    setError(null);
+    setCameraError(false);
     setVerdict(null);
     setLoading(true);
     setScannerState("SCANNING");
@@ -517,7 +519,7 @@ export default function WebCameraScanner({ onDetect }: Props) {
       scanningRef.current = false;
       setLoading(false);
       setScannerState("IDLE");
-      setError("Kamera konnte nicht gestartet werden.");
+      setCameraError(true);
     }
   }, [
     isCurrentSession,
@@ -538,9 +540,10 @@ export default function WebCameraScanner({ onDetect }: Props) {
 
     setPaused(false);
     setVerdict(null);
-    setError(null);
+    setCameraError(false);
     setLoading(true);
     setScannerState("SCANNING");
+    onRestartRef.current?.();
 
     void startScanner();
   }, [setScannerState, startScanner, stopScannerResources]);
@@ -584,6 +587,10 @@ export default function WebCameraScanner({ onDetect }: Props) {
   useEffect(() => {
     onDetectRef.current = onDetect;
   }, [onDetect]);
+
+  useEffect(() => {
+    onRestartRef.current = onRestart;
+  }, [onRestart]);
 
   useEffect(() => {
     activeRef.current = true;
@@ -638,7 +645,7 @@ export default function WebCameraScanner({ onDetect }: Props) {
           ? theme.palette.primary.main
           : theme.palette.primary.main;
 
-  const statusColor = error
+  const statusColor = cameraError
     ? theme.palette.error.main
     : paused
       ? theme.palette.warning.main
@@ -649,18 +656,17 @@ export default function WebCameraScanner({ onDetect }: Props) {
           : verdict === "error"
             ? theme.palette.error.main
             : theme.palette.primary.main;
-
-  const statusText = error
-    ? "Kamera nicht verfügbar"
+  const statusText = cameraError
+    ? tScanner("cameraUnavailable")
     : paused
-      ? "Kamera pausiert"
+      ? tScanner("paused")
       : state === "VERIFYING"
-        ? "Überprüfe Ticket"
+        ? tScanner("verifying")
         : state === "RESULT"
           ? verdict === "success"
-            ? "Ticket akzeptiert"
-            : "Scan abgelehnt"
-          : "Scannen";
+            ? tScanner("success")
+            : tScanner("error")
+          : tScanner("scanning");
 
   const blurFilter = isSafari ? "none" : "blur(18px) saturate(160%)";
   const glassOverlay = {
@@ -716,9 +722,9 @@ export default function WebCameraScanner({ onDetect }: Props) {
         <Box
           ref={videoRef}
           component="video"
-          autoPlay
-          muted
-          playsInline
+          autoPlay={true}
+          muted={true}
+          playsInline={true}
           sx={{
             position: "absolute",
             inset: 0,
@@ -775,7 +781,10 @@ export default function WebCameraScanner({ onDetect }: Props) {
             <MotionBox
               key={verdict}
               initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: verdict === "success" ? [1, 1.02, 1] : [1, 0.99, 1] }}
+              animate={{
+                opacity: 1,
+                scale: verdict === "success" ? [1, 1.02, 1] : [1, 0.99, 1],
+              }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.45, ease: "easeOut" }}
               sx={{
@@ -811,12 +820,14 @@ export default function WebCameraScanner({ onDetect }: Props) {
           <MotionBox
             animate={
               state === "RESULT"
-                ? { scale: verdict === "success" ? [1, 1.035, 1] : [1, 0.985, 1] }
+                ? {
+                    scale: verdict === "success" ? [1, 1.035, 1] : [1, 0.985, 1],
+                  }
                 : { scale: [1, 1.015, 1], opacity: [0.9, 1, 0.9] }
             }
             transition={{
               duration: state === "RESULT" ? 0.5 : 2.4,
-              repeat: state === "SCANNING" && !paused ? Infinity : 0,
+              repeat: state === "SCANNING" && !paused ? Number.POSITIVE_INFINITY : 0,
               ease: "easeInOut",
             }}
             sx={{
@@ -892,7 +903,7 @@ export default function WebCameraScanner({ onDetect }: Props) {
         </Box>
 
         {torchSupported && state === "SCANNING" && !paused ? (
-          <Tooltip title={torchOn ? "Licht aus" : "Licht an"}>
+          <Tooltip title={torchOn ? tScanner("torchOffTooltip") : tScanner("torchOnTooltip")}>
             <MotionBox
               whileTap={{ scale: 0.92 }}
               animate={{ scale: torchOn ? 1.04 : 1 }}
@@ -904,7 +915,7 @@ export default function WebCameraScanner({ onDetect }: Props) {
               }}
             >
               <IconButton
-                aria-label={torchOn ? "Licht ausschalten" : "Licht einschalten"}
+                aria-label={torchOn ? tScanner("torchOff") : tScanner("torchOn")}
                 onClick={toggleTorch}
                 sx={{
                   width: theme.spacing(6),
@@ -931,9 +942,19 @@ export default function WebCameraScanner({ onDetect }: Props) {
                 }}
               >
                 {torchOn ? (
-                  <FlashOffIcon sx={{ width: theme.spacing(2.6), height: theme.spacing(2.6) }} />
+                  <FlashOffIcon
+                    sx={{
+                      width: theme.spacing(2.6),
+                      height: theme.spacing(2.6),
+                    }}
+                  />
                 ) : (
-                  <FlashOnIcon sx={{ width: theme.spacing(2.6), height: theme.spacing(2.6) }} />
+                  <FlashOnIcon
+                    sx={{
+                      width: theme.spacing(2.6),
+                      height: theme.spacing(2.6),
+                    }}
+                  />
                 )}
               </IconButton>
             </MotionBox>
@@ -941,7 +962,7 @@ export default function WebCameraScanner({ onDetect }: Props) {
         ) : null}
 
         <MotionBox
-          layout
+          layout={true}
           sx={{
             position: "absolute",
             left: theme.spacing(2),
@@ -1006,12 +1027,12 @@ export default function WebCameraScanner({ onDetect }: Props) {
                 }}
               >
                 {state === "VERIFYING"
-                  ? "Bitte warten"
+                  ? tScanner("wait")
                   : state === "RESULT"
                     ? verdict === "success"
-                      ? "Freigabe erteilt"
-                      : "Prüfung fehlgeschlagen"
-                    : "QR-Code Scanner"}
+                      ? tScanner("granted")
+                      : tScanner("failed")
+                    : tScanner("scannerLabel")}
               </Typography>
             </Box>
           </Stack>
@@ -1078,7 +1099,7 @@ export default function WebCameraScanner({ onDetect }: Props) {
                       lineHeight: 1.2,
                     }}
                   >
-                    {verdict === "success" ? "Bereit für den nächsten Gast" : "Erneut scannen"}
+                    {verdict === "success" ? tScanner("ready") : tScanner("scanAgain")}
                   </Typography>
                 </Box>
 
@@ -1096,7 +1117,7 @@ export default function WebCameraScanner({ onDetect }: Props) {
                     )}`,
                   }}
                 >
-                  Scan again
+                  {tScanner("scanAgain")}
                 </Button>
               </Stack>
             </MotionBox>
@@ -1104,7 +1125,7 @@ export default function WebCameraScanner({ onDetect }: Props) {
         </AnimatePresence>
 
         <AnimatePresence>
-          {error ? (
+          {cameraError ? (
             <MotionBox
               key="camera-error"
               initial={{ opacity: 0, scale: 0.98 }}
@@ -1141,10 +1162,10 @@ export default function WebCameraScanner({ onDetect }: Props) {
                   <ErrorRoundedIcon sx={{ width: theme.spacing(3), height: theme.spacing(3) }} />
                 </Box>
                 <Typography variant="body2" sx={{ color: theme.palette.text.primary }}>
-                  {error}
+                  {tScanner("cameraStartFailed")}
                 </Typography>
                 <Button variant="outlined" startIcon={<ReplayIcon />} onClick={restartScanner}>
-                  Erneut versuchen
+                  {tScanner("retry")}
                 </Button>
               </Stack>
             </MotionBox>

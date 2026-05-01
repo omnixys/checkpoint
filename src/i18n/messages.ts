@@ -1,5 +1,9 @@
-import event from "../../messages/en/event.json";
 import auth from "../../messages/en/auth.json";
+import common from "../../messages/en/common.json";
+import create from "../../messages/en/create.json";
+import error from "../../messages/en/error.json";
+import event from "../../messages/en/event.json";
+import home from "../../messages/en/home.json";
 // import calendar from "../../messages/en/calendar.json";
 import invitation from "../../messages/en/invitation.json";
 // import ticket from "../../messages/en/ticket.json";
@@ -9,12 +13,11 @@ import invitation from "../../messages/en/invitation.json";
 // import notification from "../../messages/en/notification.json";
 // import user from "../../messages/en/user.json";
 import layout from "../../messages/en/layout.json";
-import home from "../../messages/en/home.json";
-import error from "../../messages/en/error.json";
-import rsvp from "../../messages/en/rsvp.json";
-import common from "../../messages/en/common.json";
-import create from "../../messages/en/create.json";
 import onboarding from "../../messages/en/onboarding.json";
+import qr from "../../messages/en/qr.json";
+import rsvp from "../../messages/en/rsvp.json";
+import scanner from "../../messages/en/scanner.json";
+import ticket from "../../messages/en/ticket.json";
 
 export const messages = {
   auth,
@@ -34,6 +37,9 @@ export const messages = {
   common,
   create,
   onboarding,
+  scanner,
+  qr,
+  ticket,
 };
 
 export type Messages = typeof messages;

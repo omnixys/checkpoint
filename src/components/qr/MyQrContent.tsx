@@ -1,56 +1,76 @@
 "use client";
 
+import { Alert, Box, CircularProgress, Stack, Typography, useTheme } from "@mui/material";
+import { alpha } from "@mui/material/styles";
+import { motion } from "framer-motion";
+import { useMemo } from "react";
 import QrCard from "@/checkpoint/components/qr/QrCard";
-import { BackButtonBase } from "@/checkpoint/components/utils/back-button-base";
 import NoTicket from "@/checkpoint/components/utils/NoTicket";
 import useMyTicketQuery from "@/checkpoint/hooks/ticket/useMyTicketQuery";
-import { env } from "@/checkpoint/lib/env";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
-import { Box, Stack, Typography, CircularProgress, Alert } from "@mui/material";
-import { useMemo } from "react";
-/**
- * MyQrContent
- *
- * Responsibilities:
- * - Load tickets
- * - Filter by active event
- * - Render ticket + QR
- *
- * Enterprise rules:
- * - No request spam
- * - Safe rendering
- * - Zero crash guarantees
- */
+
+const MotionBox = motion.create(Box);
+
 export default function MyQrContent() {
+  const theme = useTheme();
+  const tQr = useTypedTranslations("qr");
   const { activeEvent } = useActiveEvent();
 
-  const { fullTicketEventIdMap, myFullTicketListLoading, myFullTicketListError } = useMyTicketQuery(
-    { eventId: activeEvent?.id, loadMyFullTicketList: true },
-  );
+  const {
+    fullTicketEventIdMap,
+    myFullTicketListLoading,
+    myFullTicketListError,
+    myFullTicketListRefetch,
+  } = useMyTicketQuery({
+    eventId: activeEvent?.id,
+    loadMyFullTicketList: true,
+  });
 
-  /**
-   * Extract ticket for current event
-   */
   const ticket = useMemo(() => {
     if (!fullTicketEventIdMap || !activeEvent) return null;
 
-    return fullTicketEventIdMap.get(activeEvent.id);
+    return fullTicketEventIdMap.get(activeEvent.id) ?? null;
   }, [fullTicketEventIdMap, activeEvent]);
 
   if (!activeEvent) return null;
 
-  // TODO implement i18N keys
   if (myFullTicketListLoading) {
     return (
-      <Box sx={{ p: 4, display: "flex", justifyContent: "center" }}>
-        <CircularProgress />
+      <Box
+        sx={{
+          minHeight: "60vh",
+          display: "grid",
+          placeItems: "center",
+          px: 2,
+        }}
+      >
+        <Stack spacing={2} sx={{ alignItems: "center" }}>
+          <CircularProgress />
+          <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+            {tQr("loading")}
+          </Typography>
+        </Stack>
       </Box>
     );
   }
 
   if (myFullTicketListError) {
-    console.error(myFullTicketListError)
-    return <Alert severity="error">Ticket konnte nicht geladen werden.</Alert>;
+    return (
+      <Box sx={{ px: { xs: 2, sm: 3 }, py: 4 }}>
+        <Alert
+          severity="error"
+          sx={{
+            borderRadius: 3,
+            border: 1,
+            borderColor: alpha(theme.palette.error.main, 0.32),
+            backgroundColor: alpha(theme.palette.error.main, 0.09),
+          }}
+        >
+          {tQr("loadError")}
+        </Alert>
+      </Box>
+    );
   }
 
   if (!ticket) {
@@ -61,29 +81,59 @@ export default function MyQrContent() {
     <Box
       sx={{
         width: "100%",
-        maxWidth: 900,
-        margin: "0 auto",
+        minHeight: "100vh",
         px: { xs: 2, sm: 3, md: 4 },
-        py: 4,
+        py: { xs: 3, sm: 4 },
+        background: `radial-gradient(circle at top, ${alpha(
+          theme.palette.primary.main,
+          0.14,
+        )}, ${alpha(theme.palette.background.default, 0)} 44%), ${theme.palette.background.default}`,
       }}
     >
-      <Stack spacing={3}>
-        <Box>
+      <Stack spacing={3} sx={{ width: "100%", maxWidth: theme.spacing(108), mx: "auto" }}>
+        <MotionBox
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          sx={{
+            p: { xs: 2, sm: 2.5 },
+            borderRadius: 4,
+            border: 1,
+            borderColor: alpha(theme.palette.divider, 0.62),
+            backgroundColor: alpha(theme.palette.background.paper, 0.56),
+            backdropFilter: "blur(24px) saturate(150%)",
+            WebkitBackdropFilter: "blur(24px) saturate(150%)",
+          }}
+        >
           <Typography
             variant="h4"
             sx={{
-              fontWeight: 700,
-              fontSize: 12,
+              color: theme.palette.text.primary,
+              fontWeight: 900,
+              lineHeight: 1.1,
             }}
           >
-            Mein Ticket
+            {tQr("title")}
           </Typography>
 
-          <Typography sx={{ opacity: 0.75 }}>Dein persönlicher QR-Code für dieses Event</Typography>
-        </Box>
+          <Typography
+            variant="body1"
+            sx={{
+              color: theme.palette.text.secondary,
+              mt: 0.75,
+            }}
+          >
+            {tQr("subtitle")}
+          </Typography>
+        </MotionBox>
 
-        {/* Ticket Info */}
-        <QrCard ticket={ticket} event={activeEvent} />
+        <QrCard
+          ticket={ticket}
+          event={activeEvent}
+          onActivated={() => {
+            void myFullTicketListRefetch();
+          }}
+        />
       </Stack>
     </Box>
   );

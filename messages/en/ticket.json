@@ -1,0 +1,36 @@
+{
+  "status": {
+    "valid": "Valid",
+    "expired": "Expired",
+    "revoked": "Revoked"
+  },
+  "section": "Section",
+  "table": "Table",
+  "seat": "Seat",
+  
+  "guest": "Guest",
+  "scanStatus": {
+    "success": "Success",
+    "error": "Error",
+    "warning": "Warning"
+  },
+  "reasonLabel": "Reason",
+  "hint": "Hint",
+  "tableWithName": "Table {name}",
+  "seatLabelWithValue": "Seat {label}",
+  "seatNumberWithValue": "No. {number}",
+  "ticketState": "Ticket {status}",
+  "deviceBinding": "Device binding",
+  "deviceHash": "Device hash {hash}",
+  "deviceActivated": "Activated {date}",
+  "deviceIp": "IP {ip}",
+  "reason": {
+    "ok": "Ticket verified",
+    "invalidQr": "Invalid QR code",
+    "ticketRevoked": "Ticket revoked",
+    "wrongEvent": "Wrong event",
+    "alreadyInside": "Already inside",
+    "deviceMismatch": "Device mismatch",
+    "unknown": "Unknown result"
+  }
+}

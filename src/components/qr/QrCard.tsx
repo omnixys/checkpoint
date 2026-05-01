@@ -1,25 +1,9 @@
 "use client";
 
-import ActivateTicketButton from "@/checkpoint/components/qr/ActivateTicketButton";
-import QrCountdownRings from "@/checkpoint/components/qr/QrCountdownRings";
-import QrRingLegend from "@/checkpoint/components/qr/QrRingLegend";
-import { BackButtonBase } from "@/checkpoint/components/utils/back-button-base";
-import {
-  GenerateTokenDocument,
-  GenerateTokenMutation,
-  GenerateTokenMutationVariables,
-  GetActiveEventQuery,
-  GetMyFullTicketListQuery,
-  TicketPayload,
-} from "@/checkpoint/generated/graphql";
-import useGenerateTokenMutation from "@/checkpoint/hooks/ticket/useGenerateTokenMutation";
-import { env } from "@/checkpoint/lib/env";
-import { loadPrivateKey } from "@/checkpoint/utils/ticket/device-utils";
-import { hapticCritical, hapticRotate } from "@/checkpoint/utils/ticket/haptics";
-import { qrBeatAnimation } from "@/checkpoint/utils/ticket/qr-beat";
-import { signQrMessage } from "@/checkpoint/utils/ticket/qr-signature";
-import { useMutation } from "@apollo/client/react";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import EventSeatRoundedIcon from "@mui/icons-material/EventSeatRounded";
 import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
+import ShieldRoundedIcon from "@mui/icons-material/ShieldRounded";
 import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 import {
   Alert,
@@ -31,45 +15,74 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSearchParams } from "next/navigation";
+import { useLocale } from "next-intl";
 import { QRCodeCanvas } from "qrcode.react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import ActivateTicketButton from "@/checkpoint/components/qr/ActivateTicketButton";
+import QrCountdownRings from "@/checkpoint/components/qr/QrCountdownRings";
+import QrRingLegend from "@/checkpoint/components/qr/QrRingLegend";
+import { BackButtonBase } from "@/checkpoint/components/utils/back-button-base";
+import type { GetActiveEventQuery, GetMyFullTicketListQuery } from "@/checkpoint/generated/graphql";
+import useGenerateTokenMutation from "@/checkpoint/hooks/ticket/useGenerateTokenMutation";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { env } from "@/checkpoint/lib/env";
+import { loadPrivateKey } from "@/checkpoint/utils/ticket/device-utils";
+import { hapticCritical, hapticRotate } from "@/checkpoint/utils/ticket/haptics";
+import { qrBeatAnimation } from "@/checkpoint/utils/ticket/qr-beat";
+import { signQrMessage } from "@/checkpoint/utils/ticket/qr-signature";
+import useSeatQuery from "@/checkpoint/hooks/seat/useSeatQuery";
+import { useDevice } from "@/checkpoint/providers/DeviceProvider";
 
-/**
- * Backend alignment:
- * - TokenService.generate() sets JWT expiration to 60 seconds.
- * - The frontend must therefore not depend on non-existent TicketPayload fields
- *   such as rotationSeconds or lastRotatedAt.
- * - We intentionally use a frontend QR lifecycle that stays below backend expiry.
- */
 const QR_TOKEN_LIFETIME_SECONDS = 45;
 const QR_SIGNATURE_LIFETIME_SECONDS = 8;
 const QR_CRITICAL_THRESHOLD_SECONDS = 5;
-
-const RING_SIZE = 420;
-const QR_SIZE = 260;
-const QR_INSET = (RING_SIZE - QR_SIZE) / 2;
+const RING_SIZE = 620;
+const QR_SIZE = 460;
+const MARGIN_SIZE = 10;
 
 type SignedQrPayload = {
   token: string;
   signature: string;
-  deviceId: string | null;
+  deviceId: string;
 };
+
+type Ticket = GetMyFullTicketListQuery["getMyTickets"][number];
+type Event = NonNullable<GetActiveEventQuery["event"]>;
 
 type Props = {
-  ticket?: GetMyFullTicketListQuery["getMyTickets"][number] | undefined;
-  event?: GetActiveEventQuery['event'];
+  ticket?: Ticket | undefined;
+  event?: Event | null | undefined;
+  onActivated?: (() => void) | undefined;
 };
 
-export default function QrCard({ ticket, event }: Props) {
+function formatDateTime(value: unknown, locale: string) {
+  if (!value) return null;
+
+  const date =
+    value instanceof Date
+      ? value
+      : typeof value === "number"
+        ? new Date(value)
+        : new Date(String(value));
+  if (Number.isNaN(date.getTime())) return null;
+
+  return new Intl.DateTimeFormat(locale, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(date);
+}
+
+export default function QrCard({ ticket, event, onActivated }: Props) {
   const theme = useTheme();
+  const locale = useLocale();
+    const { isMobile} = useDevice();
+  const tQr = useTypedTranslations("qr");
+  const tTicket = useTypedTranslations("ticket");
   const searchParams = useSearchParams();
-
   const from = searchParams.get("from");
-
-  const omni = theme.palette.omnixys;
-  const apple = theme.palette.apple;
 
   const [qrPayload, setQrPayload] = useState<string | null>(null);
   const [cycleKey, setCycleKey] = useState<number>(0);
@@ -81,32 +94,78 @@ export default function QrCard({ ticket, event }: Props) {
   const inFlightRef = useRef(false);
   const hasStartedRef = useRef(false);
   const criticalHapticFiredRef = useRef(false);
+  const ticketIdRef = useRef<string | null>(null);
 
   const { generateToken, generateTokenLoading } = useGenerateTokenMutation();
 
-  const isDeviceActivated = useMemo((): boolean => {
-    return (
-      Boolean(ticket?.deviceId) &&
-      Boolean(ticket?.devicePublicKey) &&
-      Boolean(ticket?.deviceActivationAt)
-    );
-  }, [ticket]);
-
-  const presenceColor = useMemo((): string => {
-    if (!ticket) {
-      return theme.palette.error.main;
-    }
-
-    return ticket.currentState === "INSIDE" ? theme.palette.success.main : theme.palette.error.main;
-  }, [theme.palette.error.main, theme.palette.success.main, ticket]);
+  const isDeviceActivated = useMemo(
+    () => Boolean(ticket?.deviceId && ticket.devicePublicKey && ticket.deviceActivationAt),
+    [ticket],
+  );
 
   const isRevoked = ticket?.revoked ?? false;
+  const isQrActive = remainingSeconds > 0 && Boolean(qrPayload);
+  const ticketId = ticket?.id ?? null;
+  const eventStartDate = formatDateTime(event?.settings?.startsAt, locale);
+  const validUntilDate = cycleStartedAt
+    ? formatDateTime(cycleStartedAt + QR_TOKEN_LIFETIME_SECONDS * 1000, locale)
+    : null;
 
-  const isQrActive = useMemo(() => {
-    return remainingSeconds > 0 && !!qrPayload;
-  }, [qrPayload, remainingSeconds]);
+  const status = useMemo(() => {
+    if (isRevoked) {
+      return {
+        label: tTicket("status.revoked"),
+        color: theme.palette.error.main,
+        icon: WarningAmberRoundedIcon,
+      };
+    }
 
-  const seatLabel = ticket?.seatId ?? null;
+    if (isPreparingQr) {
+      return {
+        label: tQr("rotatingState"),
+        color: theme.palette.primary.main,
+        icon: RefreshRoundedIcon,
+      };
+    }
+
+    if (isQrActive) {
+      return {
+        label: tTicket("status.valid"),
+        color: theme.palette.success.main,
+        icon: CheckCircleRoundedIcon,
+      };
+    }
+
+    return {
+      label: tTicket("status.expired"),
+      color: theme.palette.warning.main,
+      icon: WarningAmberRoundedIcon,
+    };
+  }, [
+    isPreparingQr,
+    isQrActive,
+    isRevoked,
+    tQr,
+    tTicket,
+    theme.palette.error.main,
+    theme.palette.primary.main,
+    theme.palette.success.main,
+    theme.palette.warning.main,
+  ]);
+
+  const StatusIcon = status.icon;
+
+  useEffect(() => {
+    if (ticketIdRef.current === ticketId) return;
+
+    ticketIdRef.current = ticketId;
+    hasStartedRef.current = false;
+    criticalHapticFiredRef.current = false;
+    setQrPayload(null);
+    setCycleStartedAt(null);
+    setRemainingSeconds(0);
+    setErrorMessage(null);
+  }, [ticketId]);
 
   useEffect(() => {
     if (!cycleStartedAt) {
@@ -132,34 +191,32 @@ export default function QrCard({ ticket, event }: Props) {
     };
 
     tick();
-    const id = setInterval(tick, 250);
+    const id = window.setInterval(tick, 250);
 
-    return () => clearInterval(id);
+    return () => window.clearInterval(id);
   }, [cycleStartedAt]);
 
   const generateSignedQrPayload = useCallback(async () => {
-    if (!ticket || isRevoked || !isDeviceActivated) return;
-    if (inFlightRef.current) return;
+    if (!ticket || isRevoked || !isDeviceActivated || inFlightRef.current) return;
+
+    const deviceId = ticket.deviceId;
+    if (!deviceId) return;
 
     inFlightRef.current = true;
-
     setErrorMessage(null);
     setIsPreparingQr(true);
 
     try {
-      const deviceId = ticket.deviceId;
-
       const privateKey = await loadPrivateKey();
-      const res = await generateToken({
+      if (!privateKey) throw new Error("missing_private_key");
+
+      const response = await generateToken({
         variables: { ticketId: ticket.id },
         fetchPolicy: "no-cache",
       });
 
-      // TODO optimieren!!!
-      if (!privateKey) throw new Error("Missing Private Key!");
-
-      const token = res.data?.generateToken;
-      if (!token) throw new Error("Missing token");
+      const token = response.data?.generateToken;
+      if (!token) throw new Error("missing_token");
 
       const signature = await signQrMessage({
         token,
@@ -175,20 +232,19 @@ export default function QrCard({ ticket, event }: Props) {
 
       setQrPayload(JSON.stringify(payload));
       setCycleStartedAt(Date.now());
-      setCycleKey((p) => p + 1);
+      setCycleKey((previous) => previous + 1);
+      criticalHapticFiredRef.current = false;
 
       await hapticRotate();
-    } catch (e) {
-      console.error(e);
-
-      setErrorMessage("QR konnte nicht generiert werden");
+    } catch {
+      setErrorMessage(tQr("prepareFailed"));
       setQrPayload(null);
       setCycleStartedAt(null);
     } finally {
       setIsPreparingQr(false);
       inFlightRef.current = false;
     }
-  }, [ticket, isDeviceActivated, isRevoked, generateToken]);
+  }, [generateToken, isDeviceActivated, isRevoked, tQr, ticket]);
 
   const generateRef = useRef(generateSignedQrPayload);
 
@@ -197,17 +253,54 @@ export default function QrCard({ ticket, event }: Props) {
   }, [generateSignedQrPayload]);
 
   useEffect(() => {
-    if (!isDeviceActivated || isRevoked) return;
-    if (hasStartedRef.current) return;
+    if (!isDeviceActivated || isRevoked || hasStartedRef.current) return;
 
     hasStartedRef.current = true;
-
-    generateRef.current();
+    void generateRef.current();
   }, [isDeviceActivated, isRevoked]);
 
-  if (!ticket || !event) {
+  useEffect(() => {
+    if (!isDeviceActivated || isRevoked || !qrPayload || remainingSeconds > 0) return;
+
+    const id = window.setTimeout(() => {
+      void generateRef.current();
+    }, 300);
+
+    return () => window.clearTimeout(id);
+  }, [isDeviceActivated, isRevoked, qrPayload, remainingSeconds]);
+
+  const { fullSeatInfo } = useSeatQuery({
+    loadFullSeatInfo: true,
+    seatId: ticket?.seatId
+  });
+
+
+  if (!ticket || !event || !fullSeatInfo) {
     return null;
   }
+
+  type SeatSegment = {
+    label: string;
+    value: string;
+  };
+
+  const seatSegments: SeatSegment[] = [
+    fullSeatInfo.section?.name
+      ? { label: tTicket("section"), value: fullSeatInfo.section.name }
+      : null,
+
+    fullSeatInfo.table?.name
+      ? { label: tTicket("table"), value: fullSeatInfo.table.name }
+      : null,
+
+    // fullSeatInfo.label
+    //   ? { label: tTicket("seat"), value: fullSeatInfo.label }
+    //   : null,
+
+    fullSeatInfo.number
+      ? { label: tTicket("seat"), value: String(fullSeatInfo.number) }
+      : null,
+  ].filter((v): v is SeatSegment => v !== null);
 
   return (
     <motion.div
@@ -217,61 +310,215 @@ export default function QrCard({ ticket, event }: Props) {
     >
       <Box
         sx={{
-          p: { xs: 2.25, sm: 3.25, md: 4 },
-          borderRadius: 4,
-          backdropFilter: "blur(36px)",
-          WebkitBackdropFilter: "blur(36px)",
-          bgcolor:
-            theme.palette.mode === "light"
-              ? `${apple.systemBackground}CC`
-              : `${apple.secondarySystemBackground}CC`,
-          border: `1px solid ${apple.separator}`,
-          boxShadow:
-            theme.palette.mode === "light"
-              ? "0 24px 80px rgba(15, 23, 42, 0.08)"
-              : "0 24px 80px rgba(0, 0, 0, 0.45)",
+          position: "relative",
+          overflow: "hidden",
+          p: { xs: 2, sm: 3, md: 4 },
+          borderRadius: 5,
+          border: 1,
+          borderColor: alpha(theme.palette.divider, 0.72),
+          background: `linear-gradient(145deg, ${alpha(
+            theme.palette.background.paper,
+            0.76,
+          )}, ${alpha(theme.palette.primary.main, 0.09)}, ${alpha(
+            theme.palette.secondary.main,
+            0.06,
+          )})`,
+          backdropFilter: "blur(34px) saturate(160%)",
+          WebkitBackdropFilter: "blur(34px) saturate(160%)",
+          boxShadow: `0 ${theme.spacing(3)} ${theme.spacing(9)} ${alpha(
+            theme.palette.common.black,
+            theme.palette.mode === "dark" ? 0.44 : 0.14,
+          )}`,
         }}
       >
-        {/* TODO visuell optimieren + datum als I18N mit deutsche /englischen format dd/mm/yyyy oder yyyy/mmm/dd oder .... */}
         <Stack spacing={3}>
-          <Stack spacing={30} direction={"row"}>
-            <BackButtonBase href={from ?? env.CHECKPOINT_BASE_PATH} label={"zurück"} />
-            <Stack spacing={1.5}>
-              <Typography variant="h5" sx={{ color: theme.palette.text.primary, fontWeight: 800 }}>
-                {event.name}
-              </Typography>
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={2}
+            sx={{ alignItems: { xs: "stretch", sm: "flex-start" } }}
+          >
+            <BackButtonBase href={from ?? env.CHECKPOINT_BASE_PATH} label={tQr("back")} />
 
-              <Typography
-                variant="body2"
-                sx={{
-                  color: theme.palette.text.secondary,
-                  opacity: 0.92,
-                }}
+            <Stack spacing={1.25} sx={{ minWidth: 0, flex: 1 }}>
+              <Stack
+                direction="row"
+                spacing={1.25}
+                sx={{ alignItems: "center", justifyContent: "space-between", gap: 1.25 }}
               >
-                {new Date(event?.settings?.startsAt).toLocaleString()}
-              </Typography>
-
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={`${ticket.currentState}-${ticket.revoked ? "revoked" : "active"}`}
-                  initial={{ opacity: 0, scale: 0.92 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.92 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Chip
-                    label={isRevoked ? "REVOKED" : ticket.currentState}
+                <Box sx={{ minWidth: 0 }}>
+                  <Typography
+                    variant="overline"
                     sx={{
-                      mt: 0.5,
-                      alignSelf: "flex-start",
-                      fontWeight: 800,
-                      bgcolor: `${isRevoked ? theme.palette.error.main : presenceColor}22`,
-                      color: isRevoked ? theme.palette.error.main : presenceColor,
-                      border: `1px solid ${isRevoked ? theme.palette.error.main : presenceColor}55`,
+                      color: theme.palette.primary.main,
+                      fontWeight: 900,
+                      letterSpacing: 0,
+                    }}
+                  >
+                    {tQr("securePass")}
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      color: theme.palette.text.primary,
+                      fontWeight: 900,
+                      lineHeight: 1.12,
+                      overflowWrap: "anywhere",
+                    }}
+                  >
+                    {event.name}
+                  </Typography>
+                </Box>
+
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={status.label}
+                    initial={{ opacity: 0, scale: 0.92 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.92 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Chip
+                      icon={
+                        <StatusIcon sx={{ width: theme.spacing(2), height: theme.spacing(2) }} />
+                      }
+                      label={status.label}
+                      sx={{
+                        flexShrink: 0,
+                        fontWeight: 900,
+                        color: status.color,
+                        backgroundColor: alpha(status.color, 0.12),
+                        border: 1,
+                        borderColor: alpha(status.color, 0.34),
+                        "& .MuiChip-icon": {
+                          color: status.color,
+                        },
+                      }}
+                    />
+                  </motion.div>
+                </AnimatePresence>
+              </Stack>
+
+              {eventStartDate ? (
+                <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                  {tQr("eventStarts", { date: eventStartDate })}
+                </Typography>
+              ) : null}
+
+              {ticket.seatId ? (
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                  <EventSeatRoundedIcon
+                    sx={{
+                      width: theme.spacing(2),
+                      height: theme.spacing(2),
+                      color: theme.palette.text.secondary,
                     }}
                   />
-                </motion.div>
-              </AnimatePresence>
+                {isMobile ? (
+                  <Stack spacing={1}>
+                      {seatSegments.map((seg, index) => {
+                        const isLast = index === seatSegments.length - 1;
+                        return (
+                          <Box
+                            key={index}
+                            sx={{
+                              px: 1.5,
+                              py: 1,
+                              borderRadius: 3,
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+
+                              background: isLast
+                                ? `linear-gradient(135deg, ${alpha(theme.palette.success.main, 0.25)}, ${alpha(
+                                  theme.palette.success.main,
+                                  0.1,
+                                )})`
+                                : `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.12)}, ${alpha(
+                                  theme.palette.background.paper,
+                                  0.4,
+                                )})`,
+
+                              border: `1px solid ${isLast
+                                ? alpha(theme.palette.success.main, 0.4)
+                                : alpha(theme.palette.primary.main, 0.25)
+                                }`,
+
+                              backdropFilter: "blur(12px)",
+                            }}
+                          >
+                            {/* Label */}
+                            <Typography
+                              variant="caption"
+                              sx={{
+                                color: theme.palette.text.secondary,
+                                fontWeight: 600,
+                              }}
+                            >
+                              {seg.label}
+                            </Typography>
+
+                            {/* Value */}
+                            <Typography
+                              sx={{
+                                fontWeight: 900,
+                                fontSize: "0.95rem",
+                                letterSpacing: 0.3,
+                                maxWidth: "60%",
+                                textAlign: "right",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                              }}
+                            >
+                              {seg.value}
+                            </Typography>
+                          </Box>
+                        );
+                      })}
+                  </Stack>
+                ) : (
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{ gap: 1, flexWrap: "wrap", alignItems: "center" }}
+                  >
+                    {seatSegments.map((seg, index) => (
+                      <Fragment key={index}>
+                        <Box
+                          sx={{
+                            px: 1.5,
+                            py: 0.6,
+                            borderRadius: 999,
+                            background: `linear-gradient(135deg, ${alpha(
+                              theme.palette.primary.main,
+                              0.18,
+                            )}, ${alpha(theme.palette.secondary.main, 0.12)})`,
+                            border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
+                            backdropFilter: "blur(10px)",
+                          }}
+                        >
+                          <Typography
+                            variant="caption"
+                            sx={{ fontWeight: 800 }}
+                          >
+                            {seg.value}
+                          </Typography>
+                        </Box>
+
+                        {index < seatSegments.length - 1 && (
+                          <Typography
+                            variant="caption"
+                            sx={{ color: theme.palette.text.secondary }}
+                          >
+                            →
+                          </Typography>
+                        )}
+                      </Fragment>
+                    ))}
+                  </Stack>
+                )}
+                </Stack>
+              ) : null}
             </Stack>
           </Stack>
 
@@ -281,22 +528,15 @@ export default function QrCard({ ticket, event }: Props) {
               icon={<WarningAmberRoundedIcon />}
               sx={{
                 borderRadius: 3,
-                bgcolor: `${theme.palette.error.main}12`,
-                border: `1px solid ${theme.palette.error.main}33`,
-                "& .MuiAlert-message": {
-                  width: "100%",
-                },
+                border: 1,
+                borderColor: alpha(theme.palette.error.main, 0.34),
+                backgroundColor: alpha(theme.palette.error.main, 0.1),
+                "& .MuiAlert-message": { width: "100%" },
               }}
             >
-              <Typography
-                sx={{
-                  fontWeight: 700,
-                }}
-              >
-                Ticket wurde deaktiviert
-              </Typography>
+              <Typography sx={{ fontWeight: 800 }}>{tQr("revokedTitle")}</Typography>
               <Typography variant="body2" sx={{ mt: 0.5 }}>
-                {ticket.revokedReason ?? "Bitte wende dich an den Veranstalter."}
+                {ticket.revokedReason ?? tQr("revokedFallback")}
               </Typography>
             </Alert>
           ) : null}
@@ -306,13 +546,53 @@ export default function QrCard({ ticket, event }: Props) {
               severity="error"
               sx={{
                 borderRadius: 3,
+                border: 1,
+                borderColor: alpha(theme.palette.error.main, 0.32),
+                backgroundColor: alpha(theme.palette.error.main, 0.09),
               }}
             >
               {errorMessage}
             </Alert>
           ) : null}
 
-          {!isRevoked && !isDeviceActivated ? <ActivateTicketButton ticketId={ticket.id} /> : null}
+          {!isRevoked && !isDeviceActivated ? (
+            <Stack
+              spacing={2}
+              sx={{
+                p: { xs: 2, sm: 2.5 },
+                borderRadius: 4,
+                border: 1,
+                borderColor: alpha(theme.palette.divider, 0.62),
+                backgroundColor: alpha(theme.palette.background.paper, 0.48),
+              }}
+            >
+              <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
+                <Box
+                  sx={{
+                    width: theme.spacing(5),
+                    height: theme.spacing(5),
+                    borderRadius: 999,
+                    display: "grid",
+                    placeItems: "center",
+                    color: theme.palette.primary.main,
+                    backgroundColor: alpha(theme.palette.primary.main, 0.12),
+                  }}
+                >
+                  <ShieldRoundedIcon
+                    sx={{ width: theme.spacing(2.8), height: theme.spacing(2.8) }}
+                  />
+                </Box>
+                <Box sx={{ minWidth: 0 }}>
+                  <Typography sx={{ fontWeight: 900 }}>{tQr("activationIntroTitle")}</Typography>
+                  <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                    {tQr("activationIntroText")}
+                  </Typography>
+                </Box>
+              </Stack>
+
+              <ActivateTicketButton ticketId={ticket.id} onActivated={onActivated} />
+            </Stack>
+          ) : null}
 
           {!isRevoked && isDeviceActivated ? (
             <Box
@@ -326,13 +606,16 @@ export default function QrCard({ ticket, event }: Props) {
                 sx={{
                   position: "relative",
                   width: "100%",
-                  maxWidth: { xs: 360, sm: 420 },
+                  maxWidth: theme.spacing(52),
+                  aspectRatio: "1 / 1",
                   display: "flex",
                   justifyContent: "center",
                   p: { xs: 1.25, sm: 2.5 },
-                  borderRadius: 4,
-                  bgcolor: theme.palette.mode === "light" ? apple.systemBackground : apple.gray6,
-                  border: `1px solid ${apple.separator}`,
+                  borderRadius: 5,
+                  border: 1,
+                  borderColor: alpha(theme.palette.divider, 0.62),
+                  backgroundColor: alpha(theme.palette.background.paper, 0.62),
+                  boxShadow: `inset 0 1px 0 ${alpha(theme.palette.common.white, 0.12)}`,
                 }}
               >
                 <motion.div
@@ -340,10 +623,10 @@ export default function QrCard({ ticket, event }: Props) {
                   {...qrBeatAnimation(QR_TOKEN_LIFETIME_SECONDS)}
                   style={{
                     position: "relative",
-                    width: RING_SIZE,
-                    height: RING_SIZE,
-                    maxWidth: "100%",
-                    maxHeight: "100%",
+                    width: "100%",
+                    height: "100%",
+                    maxWidth: RING_SIZE,
+                    maxHeight: RING_SIZE,
                   }}
                 >
                   <QrCountdownRings
@@ -359,41 +642,49 @@ export default function QrCard({ ticket, event }: Props) {
                   <Box
                     sx={{
                       position: "absolute",
-                      inset: QR_INSET,
+                      inset: { xs: "20%", sm: "19%" },
                       borderRadius: 4,
-                      bgcolor:
-                        theme.palette.mode === "light" ? apple.systemBackground : apple.gray6,
+                      backgroundColor: theme.palette.background.paper,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      boxShadow: "0 12px 32px rgba(0,0,0,0.18)",
-                      overflow: "visible",
+                      boxShadow: `0 ${theme.spacing(1.5)} ${theme.spacing(4)} ${alpha(
+                        theme.palette.common.black,
+                        theme.palette.mode === "dark" ? 0.32 : 0.12,
+                      )}`,
+                      overflow: "hidden",
                     }}
                   >
-                    {isPreparingQr && !qrPayload ? (
-                      <Stack
-                        spacing={1.5}
-                        sx={{
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                        }}
-                      >
-                        <CircularProgress size={34} sx={{ color: theme.palette.primary.main }} />
+                    {!qrPayload ? (
+                      <Stack spacing={1.5} sx={{ alignItems: "center" }}>
+                        {isPreparingQr ? (
+                          <CircularProgress size={theme.spacing(4)} />
+                        ) : (
+                          <WarningAmberRoundedIcon
+                            sx={{
+                              width: theme.spacing(4),
+                              height: theme.spacing(4),
+                              color: theme.palette.warning.main,
+                            }}
+                          />
+                        )}
                         <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-                          QR wird vorbereitet…
+                          {isPreparingQr ? tQr("prepareQr") : tQr("qrUnavailable")}
                         </Typography>
                       </Stack>
                     ) : (
-                      <>
-                        <QRCodeCanvas
-                          value={qrPayload ?? "NO_TOKEN"}
-                          size={QR_SIZE}
-                          marginSize={2}
-                          fgColor={theme.palette.primary.main}
-                          bgColor={apple.systemBackground}
-                        />
-                        {/* {seatLabel ? <QrSeatOverlay seat={seatLabel} /> : null} */}
-                      </>
+                      <QRCodeCanvas
+                        value={qrPayload}
+                        size={QR_SIZE}
+                        marginSize={MARGIN_SIZE}
+                        fgColor={theme.palette.primary.main}
+                        bgColor={theme.palette.background.paper}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          display: "block",
+                        }}
+                      />
                     )}
                   </Box>
                 </motion.div>
@@ -404,35 +695,41 @@ export default function QrCard({ ticket, event }: Props) {
           {!isRevoked && isDeviceActivated ? (
             <Stack spacing={1.5}>
               <Button
-                fullWidth
+                fullWidth={true}
                 onClick={() => {
                   void generateSignedQrPayload();
                 }}
                 disabled={generateTokenLoading || isPreparingQr}
                 startIcon={
-                  generateTokenLoading || isPreparingQr ? undefined : <RefreshRoundedIcon />
+                  generateTokenLoading || isPreparingQr ? undefined : (
+                    <RefreshRoundedIcon
+                      sx={{ width: theme.spacing(2.2), height: theme.spacing(2.2) }}
+                    />
+                  )
                 }
                 sx={{
                   borderRadius: 3,
                   py: 1.35,
+                  fontWeight: 900,
                   color: theme.palette.primary.main,
-                  border: `1px solid ${theme.palette.primary.main}55`,
-                  bgcolor: `${theme.palette.primary.main}08`,
+                  border: 1,
+                  borderColor: alpha(theme.palette.primary.main, 0.34),
+                  backgroundColor: alpha(theme.palette.primary.main, 0.08),
                   "&:hover": {
-                    bgcolor: `${theme.palette.primary.main}14`,
-                    borderColor: `${theme.palette.primary.main}88`,
+                    backgroundColor: alpha(theme.palette.primary.main, 0.14),
+                    borderColor: alpha(theme.palette.primary.main, 0.54),
                   },
                   "&.Mui-disabled": {
-                    borderColor: apple.separator,
+                    borderColor: alpha(theme.palette.divider, 0.62),
                   },
                 }}
               >
                 {generateTokenLoading || isPreparingQr ? (
-                  <CircularProgress size={22} sx={{ color: theme.palette.primary.main }} />
+                  <CircularProgress size={theme.spacing(2.4)} />
                 ) : isQrActive ? (
-                  "QR-Code jetzt erneuern"
+                  tQr("refreshNow")
                 ) : (
-                  "QR-Code generieren"
+                  tQr("generate")
                 )}
               </Button>
 
@@ -443,6 +740,7 @@ export default function QrCard({ ticket, event }: Props) {
                   justifyContent: "space-between",
                   alignItems: "center",
                   flexWrap: "wrap",
+                  rowGap: 1,
                 }}
               >
                 <QrRingLegend />
@@ -450,7 +748,7 @@ export default function QrCard({ ticket, event }: Props) {
                 <Typography
                   variant="caption"
                   sx={{
-                    fontWeight: 700,
+                    fontWeight: 800,
                     color:
                       remainingSeconds <= QR_CRITICAL_THRESHOLD_SECONDS
                         ? theme.palette.error.main
@@ -458,8 +756,10 @@ export default function QrCard({ ticket, event }: Props) {
                   }}
                 >
                   {isQrActive
-                    ? `Aktuell noch ${remainingSeconds}s gültig`
-                    : "Noch kein aktiver QR-Code"}
+                    ? validUntilDate
+                      ? tQr("validUntil", { date: validUntilDate })
+                      : tQr("validFor", { seconds: remainingSeconds })
+                    : tQr("noActiveQr")}
                 </Typography>
               </Stack>
             </Stack>

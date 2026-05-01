@@ -1,0 +1,35 @@
+{
+  "title": "QR Scanner",
+  "webSubtitle": "Browser scanner with secure ticket verification",
+  "nativeSubtitle": "Native scanner with secure ticket verification",
+  "scanAgain": "Scan again",
+  "success": "Ticket accepted",
+  "error": "Scan rejected",
+  "verifying": "Verifying ticket",
+  "scanning": "Scanning",
+  "paused": "Camera paused",
+  "cameraUnavailable": "Camera unavailable",
+  "cameraStartFailed": "Camera could not be started.",
+  "invalidQr": "Invalid QR code",
+  "scanFailed": "Scan failed",
+  "scanButton": "Scan QR code",
+  "wait": "Please wait",
+  "ready": "Ready for the next guest",
+  "retry": "Try again",
+  "granted": "Access granted",
+  "failed": "Verification failed",
+  "scannerLabel": "QR code scanner",
+  "torchOn": "Turn light on",
+  "torchOff": "Turn light off",
+  "torchOnTooltip": "Light on",
+  "torchOffTooltip": "Light off",
+  "header": {
+    "subtitle": "Live gate verification",
+    "noEvent": "No active event",
+    "live": {
+      "websocket": "WebSocket",
+      "queue": "Queue",
+      "api": "API"
+    }
+  }
+}

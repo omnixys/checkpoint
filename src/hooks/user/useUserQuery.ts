@@ -1,18 +1,12 @@
-import {
-  CurrentUserDocument,
-  CurrentUserQuery,
-  CurrentUserQueryVariables,
-  GetUserNameDocument,
-  GetUserNameQuery,
-  GetUserNameQueryVariables,
-  MePageDocument,
-  MePageQuery,
-  MePageQueryVariables,
-} from "@/checkpoint/generated/graphql";
 import { useQuery } from "@apollo/client/react";
+import {
+  GetUserNameDocument,
+  type GetUserNameQuery,
+  type GetUserNameQueryVariables,
+} from "@/checkpoint/generated/graphql";
 
 interface Props {
-  userId: string;
+  userId?: string | undefined;
 
   loadUserName?: boolean | undefined;
 }
@@ -22,7 +16,7 @@ export default function useUserQuery({ userId, loadUserName = false }: Props) {
     GetUserNameDocument,
     {
       variables: {
-        id: userId,
+        id: userId ?? "",
       },
       fetchPolicy: "cache-first",
       skip: !loadUserName || !userId,

@@ -1,31 +1,38 @@
-import {
-  ScanTokenMutation,
-  ScanTokenMutationVariables,
-  ScanTokenDocument,
-  ScanPayload,
-} from "@/checkpoint/generated/graphql";
-import useSeatQuery from "@/checkpoint/hooks/seat/useSeatQuery";
-import useUserQuery from "@/checkpoint/hooks/user/useUserQuery";
-import { ScanResult } from "@/checkpoint/types/scan.type";
 import { useMutation } from "@apollo/client/react";
+import { useCallback } from "react";
+import {
+  type ScanPayload,
+  ScanTokenDocument,
+  type ScanTokenMutation,
+  type ScanTokenMutationVariables,
+} from "@/checkpoint/generated/graphql";
 
-/**
- * Parses QR payload safely
- */
-function parseQrPayload(qr: string): {
+type QrPayload = {
   token: string;
   signature: string;
   deviceId: string;
-} | null {
+};
+
+function parseQrPayload(qr: string): QrPayload | null {
   try {
-    const parsed = JSON.parse(qr);
+    const parsed: unknown = JSON.parse(qr);
+
+    if (!parsed || typeof parsed !== "object") {
+      return null;
+    }
+
+    const candidate = parsed as Partial<Record<keyof QrPayload, unknown>>;
 
     if (
-      typeof parsed.token === "string" &&
-      typeof parsed.signature === "string" &&
-      typeof parsed.deviceId === "string"
+      typeof candidate.token === "string" &&
+      typeof candidate.signature === "string" &&
+      typeof candidate.deviceId === "string"
     ) {
-      return parsed;
+      return {
+        token: candidate.token,
+        signature: candidate.signature,
+        deviceId: candidate.deviceId,
+      };
     }
 
     return null;
@@ -39,86 +46,27 @@ export function useScanTicket() {
     ScanTokenDocument,
   );
 
-  return async (qr: string): Promise<ScanResult> => {
-    /* ---------------------------------------------
-     * 1) Parse QR
-     * ------------------------------------------- */
+  return useCallback(
+    async (qr: string): Promise<ScanPayload | null> => {
+      const parsed = parseQrPayload(qr);
 
-    const parsed = parseQrPayload(qr);
+      if (!parsed) {
+        return null;
+      }
 
-    if (!parsed) {
-      return {
-        status: "ERROR",
-        message: "Ungültiger QR-Code",
-        valid: false,
-        deviceMatched: false,
-        reason: "INVALID_QR",
-      };
-    }
-
-    /* ---------------------------------------------
-     * 2) Send FULL payload
-     * ------------------------------------------- */
-
-    const { data } = await scanMutation({
-      variables: {
-        input: {
-          token: parsed.token,
-          signature: parsed.signature,
-          deviceId: parsed.deviceId,
-          gate: "MAIN_GATE",
+      const { data } = await scanMutation({
+        variables: {
+          input: {
+            token: parsed.token,
+            signature: parsed.signature,
+            deviceId: parsed.deviceId,
+            gate: "MAIN_GATE",
+          },
         },
-      },
-    });
+      });
 
-    if (!data?.scanToken) {
-      return {
-        status: "ERROR",
-        message: "Scan fehlgeschlagen",
-        valid: false,
-        deviceMatched: false,
-        reason: "INVALID_QR",
-      };
-    }
-
-    const res: ScanPayload = data.scanToken;
-
-    const { fullSeatInfo } = useSeatQuery({
-      seatId: res.ticket.seatId,
-      loadFullSeatInfo: true,
-    });
-    const { userInfo } = useUserQuery({
-      userId: res.ticket.guestProfileId,
-      loadUserName: true,
-    });
-
-    return {
-      status: res.verdict === "OK" ? "SUCCESS" : "ERROR",
-      message: res.message,
-      valid: res.verdict === "OK",
-      deviceMatched: res.verdict !== "DEVICE_MISMATCH",
-      reason: mapReason(res.verdict),
-      ticket: res.ticket,
-      guest: userInfo,
-      seat: fullSeatInfo,
-    };
-  };
-}
-
-/**
- * Maps backend verdict → UI reason
- */
-function mapReason(verdict: string): ScanResult["reason"] {
-  switch (verdict) {
-    case "OK":
-      return "OK";
-    case "ALREADY_INSIDE":
-      return "ALREADY_INSIDE";
-    case "REVOKED":
-      return "TICKET_REVOKED";
-    case "DEVICE_MISMATCH":
-      return "DEVICE_MISMATCH";
-    default:
-      return "INVALID_QR";
-  }
+      return data?.scanToken ?? null;
+    },
+    [scanMutation],
+  );
 }

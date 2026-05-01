@@ -1,0 +1,36 @@
+{
+  "status": {
+    "valid": "Gültig",
+    "expired": "Abgelaufen",
+    "revoked": "Widerrufen"
+  },
+
+  "section": "Bereich",
+  "table": "Tisch",
+  "seat": "Sitzplatz",
+  "guest": "Gast",
+  "scanStatus": {
+    "success": "Erfolgreich",
+    "error": "Fehler",
+    "warning": "Warnung"
+  },
+  "reasonLabel": "Grund",
+  "hint": "Hinweis",
+  "tableWithName": "Tisch {name}",
+  "seatLabelWithValue": "Sitz {label}",
+  "seatNumberWithValue": "Nr. {number}",
+  "ticketState": "Ticket {status}",
+  "deviceBinding": "Gerätebindung",
+  "deviceHash": "Geräte-Hash {hash}",
+  "deviceActivated": "Aktiviert {date}",
+  "deviceIp": "IP {ip}",
+  "reason": {
+    "ok": "Ticket geprüft",
+    "invalidQr": "Ungültiger QR-Code",
+    "ticketRevoked": "Ticket widerrufen",
+    "wrongEvent": "Falsches Event",
+    "alreadyInside": "Bereits eingecheckt",
+    "deviceMismatch": "Gerät stimmt nicht überein",
+    "unknown": "Unbekanntes Ergebnis"
+  }
+}
