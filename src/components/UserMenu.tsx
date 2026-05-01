@@ -28,6 +28,7 @@ import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { useDevice } from "@/checkpoint/providers/DeviceProvider";
 import ThemeToggleButton from "@/checkpoint/components/ThemeToggleButton";
 import LanguageSwitcher from "@/checkpoint/components/LanguageSwitcher";
+import Link from "next/link";
 
 /**
  * eventRoles:
@@ -164,7 +165,9 @@ export default function UserMenu(): JSX.Element | null {
 
         {/* Plus-Ones → only for guests */}
         {eventRole === "GUEST" && (
-          <MenuItem onClick={() => go(`${CHECKPOINT_BASE_PATH}me/my-plus-ones`)}>
+          <MenuItem
+            onClick={() => go(`${CHECKPOINT_BASE_PATH}me/my-plus-ones`)}
+          >
             <ListItemIcon>
               <GroupsIcon fontSize="small" />
             </ListItemIcon>
@@ -201,6 +204,15 @@ export default function UserMenu(): JSX.Element | null {
           </ListItemIcon>
           Abmelden
         </MenuItem>
+
+        <Link href={env.NEXYS_HOME_LINK}>
+          <MenuItem>
+            <ListItemIcon>
+              <LogoutIcon fontSize="small" />
+            </ListItemIcon>
+            Nexus
+          </MenuItem>
+        </Link>
       </Menu>
     </>
   );

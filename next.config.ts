@@ -19,9 +19,8 @@ const nextConfig: NextConfig = {
     ],
   },
 
-  // typescript: {
-  //   ignoreBuildErrors: true,
-  // },
+  basePath: "/checkpoint",
+  assetPrefix: "/checkpoint",
 
   experimental: {
     // Required for Server Actions in iOS wrapper

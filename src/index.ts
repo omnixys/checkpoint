@@ -32,25 +32,25 @@ export { default as ProtectedEventNewPage } from "./app/(protected)/event/new/pa
 export { default as ProtectedMePlusOnesPage } from "./app/(protected)/me/my-plus-ones/page";
 
 
-export { default as EnAuthMessages } from "../messages/en/auth.json";
-export { default as EnCommonMessages } from "../messages/en/common.json";
-export { default as EnCreateMessages } from "../messages/en/create.json";
-export { default as EnErrorMessages } from "../messages/en/error.json";
-export { default as EnEventMessages } from "../messages/en/event.json";
-export { default as EnHomeMessages } from "../messages/en/home.json";
-export { default as EnInvitationMessages } from "../messages/en/invitation.json";
-export { default as EnLayoutMessages } from "../messages/en/layout.json";
-export { default as EnOnboardingMessages } from "../messages/en/onboarding.json";
-export { default as EnRsvpMessages } from "../messages/en/rsvp.json";
+// export { default as EnAuthMessages } from "../messages/en/auth.json";
+// export { default as EnCommonMessages } from "../messages/en/common.json";
+// export { default as EnCreateMessages } from "../messages/en/create.json";
+// export { default as EnErrorMessages } from "../messages/en/error.json";
+// export { default as EnEventMessages } from "../messages/en/event.json";
+// export { default as EnHomeMessages } from "../messages/en/home.json";
+// export { default as EnInvitationMessages } from "../messages/en/invitation.json";
+// export { default as EnLayoutMessages } from "../messages/en/layout.json";
+// export { default as EnOnboardingMessages } from "../messages/en/onboarding.json";
+// export { default as EnRsvpMessages } from "../messages/en/rsvp.json";
 
 
-export { default as DeAuthMessages } from "../messages/de/auth.json";
-export { default as DeCommonMessages } from "../messages/de/common.json";
-export { default as DeCreateMessages } from "../messages/de/create.json";
-export { default as DeErrorMessages } from "../messages/de/error.json";
-export { default as DeEventMessages } from "../messages/de/event.json";
-export { default as DeHomeMessages } from "../messages/de/home.json";
-export { default as DeInvitationMessages } from "../messages/de/invitation.json";
-export { default as DeLayoutMessages } from "../messages/de/layout.json";
-export { default as DeOnboardingMessages } from "../messages/de/onboarding.json";
-export { default as DeRsvpMessages } from "../messages/de/rsvp.json";
+// export { default as DeAuthMessages } from "../messages/de/auth.json";
+// export { default as DeCommonMessages } from "../messages/de/common.json";
+// export { default as DeCreateMessages } from "../messages/de/create.json";
+// export { default as DeErrorMessages } from "../messages/de/error.json";
+// export { default as DeEventMessages } from "../messages/de/event.json";
+// export { default as DeHomeMessages } from "../messages/de/home.json";
+// export { default as DeInvitationMessages } from "../messages/de/invitation.json";
+// export { default as DeLayoutMessages } from "../messages/de/layout.json";
+// export { default as DeOnboardingMessages } from "../messages/de/onboarding.json";
+// export { default as DeRsvpMessages } from "../messages/de/rsvp.json";
