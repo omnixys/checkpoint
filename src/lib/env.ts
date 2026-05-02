@@ -69,7 +69,7 @@ export const env = {
 
   APP_URL: getClientEnv("NEXT_PUBLIC_APP_URL", "http://localhost:3000"),
 
-  NEXYS_HOME_LINK: getClientEnv("NEXYS_HOME_LINK", "http://localhost:3000/nexys/home"),
+  NEXYS_HOME_LINK: getClientEnv("NEXYS_HOME_LINK", "https://nexys.omnixys.com"),
 } as const;
 
 /**

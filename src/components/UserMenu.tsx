@@ -205,7 +205,7 @@ export default function UserMenu(): JSX.Element | null {
           Abmelden
         </MenuItem>
 
-        <Link href={env.NEXYS_HOME_LINK}>
+        <Link href={`${env.NEXYS_HOME_LINK}/home`}>
           <MenuItem>
             <ListItemIcon>
               <LogoutIcon fontSize="small" />
