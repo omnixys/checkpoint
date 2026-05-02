@@ -19,8 +19,8 @@ const nextConfig: NextConfig = {
     ],
   },
 
-  basePath: "/checkpoint",
-  assetPrefix: "/checkpoint",
+  // basePath: "/checkpoint",
+  // assetPrefix: "/checkpoint",
 
   experimental: {
     // Required for Server Actions in iOS wrapper

@@ -7,6 +7,8 @@ import { getMessages } from "next-intl/server";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import StartupVisionPro from "@/checkpoint/components/startup/StartupVisionPro";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
 
 export const viewport: Viewport = {
   themeColor: "#6A4BBC", // MUST match omnixys primary :contentReference[oaicite:0]{index=0}
@@ -119,6 +121,8 @@ export default async function RootLayout({
   return (
     <html lang="de" className={inter.variable}>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        <SpeedInsights />
+        <Analytics />
         <NextIntlClientProvider messages={messages}>
           <Provider>
             <StartupVisionPro />
