@@ -1,14 +1,15 @@
+import type { Metadata, Viewport } from "next";
+import { Geist, Geist_Mono, Inter, Lato, Playfair_Display } from "next/font/google";
+import { cookies } from "next/headers";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 import { env } from "@/checkpoint/lib/env";
 import { baseMetadata } from "@/checkpoint/lib/metadata/base.metadata";
 import Provider from "@/checkpoint/providers/Provider";
-import type { Metadata, Viewport } from "next";
-import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
-import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
-import StartupVisionPro from "@/checkpoint/components/startup/StartupVisionPro";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import StartupVisionPro from "@/checkpoint/components/startup/StartupVisionPro";
 
 export const viewport: Viewport = {
   themeColor: "#6A4BBC", // MUST match omnixys primary :contentReference[oaicite:0]{index=0}
@@ -111,20 +112,40 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const weddingSerif = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  variable: "--font-wedding-serif",
+});
+
+const weddingSans = Lato({
+  subsets: ["latin"],
+  weight: ["300", "400", "700"],
+  display: "swap",
+  variable: "--font-wedding-sans",
+});
+
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const messages = await getMessages();
+  const locale = await getLocale();
+  const cookieStore = await cookies();
+  const initialThemeProfile = cookieStore.get("theme")?.value === "wedding" ? "wedding" : null;
 
   return (
-    <html lang="de" className={inter.variable}>
+    <html
+      lang={locale}
+      className={`${inter.variable} ${weddingSerif.variable} ${weddingSans.variable}`}
+    >
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <SpeedInsights />
         <Analytics />
         <NextIntlClientProvider messages={messages}>
-          <Provider>
+          <Provider initialThemeProfile={initialThemeProfile}>
             <StartupVisionPro />
             {children}
           </Provider>

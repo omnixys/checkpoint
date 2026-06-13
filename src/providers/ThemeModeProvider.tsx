@@ -1,12 +1,28 @@
 "use client";
 
-import React from "react";
-import { CssBaseline, ThemeProvider } from "@mui/material";
 import type { PaletteMode } from "@mui/material";
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import React from "react";
 import { STORAGE_MODE, STORAGE_SCHEME } from "@/checkpoint/constants/color";
 import { triggerAccentPulse } from "@/checkpoint/themes/accent-animation";
 import { createAppTheme } from "@/checkpoint/themes/createAppTheme";
-import { OmnixysColorScheme } from "@/checkpoint/themes/paletteTypes";
+import type { OmnixysColorScheme } from "@/checkpoint/themes/paletteTypes";
+
+export type ThemeProfile = "wedding";
+
+type ThemeModeProviderProps = {
+  children: React.ReactNode;
+  initialThemeProfile: ThemeProfile | null;
+};
+
+const WEDDING_PROFILE: ThemeProfile = "wedding";
+
+function clearThemeProfileCookie() {
+  const domain = window.location.hostname.endsWith(".omnixys.com") ? "; domain=.omnixys.com" : "";
+
+  // biome-ignore lint/suspicious/noDocumentCookie: one-shot cross-application theme bridge
+  document.cookie = `theme=; path=/; max-age=0; SameSite=Lax${domain}`;
+}
 
 // -------------------------------------------------------------
 // Context Types
@@ -24,17 +40,43 @@ type ThemeModeContextValue = {
 // -------------------------------------------------------------
 export const ThemeModeContext = React.createContext<ThemeModeContextValue | null>(null);
 
-export default function ThemeModeProvider({ children }: { children: React.ReactNode }) {
+export default function ThemeModeProvider({
+  children,
+  initialThemeProfile,
+}: ThemeModeProviderProps) {
   // -------------------------------------------------------------
   // State
   // -------------------------------------------------------------
-  const [mode, setMode] = React.useState<PaletteMode>("light");
-  const [scheme, setScheme] = React.useState<OmnixysColorScheme>("original");
+  const [mode, setMode] = React.useState<PaletteMode>(
+    initialThemeProfile === WEDDING_PROFILE ? "dark" : "light",
+  );
+  const [scheme, setScheme] = React.useState<OmnixysColorScheme>(
+    initialThemeProfile === WEDDING_PROFILE ? "wedding" : "original",
+  );
 
   // -------------------------------------------------------------
   // Load mode + scheme from localStorage
   // -------------------------------------------------------------
   React.useEffect(() => {
+    const url = new URL(window.location.href);
+    const requestedProfile =
+      initialThemeProfile === WEDDING_PROFILE || url.searchParams.get("theme") === WEDDING_PROFILE;
+
+    if (requestedProfile) {
+      window.localStorage.setItem(STORAGE_MODE, "dark");
+      window.localStorage.setItem(STORAGE_SCHEME, "wedding");
+      setMode("dark");
+      setScheme("wedding");
+      clearThemeProfileCookie();
+
+      if (url.searchParams.has("theme")) {
+        url.searchParams.delete("theme");
+        window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
+      }
+
+      return;
+    }
+
     const savedMode = window.localStorage.getItem(STORAGE_MODE) as PaletteMode | null;
 
     const savedScheme = window.localStorage.getItem(STORAGE_SCHEME) as OmnixysColorScheme | null;
@@ -43,12 +85,15 @@ export default function ThemeModeProvider({ children }: { children: React.ReactN
 
     setMode(savedMode ?? (prefersDark ? "dark" : "light"));
     setScheme(savedScheme ?? "original");
-  }, []);
+  }, [initialThemeProfile]);
 
   // -------------------------------------------------------------
   // Smooth iOS-like transition on theme change
   // -------------------------------------------------------------
   React.useEffect(() => {
+    void mode;
+    void scheme;
+
     const root = document.documentElement;
     root.classList.add("theme-transition");
 

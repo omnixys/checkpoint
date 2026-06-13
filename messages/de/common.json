@@ -15,6 +15,13 @@
     "title": "Telefonnummern ({count})",
     "add": "+ Telefonnummer hinzufügen"
   },
+
+  "plusOne": {
+    "title": "Begleitpersonen ({count})",
+    "add": "+ Begleitperson hinzufügen",
+    "guest": "Gast",
+    "noEmail": "Keine E-Mail"
+  },
   
   "language": {
     "en-US": "Englisch",

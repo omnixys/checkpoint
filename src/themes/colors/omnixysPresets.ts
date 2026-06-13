@@ -1,4 +1,4 @@
-import { OmnixysColorScheme, OmnixysPresetExtended } from "@/checkpoint/themes/paletteTypes";
+import type { OmnixysColorScheme, OmnixysPresetExtended } from "@/checkpoint/themes/paletteTypes";
 
 export const omnixysPresets: Record<OmnixysColorScheme, OmnixysPresetExtended> = {
   original: {
@@ -317,6 +317,59 @@ export const omnixysPresets: Record<OmnixysColorScheme, OmnixysPresetExtended> =
         },
         shadow: {
           glow: "rgba(139,94,60,0.6)",
+        },
+      },
+    },
+  },
+
+  wedding: {
+    light: {
+      primary: "#9B6B24",
+      secondary: "#5C4930",
+      backgroundDefault: "#F7F2E9",
+      backgroundPaper: "#FFFDF8",
+      textPrimary: "#241D16",
+      textSecondary: "#6D6256",
+      error: "#B42318",
+      success: "#557A46",
+    },
+    dark: {
+      primary: "#D8B879",
+      secondary: "#F1ECE2",
+      backgroundDefault: "#050506",
+      backgroundPaper: "#0D0C0C",
+      textPrimary: "#F1ECE2",
+      textSecondary: "#AAA39A",
+      error: "#F28B82",
+      success: "#9BC58C",
+    },
+    visual: {
+      light: {
+        glow: {
+          primary: "#B68A45",
+          secondary: "#D8B879",
+          accent: "#F0DFC0",
+        },
+        gradient: {
+          orb: ["#9B6B24", "#D8B879", "#F0DFC0"],
+          rays: ["#E8CF9D", "#D8B879", "#A87931"],
+        },
+        shadow: {
+          glow: "rgba(155,107,36,0.42)",
+        },
+      },
+      dark: {
+        glow: {
+          primary: "#D8B879",
+          secondary: "#A87931",
+          accent: "#F1ECE2",
+        },
+        gradient: {
+          orb: ["#4A351E", "#A87931", "#D8B879"],
+          rays: ["#D8B879", "#8E642E", "#F1ECE2"],
+        },
+        shadow: {
+          glow: "rgba(216,184,121,0.42)",
         },
       },
     },

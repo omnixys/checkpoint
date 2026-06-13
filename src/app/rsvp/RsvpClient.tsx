@@ -1,14 +1,14 @@
 "use client";
 
+import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import {
   Alert,
   alpha,
   Box,
   Button,
-  Card,
-  CardContent,
   CircularProgress,
   Container,
+  Paper,
   Stack,
   TextField,
   Typography,
@@ -16,21 +16,25 @@ import {
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 
-import RSVPSuccess from "@/checkpoint/app/rsvp/success/RSVPSuccess";
+import RsvpSuccess from "@/checkpoint/app/rsvp/success/RSVPSuccess";
 import PhoneNumberDialog from "@/checkpoint/components/common/phoneNumber/PhoneNumberDialog";
 import PhoneNumberListAccordion from "@/checkpoint/components/common/phoneNumber/PhoneNumberListAccordion";
 import PlusOneDialog from "@/checkpoint/components/common/plus-one/PlusOneDialog";
 import PlusOneListAccordion from "@/checkpoint/components/common/plus-one/PlusOneListAccordion";
 import EventParticipationField from "@/checkpoint/components/EventParticipationField";
 import LanguageSwitcher from "@/checkpoint/components/LanguageSwitcher";
+import { CinematicRsvpLayout, RsvpChapter } from "@/checkpoint/components/rsvp/CinematicRsvpLayout";
 import ThemeToggleButton from "@/checkpoint/components/ThemeToggleButton";
 import { usePhoneNumbers } from "@/checkpoint/hooks/common/usePhoneNumbers";
-import { EventSelectionNode, useEventSelection } from "@/checkpoint/hooks/events/useEventSelection";
+import {
+  type EventSelectionNode,
+  useEventSelection,
+} from "@/checkpoint/hooks/events/useEventSelection";
 import useEventTreeQuery from "@/checkpoint/hooks/events/useEventTreeQuery";
 import { usePlusOnes } from "@/checkpoint/hooks/invitation/usePlusOnes";
 import usePublicRsvpMutation from "@/checkpoint/hooks/invitation/usePublicRsvpMutation";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { CallingCodeCountry } from "@/checkpoint/types/country.type";
+import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
 import ColorBubbleSwitcher from "../../components/ColorBubbleSwitcher";
 
 /* ------------------------------------------------------------------ */
@@ -39,30 +43,33 @@ import ColorBubbleSwitcher from "../../components/ColorBubbleSwitcher";
 
 function ErrorState({ title, message }: { title: string; message: string }) {
   return (
-    <Container maxWidth="sm">
-      <Box
-        sx={{
-          display: "flex",
-          minHeight: "100vh",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Card>
-          <CardContent>
-            <Stack
-              spacing={2}
-              sx={{
-                alignItems: "center",
-              }}
-            >
-              <Typography variant="h5">{title}</Typography>
+    <Box
+      component="main"
+      sx={{
+        background:
+          "radial-gradient(circle at 50% 15%, rgba(216,184,121,0.16), transparent 34%), #050506",
+        color: "#f1ece2",
+        minHeight: "100vh",
+      }}
+    >
+      <Container maxWidth="sm">
+        <Box
+          sx={{
+            display: "flex",
+            minHeight: "100vh",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Paper sx={{ p: { xs: 3, sm: 5 }, textAlign: "center", width: "100%" }}>
+            <Stack spacing={2} sx={{ alignItems: "center" }}>
+              <Typography variant="h4">{title}</Typography>
               <Alert severity="error">{message}</Alert>
             </Stack>
-          </CardContent>
-        </Card>
-      </Box>
-    </Container>
+          </Paper>
+        </Box>
+      </Container>
+    </Box>
   );
 }
 
@@ -71,14 +78,65 @@ function LoadingScreen() {
   return (
     <Box
       sx={{
+        background:
+          "radial-gradient(circle at 50% 15%, rgba(216,184,121,0.16), transparent 34%), #050506",
+        color: "#f1ece2",
         display: "flex",
         minHeight: "100vh",
-        justifyContent: "space-between",
+        flexDirection: "column",
+        gap: 2,
+        justifyContent: "center",
         alignItems: "center",
       }}
     >
-      <CircularProgress />
+      <CircularProgress color="inherit" size={34} thickness={2} />
       <Typography variant="body2">{t("loading")}</Typography>
+    </Box>
+  );
+}
+
+function AppearanceControls() {
+  return (
+    <Box
+      aria-label="Appearance and language controls"
+      sx={{
+        alignItems: "center",
+        backdropFilter: "blur(22px) saturate(160%)",
+        backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.78),
+        border: "1px solid",
+        borderColor: (theme) => alpha(theme.palette.primary.main, 0.26),
+        borderRadius: 999,
+        boxShadow: "0 18px 55px rgba(0,0,0,0.3)",
+        display: "flex",
+        gap: 0.5,
+        left: { xs: "50%", sm: "auto" },
+        p: 0.5,
+        position: "fixed",
+        right: { xs: "auto", sm: 24 },
+        top: { xs: 16, sm: 24 },
+        transform: { xs: "translateX(-50%)", sm: "none" },
+        zIndex: (theme) => theme.zIndex.appBar + 1,
+        "& > .rsvp-floating-control": {
+          alignItems: "center",
+          borderRadius: "50%",
+          display: "flex",
+          minHeight: 44,
+          minWidth: 44,
+          justifyContent: "center",
+          "& .MuiIconButton-root": { m: 0 },
+          "& .MuiButton-root": { minWidth: 44, px: 0 },
+        },
+      }}
+    >
+      <Box className="rsvp-floating-control">
+        <ColorBubbleSwitcher />
+      </Box>
+      <Box className="rsvp-floating-control">
+        <ThemeToggleButton />
+      </Box>
+      <Box className="rsvp-floating-control">
+        <LanguageSwitcher />
+      </Box>
     </Box>
   );
 }
@@ -135,7 +193,7 @@ export default function RsvpClient({
         depth: item.depth,
       })) ?? []
     );
-  }, [publicEventTree]);
+  }, [eventId, publicEventTree]);
 
   const selectedPhone = useMemo(() => {
     if (phoneDialogIndex === null) return null;
@@ -176,7 +234,7 @@ export default function RsvpClient({
   }
 
   if (submitted) {
-    return <RSVPSuccess />;
+    return <RsvpSuccess />;
   }
 
   const handleSubmit = async () => {
@@ -235,152 +293,169 @@ export default function RsvpClient({
   };
 
   return (
-    <Container maxWidth="sm">
-      <Box
-        sx={{
-          alignItems: "center",
-          display: "flex",
-          justifyContent: "center",
-          minHeight: "100vh",
-          py: 4,
-        }}
+    <CinematicRsvpLayout
+      controls={<AppearanceControls />}
+      eventName={publicEventTree.rootEvent.name}
+      heroDescription={t("public.heroDescription")}
+      heroEyebrow={t("public.heroEyebrow")}
+    >
+      <RsvpChapter
+        description={t("public.participationDescription")}
+        index="01"
+        title={t("public.participationTitle")}
+      >
+        <EventParticipationField
+          rootEventId={eventId}
+          rootEventName={publicEventTree.rootEvent.name}
+          events={childEvents}
+          isRootSelected={isRootSelected}
+          isChildSelected={isChildSelected}
+          onToggleRoot={toggleRoot}
+          onToggleChild={toggleChild}
+        />
+      </RsvpChapter>
+
+      <RsvpChapter
+        description={t("public.guestInfoDescription")}
+        index="02"
+        title={t("public.guestInfoTitle")}
       >
         <Box
-          aria-label="Appearance and language controls"
           sx={{
-            alignItems: "center",
-            backdropFilter: "blur(22px) saturate(160%)",
-            backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.72),
-            border: "1px solid",
-            borderColor: "divider",
-            borderRadius: 999,
-            boxShadow: "0 18px 55px rgba(15, 23, 42, 0.18)",
-            display: "flex",
-            gap: 0.75,
-            left: { xs: "50%", sm: "auto" },
-            p: 0.75,
-            position: "fixed",
-            right: { xs: "auto", sm: 24 },
-            top: { xs: 16, sm: 24 },
-            transform: { xs: "translateX(-50%)", sm: "none" },
-            transition: "transform 220ms ease, box-shadow 220ms ease, background-color 220ms ease",
-            zIndex: (theme) => theme.zIndex.appBar + 1,
-            "&:hover, &:focus-within": {
-              backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.86),
-              boxShadow: "0 22px 70px rgba(15, 23, 42, 0.24)",
-              transform: {
-                xs: "translateX(-50%) translateY(-3px)",
-                sm: "translateY(-3px)",
-              },
-            },
-            "& > .rsvp-floating-control": {
-              alignItems: "center",
-              borderRadius: "50%",
-              display: "flex",
-              height: 44,
-              justifyContent: "center",
-              minWidth: 44,
-              transition:
-                "transform 180ms ease, background-color 180ms ease, box-shadow 180ms ease",
-              "&:hover, &:focus-within": {
-                backgroundColor: "action.hover",
-                boxShadow: "0 8px 22px rgba(15, 23, 42, 0.14)",
-                transform: "translateY(-4px) scale(1.04)",
-              },
-              "& .MuiIconButton-root": {
-                m: 0,
-              },
-              "& .MuiButton-root": {
-                minWidth: 44,
-                px: 0,
-              },
-            },
+            display: "grid",
+            gap: 2,
+            gridTemplateColumns: { xs: "1fr", md: "repeat(2, minmax(0, 1fr))" },
           }}
         >
-          <Box className="rsvp-floating-control">
-            <ColorBubbleSwitcher />
-          </Box>
-          <Box className="rsvp-floating-control">
-            <ThemeToggleButton />
-          </Box>
-          <Box className="rsvp-floating-control">
-            <LanguageSwitcher />
-          </Box>
+          <TextField
+            autoComplete="given-name"
+            label={t("firstName")}
+            value={firstName}
+            onChange={(event) => setFirstName(event.target.value)}
+            fullWidth={true}
+            required={true}
+          />
+          <TextField
+            autoComplete="family-name"
+            label={t("lastName")}
+            value={lastName}
+            onChange={(event) => setLastName(event.target.value)}
+            fullWidth={true}
+            required={true}
+          />
+          <TextField
+            autoComplete="email"
+            label={t("emailOptional")}
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            fullWidth={true}
+            sx={{ gridColumn: { md: "1 / -1" } }}
+            type="email"
+          />
         </Box>
+      </RsvpChapter>
 
-        <Card sx={{ width: "100%" }}>
-          <CardContent>
-            <Stack spacing={3}>
-              <Typography variant="h4">{publicEventTree.rootEvent.name}</Typography>
+      <RsvpChapter
+        description={t("public.contactDescription")}
+        index="03"
+        title={t("public.contactTitle")}
+      >
+        <PhoneNumberListAccordion
+          values={phoneNumbers}
+          onAdd={addPhone}
+          onEdit={setPhoneDialogIndex}
+          onRemove={removePhone}
+        />
+      </RsvpChapter>
 
-              <EventParticipationField
-                rootEventId={eventId}
-                rootEventName={publicEventTree.rootEvent.name}
-                children={childEvents}
-                isRootSelected={isRootSelected}
-                isChildSelected={isChildSelected}
-                onToggleRoot={toggleRoot}
-                onToggleChild={toggleChild}
-              />
+      <RsvpChapter
+        description={t("public.companionsDescription")}
+        index="04"
+        title={t("public.companionsTitle")}
+      >
+        <PlusOneListAccordion
+          values={plusOnes}
+          onAdd={add}
+          onEdit={setPlusOneDialogIndex}
+          onRemove={remove}
+        />
+      </RsvpChapter>
 
-              <TextField
-                label={t("firstName")}
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                fullWidth
-                required
-              />
+      <Paper
+        component="section"
+        elevation={0}
+        sx={{
+          background: (theme) =>
+            `linear-gradient(145deg, ${alpha(theme.palette.primary.main, 0.14)}, ${alpha(theme.palette.background.paper, 0.82)})`,
+          border: "1px solid",
+          borderColor: (theme) => alpha(theme.palette.primary.main, 0.32),
+          borderRadius: { xs: 3, md: 5 },
+          p: { xs: 3, sm: 5, md: 7 },
+          textAlign: "center",
+        }}
+      >
+        <Stack spacing={3} sx={{ alignItems: "center" }}>
+          <Typography
+            component="h2"
+            sx={{
+              fontFamily: "var(--font-wedding-serif), Georgia, serif",
+              fontSize: "clamp(2rem, 6vw, 4rem)",
+              fontWeight: 400,
+              lineHeight: 1.1,
+            }}
+          >
+            {t("public.confirmTitle")}
+          </Typography>
+          <Typography
+            color="text.secondary"
+            id="rsvp-submit-note"
+            sx={{ lineHeight: 1.8, maxWidth: 560 }}
+          >
+            {t("public.confirmDescription")}
+          </Typography>
 
-              <TextField
-                label={t("lastName")}
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                fullWidth
-                required
-              />
+          {validationMessages.length > 0 && (
+            <Alert severity="error" sx={{ maxWidth: 680, textAlign: "left", width: "100%" }}>
+              <Stack spacing={0.5}>
+                {validationMessages.map((message) => (
+                  <Typography key={message} variant="body2">
+                    {message}
+                  </Typography>
+                ))}
+              </Stack>
+            </Alert>
+          )}
 
-              <TextField
-                label={t("emailOptional")}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                fullWidth
-              />
+          {publicRsvpError && (
+            <Alert severity="error" sx={{ maxWidth: 680, width: "100%" }}>
+              {t("submitFailed")}
+            </Alert>
+          )}
 
-              <PhoneNumberListAccordion
-                values={phoneNumbers}
-                onAdd={addPhone}
-                onEdit={setPhoneDialogIndex}
-                onRemove={removePhone}
-              />
-
-              <PlusOneListAccordion
-                values={plusOnes}
-                onAdd={add}
-                onEdit={setPlusOneDialogIndex}
-                onRemove={remove}
-              />
-
-              {validationMessages.length > 0 && (
-                <Alert severity="error">
-                  <Stack spacing={0.5}>
-                    {validationMessages.map((message, index) => (
-                      <Typography key={index} variant="body2">
-                        {message}
-                      </Typography>
-                    ))}
-                  </Stack>
-                </Alert>
-              )}
-
-              {publicRsvpError && <Alert severity="error"> {t("submitFailed")}</Alert>}
-
-              <Button variant="contained" onClick={handleSubmit} disabled={publicRsvpLoading}>
-                {t("submit")}
-              </Button>
-            </Stack>
-          </CardContent>
-        </Card>
-      </Box>
+          <Button
+            aria-describedby="rsvp-submit-note"
+            disabled={publicRsvpLoading}
+            endIcon={
+              publicRsvpLoading ? (
+                <CircularProgress color="inherit" size={18} />
+              ) : (
+                <ArrowForwardRoundedIcon />
+              )
+            }
+            onClick={handleSubmit}
+            size="large"
+            sx={{
+              minWidth: { xs: "100%", sm: 280 },
+              mt: 1,
+              px: 5,
+              py: 1.6,
+            }}
+            variant="contained"
+          >
+            {t("submit")}
+          </Button>
+        </Stack>
+      </Paper>
 
       <PhoneNumberDialog
         open={phoneDialogIndex !== null}
@@ -403,6 +478,6 @@ export default function RsvpClient({
         onRemovePhone={removePlusOnePhone}
         onRemove={remove}
       />
-    </Container>
+    </CinematicRsvpLayout>
   );
 }

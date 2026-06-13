@@ -1,28 +1,29 @@
 "use client";
 
-import React from "react";
-
 // import AppShell from "@/components/layout/AppShell";
 import { usePathname } from "next/navigation";
+import type React from "react";
+import AppShell from "@/checkpoint/components/layout/AppShell";
+import { env } from "@/checkpoint/lib/env";
+import ThemeRegistry from "@/checkpoint/lib/mui/ThemeRegistry";
+import { ApolloRootProvider } from "@/checkpoint/providers/ApolloProvider";
+import OnboardingProvider from "@/checkpoint/providers/OnboardingProvider";
+import SwipeBackProvider from "@/checkpoint/providers/SwipeBackProvider";
+import TourProvider from "@/checkpoint/providers/TourProvider";
 import { ActiveEventProvider } from "./ActiveEventProvider";
 import { AuthProvider } from "./AuthProvider";
 import DateProvider from "./DateProvider";
 import { DeviceProvider } from "./DeviceProvider";
-import ThemeModeProvider from "./ThemeModeProvider";
-import OnboardingModal from "@/checkpoint/components/onboarding/OnboardingModal";
-import { ApolloRootProvider } from "@/checkpoint/providers/ApolloProvider";
-import AppShell from "@/checkpoint/components/layout/AppShell";
-import { env } from "@/checkpoint/lib/env";
-import ThemeRegistry from "@/checkpoint/lib/mui/ThemeRegistry";
-import OnboardingProvider from "@/checkpoint/providers/OnboardingProvider";
-import TourProvider from "@/checkpoint/providers/TourProvider";
-import SwipeBackProvider  from "@/checkpoint/providers/SwipeBackProvider";
+import ThemeModeProvider, { type ThemeProfile } from "./ThemeModeProvider";
 
-type ProviderProps = { children: React.ReactNode };
+type ProviderProps = {
+  children: React.ReactNode;
+  initialThemeProfile: ThemeProfile | null;
+};
 
-export default function Provider({ children }: ProviderProps) {
+export default function Provider({ children, initialThemeProfile }: ProviderProps) {
   const pathname = usePathname();
-  const AUTH_ROUTES = [
+  const AuthRoutes = [
     `${env.CHECKPOINT_BASE_PATH}login`,
     `${env.CHECKPOINT_BASE_PATH}register`,
     `${env.CHECKPOINT_BASE_PATH}unlock`,
@@ -31,11 +32,11 @@ export default function Provider({ children }: ProviderProps) {
     `${env.CHECKPOINT_BASE_PATH}forgot-password`,
   ];
 
-  const isAuthRoute = AUTH_ROUTES.some((route) => pathname.startsWith(route));
+  const isAuthRoute = AuthRoutes.some((route) => pathname.startsWith(route));
 
   return (
     <DeviceProvider>
-      <ThemeModeProvider>
+      <ThemeModeProvider initialThemeProfile={initialThemeProfile}>
         <ThemeRegistry>
           <ApolloRootProvider>
             <AuthProvider>

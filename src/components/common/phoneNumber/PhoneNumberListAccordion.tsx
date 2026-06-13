@@ -1,23 +1,23 @@
 "use client";
 
-import {
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Stack,
-  Typography,
-  Button,
-  IconButton,
-  useTheme,
-  alpha,
-  Divider,
-  Tooltip,
-} from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  alpha,
+  Button,
+  Divider,
+  IconButton,
+  Stack,
+  Tooltip,
+  Typography,
+  useTheme,
+} from "@mui/material";
 
-import { PhoneNumberInput } from "@/checkpoint/generated/graphql";
+import type { PhoneNumberInput } from "@/checkpoint/generated/graphql";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 type Props = {
@@ -33,10 +33,16 @@ export default function PhoneNumberListAccordion({ values, onAdd, onEdit, onRemo
 
   return (
     <Accordion
-      defaultExpanded
+      defaultExpanded={true}
+      disableGutters={true}
       sx={{
-        background: alpha(theme.palette.background.paper, 0.7),
-        backdropFilter: "blur(14px)",
+        background: alpha(theme.palette.background.paper, 0.46),
+        border: "1px solid",
+        borderColor: alpha(theme.palette.text.primary, 0.1),
+        borderRadius: "18px !important",
+        boxShadow: "none",
+        overflow: "hidden",
+        "&::before": { display: "none" },
       }}
     >
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -53,15 +59,19 @@ export default function PhoneNumberListAccordion({ values, onAdd, onEdit, onRemo
         <Stack spacing={1.5}>
           {values.map((p, index) => (
             <Stack
-              key={index}
+              key={`${p.countryCode}-${p.number}-${p.type}`}
               direction="row"
               sx={{
                 alignItems: "center",
                 justifyContent: "space-between",
-                p: 1.2,
+                border: "1px solid",
+                borderColor: alpha(theme.palette.text.primary, 0.08),
+                p: 1.5,
                 borderRadius: 2,
+                transition: "background-color 200ms ease, border-color 200ms ease",
                 "&:hover": {
                   background: alpha(theme.palette.primary.main, 0.06),
+                  borderColor: alpha(theme.palette.primary.main, 0.24),
                 },
               }}
             >
@@ -97,7 +107,7 @@ export default function PhoneNumberListAccordion({ values, onAdd, onEdit, onRemo
 
           <Divider />
 
-          <Button onClick={onAdd} fullWidth>
+          <Button onClick={onAdd} fullWidth={true} variant="outlined">
             {t("phone.add")}
           </Button>
         </Stack>

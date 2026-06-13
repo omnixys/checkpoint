@@ -1,14 +1,23 @@
 "use client";
 
+import { Box, Fade, IconButton, Popover, useMediaQuery } from "@mui/material";
+import type React from "react";
+import { useRef, useState } from "react";
 import { useThemeMode } from "@/checkpoint/providers/ThemeModeProvider";
-import { OmnixysColorScheme } from "@/checkpoint/themes/paletteTypes";
-import { Box, Fade, IconButton, Popover, useMediaQuery, useTheme } from "@mui/material";
-import React, { useRef, useState } from "react";
+import type { OmnixysColorScheme } from "@/checkpoint/themes/paletteTypes";
 
 // -------------------------------------------------------------
 // Available colors
 // -------------------------------------------------------------
-const schemes: OmnixysColorScheme[] = ["original", "red", "green", "yellow", "blue", "brown"];
+const schemes: OmnixysColorScheme[] = [
+  "original",
+  "red",
+  "green",
+  "yellow",
+  "blue",
+  "brown",
+  "wedding",
+];
 
 const bubbleColor: Record<OmnixysColorScheme, string> = {
   original: "#6A4BBC",
@@ -17,6 +26,7 @@ const bubbleColor: Record<OmnixysColorScheme, string> = {
   yellow: "#F59E0B",
   blue: "#2563EB",
   brown: "#8B5E3C",
+  wedding: "#D8B879",
 };
 
 // -------------------------------------------------------------
@@ -25,7 +35,6 @@ const bubbleColor: Record<OmnixysColorScheme, string> = {
 export default function ColorBubbleSwitcher() {
   const { scheme, setScheme } = useThemeMode();
 
-  const theme = useTheme();
   const isTouch = useMediaQuery("(hover: none)");
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [open, setOpen] = useState(false);
@@ -51,7 +60,6 @@ export default function ColorBubbleSwitcher() {
   // Touch tap
   // -------------------------------------------------------------
   const handleTap = (e: React.MouseEvent<HTMLElement>) => {
-    if (!isTouch) return; // tap only for touch
     showPicker(e.currentTarget);
   };
 
@@ -79,6 +87,7 @@ export default function ColorBubbleSwitcher() {
     <>
       {/* Main Color Bubble */}
       <IconButton
+        aria-label="Choose color theme"
         size="small"
         onMouseEnter={handleHover}
         onClick={handleTap}
@@ -95,6 +104,10 @@ export default function ColorBubbleSwitcher() {
           "&:hover": {
             transform: "scale(1.12) translateZ(12px)",
           },
+          "@media (prefers-reduced-motion: reduce)": {
+            transition: "none",
+            "&:hover": { transform: "none" },
+          },
         }}
       />
 
@@ -103,8 +116,8 @@ export default function ColorBubbleSwitcher() {
         open={open}
         anchorEl={anchorEl}
         onClose={handleClose}
-        disableAutoFocus
-        disableRestoreFocus
+        disableAutoFocus={true}
+        disableRestoreFocus={true}
         slotProps={{
           paper: {
             sx: {
@@ -142,6 +155,7 @@ export default function ColorBubbleSwitcher() {
           >
             {schemes.map((s) => (
               <IconButton
+                aria-label={`Use ${s} color theme`}
                 key={s}
                 size="small"
                 onClick={() => {
@@ -159,6 +173,10 @@ export default function ColorBubbleSwitcher() {
                   transform: s === scheme ? "scale(1.18)" : "scale(1)",
                   "&:hover": {
                     transform: "scale(1.22)",
+                  },
+                  "@media (prefers-reduced-motion: reduce)": {
+                    transition: "none",
+                    "&:hover": { transform: s === scheme ? "scale(1.18)" : "none" },
                   },
                 }}
               />

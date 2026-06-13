@@ -112,6 +112,22 @@
     "participation": "Teilnahme",
     "allEvents": "Alle Events",
     "noSelection": "Keine Auswahl",
-    "rootWithAll": "{name} (alle)"
+    "rootWithAll": "{name} · beide Momente",
+    "heroEyebrow": "Caleb & Rachel laden ein",
+    "heroDescription": "Wir freuen uns darauf, diesen besonderen Tag mit dir zu feiern. Nimm dir einen Moment und vervollständige deine Rückmeldung.",
+    "participationTitle": "Wo dürfen wir dich begrüßen?",
+    "participationDescription": "Wähle die Momente aus, die du mit uns teilen möchtest.",
+    "selectionLabel": "Deine Auswahl",
+    "allEventsDescription": "Begleite uns durch den gesamten Hochzeitstag.",
+    "singleEventDescription": "Sei bei diesem besonderen Teil unseres Tages dabei.",
+    "guestInfoTitle": "Erzähl uns von dir",
+    "guestInfoDescription": "Damit wir deine Rückmeldung persönlich zuordnen können.",
+    "contactTitle": "So erreichen wir dich",
+    "contactDescription": "Eine Telefonnummer hilft uns, dich bei wichtigen Änderungen schnell zu informieren.",
+    "companionsTitle": "Wer begleitet dich?",
+    "companionsDescription": "Füge eingeladene Begleitpersonen hinzu und vervollständige ihre Angaben.",
+    "confirmTitle": "Wir zählen die Tage",
+    "confirmDescription": "Prüfe deine Angaben und sende deine Rückmeldung an Caleb & Rachel.",
+    "preparing": "Eure Einladung wird vorbereitet"
   }
 }

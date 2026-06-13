@@ -112,7 +112,22 @@
     "participation": "Participation",
     "allEvents": "All events",
     "noSelection": "No selection",
-    "rootWithAll": "{name} (all)"
+    "rootWithAll": "{name} · both moments",
+    "heroEyebrow": "Caleb & Rachel invite you",
+    "heroDescription": "We cannot wait to celebrate this special day with you. Take a moment to complete your response.",
+    "participationTitle": "Where may we welcome you?",
+    "participationDescription": "Choose the moments you would like to share with us.",
+    "selectionLabel": "Your selection",
+    "allEventsDescription": "Join us throughout the entire wedding day.",
+    "singleEventDescription": "Be part of this special moment of our day.",
+    "guestInfoTitle": "Tell us about you",
+    "guestInfoDescription": "So we can personally match your response to our guest list.",
+    "contactTitle": "How we can reach you",
+    "contactDescription": "A phone number helps us reach you quickly if an important detail changes.",
+    "companionsTitle": "Who is joining you?",
+    "companionsDescription": "Add invited companions and complete their details.",
+    "confirmTitle": "We are counting the days",
+    "confirmDescription": "Review your details and send your response to Caleb & Rachel.",
+    "preparing": "Preparing your invitation"
   }
 }
-
