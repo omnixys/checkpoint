@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, Stack, Typography, useTheme } from "@mui/material";
 import { motion, useReducedMotion } from "framer-motion";
 import { type JSX, type MutableRefObject, useCallback, useRef, useState } from "react";
 import { StartupLogo } from "@/checkpoint/components/startup/elements/StartupLogo";
@@ -13,7 +13,7 @@ import { useCanvasSize } from "./hooks/useCanvasSize";
 import { useParallax } from "./hooks/useParallax";
 import { useStartupEffects } from "./hooks/useStartupEffects";
 
-const WEDDING_MONOGRAM = "C · R";
+const WEDDING_MONOGRAM = "C·R";
 
 /**
  * StartupVisionPro
@@ -116,6 +116,7 @@ export default function StartupVisionPro(): JSX.Element | null {
         <StartupOrb tiltX={tiltX} tiltY={tiltY} />
 
         {scheme === "wedding" ? (
+          <Stack direction="column" sx={{ position: "relative", zIndex: 50, alignItems: "center" }}>
           <Typography
             component={motion.p}
             initial={{ opacity: 0, y: 12 }}
@@ -133,6 +134,23 @@ export default function StartupVisionPro(): JSX.Element | null {
           >
             {WEDDING_MONOGRAM}
           </Typography>
+
+              {/* <Typography             
+              component={motion.p}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35, duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+            sx={{ 
+              flexShrink: 0, 
+              fontSize: "0.86rem", 
+              fontWeight: 700, 
+              ml: 1.5,
+                            color: "primary.main",
+              fontFamily: "var(--font-wedding-serif), Georgia, serif",
+               }}>
+                #CGR #HAPPELYEVERGYAMFI
+              </Typography> */}
+          </Stack>
         ) : (
           <StartupLogo tiltX={tiltX} tiltY={tiltY} scheme={scheme} />
         )}
@@ -153,7 +171,15 @@ export default function StartupVisionPro(): JSX.Element | null {
           }}
         >
           {scheme === "wedding" ? (
-            t("public.preparing")
+            <Stack 
+            direction="column"
+            >
+            {t("public.preparing")}
+                <Typography>
+            #CGR #HAPPELYEVERGYAMFI
+              </Typography>
+            </Stack>
+
           ) : (
             <>
               Powered by <strong>Omnixys</strong>
