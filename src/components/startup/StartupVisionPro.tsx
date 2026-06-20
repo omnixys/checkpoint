@@ -176,7 +176,7 @@ export default function StartupVisionPro(): JSX.Element | null {
             >
             {t("public.preparing")}
                 <Typography>
-            #CGR #HAPPELYEVERGYAMFI
+            #CALEBGETSRICH #HAPPELYEVERGYAMFI
               </Typography>
             </Stack>
 
