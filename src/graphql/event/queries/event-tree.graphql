@@ -3,12 +3,18 @@ query GetEventTree($eventId: ID!) {
     rootEvent {
       id
       name
+      settings {
+        endsAt
+      }
     }
     subEvents {
       id
       name
       parentId
       depth
+      settings {
+        endsAt
+      }
     }
   }
 }
@@ -18,12 +24,18 @@ query GetPublicEventTree($eventId: ID!) {
     rootEvent {
       id
       name
+      settings {
+        endsAt
+      }
     }
     subEvents {
       id
       name
       parentId
       depth
+      settings {
+        endsAt
+      }
     }
   }
 }
@@ -33,10 +45,16 @@ query GetFullEventTreeInfo($eventId: ID!) {
     rootEvent {
       id
       name
+      settings {
+        endsAt
+      }
     }
     subEvents {
       id
       name
+      settings {
+        endsAt
+      }
     }
   }
 }

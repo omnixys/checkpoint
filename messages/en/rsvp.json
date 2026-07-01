@@ -19,6 +19,7 @@
     "lastNameRequired": "Last name is required.",
     "contactRequired": "Please provide at least an email address or phone number.",
     "eventRequired": "Please select at least one event you want to attend.",
+    "eventEndTimeMissing": "The selected event is missing an end time.",
     "multiEventNotSupported": "Selecting multiple sub-events is currently not supported."
   },
 

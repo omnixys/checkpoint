@@ -282,6 +282,11 @@ export function useRsvpForm(invitation: GetInvitationQuery["invitation"]) {
       .map(toGraphQlPlusOne);
 
     const trimmedEmail = state.email.trim();
+    const eventEndsAt = invitation.eventEndsAt;
+
+    if (!eventEndsAt) {
+      throw new Error("Missing event end time for RSVP");
+    }
 
     await replyInvitation({
       variables: {
@@ -291,6 +296,7 @@ export function useRsvpForm(invitation: GetInvitationQuery["invitation"]) {
           replyInput: {
             firstName: state.firstName.trim(),
             lastName: state.lastName.trim(),
+            eventEndsAt,
             email: trimmedEmail || null,
             phoneNumbers: state.phoneNumbers.length > 0 ? state.phoneNumbers : null,
             plusOnes: cleanedPlusOnes.length > 0 ? cleanedPlusOnes : null,

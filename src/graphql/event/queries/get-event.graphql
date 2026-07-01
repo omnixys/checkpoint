@@ -12,6 +12,8 @@ query EventPage($eventId: ID!) {
     timeline {
       id
       eventId
+      referenceId
+      sourceId
       type
       timestamp
       label
@@ -76,6 +78,8 @@ query GetEventSettings($eventId: ID!) {
     timeline {
       id
       eventId
+      referenceId
+      sourceId
       type
       timestamp
       label

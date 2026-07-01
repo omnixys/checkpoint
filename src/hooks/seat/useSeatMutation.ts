@@ -1,34 +1,17 @@
+import { useMutation } from "@apollo/client/react";
 import {
-  EventPageDocument,
-  EventPageQuery,
-  EventPageQueryVariables,
-  GetFullSeatInfoListDocument,
-  GetFullSeatInfoListQuery,
-  GetFullSeatInfoListQueryVariables,
-  GetFullSeatInfoQuery,
-  GetFullSeatInfoQueryVariables,
-  GetSeatInfoDocument,
-  GetSeatInfoListDocument,
-  GetSeatInfoListQuery,
-  GetSeatInfoListQueryVariables,
-  GetSeatInfoQuery,
-  GetSeatInfoQueryVariables,
   RenameSectionDocument,
-  RenameSectionMutation,
-  RenameSectionMutationVariables,
-  SeatListDocument,
-  SeatListQuery,
-  SeatListQueryVariables,
+  type RenameSectionMutation,
+  type RenameSectionMutationVariables,
 } from "@/checkpoint/generated/graphql";
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client/react";
-
-interface Props {}
+import { useMutationError } from "@/checkpoint/hooks/error";
 
 export default function useSeatMutation() {
+  const handleMutationError = useMutationError({ operationName: "RenameSection" });
   const [renameSection, { data }] = useMutation<
     RenameSectionMutation,
     RenameSectionMutationVariables
-  >(RenameSectionDocument);
+  >(RenameSectionDocument, { onError: (error) => void handleMutationError(error) });
 
   return {
     renameSection,

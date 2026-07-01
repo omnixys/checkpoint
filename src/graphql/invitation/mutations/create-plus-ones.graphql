@@ -1,13 +1,13 @@
 # import InvitationFull from "../fragments/invitation.fragment.graphql"
 
-mutation CreatePlusOnesInvitation($input: CreatePlusOneInput!) {
-  createPlusOnesInvitation(input: $input) {
+mutation CreatePlusOnesInvitation($input: CreatePlusOneInput!, $eventEndsAt: DateTime!) {
+  createPlusOnesInvitation(input: $input, eventEndsAt: $eventEndsAt) {
     ...InvitationFull
   }
 }
 
-mutation AddPlusOne($input: CreatePlusOneInput!) {
-  createPlusOnesInvitation(input: $input) {
+mutation AddPlusOne($input: CreatePlusOneInput!, $eventEndsAt: DateTime!) {
+  createPlusOnesInvitation(input: $input, eventEndsAt: $eventEndsAt) {
     id
     firstName
     lastName

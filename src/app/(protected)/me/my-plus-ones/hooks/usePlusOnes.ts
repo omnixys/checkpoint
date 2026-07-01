@@ -36,11 +36,13 @@ export const usePlusOnes = (): UsePlusOnesResult => {
     loadMyInvitationIdList: true,
   });
   const getInvitationId = (eventId: string) => {
-    return myInvitationIdMap.get(eventId)?.id ?? "—";
+    return myInvitationIdMap.get(eventId)?.id ?? null;
   };
-  const invitationId = getInvitationId(eventId ?? "");
+  const invitationId = eventId ? getInvitationId(eventId) : null;
+  const eventEndsAt = activeEvent?.settings?.endsAt ?? null;
 
   const { plusOneInvitationList, plusOneInvitationListLoading } = useInvitationQuery({
+    invitationId: invitationId ?? undefined,
     loadPlusOneInvitationList: true,
   });
 
@@ -79,7 +81,7 @@ export const usePlusOnes = (): UsePlusOnesResult => {
 
   const createPlusOne = useCallback(
     async (input: CreatePlusOneInput) => {
-      if (!invitationId || !eventId) {
+      if (!invitationId || !eventId || !eventEndsAt) {
         enqueueSnackbar(t("plusOnes.errorMissingInvitation"), {
           variant: "error",
         });
@@ -97,6 +99,7 @@ export const usePlusOnes = (): UsePlusOnesResult => {
               email: input.email?.trim() || null,
               phoneNumbers: input.phoneNumbers,
             },
+            eventEndsAt,
           },
         });
 
@@ -109,7 +112,7 @@ export const usePlusOnes = (): UsePlusOnesResult => {
         });
       }
     },
-    [createPlusOneMutation, plusOneInvitationList, enqueueSnackbar, invitationId, t],
+    [createPlusOneMutation, enqueueSnackbar, eventEndsAt, eventId, invitationId, t],
   );
 
   const updatePlusOne = useCallback(

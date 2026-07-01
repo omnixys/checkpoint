@@ -121,8 +121,8 @@ export function useEventSettings(eventId: string) {
     updateSettings: (patch: UpdateSettingsInput) => {
       const normalized = {
         ...patch,
-        startsAt: patch.startsAt ?? undefined,
-        endsAt: patch.endsAt ?? undefined,
+        startsAt: patch.startsAt ?? null,
+        endsAt: patch.endsAt ?? null,
       };
 
       return updateEvent({
@@ -132,6 +132,7 @@ export function useEventSettings(eventId: string) {
             name: null,
             parentId: null,
             settings: normalized,
+            tags: null,
           },
         },
 
@@ -249,6 +250,8 @@ export function useEventSettings(eventId: string) {
         __typename: "EventTimelinePayload",
         id: t.id,
         eventId,
+        referenceId: null,
+        sourceId: null,
         label: t.label,
         timestamp: t.timestamp,
         type: t.type,
@@ -310,6 +313,7 @@ export function useEventSettings(eventId: string) {
             address,
             settings,
             children: [],
+            tags: payload.tags ?? null,
           },
         },
       });

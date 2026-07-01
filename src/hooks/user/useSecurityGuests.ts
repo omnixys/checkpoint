@@ -31,18 +31,22 @@ export function useSecurityGuests(eventId: string) {
 
   // 5️⃣ Aggregation → ViewModel
   const guests: GuestDTO[] = useMemo(() => {
-    return securityTicketList.map((ticket) => ({
-      ticketId: ticket.id,
-      guestId: ticket.guestProfileId,
+    return securityTicketList.map((ticket) => {
+      const checkedInAt = ticket.checkedInAt;
 
-      name: securityGuestMap.get(ticket.guestProfileId) ?? "Unbekannter Gast",
+      return {
+        ticketId: ticket.id,
+        guestId: ticket.guestProfileId,
 
-      seat: fullSeatMap.get(ticket.seatId) ?? undefined,
+        name: securityGuestMap.get(ticket.guestProfileId) ?? "Unbekannter Gast",
 
-      status: ticket.checkedInAt ? "CHECKED_IN" : "NOT_ARRIVED",
-      presence: ticket.currentState,
-      checkedInAt: ticket.checkedInAt ?? undefined,
-    }));
+        seat: fullSeatMap.get(ticket.seatId) ?? undefined,
+
+        status: checkedInAt ? "CHECKED_IN" : "NOT_ARRIVED",
+        presence: ticket.currentState,
+        ...(checkedInAt ? { checkedInAt } : {}),
+      };
+    });
   }, [securityTicketList, securityGuestMap, fullSeatMap]);
 
   return {

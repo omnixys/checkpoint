@@ -8,6 +8,8 @@ query GetGlobalEventInvitationList($eventIds: [ID!]!) {
   getFullByEventIds(eventIds: $eventIds) {
     id
     eventId
+    eventName
+    eventEndsAt
     type
     status
     firstName

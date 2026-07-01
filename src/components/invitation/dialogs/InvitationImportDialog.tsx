@@ -13,23 +13,24 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-
+import DialogTransition from "@/checkpoint/components/DialogTransition";
+import VisionColumnMapping from "@/checkpoint/components/vision/VisionColumnMapping";
 import VisionDropzone from "@/checkpoint/components/vision/VisionDropzone";
+import { VisionOSInfoSheet } from "@/checkpoint/components/vision/VisionOSInfoSheet";
 import { VisionOSProgress } from "@/checkpoint/components/vision/VisionOSProgress";
 import { VisionOSSuccessSheet } from "@/checkpoint/components/vision/VisionOSSuccessSheet";
-import { VisionOSInfoSheet } from "@/checkpoint/components/vision/VisionOSInfoSheet";
-
-import { getLogger } from "@/checkpoint/utils/logger";
-import DialogTransition from "@/checkpoint/components/DialogTransition";
-import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
-import VisionColumnMapping from "@/checkpoint/components/vision/VisionColumnMapping";
 import VisionPreviewTable from "@/checkpoint/components/vision/VisionPreviewTable";
+import { AppError, ErrorCode } from "@/checkpoint/errors/app-error";
+import { useMutationError } from "@/checkpoint/hooks/error";
+import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
+import { getLogger } from "@/checkpoint/utils/logger";
 
 /* ---------------------------------------------------------------------------
  * COMPONENT
  * ------------------------------------------------------------------------- */
 export default function InvitationImportDialog({ logic }: { logic: InvitationLogic }) {
   const logger = getLogger("InvitationImportDialog");
+  const handleMutationError = useMutationError({ operationName: "ImportInvitations" });
 
   const [file, setFile] = useState<File | null>(null);
 
@@ -67,7 +68,10 @@ export default function InvitationImportDialog({ logic }: { logic: InvitationLog
       const uploadResult = await logic.uploadFile(f);
 
       if (!uploadResult?.key) {
-        throw new Error("Upload returned no key");
+        throw new AppError({
+          code: ErrorCode.INVITATION_UPLOAD_INVALID,
+          message: "Invitation upload response was incomplete",
+        });
       }
 
       /**
@@ -79,7 +83,10 @@ export default function InvitationImportDialog({ logic }: { logic: InvitationLog
       });
 
       if (!preview) {
-        throw new Error("Preview returned no data");
+        throw new AppError({
+          code: ErrorCode.INVITATION_PREVIEW_FAILED,
+          message: "Invitation preview response was incomplete",
+        });
       }
 
       /**
@@ -102,22 +109,11 @@ export default function InvitationImportDialog({ logic }: { logic: InvitationLog
       if (preview.errors?.length) {
         setErrors(preview.errors);
       }
-    } catch (err: unknown) {
-      console.error("🔥 FULL ERROR:", err);
-
-      let message = "Upload oder Preview fehlgeschlagen";
-
-      if (err instanceof Error) {
-        message = err.message;
-      } else if (typeof err === "string") {
-        message = err;
-      }
-
-      setErrors([message]);
-
+    } catch (error: unknown) {
+      const appError = handleMutationError(error, { operationName: "PreviewInvitations" });
+      setErrors([appError.message]);
       logger.error("Upload/Preview failed", {
-        message,
-        raw: err,
+        ...appError.toLogContext(),
         fileName: f.name,
         fileSize: f.size,
         fileType: f.type,
@@ -139,7 +135,11 @@ export default function InvitationImportDialog({ logic }: { logic: InvitationLog
       const result = res?.data?.importInvitations;
 
       if (!result) {
-        throw new Error("No result returned");
+        throw new AppError({
+          code: ErrorCode.INTERNAL_SERVER_ERROR,
+          message: "Invitation import response was incomplete",
+          operationName: "ImportInvitations",
+        });
       }
 
       /* ---------------- Backend Result ---------------- */
@@ -162,9 +162,10 @@ export default function InvitationImportDialog({ logic }: { logic: InvitationLog
         logic.setImportOpen(false);
         resetState();
       }, 300);
-    } catch (err) {
-      logger.error("Import failed", err);
-      setErrors(["Import fehlgeschlagen"]);
+    } catch (error) {
+      const appError = handleMutationError(error);
+      logger.error("Import failed", appError.toLogContext());
+      setErrors([appError.message]);
     }
   }
 
@@ -177,7 +178,7 @@ export default function InvitationImportDialog({ logic }: { logic: InvitationLog
         open={logic.importOpen}
         onClose={() => logic.setImportOpen(false)}
         maxWidth="lg"
-        fullWidth
+        fullWidth={true}
         slots={{ transition: DialogTransition }}
       >
         <DialogTitle>Gästeliste importieren</DialogTitle>
@@ -189,8 +190,8 @@ export default function InvitationImportDialog({ logic }: { logic: InvitationLog
             {/* Errors */}
             {errors.length > 0 && (
               <Box color="error.main">
-                {errors.map((e, i) => (
-                  <Typography key={i}>{e}</Typography>
+                {errors.map((error) => (
+                  <Typography key={error}>{error}</Typography>
                 ))}
               </Box>
             )}
@@ -208,9 +209,7 @@ export default function InvitationImportDialog({ logic }: { logic: InvitationLog
                 rows={logic.preview.rows}
                 duplicates={logic.preview.duplicates}
                 errors={logic.preview.errors}
-                onChange={(updated) => {
-                  console.log("UPDATED ROWS", updated);
-                }}
+                onChange={() => undefined}
               />
             )}
           </Stack>

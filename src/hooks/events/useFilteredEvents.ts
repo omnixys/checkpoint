@@ -25,8 +25,15 @@ export function useFilteredEvents(params: {
     const now = Date.now();
 
     const filtered = base.filter((ev) => {
-      const start = new Date(ev.settings?.startsAt).getTime();
-      const end = new Date(ev.settings?.endsAt).getTime();
+      const startsAt = ev.settings?.startsAt;
+      const endsAt = ev.settings?.endsAt;
+
+      if (!startsAt || !endsAt) {
+        return filter === "all";
+      }
+
+      const start = new Date(startsAt).getTime();
+      const end = new Date(endsAt).getTime();
 
       if (filter === "upcoming") return start > now;
       if (filter === "now") return start <= now && end >= now;
@@ -44,8 +51,8 @@ export function useFilteredEvents(params: {
           });
 
     const sorted = [...searched].sort((a, b) => {
-      const aStart = new Date(a.settings?.startsAt).getTime();
-      const bStart = new Date(b.settings?.startsAt).getTime();
+      const aStart = a.settings?.startsAt ? new Date(a.settings.startsAt).getTime() : Infinity;
+      const bStart = b.settings?.startsAt ? new Date(b.settings.startsAt).getTime() : Infinity;
       return aStart - bStart;
     });
 

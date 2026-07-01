@@ -1,16 +1,18 @@
 "use client";
 
+import { Box, Button, Stack, TextField, Typography, useTheme } from "@mui/material";
 import { useMemo, useState } from "react";
-import { Alert, Box, Button, Stack, TextField, Typography, useTheme } from "@mui/material";
 
 import PhoneNumberDialog from "@/checkpoint/components/common/phoneNumber/PhoneNumberDialog";
 import PhoneNumberListAccordion from "@/checkpoint/components/common/phoneNumber/PhoneNumberListAccordion";
 import PlusOneDialog from "@/checkpoint/components/common/plus-one/PlusOneDialog";
 import PlusOneListAccordion from "@/checkpoint/components/common/plus-one/PlusOneListAccordion";
+import type { AppError } from "@/checkpoint/errors/app-error";
+import type { GetInvitationQuery } from "@/checkpoint/generated/graphql";
+import { useFieldError, useMutationError } from "@/checkpoint/hooks/error";
 import { useRsvpForm } from "@/checkpoint/hooks/invitation/useRsvpForm";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { GetInvitationQuery } from "@/checkpoint/generated/graphql";
-import { CallingCodeCountry } from "@/checkpoint/types/country.type";
+import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
 
 type AcceptFormProps = {
   invitation: GetInvitationQuery["invitation"];
@@ -26,7 +28,11 @@ export default function AcceptForm({ invitation, countries, onAccepted }: Accept
 
   const [phoneDialogIndex, setPhoneDialogIndex] = useState<number | null>(null);
   const [plusOneDialogIndex, setPlusOneDialogIndex] = useState<number | null>(null);
-  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<AppError | null>(null);
+  const handleMutationError = useMutationError({ operationName: "ReplyInvitation" });
+  const firstNameError = useFieldError(submitError, "firstName");
+  const lastNameError = useFieldError(submitError, "lastName");
+  const emailError = useFieldError(submitError, "email");
 
   const selectedPhone = useMemo(() => {
     if (phoneDialogIndex === null) {
@@ -50,7 +56,7 @@ export default function AcceptForm({ invitation, countries, onAccepted }: Accept
       await form.submit();
       onAccepted();
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : t("acceptForm.submitError"));
+      setSubmitError(handleMutationError(error));
     }
   };
 
@@ -74,24 +80,30 @@ export default function AcceptForm({ invitation, countries, onAccepted }: Accept
 
         <Stack direction="row" spacing={2}>
           <TextField
-            fullWidth
+            fullWidth={true}
             label={t("acceptForm.firstName")}
             value={form.state.firstName}
+            error={firstNameError !== undefined}
+            helperText={firstNameError}
             onChange={(e) => form.update("firstName", e.target.value)}
           />
 
           <TextField
-            fullWidth
+            fullWidth={true}
             label={t("acceptForm.lastName")}
             value={form.state.lastName}
+            error={lastNameError !== undefined}
+            helperText={lastNameError}
             onChange={(e) => form.update("lastName", e.target.value)}
           />
         </Stack>
 
         <TextField
-          fullWidth
+          fullWidth={true}
           label={t("acceptForm.email")}
           value={form.state.email}
+          error={emailError !== undefined}
+          helperText={emailError}
           onChange={(e) => form.update("email", e.target.value)}
         />
 
@@ -108,8 +120,6 @@ export default function AcceptForm({ invitation, countries, onAccepted }: Accept
           onEdit={setPlusOneDialogIndex}
           onRemove={form.removePlusOne}
         />
-
-        {submitError && <Alert severity="error">{submitError}</Alert>}
 
         <Button variant="contained" disabled={!form.isValid} onClick={handleSubmit}>
           {t("acceptForm.submit")}

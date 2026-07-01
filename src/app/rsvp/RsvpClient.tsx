@@ -237,6 +237,17 @@ export default function RsvpClient({
     return <RsvpSuccess />;
   }
 
+  const resolvePublicEventEndsAt = (selectedEventId: string): string | null => {
+    if (selectedEventId === eventId || selectedEventId === publicEventTree.rootEvent.id) {
+      return publicEventTree.rootEvent.settings?.endsAt ?? null;
+    }
+
+    return (
+      publicEventTree.subEvents?.find((child) => child.id === selectedEventId)?.settings?.endsAt ??
+      null
+    );
+  };
+
   const handleSubmit = async () => {
     const validPhones = getValidPhones();
     const mappedPlusOnes = toGraphQL();
@@ -275,10 +286,18 @@ export default function RsvpClient({
       return;
     }
 
+    const eventEndsAt = resolvePublicEventEndsAt(effectiveEventId);
+
+    if (!eventEndsAt) {
+      setValidationMessages([t("validation.eventEndTimeMissing")]);
+      return;
+    }
+
     await createPublicInvitation({
       variables: {
         input: {
           eventId: effectiveEventId,
+          eventEndsAt,
           firstName: firstName.trim(),
           lastName: lastName.trim(),
           message: null,

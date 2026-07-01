@@ -37,11 +37,16 @@ export default function CalendarGridView({
         {Array.from({ length: 12 }).map((_, m) => {
           const monthDate = new Date(date.getFullYear(), m, 1);
 
-          const monthEvents = events.filter(
-            (e) =>
-              new Date(e.settings?.startsAt).getMonth() === m &&
-              new Date(e.settings?.startsAt).getFullYear() === date.getFullYear(),
-          );
+          const monthEvents = events.filter((e) => {
+            const startsAt = e.settings?.startsAt;
+
+            if (!startsAt) {
+              return false;
+            }
+
+            const startDate = new Date(startsAt);
+            return startDate.getMonth() === m && startDate.getFullYear() === date.getFullYear();
+          });
 
           return (
             <Box

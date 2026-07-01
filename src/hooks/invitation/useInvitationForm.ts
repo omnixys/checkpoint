@@ -13,6 +13,12 @@ export type InvitationFormValues = {
   eventId: string;
 };
 
+type InvitationCreateMetadata = {
+  autoApproveOnAccept: boolean;
+  eventEndsAt: string;
+  eventName: string | null;
+};
+
 export type UseInvitationFormOptions = {
   /**
    * Event id is required for create payload generation.
@@ -69,7 +75,7 @@ export type UseInvitationFormReturn = {
   /**
    * Final GraphQL-ready payload.
    */
-  buildCreateInput: () => InvitationCreateInput;
+  buildCreateInput: (metadata: InvitationCreateMetadata) => InvitationCreateInput;
 };
 
 const DEFAULT_VALUES: InvitationFormValues = {
@@ -214,12 +220,15 @@ export function useInvitationForm({
     );
   }, [values, mergedInitialValues, initialPhoneNumbers, phoneNumbers]);
 
-  const buildCreateInput = useCallback((): InvitationCreateInput => {
+  const buildCreateInput = useCallback((metadata: InvitationCreateMetadata): InvitationCreateInput => {
     const trimmedEmail = values.email.trim();
     const trimmedInvitedByInvitationId = values.invitedByInvitationId.trim();
 
     return {
       eventId: values.eventId,
+      eventName: metadata.eventName,
+      eventEndsAt: metadata.eventEndsAt,
+      autoApproveOnAccept: metadata.autoApproveOnAccept,
       firstName: values.firstName.trim(),
       lastName: values.lastName.trim(),
       email: trimmedEmail !== "" ? trimmedEmail : null,

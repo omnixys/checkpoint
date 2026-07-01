@@ -83,20 +83,24 @@ export default function EventHeaderB({ eventPageData }: EventHeaderProps) {
           }}
         />
 
-        <Typography variant="body1" sx={{ color: theme.palette.primary.contrastText }}>
-          {new Date(eventPageData.settings?.startsAt).toLocaleString("de-DE", {
-            dateStyle: "medium",
-            timeStyle: "short",
-          })}
-        </Typography>
+        {eventPageData.settings?.startsAt && (
+          <Typography variant="body1" sx={{ color: theme.palette.primary.contrastText }}>
+            {new Date(eventPageData.settings.startsAt).toLocaleString("de-DE", {
+              dateStyle: "medium",
+              timeStyle: "short",
+            })}
+          </Typography>
+        )}
 
-        <Typography variant="body2" sx={{ color: theme.palette.primary.contrastText }}>
-          bis{" "}
-          {new Date(eventPageData.settings?.endsAt).toLocaleString("de-DE", {
-            dateStyle: "medium",
-            timeStyle: "short",
-          })}
-        </Typography>
+        {eventPageData.settings?.endsAt && (
+          <Typography variant="body2" sx={{ color: theme.palette.primary.contrastText }}>
+            bis{" "}
+            {new Date(eventPageData.settings.endsAt).toLocaleString("de-DE", {
+              dateStyle: "medium",
+              timeStyle: "short",
+            })}
+          </Typography>
+        )}
       </Stack>
     </Box>
   );

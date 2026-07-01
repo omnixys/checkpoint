@@ -1,6 +1,8 @@
 fragment EventTimeline on EventTimelinePayload {
   id
   eventId
+  referenceId
+  sourceId
   type
   timestamp
   label

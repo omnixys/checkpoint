@@ -106,19 +106,24 @@ export default function EventHeaderD({ eventPageData: ev }: EventHeaderProps) {
               }}
             />
 
-            <Typography variant="body1">
-              {new Date(ev.settings?.startsAt).toLocaleString(locale, {
-                dateStyle: "medium",
-                timeStyle: "short",
-              })}
-            </Typography>
-            <Typography variant="body2">
-              {t("header.until")}{" "}
-              {new Date(ev.settings?.endsAt).toLocaleString(locale, {
-                dateStyle: "medium",
-                timeStyle: "short",
-              })}
-            </Typography>
+            {ev.settings?.startsAt && (
+              <Typography variant="body1">
+                {new Date(ev.settings.startsAt).toLocaleString(locale, {
+                  dateStyle: "medium",
+                  timeStyle: "short",
+                })}
+              </Typography>
+            )}
+
+            {ev.settings?.endsAt && (
+              <Typography variant="body2">
+                {t("header.until")}{" "}
+                {new Date(ev.settings.endsAt).toLocaleString(locale, {
+                  dateStyle: "medium",
+                  timeStyle: "short",
+                })}
+              </Typography>
+            )}
           </Stack>
         </Box>
       </motion.div>

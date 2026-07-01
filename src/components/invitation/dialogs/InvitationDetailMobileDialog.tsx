@@ -86,6 +86,31 @@ export default function InvitationDetailMobileDialog({ logic }: { logic: Invitat
 
   const rsvpUrl = rsvpLinkForInvitationId(inv.id);
 
+  const approveInvitation = async (approved: boolean) => {
+    const eventEndsAt = logic.getEventEndsAt(inv.eventId);
+
+    if (!eventEndsAt) {
+      throw new Error("Missing event end time for invitation approval");
+    }
+
+    await logic.approveInvitationMutation({
+      variables: {
+        input: {
+          eventId: inv.eventId,
+          eventEndsAt,
+          eventName: "",
+          seat: "",
+          seatId: "",
+          invitationId: inv.id,
+          approved,
+        },
+      },
+    });
+
+    await logic.reload();
+    logic.closeInvitation();
+  };
+
   const whatsappInviteText = [
     `Hallo ${inv.firstName} ${inv.lastName}`,
     "du bist herzlich eingeladen.",
@@ -134,23 +159,7 @@ export default function InvitationDetailMobileDialog({ logic }: { logic: Invitat
           <Button
             autoFocus
             variant="contained"
-            onClick={() =>
-              logic
-                .approveInvitationMutation({
-                  variables: {
-                    input: {
-                      //TODO optimieren!!!
-                      eventName: "",
-                      seat: "",
-                      seatId: "",
-                      invitationId: inv.id,
-                      approved: true,
-                    },
-                  },
-                })
-                .then(() => logic.reload())
-                .then(() => logic.closeInvitation())
-            }
+            onClick={() => approveInvitation(true)}
           >
             {tInvitation("approve")}
           </Button>
@@ -167,23 +176,7 @@ export default function InvitationDetailMobileDialog({ logic }: { logic: Invitat
           <Button
             variant="outlined"
             color="warning"
-            onClick={() =>
-              logic
-                .approveInvitationMutation({
-                  //TODO optimieren!!!!
-                  variables: {
-                    input: {
-                      invitationId: inv.id,
-                      approved: false,
-                      eventName: "",
-                      seat: "",
-                      seatId: "",
-                    },
-                  },
-                })
-                .then(() => logic.reload())
-                .then(() => logic.closeInvitation())
-            }
+            onClick={() => approveInvitation(false)}
           >
             {tInvitation("decline")}
           </Button>

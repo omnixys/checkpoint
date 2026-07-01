@@ -94,7 +94,7 @@ export default function ScanContent() {
 
   const result = useMemo(() => {
     if (scanPayload) {
-      return buildScanResult(scanPayload, userInfo, fullSeatInfo);
+      return buildScanResult(scanPayload, userInfo ?? undefined, fullSeatInfo);
     }
 
     return fallbackResult;

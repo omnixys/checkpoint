@@ -1,15 +1,15 @@
 "use client";
 
 import {
-  LoginMutation,
-  LoginMutationVariables,
   LoginDocument,
-  RefreshMutation,
-  RefreshMutationVariables,
-  RefreshDocument,
-  LogoutMutation,
-  LogoutMutationVariables,
+  type LoginMutation,
+  type LoginMutationVariables,
   LogoutDocument,
+  type LogoutMutation,
+  type LogoutMutationVariables,
+  RefreshDocument,
+  type RefreshMutation,
+  type RefreshMutationVariables,
 } from "@/checkpoint/generated/graphql";
 import { getCookie } from "@/checkpoint/lib/apollo/cookie.utils";
 /**
@@ -29,6 +29,7 @@ import { getCookie } from "@/checkpoint/lib/apollo/cookie.utils";
  */
 
 import type { ApolloClient } from "@apollo/client";
+import { AppError, ErrorCode } from "@/checkpoint/errors/app-error";
 
 /**
  * Typed Event Bus
@@ -41,14 +42,14 @@ type AuthEvent =
   | "user:changed";
 
 class AuthEventEmitter {
-  private listeners = new Map<AuthEvent, Array<(p?: any) => void>>();
+  private listeners = new Map<AuthEvent, Array<(payload?: unknown) => void>>();
 
-  on(name: AuthEvent, fn: (p?: any) => void) {
+  on(name: AuthEvent, fn: (payload?: unknown) => void) {
     if (!this.listeners.has(name)) this.listeners.set(name, []);
     this.listeners.get(name)?.push(fn);
   }
 
-  off(name: AuthEvent, fn: (p?: any) => void) {
+  off(name: AuthEvent, fn: (payload?: unknown) => void) {
     const list = this.listeners.get(name);
     if (!list) return;
 
@@ -58,8 +59,10 @@ class AuthEventEmitter {
     );
   }
 
-  emit(name: AuthEvent, payload?: any) {
-    this.listeners.get(name)?.forEach((fn) => fn(payload));
+  emit(name: AuthEvent, payload?: unknown) {
+    this.listeners.get(name)?.forEach((fn) => {
+      fn(payload);
+    });
   }
 }
 
@@ -133,7 +136,11 @@ class AuthManagerClass {
     });
 
     if (!res?.data?.credentialsLogin) {
-      throw new Error("Login failed: missing payload");
+      throw new AppError({
+        code: ErrorCode.INTERNAL_SERVER_ERROR,
+        message: "Login response was incomplete",
+        operationName: "CredentialsLogin",
+      });
     }
 
     /**
@@ -159,7 +166,11 @@ class AuthManagerClass {
     });
 
     if (!res?.data?.refresh) {
-      throw new Error("Refresh failed: missing payload");
+      throw new AppError({
+        code: ErrorCode.INTERNAL_SERVER_ERROR,
+        message: "Refresh response was incomplete",
+        operationName: "Refresh",
+      });
     }
 
     /**
@@ -199,7 +210,10 @@ class AuthManagerClass {
    */
   private assertApollo() {
     if (!this.apollo) {
-      throw new Error("AuthManager not initialized with ApolloClient");
+      throw new AppError({
+        code: ErrorCode.INTERNAL_SERVER_ERROR,
+        message: "Authentication client is not initialized",
+      });
     }
   }
 }

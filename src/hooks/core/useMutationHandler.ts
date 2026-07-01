@@ -1,4 +1,6 @@
 import { useState } from "react";
+import type { AppError } from "@/checkpoint/errors/app-error";
+import { useMutationError } from "@/checkpoint/hooks/error/useMutationError";
 
 /**
  * Local mutation handler
@@ -12,18 +14,23 @@ export function useMutationHandler() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [appError, setAppError] = useState<AppError | null>(null);
+  const handleMutationError = useMutationError();
 
   const execute = async <T>(fn: () => Promise<T>): Promise<T | null> => {
     setLoading(true);
     setError(null);
     setSuccess(false);
+    setAppError(null);
 
     try {
       const result = await fn();
       setSuccess(true);
       return result;
-    } catch (err: any) {
-      setError(err?.message ?? "Unexpected error");
+    } catch (err: unknown) {
+      const normalized = handleMutationError(err);
+      setAppError(normalized);
+      setError(normalized.message);
       return null;
     } finally {
       setLoading(false);
@@ -33,6 +40,7 @@ export function useMutationHandler() {
   const reset = () => {
     setError(null);
     setSuccess(false);
+    setAppError(null);
   };
 
   return {
@@ -40,6 +48,7 @@ export function useMutationHandler() {
     loading,
     error,
     success,
+    appError,
     reset,
   };
 }

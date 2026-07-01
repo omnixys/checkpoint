@@ -16,9 +16,9 @@ import { Metadata } from "next";
 export async function generateMetadata({
   searchParams,
 }: {
-  searchParams: { eventId?: string };
+  searchParams: Promise<{ eventId?: string }>;
 }): Promise<Metadata> {
-  const eventId = searchParams?.eventId;
+  const { eventId } = await searchParams;
 
   /**
    * -------------------------------------------------------------

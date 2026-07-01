@@ -95,6 +95,7 @@ const mapChild = (
     }),
 
     children: [],
+    tags: null,
   };
 };
 
@@ -109,5 +110,6 @@ export const mapEvent = (draft: CreateEventDraft): CreateEventInput => {
 
     children:
       draft.children?.map((child): CreateEventInput => mapChild(child, draft.settings)) ?? [],
+    tags: null,
   };
 };

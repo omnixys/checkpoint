@@ -23,7 +23,7 @@ export default function useUserQuery({ userId, loadUserName = false }: Props) {
     },
   );
 
-  const userInfo = userNameQueryResult.data?.user;
+  const userInfo = userNameQueryResult.data?.getUserList?.[0] ?? null;
 
   return {
     userInfo,

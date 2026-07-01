@@ -1,16 +1,10 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import React, { JSX } from "react";
-import { motion } from "framer-motion";
-
 import LockRoundedIcon from "@mui/icons-material/LockRounded";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-
 import {
-  Alert,
   Box,
   IconButton,
   InputAdornment,
@@ -19,21 +13,23 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-
-import { env } from "@/checkpoint/lib/env";
+import { motion } from "framer-motion";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { type JSX } from "react";
 import { AppleButton } from "@/checkpoint/components/apple/AppleButton";
 import { AppleCard } from "@/checkpoint/components/apple/AppleCard";
+import type { AppError } from "@/checkpoint/errors/app-error";
+import { useFieldError, useMutationError } from "@/checkpoint/hooks/error";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { setCurrentUser } from "@/checkpoint/lib/apollo/auth-context";
 import { AuthManager } from "@/checkpoint/lib/auth/AuthManager";
 import { getCurrentUser } from "@/checkpoint/lib/auth/get-current-user";
-import { useThemeMode } from "@/checkpoint/providers/ThemeModeProvider";
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { env } from "@/checkpoint/lib/env";
 
 export default function LoginForm(): JSX.Element {
   const router = useRouter();
   const searchParams = useSearchParams();
   const theme = useTheme();
-  const { scheme } = useThemeMode();
   const t = useTypedTranslations("auth");
 
   const redirect = searchParams.get("redirect") || env.CHECKPOINT_BASE_PATH;
@@ -41,16 +37,19 @@ export default function LoginForm(): JSX.Element {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [showPw, setShowPw] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
+  const [appError, setAppError] = React.useState<AppError | null>(null);
   const [loading, setLoading] = React.useState(false);
   const [focused, setFocused] = React.useState<string | null>(null);
+  const handleMutationError = useMutationError({ operationName: "CredentialsLogin" });
+  const usernameError = useFieldError(appError, "username");
+  const passwordError = useFieldError(appError, "password");
 
   async function submitForm(): Promise<void> {
     if (loading) return;
 
     try {
       setLoading(true);
-      setError(null);
+      setAppError(null);
 
       await AuthManager.login({ username, password });
       const user = await getCurrentUser();
@@ -59,7 +58,7 @@ export default function LoginForm(): JSX.Element {
 
       router.replace(redirect);
     } catch (e) {
-      setError(t("login.error"));
+      setAppError(handleMutationError(e));
     } finally {
       setLoading(false);
     }
@@ -84,7 +83,7 @@ export default function LoginForm(): JSX.Element {
       {/* Glow */}
       <motion.div
         animate={{ opacity: [0.4, 0.7, 0.4] }}
-        transition={{ duration: 6, repeat: Infinity }}
+        transition={{ duration: 6, repeat: Number.POSITIVE_INFINITY }}
         style={{
           position: "absolute",
           width: 600,
@@ -124,18 +123,13 @@ export default function LoginForm(): JSX.Element {
                 </Typography>
               </Stack>
 
-              {/* Error */}
-              {error && (
-                <motion.div initial={{ x: 0 }} animate={{ x: [-8, 8, -6, 6, 0] }}>
-                  <Alert severity="error">{error}</Alert>
-                </motion.div>
-              )}
-
               {/* Username */}
               <TextField
                 label={t("login.username")}
-                fullWidth
+                fullWidth={true}
                 value={username}
+                error={usernameError !== undefined}
+                helperText={usernameError}
                 onFocus={() => setFocused("username")}
                 onBlur={() => setFocused(null)}
                 onChange={(e) => setUsername(e.target.value)}
@@ -161,8 +155,10 @@ export default function LoginForm(): JSX.Element {
               <TextField
                 label={t("login.password")}
                 type={showPw ? "text" : "password"}
-                fullWidth
+                fullWidth={true}
                 value={password}
+                error={passwordError !== undefined}
+                helperText={passwordError}
                 onFocus={() => setFocused("password")}
                 onBlur={() => setFocused(null)}
                 onChange={(e) => setPassword(e.target.value)}
@@ -193,14 +189,14 @@ export default function LoginForm(): JSX.Element {
 
               {/* CTA */}
               <motion.div whileTap={{ scale: 0.96 }}>
-                <AppleButton type="submit" fullWidth variant="accent" disabled={loading}>
+                <AppleButton type="submit" fullWidth={true} variant="accent" disabled={loading}>
                   {loading ? t("login.submitLoading") : t("login.submit")}
                 </AppleButton>
               </motion.div>
 
               {/* Secondary */}
               <AppleButton
-                fullWidth
+                fullWidth={true}
                 variant="ghost"
                 onClick={() => router.push(env.CHECKPOINT_BASE_PATH)}
               >

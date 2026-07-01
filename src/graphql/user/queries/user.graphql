@@ -1,13 +1,13 @@
 # import UserFull from "../fragments/user.fragment.graphql"
 
 query User($id: ID!) {
-  user(id: $id) {
+  getUserList(userIds: [$id]) {
     ...UserFull
   }
 }
 
 query GetUserName($id: ID!) {
-  user(id: $id) {
+  getUserList(userIds: [$id]) {
     personalInfo {
       firstName
       lastName

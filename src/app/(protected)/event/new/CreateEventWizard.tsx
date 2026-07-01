@@ -1,9 +1,11 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useMutation } from "@apollo/client/react";
 import { Box, Stack, useTheme } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
-
+import { useCallback, useState } from "react";
+import CreateEventActionBar from "@/checkpoint/app/(protected)/event/new/CreateEventActionBar";
+import CreateEventHeader from "@/checkpoint/app/(protected)/event/new/CreateEventHeader";
 import AddressStep from "@/checkpoint/app/(protected)/event/new/components/step/AddressStep";
 import BasicsStep from "@/checkpoint/app/(protected)/event/new/components/step/BasicsStep";
 import ChildrenStep from "@/checkpoint/app/(protected)/event/new/components/step/ChildrenStep";
@@ -12,28 +14,22 @@ import SettingsStep from "@/checkpoint/app/(protected)/event/new/components/step
 import SuccessStep from "@/checkpoint/app/(protected)/event/new/components/step/SuccessStep";
 import SummaryStep from "@/checkpoint/app/(protected)/event/new/components/step/SummaryStep";
 import VisibilityStep from "@/checkpoint/app/(protected)/event/new/components/step/VisibilityStep";
-
-import CreateEventActionBar from "@/checkpoint/app/(protected)/event/new/CreateEventActionBar";
-import CreateEventHeader from "@/checkpoint/app/(protected)/event/new/CreateEventHeader";
-
+import { useCreateEvent } from "@/checkpoint/app/(protected)/event/new/context/CreateEventContext";
 import { useCreateEventWizard } from "@/checkpoint/app/(protected)/event/new/hooks/useCreateEventWizard";
 import { scrollToFirstError } from "@/checkpoint/app/(protected)/event/new/hooks/useScrollToError";
+import { mapEvent } from "@/checkpoint/app/(protected)/event/new/types/event/event-draft.type";
 import { CreateEventWizardStep } from "@/checkpoint/app/(protected)/event/new/types/event/event-wizard.type";
-
-import { useCreateEvent } from "@/checkpoint/app/(protected)/event/new/context/CreateEventContext";
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { AppError, ErrorCode } from "@/checkpoint/errors/app-error";
 import {
   CreateEventDocument,
-  CreateEventMutation,
-  CreateEventMutationVariables,
+  type CreateEventMutation,
+  type CreateEventMutationVariables,
 } from "@/checkpoint/generated/graphql";
-import { mapEvent } from "@/checkpoint/app/(protected)/event/new/types/event/event-draft.type";
 import { useUploadMedia } from "@/checkpoint/hooks/common/useUploadMedia";
-import { useMutation } from "@apollo/client/react";
+import { useMutationError } from "@/checkpoint/hooks/error";
 
 export default function CreateEventWizard() {
   const theme = useTheme();
-  const t = useTypedTranslations("create");
   const [eventId, setEventId] = useState<string | undefined>(undefined);
 
   /**
@@ -57,49 +53,8 @@ export default function CreateEventWizard() {
     CreateEventDocument,
   );
 
-  const { uploads, clearUploads, patchSettings } = useCreateEvent();
-
-  const handleCreateEvent2 = useCallback(async () => {
-    /**
-     * 1. VALIDATE
-     */
-    const result = form.validate();
-
-    if (!result.valid) {
-      scrollToFirstError(form.errors);
-      return;
-    }
-
-    /**
-     * 2. CREATE EVENT
-     */
-    const input = mapEvent(draft);
-
-    const res = await create({
-      variables: { input },
-    });
-
-    const newEventId = res.data?.createEvent.id;
-    setEventId(newEventId);
-
-    if (!newEventId) {
-      throw new Error("Event creation failed");
-    }
-
-    /**
-     * 3. UPLOAD FILES
-     */
-    for (const item of uploads) {
-      await upload(newEventId, item.file, item.type);
-    }
-
-    /**
-     * 4. CLEANUP
-     */
-    clearUploads();
-
-    nextStep();
-  }, [draft, uploads, create, upload, form, clearUploads]);
+  const { uploads, clearUploads } = useCreateEvent();
+  const handleMutationError = useMutationError({ operationName: "CreateEvent" });
 
   const handleCreateEvent = useCallback(async () => {
     const result = form.validate();
@@ -112,29 +67,32 @@ export default function CreateEventWizard() {
     /**
      * 1. CREATE EVENT
      */
-    const res = await create({
-      variables: { input: mapEvent(draft) },
-    });
+    try {
+      const res = await create({
+        variables: { input: mapEvent(draft) },
+      });
 
-    const eventId = res.data?.createEvent.id;
+      const createdEventId = res.data?.createEvent.id;
 
-    if (!eventId) {
-      throw new Error("Event creation failed");
+      if (!createdEventId) {
+        throw new AppError({
+          code: ErrorCode.INTERNAL_SERVER_ERROR,
+          message: "Event creation response was incomplete",
+          operationName: "CreateEvent",
+        });
+      }
+
+      setEventId(createdEventId);
+      for (const item of uploads) {
+        await upload(createdEventId, item.file, item.type);
+      }
+
+      clearUploads();
+      nextStep();
+    } catch (error) {
+      handleMutationError(error);
     }
-
-    /**
-     * 2. UPLOAD FILES
-     */
-    const uploaded: Record<string, string> = {};
-
-    for (const item of uploads) {
-      const result = await upload(eventId, item.file, item.type);
-      uploaded[item.type] = result.url;
-    }
-
-    clearUploads();
-    nextStep();
-  }, [draft, uploads, upload, create, form]);
+  }, [clearUploads, create, draft, form, handleMutationError, nextStep, upload, uploads]);
 
   const handleNext = useCallback(() => {
     const result = form.validate();
@@ -234,7 +192,7 @@ export default function CreateEventWizard() {
             <CreateEventActionBar
               previousStep={previousStep}
               activeStep={activeStep}
-              onNext={nextStep}
+              onNext={handleNext}
               onSubmit={handleCreateEvent}
             />
           )}

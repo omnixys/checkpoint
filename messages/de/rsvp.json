@@ -19,6 +19,7 @@
     "lastNameRequired": "Nachname ist erforderlich.",
     "contactRequired": "Bitte gib mindestens eine E-Mail-Adresse oder Telefonnummer an.",
     "eventRequired": "Bitte wähle mindestens ein Event aus, an dem du teilnehmen möchtest.",
+    "eventEndTimeMissing": "Dem ausgewählten Event fehlt eine Endzeit.",
     "multiEventNotSupported": "Mehrfachauswahl von Teil-Events wird aktuell noch nicht unterstützt."
   },
 

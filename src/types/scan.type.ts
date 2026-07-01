@@ -38,7 +38,7 @@ export type ScanResult = {
 
   ticket?: TicketPayload;
 
-  guest?: GetUserNameQuery["user"] | undefined;
+  guest?: GetUserNameQuery["getUserList"][number] | undefined;
 
   seat?: GetFullSeatInfoQuery['seat'] | undefined;
 };

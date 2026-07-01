@@ -47,12 +47,8 @@ export function mapSettingsToUpdateInput(
     dressCode: payload.dressCode ?? null,
     description: payload.description ?? null,
 
-    /**
-     * Convert ISO string → Date
-     * Required because backend expects GraphQLISODateTime (Date)
-     */
-    startsAt: payload.startsAt ? new Date(payload.startsAt) : undefined,
-    endsAt: payload.endsAt ? new Date(payload.endsAt) : undefined,
+    startsAt: payload.startsAt ?? null,
+    endsAt: payload.endsAt ?? null,
 
     ...(payload.allowPublicRsvp !== undefined && { allowPublicRsvp: payload.allowPublicRsvp }),
     ...(payload.allowPublicPlusOne !== undefined && {

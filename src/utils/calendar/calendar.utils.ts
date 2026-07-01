@@ -20,7 +20,13 @@ export function groupEventsByDay(
     return;
   }
   for (const event of events) {
-    const key = getDateKey(event.settings?.startsAt);
+    const startsAt = event.settings?.startsAt;
+
+    if (!startsAt) {
+      continue;
+    }
+
+    const key = getDateKey(startsAt);
 
     if (!map.has(key)) {
       map.set(key, []);
@@ -38,5 +44,5 @@ export function groupEventsByDay(
 export function getEventsForDay(events: readonly any[], date: Date): any[] {
   const key = getDateKey(date);
 
-  return events.filter((e) => getDateKey(e.settings.startsAt) === key);
+  return events.filter((e) => e.settings?.startsAt && getDateKey(e.settings.startsAt) === key);
 }

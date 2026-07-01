@@ -3,10 +3,12 @@
 // import AppShell from "@/components/layout/AppShell";
 import { usePathname } from "next/navigation";
 import type React from "react";
+import ErrorBoundary from "@/checkpoint/components/error/ErrorBoundary";
 import AppShell from "@/checkpoint/components/layout/AppShell";
 import { env } from "@/checkpoint/lib/env";
 import ThemeRegistry from "@/checkpoint/lib/mui/ThemeRegistry";
 import { ApolloRootProvider } from "@/checkpoint/providers/ApolloProvider";
+import { ErrorProvider } from "@/checkpoint/providers/ErrorProvider";
 import OnboardingProvider from "@/checkpoint/providers/OnboardingProvider";
 import SwipeBackProvider from "@/checkpoint/providers/SwipeBackProvider";
 import TourProvider from "@/checkpoint/providers/TourProvider";
@@ -38,25 +40,29 @@ export default function Provider({ children, initialThemeProfile }: ProviderProp
     <DeviceProvider>
       <ThemeModeProvider initialThemeProfile={initialThemeProfile}>
         <ThemeRegistry>
-          <ApolloRootProvider>
-            <AuthProvider>
-              <ActiveEventProvider>
-                <DateProvider>
-                  <TourProvider>
-                    <OnboardingProvider>
-                      {isAuthRoute ? (
-                        children
-                      ) : (
-                        <SwipeBackProvider>
-                          <AppShell>{children}</AppShell>
-                        </SwipeBackProvider>
-                      )}
-                    </OnboardingProvider>
-                  </TourProvider>
-                </DateProvider>
-              </ActiveEventProvider>
-            </AuthProvider>
-          </ApolloRootProvider>
+          <ErrorProvider>
+            <ErrorBoundary>
+              <ApolloRootProvider>
+                <AuthProvider>
+                  <ActiveEventProvider>
+                    <DateProvider>
+                      <TourProvider>
+                        <OnboardingProvider>
+                          {isAuthRoute ? (
+                            children
+                          ) : (
+                            <SwipeBackProvider>
+                              <AppShell>{children}</AppShell>
+                            </SwipeBackProvider>
+                          )}
+                        </OnboardingProvider>
+                      </TourProvider>
+                    </DateProvider>
+                  </ActiveEventProvider>
+                </AuthProvider>
+              </ApolloRootProvider>
+            </ErrorBoundary>
+          </ErrorProvider>
         </ThemeRegistry>
       </ThemeModeProvider>
     </DeviceProvider>

@@ -106,14 +106,16 @@ export default function RSVPSuccessPage() {
                 {t("success.description")}
               </Typography>
 
-                 <Typography color="text.secondary" sx={{ 
+              <Typography
+                sx={{
                   lineHeight: 1.8,
-                  maxWidth: 420,                   
+                  maxWidth: 420,
                   fontFamily: "var(--font-wedding-serif), Georgia, serif",
-                  fontSize: "1.15rem", 
-                  color: theme.palette.primary.main,
-                  }}>
-               #CALEBGETSRICH  {<br/>}       #HAPPELYEVERGYAMFI
+                  fontSize: "1.15rem",
+                  color: "primary.main",
+                }}
+              >
+                #CALEBGETSRICH <br /> #HAPPELYEVERGYAMFI
               </Typography>
 
               <Box

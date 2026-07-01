@@ -1,4 +1,154 @@
 import type { CodegenConfig } from "@graphql-codegen/cli";
+import {
+  buildClientSchema,
+  getIntrospectionQuery,
+  parse,
+  printSchema,
+  type DocumentNode,
+  type IntrospectionQuery,
+} from "graphql";
+
+const schemaEndpoint =
+  process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT ??
+  process.env.NEXT_PUBLIC_BACKEND_SERVER_URL ??
+  "http://localhost:8000/graphql";
+
+const generatedTypeConfig = {
+  /**
+   * Enforces strict typing across the entire schema.
+   */
+  avoidOptionals: true,
+
+  /**
+   * Use string unions instead of enums for better DX and no runtime cost.
+   */
+  enumsAsTypes: true,
+
+  /**
+   * Explicit null handling instead of undefined.
+   */
+  maybeValue: "T | null",
+
+  /**
+   * Backend DateTime values are transported as ISO strings.
+   */
+  scalars: {
+    DateTime: {
+      input: "string",
+      output: "string",
+    },
+  },
+
+  /**
+   * Required for Apollo cache normalization.
+   */
+  nonOptionalTypename: true,
+
+  /**
+   * Uses `import type` to avoid runtime overhead.
+   */
+  useTypeImports: true,
+
+  /**
+   * Simplifies generated types and removes unnecessary wrappers.
+   */
+  preResolveTypes: true,
+
+  /**
+   * Ensures operations are strongly typed and safer.
+   */
+  dedupeFragments: true,
+};
+
+type IntrospectionDirective = {
+  locations?: unknown;
+};
+
+type IntrospectionResponseBody = {
+  data?: {
+    __schema?: {
+      directives?: IntrospectionDirective[];
+    };
+  };
+};
+
+async function sanitizeIntrospectionFetch(
+  input: RequestInfo | URL,
+  init?: RequestInit,
+): Promise<Response> {
+  const response = await fetch(input, init);
+  const contentType = response.headers.get("content-type") ?? "";
+
+  if (!contentType.includes("application/json")) {
+    return response;
+  }
+
+  let body: IntrospectionResponseBody;
+
+  try {
+    body = (await response.clone().json()) as IntrospectionResponseBody;
+  } catch {
+    return response;
+  }
+
+  const directives = body.data?.__schema?.directives;
+  let changed = false;
+
+  if (Array.isArray(directives)) {
+    for (const directive of directives) {
+      if (!Array.isArray(directive.locations)) {
+        continue;
+      }
+
+      const locations = directive.locations.filter(
+        (location) => location !== "DIRECTIVE_DEFINITION",
+      );
+
+      if (locations.length !== directive.locations.length) {
+        directive.locations = locations;
+        changed = true;
+      }
+    }
+  }
+
+  if (!changed) {
+    return response;
+  }
+
+  const headers = new Headers(response.headers);
+  headers.set("content-type", "application/json");
+  headers.delete("content-length");
+
+  return new Response(JSON.stringify(body), {
+    headers,
+    status: response.status,
+    statusText: response.statusText,
+  });
+}
+
+async function loadSanitizedSchemaDocument(pointer: string): Promise<DocumentNode> {
+  const response = await sanitizeIntrospectionFetch(pointer, {
+    body: JSON.stringify({ query: getIntrospectionQuery() }),
+    headers: {
+      "content-type": "application/json",
+    },
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to load GraphQL schema from ${pointer}: ${response.status}`);
+  }
+
+  const body = (await response.json()) as IntrospectionResponseBody;
+
+  if (!body.data) {
+    throw new Error(`GraphQL introspection response from ${pointer} did not include data`);
+  }
+
+  const schema = buildClientSchema(body.data as IntrospectionQuery);
+
+  return parse(printSchema(schema));
+}
 
 /**
  * GraphQL Code Generator configuration (STRICT .graphql ONLY).
@@ -19,8 +169,14 @@ const config: CodegenConfig = {
    *
    * Always configurable via env for multi-environment setups.
    */
-  schema:
-    process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT ?? "http://localhost:8000/graphql",
+  schema: [
+    {
+      [schemaEndpoint]: {
+        loader: loadSanitizedSchemaDocument,
+        customFetch: sanitizeIntrospectionFetch,
+      },
+    },
+  ],
 
   /**
    * ONLY .graphql documents.
@@ -32,46 +188,32 @@ const config: CodegenConfig = {
 
   generates: {
     /**
+     * Shared schema TypeScript output.
+     */
+    "src/generated/schema.ts": {
+      plugins: ["typescript"],
+      config: generatedTypeConfig,
+    },
+
+    /**
      * Main generated TypeScript output.
      */
     "src/generated/graphql.ts": {
-      plugins: ["typescript", "typescript-operations", "typed-document-node"],
-      config: {
-        /**
-         * Enforces strict typing across the entire schema.
-         */
-        avoidOptionals: true,
-
-        /**
-         * Use string unions instead of enums for better DX and no runtime cost.
-         */
-        enumsAsTypes: true,
-
-        /**
-         * Explicit null handling instead of undefined.
-         */
-        maybeValue: "T | null",
-
-        /**
-         * Required for Apollo cache normalization.
-         */
-        nonOptionalTypename: true,
-
-        /**
-         * Uses `import type` to avoid runtime overhead.
-         */
-        useTypeImports: true,
-
-        /**
-         * Simplifies generated types and removes unnecessary wrappers.
-         */
-        preResolveTypes: true,
-
-        /**
-         * Ensures operations are strongly typed and safer.
-         */
-        dedupeFragments: true,
-      },
+      plugins: [
+        {
+          add: {
+            content: 'export type * from "./schema";',
+          },
+        },
+        {
+          "typescript-operations": {
+            importSchemaTypesFrom: "src/generated/schema",
+            namespacedImportName: "Types",
+          },
+        },
+        "typed-document-node",
+      ],
+      config: generatedTypeConfig,
     },
 
     /**

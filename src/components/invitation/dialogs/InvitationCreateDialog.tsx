@@ -1,30 +1,31 @@
 "use client";
 
-import React, { useState } from "react";
 import {
+  alpha,
+  Box,
+  Button,
   Dialog,
+  DialogActions,
   DialogContent,
   DialogTitle,
-  DialogActions,
-  Button,
-  Stack,
-  Typography,
-  TextField,
-  Box,
   MenuItem,
+  Stack,
+  TextField,
+  type Theme,
+  Typography,
   useTheme,
-  alpha,
-  Theme,
 } from "@mui/material";
 import { useParams } from "next/navigation";
-
-import DialogTransition from "@/checkpoint/components/DialogTransition";
+import type React from "react";
+import { useState } from "react";
 import PhoneNumberListAccordion from "@/checkpoint/components/common/phoneNumber/PhoneNumberListAccordion";
-
+import DialogTransition from "@/checkpoint/components/DialogTransition";
+import type { AppError } from "@/checkpoint/errors/app-error";
+import { useFieldError, useMutationError } from "@/checkpoint/hooks/error";
 import { useInvitationForm } from "@/checkpoint/hooks/invitation/useInvitationForm";
-import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
-import { CallingCodeCountry } from "@/checkpoint/types/country.type";
+import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
 
 /**
  * Props for InvitationCreateDialog
@@ -75,7 +76,10 @@ function Section({
  * - Handle form state
  * - Submit data via InvitationLogic
  */
-export default function InvitationCreateDialog({ logic, callingCodeCountries }: Props) {
+export default function InvitationCreateDialog({
+  logic,
+  callingCodeCountries: _callingCodeCountries,
+}: Props) {
   const tInvitation = useTypedTranslations("invitation");
   const tCommon = useTypedTranslations("common");
 
@@ -84,6 +88,11 @@ export default function InvitationCreateDialog({ logic, callingCodeCountries }: 
   const eventId = String(params.id);
 
   const [loading, setLoading] = useState(false);
+  const [appError, setAppError] = useState<AppError | null>(null);
+  const handleMutationError = useMutationError({ operationName: "CreateInvitation" });
+  const firstNameError = useFieldError(appError, "firstName");
+  const lastNameError = useFieldError(appError, "lastName");
+  const emailError = useFieldError(appError, "email");
 
   const {
     values,
@@ -91,7 +100,6 @@ export default function InvitationCreateDialog({ logic, callingCodeCountries }: 
     phoneNumbers,
     addPhone,
     removePhone,
-    updatePhone,
     isValid,
     resetForm,
     buildCreateInput,
@@ -117,17 +125,29 @@ export default function InvitationCreateDialog({ logic, callingCodeCountries }: 
 
     try {
       setLoading(true);
+      setAppError(null);
+
+      const selectedEvent = logic.allEventOptions.find((event) => event.id === values.eventId);
+      const eventEndsAt = selectedEvent?.settings?.endsAt;
+
+      if (!eventEndsAt) {
+        throw new Error("Missing event end time for invitation creation");
+      }
 
       await logic.createInvitationMutation({
         variables: {
-          input: buildCreateInput(),
+          input: buildCreateInput({
+            autoApproveOnAccept: false,
+            eventEndsAt,
+            eventName: selectedEvent?.name ?? null,
+          }),
         },
       });
 
       await logic.reload();
       handleClose();
     } catch (error) {
-      console.error("Failed to create invitation", error);
+      setAppError(handleMutationError(error));
     } finally {
       setLoading(false);
     }
@@ -138,7 +158,7 @@ export default function InvitationCreateDialog({ logic, callingCodeCountries }: 
       open={logic.createOpen}
       onClose={handleClose}
       maxWidth="md"
-      fullWidth
+      fullWidth={true}
       slots={{
         transition: DialogTransition,
       }}
@@ -183,24 +203,30 @@ export default function InvitationCreateDialog({ logic, callingCodeCountries }: 
             <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
               <TextField
                 label={tInvitation("createInv.firstName")}
-                fullWidth
-                autoFocus
+                fullWidth={true}
+                autoFocus={true}
                 value={values.firstName}
+                error={firstNameError !== undefined}
+                helperText={firstNameError}
                 onChange={(e) => setField("firstName", e.target.value)}
               />
 
               <TextField
                 label={tInvitation("createInv.lastName")}
-                fullWidth
+                fullWidth={true}
                 value={values.lastName}
+                error={lastNameError !== undefined}
+                helperText={lastNameError}
                 onChange={(e) => setField("lastName", e.target.value)}
               />
             </Stack>
 
             <TextField
               label={tInvitation("createInv.email")}
-              fullWidth
+              fullWidth={true}
               value={values.email}
+              error={emailError !== undefined}
+              helperText={emailError}
               onChange={(e) => setField("email", e.target.value)}
             />
           </Section>
@@ -209,10 +235,7 @@ export default function InvitationCreateDialog({ logic, callingCodeCountries }: 
             <PhoneNumberListAccordion
               values={phoneNumbers}
               onAdd={addPhone}
-              onEdit={(index) => {
-                // Editing logic can open a modal or inline edit
-                console.log("Edit phone index:", index);
-              }}
+              onEdit={() => undefined}
               onRemove={removePhone}
             />
           </Section>
@@ -222,14 +245,14 @@ export default function InvitationCreateDialog({ logic, callingCodeCountries }: 
             <TextField
               type="number"
               label={tInvitation("createInv.maxInvitees")}
-              fullWidth
+              fullWidth={true}
               value={values.maxInvitees}
               onChange={(e) => setField("maxInvitees", Math.max(0, Number(e.target.value) || 0))}
             />
 
             <TextField
-              select
-              fullWidth
+              select={true}
+              fullWidth={true}
               label={tInvitation("createInv.invitedBy")}
               value={values.eventId}
               onChange={(e) => setField("eventId", e.target.value)}

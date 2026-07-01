@@ -11,6 +11,8 @@ query GetInvitation($invitationId: ID!) {
     id
     status
     eventId
+    eventName
+    eventEndsAt
 
     firstName
     lastName

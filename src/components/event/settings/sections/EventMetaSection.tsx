@@ -124,6 +124,7 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
         rsvpDeadline: new Date(Date.now() + 1000 * 60 * 60 * 5).toISOString(),
       },
       children: [],
+      tags: null,
     };
 
     const result = await execute(() => actions.addChild(payload));

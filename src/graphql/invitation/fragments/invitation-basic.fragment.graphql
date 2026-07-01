@@ -4,6 +4,8 @@ fragment InvitationBase on InvitationPayload {
   firstName
   lastName
   eventId
+  eventName
+  eventEndsAt
   guestProfileId
   email
 
