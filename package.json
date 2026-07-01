@@ -38,7 +38,7 @@
     "@mui/lab": "9.0.0-beta.2",
     "@mui/material": "^9.0.0",
     "@mui/x-date-pickers": "^9.0.0",
-    "@omnixys/contracts": "file:../../packages/ts/contracts",
+    "@omnixys/contracts": "^2.0.1",
     "@react-hook/window-size": "^3.1.1",
     "@react-spring/web": "^10.0.3",
     "@vercel/analytics": "^2.0.1",

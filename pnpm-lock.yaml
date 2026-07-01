@@ -48,8 +48,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.4))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.4))(@types/react@19.2.14)(react@19.2.4))(@mui/material@9.0.0(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.4))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.4))(@types/react@19.2.14)(react@19.2.4))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@mui/system@9.0.0(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.4))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.4))(@types/react@19.2.14)(react@19.2.4))(@types/react@19.2.14)(react@19.2.4))(@types/react@19.2.14)(date-fns@4.1.0)(dayjs@1.11.20)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@omnixys/contracts':
-        specifier: file:../../packages/ts/contracts
-        version: file:../../packages/ts/contracts(@nestjs/common@11.1.27(reflect-metadata@0.2.2)(rxjs@7.8.2))
+        specifier: ^2.0.1
+        version: 2.0.1(@nestjs/common@11.1.27(reflect-metadata@0.2.2)(rxjs@7.8.2))
       '@react-hook/window-size':
         specifier: ^3.1.1
         version: 3.1.1(react@19.2.4)
@@ -1601,8 +1601,8 @@ packages:
   '@octokit/types@16.0.0':
     resolution: {integrity: sha512-sKq+9r1Mm4efXW1FCk7hFSeJo4QKreL/tTbR0rz/qx/r1Oa2VV83LTA/H/MuCOX7uCIJmQVRKBcbmWoySjAnSg==}
 
-  '@omnixys/contracts@file:../../packages/ts/contracts':
-    resolution: {directory: ../../packages/ts/contracts, type: directory}
+  '@omnixys/contracts@2.0.1':
+    resolution: {integrity: sha512-zXh1l2kfAhmryvho5mMtJe8z3MTVHtK++wSh1Sbpv4Xkb5w6cpf13F+tBRLDTnHgO9QfA8MmNgZljD0PxOYzxQ==, tarball: https://npm.pkg.github.com/download/@omnixys/contracts/2.0.1/8a65bb2fd85ba45b7d4b559efc7eb2b85425937b}
     engines: {node: '>=20'}
     peerDependencies:
       '@nestjs/common': ^11.1.27
@@ -7051,7 +7051,7 @@ snapshots:
     dependencies:
       '@octokit/openapi-types': 27.0.0
 
-  '@omnixys/contracts@file:../../packages/ts/contracts(@nestjs/common@11.1.27(reflect-metadata@0.2.2)(rxjs@7.8.2))':
+  '@omnixys/contracts@2.0.1(@nestjs/common@11.1.27(reflect-metadata@0.2.2)(rxjs@7.8.2))':
     dependencies:
       '@nestjs/common': 11.1.27(reflect-metadata@0.2.2)(rxjs@7.8.2)
       zod: 4.3.6
