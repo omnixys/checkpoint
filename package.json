@@ -12,7 +12,8 @@
     "test:unit": "vitest run src/errors src/lib/apollo",
     "test:components": "vitest run src/components/error src/hooks/error",
     "test:types": "tsc --noEmit",
-    "release": "semantic-release"
+    "release": "semantic-release",
+     "preinstall": "node scripts/setup-npmrc.js"
   },
   "main": "src/index.ts",
   "types": "src/index.ts",
