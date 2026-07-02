@@ -99,7 +99,9 @@ const backgroundColor = React.useMemo(() => {
           position: "absolute",
           left: x ?? 0,
           top: y ?? 0,
-          transform: rotation ? `rotate(${rotation}deg)` : undefined,
+          transform: rotation
+            ? `translate(-50%, -50%) rotate(${rotation}deg)`
+            : "translate(-50%, -50%)",
           width: 28,
           height: 28,
           borderRadius: "50%",
@@ -127,7 +129,9 @@ const backgroundColor = React.useMemo(() => {
           transition: "opacity 0.2s, transform 0.15s, box-shadow 0.15s",
           opacity: isFilterActive ? (highlighted ? 1 : 0.15) : 1,
           "&:hover": {
-            transform: rotation ? `rotate(${rotation}deg) scale(1.3)` : "scale(1.3)",
+            transform: rotation
+              ? `translate(-50%, -50%) rotate(${rotation}deg) scale(1.3)`
+              : "translate(-50%, -50%) scale(1.3)",
             boxShadow: 4,
             zIndex: 100,
           },

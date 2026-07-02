@@ -106,6 +106,7 @@ export default function SeatMapEditorToolbar({
   return (
     <Stack
       spacing={0.5}
+      data-testid="editor-toolbar"
       sx={{
         position: "absolute",
         top: 72,

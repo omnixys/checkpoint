@@ -13,9 +13,13 @@
     "test:components": "vitest run src/components/error src/hooks/error",
     "test:types": "tsc --noEmit",
     "release": "semantic-release",
-     "preinstall": "node scripts/setup-npmrc.js"
+    "preinstall": "node scripts/setup-npmrc.js",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:chromium": "playwright test --project=chromium",
+    "test:e2e:debug": "playwright test --debug"
   },
-    "packageManager": "pnpm@10.33.0",
+  "packageManager": "pnpm@10.33.0",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "files": [
@@ -91,6 +95,7 @@
     "@graphql-codegen/typescript-operations": "^6.0.5",
     "@graphql-codegen/typescript-react-apollo": "^4.4.1",
     "@graphql-typed-document-node/core": "^3.2.0",
+    "@playwright/test": "^1.61.1",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^13.0.1",
     "@semantic-release/git": "^10.0.1",
@@ -108,6 +113,7 @@
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
     "depcheck": "^1.4.7",
+    "dotenv": "^17.4.2",
     "jsdom": "^29.1.1",
     "semantic-release": "^25.0.3",
     "typescript": "^5",

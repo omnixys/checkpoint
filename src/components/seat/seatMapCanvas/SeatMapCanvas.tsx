@@ -6,6 +6,7 @@ import type { SeatListQuery } from "@/checkpoint/generated/graphql";
 import { Box, Chip, IconButton, LinearProgress, Stack, Tooltip } from "@mui/material";
 import { ZoomIn, ZoomOut, FitScreen } from "@mui/icons-material";
 import SeatNode from "./SeatNode";
+import SeatMapDebugOverlay from "./SeatMapDebugOverlay";
 import type { SelectedItem } from "./SeatMapEditorToolbar";
 
 type Props = {
@@ -70,8 +71,21 @@ export default function SeatMapCanvas({
   const [dragging, setDragging] = useState(false);
   const [dragState, setDragState] = useState<DragState | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [showDebug, setShowDebug] = useState(false);
+  const [mouseCanvasPos, setMouseCanvasPos] = useState({ x: 0, y: 0 });
   const dragStart = useRef({ x: 0, y: 0 });
   const translateStart = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === "D") {
+        e.preventDefault();
+        setShowDebug((p) => !p);
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const hasFilter = highlightedSeatIds !== undefined;
 
@@ -93,36 +107,26 @@ export default function SeatMapCanvas({
   const bounds = useMemo(() => {
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     for (const section of sections) {
-      if (section.x != null && section.y != null) {
-        minX = Math.min(minX, section.x);
-        minY = Math.min(minY, section.y);
-        maxX = Math.max(maxX, section.x + (section.width ?? 400));
-        maxY = Math.max(maxY, section.y + (section.height ?? 300));
-      }
-      for (const table of section.tables ?? []) {
-        if (table.x != null && table.y != null) {
+      const cx = section.x ?? 0;
+      const cy = section.y ?? 0;
+      const sw = section.width;
+      const sh = section.height;
+
+      if (sw != null && sh != null) {
+        minX = Math.min(minX, cx - sw / 2);
+        minY = Math.min(minY, cy - sh / 2);
+        maxX = Math.max(maxX, cx + sw / 2);
+        maxY = Math.max(maxY, cy + sh / 2);
+      } else {
+        for (const table of section.tables ?? []) {
+          const tx = cx + (table.x ?? 0);
+          const ty = cy + (table.y ?? 0);
           const tw = table.width ?? 120;
-          const th = table.height ?? 80;
-          minX = Math.min(minX, table.x);
-          minY = Math.min(minY, table.y);
-          maxX = Math.max(maxX, table.x + tw);
-          maxY = Math.max(maxY, table.y + th);
-        }
-        for (const seat of table.seats ?? []) {
-          if (seat.x != null && seat.y != null) {
-            minX = Math.min(minX, seat.x);
-            minY = Math.min(minY, seat.y);
-            maxX = Math.max(maxX, seat.x + 30);
-            maxY = Math.max(maxY, seat.y + 30);
-          }
-        }
-      }
-      for (const seat of section.seats ?? []) {
-        if (seat.x != null && seat.y != null) {
-          minX = Math.min(minX, seat.x);
-          minY = Math.min(minY, seat.y);
-          maxX = Math.max(maxX, seat.x + 30);
-          maxY = Math.max(maxY, seat.y + 30);
+          const th = table.height ?? 60;
+          minX = Math.min(minX, tx - tw / 2);
+          minY = Math.min(minY, ty - th / 2);
+          maxX = Math.max(maxX, tx + tw / 2);
+          maxY = Math.max(maxY, ty + th / 2);
         }
       }
     }
@@ -190,6 +194,12 @@ export default function SeatMapCanvas({
         setDragOffset({ x: dx, y: dy });
         return;
       }
+
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      const cx = (e.clientX - rect.left - translate.x) / scale;
+      const cy = (e.clientY - rect.top - translate.y) / scale;
+      setMouseCanvasPos({ x: cx, y: cy });
+
       if (!dragging) return;
       const dx = e.clientX - dragStart.current.x;
       const dy = e.clientY - dragStart.current.y;
@@ -198,7 +208,7 @@ export default function SeatMapCanvas({
         y: translateStart.current.y + dy,
       });
     },
-    [dragging, dragState, scale],
+    [dragging, dragState, scale, translate],
   );
 
   const handleMouseUp = useCallback(() => {
@@ -282,6 +292,7 @@ export default function SeatMapCanvas({
         userSelect: "none",
       }}
       ref={containerRef}
+      data-testid="seatmap-canvas"
       onWheel={handleWheel}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
@@ -363,19 +374,22 @@ export default function SeatMapCanvas({
               ? dragOffset
               : { x: 0, y: 0 };
 
-          const sectionX = (section.x ?? 0) + sectionDragOffset.x;
-          const sectionY = (section.y ?? 0) + sectionDragOffset.y;
+          const sectionCenterX = (section.x ?? 0) + sectionDragOffset.x;
+          const sectionCenterY = (section.y ?? 0) + sectionDragOffset.y;
+          const sectionW = section.width ?? 400;
+          const sectionH = section.height ?? 300;
           const sectionSelected = isSelected(selectedItems, "section", section.id);
 
           return (
             <Box
               key={section.id}
+              data-testid={`section-${section.id}`}
               sx={{
                 position: "absolute",
-                left: sectionX,
-                top: sectionY,
-                width: section.width ?? 400,
-                height: section.height ?? 300,
+                left: sectionCenterX - sectionW / 2,
+                top: sectionCenterY - sectionH / 2,
+                width: sectionW,
+                height: sectionH,
                 border: "2px solid",
                 borderColor: sectionSelected ? "primary.main" : "divider",
                 borderRadius: 2,
@@ -408,14 +422,16 @@ export default function SeatMapCanvas({
                 {section.name}
               </Box>
 
-              {/* Tables */}
+              {/* Tables (positioned relative to section center) */}
               {section.tables?.map((table) => {
                 const tableDragOffset =
                   dragState?.type === "table" && dragState.id === table.id
                     ? dragOffset
                     : { x: 0, y: 0 };
-                const tableX = (table.x ?? 0) + tableDragOffset.x;
-                const tableY = (table.y ?? 0) + tableDragOffset.y;
+                const tableCenterX = (table.x ?? 0) + tableDragOffset.x;
+                const tableCenterY = (table.y ?? 0) + tableDragOffset.y;
+                const tw = table.width ?? 120;
+                const th = table.height ?? 60;
                 const tableSelected = isSelected(selectedItems, "table", table.id);
 
                 return (
@@ -423,10 +439,10 @@ export default function SeatMapCanvas({
                     key={table.id}
                     sx={{
                       position: "absolute",
-                      left: tableX,
-                      top: tableY,
-                      width: table.width ?? 120,
-                      height: table.height ?? 60,
+                      left: tableCenterX - tw / 2,
+                      top: tableCenterY - th / 2,
+                      width: tw,
+                      height: th,
                       border: "2px solid",
                       borderColor: tableSelected ? "primary.main" : "grey.500",
                       borderRadius: table.shape === "ROUND" ? "50%" : 1,
@@ -451,21 +467,32 @@ export default function SeatMapCanvas({
                     }}
                   >
                     {table.name}
+
+                    {/* Seats (attached to table, positioned relative to table center) */}
+                    {table.seats?.map((seat) => renderSeat(seat, section.id))}
                   </Box>
                 );
               })}
 
-              {/* Seats (floating) */}
+              {/* Seats (floating, positioned relative to section center) */}
               {section.seats?.map((seat) => renderSeat(seat, section.id))}
-
-              {/* Seats (attached to tables) */}
-              {section.tables?.map((table) =>
-                table.seats?.map((seat) => renderSeat(seat, section.id)),
-              )}
             </Box>
           );
         })}
       </Box>
+
+      {/* Debug Overlay */}
+      {isEditing && (
+        <SeatMapDebugOverlay
+          sections={sections}
+          scale={scale}
+          translate={translate}
+          mouseCanvasPos={mouseCanvasPos}
+          selectedItems={selectedItems}
+          visible={showDebug}
+          onToggle={() => setShowDebug((p) => !p)}
+        />
+      )}
     </Box>
   );
 
