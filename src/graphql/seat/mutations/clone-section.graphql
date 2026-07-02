@@ -1,0 +1,7 @@
+# import SectionFull from "../fragments/section.fragment.graphql"
+
+mutation CloneSection($input: CloneSectionInput!) {
+  cloneSection(input: $input) {
+    ...SectionFull
+  }
+}

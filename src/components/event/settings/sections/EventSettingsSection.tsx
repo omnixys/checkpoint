@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import SaveIcon from "@mui/icons-material/Save";
 import {
   Box,
@@ -72,6 +73,8 @@ function normalizeSettings(settings: SettingsType) {
 
     allowGuestSeatSelection: fullSettings.allowGuestSeatSelection ?? false,
     allowSeatOverbooking: fullSettings.allowSeatOverbooking ?? false,
+    invitedByOptions: fullSettings.invitedByOptions ?? [],
+    ticketReleaseAt: fullSettings.ticketReleaseAt ?? null,
   };
 }
 
@@ -79,11 +82,22 @@ function datetimeValue(value?: string | null) {
   return value ? dayjs(value).format("YYYY-MM-DDTHH:mm") : "";
 }
 
+function normalizeOptionList(values: string[]) {
+  return values
+    .map((value) => value.trim())
+    .filter((value, index, all) => value.length > 0 && all.indexOf(value) === index);
+}
+
+function splitOptions(value: string) {
+  return normalizeOptionList(value.split(/[\n,]+/));
+}
+
 export default function EventSettingsSection({ settings, actions }: Props) {
   const theme = useTheme();
 
   const [local, setLocal] = useState<SettingsType>(() => normalizeSettings(settings));
   const [dirty, setDirty] = useState(false);
+  const [optionInput, setOptionInput] = useState("");
 
   useEffect(() => {
     setLocal(normalizeSettings(settings));
@@ -111,11 +125,27 @@ export default function EventSettingsSection({ settings, actions }: Props) {
       maxPlusOnes: local.maxPlusOnes,
       requireApprovalForPlusOnes: local.requireApprovalForPlusOnes,
       rsvpDeadline: local.rsvpDeadline ? new Date(local.rsvpDeadline) : null,
+      ticketReleaseAt: local.ticketReleaseAt ? new Date(local.ticketReleaseAt) : null,
       allowGuestSeatSelection: local.allowGuestSeatSelection,
       allowSeatOverbooking: local.allowSeatOverbooking,
+      invitedByOptions: normalizeOptionList(local.invitedByOptions ?? []),
     };
 
     await actions.updateSettings(input);
+  };
+
+  const addInvitedByOptions = (values: string[]) => {
+    const next = normalizeOptionList([...(local.invitedByOptions ?? []), ...values]);
+
+    update("invitedByOptions", next);
+    setOptionInput("");
+  };
+
+  const removeInvitedByOption = (value: string) => {
+    update(
+      "invitedByOptions",
+      (local.invitedByOptions ?? []).filter((option) => option !== value),
+    );
   };
 
   const panelSx = {
@@ -312,6 +342,65 @@ export default function EventSettingsSection({ settings, actions }: Props) {
               sx={inputSx}
             />
           </Stack>
+
+          <Divider />
+
+          <Stack spacing={1.5}>
+            <Box>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                RSVP source options
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Optional choices shown as checkboxes in public RSVP.
+              </Typography>
+            </Box>
+
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+              <TextField
+                fullWidth
+                label="Add source option"
+                value={optionInput}
+                onChange={(event) => setOptionInput(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    addInvitedByOptions(splitOptions(optionInput));
+                  }
+                }}
+                onPaste={(event) => {
+                  const values = splitOptions(event.clipboardData.getData("text"));
+
+                  if (values.length > 1) {
+                    event.preventDefault();
+                    addInvitedByOptions(values);
+                  }
+                }}
+                sx={inputSx}
+              />
+              <Button
+                disabled={splitOptions(optionInput).length === 0}
+                onClick={() => addInvitedByOptions(splitOptions(optionInput))}
+                startIcon={<AddRoundedIcon />}
+                sx={{ minHeight: 48, minWidth: { sm: 140 } }}
+                variant="outlined"
+              >
+                Add
+              </Button>
+            </Stack>
+
+            {(local.invitedByOptions ?? []).length > 0 && (
+              <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }} useFlexGap>
+                {(local.invitedByOptions ?? []).map((option) => (
+                  <Chip
+                    key={option}
+                    label={option}
+                    onDelete={() => removeInvitedByOption(option)}
+                    variant="outlined"
+                  />
+                ))}
+              </Stack>
+            )}
+          </Stack>
         </Stack>
       </Box>
 
@@ -393,6 +482,20 @@ export default function EventSettingsSection({ settings, actions }: Props) {
               sx={inputSx}
             />
           </Stack>
+          <TextField
+            fullWidth
+            label="Ticket Release At"
+            type="datetime-local"
+            value={datetimeValue(local.ticketReleaseAt as string | null | undefined)}
+            onChange={(e) =>
+              update(
+                "ticketReleaseAt" as keyof SettingsType,
+                e.target.value ? new Date(e.target.value).toISOString() : null,
+              )
+            }
+            helperText="If set, ticket/QR generation is delayed until this time instead of happening immediately on approval."
+            sx={inputSx}
+          />
         </Stack>
       </Box>
 

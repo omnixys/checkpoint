@@ -49,8 +49,18 @@ export default function InvitationBulkApproveDialog({ logic }: InvitationBulkApp
                 sx={{
                   borderRadius: 3,
                   p: 2,
-                  border: `1px solid ${alpha(theme.palette.divider, 0.9)}`,
-                  backgroundColor: alpha(theme.palette.background.paper, 0.75),
+                  border:
+                    invitation.plusOneAgeCategory === "OVER_SIX"
+                      ? `1px solid ${alpha(theme.palette.info.main, 0.3)}`
+                      : invitation.plusOneAgeCategory === "UNDER_SIX"
+                        ? `1px solid ${alpha(theme.palette.warning.main, 0.3)}`
+                        : `1px solid ${alpha(theme.palette.divider, 0.9)}`,
+                  backgroundColor:
+                    invitation.plusOneAgeCategory === "OVER_SIX"
+                      ? alpha(theme.palette.info.main, 0.06)
+                      : invitation.plusOneAgeCategory === "UNDER_SIX"
+                        ? alpha(theme.palette.warning.main, 0.06)
+                        : alpha(theme.palette.background.paper, 0.75),
                 }}
               >
                 <Stack spacing={2}>
@@ -146,7 +156,7 @@ export default function InvitationBulkApproveDialog({ logic }: InvitationBulkApp
 
                   <Typography variant="caption" color="text.secondary">
                     {tInvitation("bulkApprove.selectedSeat", {
-                      seat: entry?.seatLabel ?? tCommon("empty"),
+                      seat: entry?.seatId ?? tCommon("empty"),
                     })}
                   </Typography>
                 </Stack>

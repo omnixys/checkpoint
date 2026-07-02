@@ -118,7 +118,8 @@ export default function CalendarGridView({
             key={d.toISOString()}
             onClick={() => onSelectDay(d)}
             sx={{
-              p: 1,
+              p: { xs: 0.75, sm: 1 },
+              minHeight: { xs: 40, sm: 48 },
               borderRadius: 3,
               cursor: "pointer",
               backgroundColor: hasEvents

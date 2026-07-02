@@ -24,6 +24,7 @@ export const createSettingsSchema = z.object({
   allowPublicRsvp: z.boolean(),
   allowPublicPlusOne: z.boolean(),
   allowPublicRsvpWebsite: z.boolean(),
+  invitedByOptions: z.array(z.string().trim().min(1)).default([]),
   publicRsvpWebsite: z
     .string()
     .trim()

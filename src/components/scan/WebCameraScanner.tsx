@@ -690,13 +690,14 @@ export default function WebCameraScanner({ onDetect, onRestart }: Props) {
         width: "100%",
         maxWidth: theme.spacing(58),
         mx: "auto",
+        minWidth: 0,
       }}
     >
       <Box
         sx={{
           "--scan-size": `clamp(${theme.spacing(24)}, 64vw, ${theme.spacing(32)})`,
           position: "relative",
-          minHeight: { xs: theme.spacing(46), sm: theme.spacing(54) },
+          minHeight: { xs: "min(72dvh, 368px)", sm: theme.spacing(54) },
           aspectRatio: "4 / 5",
           overflow: "hidden",
           borderRadius: 4,
@@ -982,7 +983,11 @@ export default function WebCameraScanner({ onDetect, onRestart }: Props) {
             )}`,
           }}
         >
-          <Stack direction="row" spacing={1.25} sx={{ alignItems: "center" }}>
+              <Stack
+                direction="row"
+                spacing={1.25}
+                sx={{ alignItems: "center", minWidth: 0 }}
+              >
             <Box
               sx={{
                 width: theme.spacing(4),
@@ -1065,7 +1070,11 @@ export default function WebCameraScanner({ onDetect, onRestart }: Props) {
                 )}`,
               }}
             >
-              <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                spacing={1.5}
+                sx={{ alignItems: { xs: "stretch", sm: "center" } }}
+              >
                 <Box
                   sx={{
                     width: theme.spacing(5),
@@ -1109,7 +1118,7 @@ export default function WebCameraScanner({ onDetect, onRestart }: Props) {
                   onClick={restartScanner}
                   sx={{
                     flexShrink: 0,
-                    minWidth: theme.spacing(13),
+                    minWidth: { xs: "100%", sm: theme.spacing(13) },
                     borderRadius: 999,
                     boxShadow: `0 ${theme.spacing(1)} ${theme.spacing(3)} ${alpha(
                       theme.palette.primary.main,
@@ -1147,7 +1156,7 @@ export default function WebCameraScanner({ onDetect, onRestart }: Props) {
                 WebkitBackdropFilter: blurFilter,
               }}
             >
-              <Stack spacing={2} sx={{ alignItems: "center", textAlign: "center" }}>
+              <Stack spacing={2} sx={{ alignItems: "center", textAlign: "center", width: "100%" }}>
                 <Box
                   sx={{
                     width: theme.spacing(6),
@@ -1164,7 +1173,12 @@ export default function WebCameraScanner({ onDetect, onRestart }: Props) {
                 <Typography variant="body2" sx={{ color: theme.palette.text.primary }}>
                   {tScanner("cameraStartFailed")}
                 </Typography>
-                <Button variant="outlined" startIcon={<ReplayIcon />} onClick={restartScanner}>
+                <Button
+                  variant="outlined"
+                  startIcon={<ReplayIcon />}
+                  onClick={restartScanner}
+                  sx={{ width: { xs: "100%", sm: "auto" } }}
+                >
                   {tScanner("retry")}
                 </Button>
               </Stack>

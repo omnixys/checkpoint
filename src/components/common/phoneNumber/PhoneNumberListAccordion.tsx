@@ -60,9 +60,9 @@ export default function PhoneNumberListAccordion({ values, onAdd, onEdit, onRemo
           {values.map((p, index) => (
             <Stack
               key={`${p.countryCode}-${p.number}-${p.type}`}
-              direction="row"
+              direction={{ xs: "column", sm: "row" }}
               sx={{
-                alignItems: "center",
+                alignItems: { xs: "stretch", sm: "center" },
                 justifyContent: "space-between",
                 border: "1px solid",
                 borderColor: alpha(theme.palette.text.primary, 0.08),
@@ -75,7 +75,7 @@ export default function PhoneNumberListAccordion({ values, onAdd, onEdit, onRemo
                 },
               }}
             >
-              <Stack>
+              <Stack sx={{ minWidth: 0 }}>
                 <Typography
                   sx={{
                     fontWeight: 500,
@@ -84,12 +84,12 @@ export default function PhoneNumberListAccordion({ values, onAdd, onEdit, onRemo
                   {p.label || p.type}
                 </Typography>
 
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: "anywhere" }}>
                   {p.countryCode} {p.number || t("empty")}
                 </Typography>
               </Stack>
 
-              <Stack direction="row">
+              <Stack direction="row" sx={{ justifyContent: { xs: "flex-end", sm: "initial" } }}>
                 <Tooltip title={t("edit")}>
                   <IconButton onClick={() => onEdit(index)}>
                     <EditIcon />

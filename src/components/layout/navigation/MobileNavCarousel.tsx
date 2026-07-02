@@ -54,6 +54,7 @@ export function MobileNavCarousel({ items, eventId }: Props) {
         backgroundColor: "rgba(20,20,20,0.75)",
         borderTop: "1px solid rgba(255,255,255,0.08)",
         borderRadius: 0,
+        pb: "env(safe-area-inset-bottom)",
       }}
     >
       <Box ref={emblaRef} sx={{ overflow: "hidden" }}>
@@ -71,9 +72,12 @@ export function MobileNavCarousel({ items, eventId }: Props) {
                 onClick={() => !item.disabled && router.push(item.path)}
                 sx={{
                   flex: "0 0 25%", // 👈 max 4 sichtbar
+                  minWidth: 76,
+                  minHeight: 64,
                   py: 1,
                   position: "relative",
                   opacity: item.disabled ? 0.4 : 1,
+                  cursor: item.disabled ? "default" : "pointer",
                 }}
               >
                 {/* VisionOS Pill */}
@@ -98,7 +102,9 @@ export function MobileNavCarousel({ items, eventId }: Props) {
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
+                    justifyContent: "center",
                     gap: 0.4,
+                    minWidth: 0,
                     color: active
                       ? "primary.main"
                       : mode === "light"

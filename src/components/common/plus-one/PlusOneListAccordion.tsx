@@ -8,7 +8,9 @@ import {
   AccordionDetails,
   AccordionSummary,
   alpha,
+  Box,
   Button,
+  Chip,
   Divider,
   IconButton,
   Stack,
@@ -59,9 +61,9 @@ export default function PlusOneListAccordion({ values, onAdd, onEdit, onRemove }
           {values.map((p, index) => (
             <Stack
               key={`${p.firstName}-${p.lastName}-${p.email ?? "no-email"}`}
-              direction="row"
+              direction={{ xs: "column", sm: "row" }}
               sx={{
-                alignItems: "center",
+                alignItems: { xs: "stretch", sm: "center" },
                 justifyContent: "space-between",
                 border: "1px solid",
                 borderColor: alpha(theme.palette.text.primary, 0.08),
@@ -74,7 +76,7 @@ export default function PlusOneListAccordion({ values, onAdd, onEdit, onRemove }
                 },
               }}
             >
-              <Stack>
+              <Stack sx={{ minWidth: 0 }}>
                 <Typography
                   sx={{
                     fontWeight: 500,
@@ -83,12 +85,22 @@ export default function PlusOneListAccordion({ values, onAdd, onEdit, onRemove }
                   {p.firstName || t("plusOne.guest")} {p.lastName}
                 </Typography>
 
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: "anywhere" }}>
                   {p.email || t("plusOne.noEmail")}
                 </Typography>
+
+                <Box>
+                  {p.plusOneAgeCategory === "OVER_SIX" ? (
+                    <Chip label={t("plusOne.overSix")} size="small" color="default" />
+                  ) : p.plusOneAgeCategory === "UNDER_SIX" ? (
+                    <Chip label={t("plusOne.underSix")} size="small" color="info" />
+                  ) : (
+                    <Chip label={t("plusOne.ageMissing")} size="small" variant="outlined" />
+                  )}
+                </Box>
               </Stack>
 
-              <Stack direction="row">
+              <Stack direction="row" sx={{ justifyContent: { xs: "flex-end", sm: "initial" } }}>
                 <Tooltip title={t("edit")}>
                   <IconButton onClick={() => onEdit(index)}>
                     <EditIcon />

@@ -5,6 +5,7 @@ query GetEventTree($eventId: ID!) {
       name
       settings {
         endsAt
+        invitedByOptions
       }
     }
     subEvents {
@@ -14,6 +15,7 @@ query GetEventTree($eventId: ID!) {
       depth
       settings {
         endsAt
+        invitedByOptions
       }
     }
   }
@@ -26,6 +28,7 @@ query GetPublicEventTree($eventId: ID!) {
       name
       settings {
         endsAt
+        invitedByOptions
       }
     }
     subEvents {
@@ -35,6 +38,7 @@ query GetPublicEventTree($eventId: ID!) {
       depth
       settings {
         endsAt
+        invitedByOptions
       }
     }
   }
@@ -47,6 +51,7 @@ query GetFullEventTreeInfo($eventId: ID!) {
       name
       settings {
         endsAt
+        invitedByOptions
       }
     }
     subEvents {
@@ -54,6 +59,7 @@ query GetFullEventTreeInfo($eventId: ID!) {
       name
       settings {
         endsAt
+        invitedByOptions
       }
     }
   }

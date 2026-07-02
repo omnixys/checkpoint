@@ -26,8 +26,8 @@ export default function EventHeaderC({ eventPageData: ev }: EventHeaderProps) {
         justifyContent: "space-between",
       }}
     >
-      <Stack spacing={1}>
-        <Typography variant="h4" sx={{ fontWeight: 800 }}>
+      <Stack spacing={1} sx={{ minWidth: 0 }}>
+        <Typography variant="h4" sx={{ fontWeight: 800, overflowWrap: "anywhere" }}>
           {ev.name}
         </Typography>
 
@@ -39,7 +39,7 @@ export default function EventHeaderC({ eventPageData: ev }: EventHeaderProps) {
         />
       </Stack>
 
-      <Stack spacing={0.5}>
+      <Stack spacing={0.5} sx={{ minWidth: 0 }}>
         <Typography variant="body2" color="text.secondary">
           {t("header.start")}: {startFormatted}
         </Typography>

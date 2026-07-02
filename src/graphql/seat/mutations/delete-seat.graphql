@@ -1,0 +1,3 @@
+mutation DeleteSeat($seatId: String!) {
+  deleteSeat(seatId: $seatId)
+}

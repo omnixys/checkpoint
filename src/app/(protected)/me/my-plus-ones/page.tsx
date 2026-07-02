@@ -84,6 +84,7 @@ export default function MyPlusOnesPage() {
         px: { xs: 2, sm: 3 },
         py: { xs: 2, sm: 3 },
         pb: { xs: 12, sm: 4 },
+        minWidth: 0,
       }}
     >
       <Stack spacing={3}>
@@ -110,6 +111,7 @@ export default function MyPlusOnesPage() {
               variant="h4"
               sx={{
                 fontWeight: 800,
+                overflowWrap: "anywhere",
               }}
             >
               {t("plusOnes.title")}

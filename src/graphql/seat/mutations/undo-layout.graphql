@@ -1,0 +1,3 @@
+mutation UndoLayout($eventId: String!) {
+  undoLayout(eventId: $eventId)
+}

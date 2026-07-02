@@ -5,9 +5,24 @@ fragment EventSettings on SettingsPayload {
   maxSeats
   dressCode
   description
+  invitedByOptions
   isActive
   startsAt
   endsAt
+  allowPublicRsvp
+  allowPublicPlusOne
+  allowPublicRsvpWebsite
+  allowPlusOneUpdate
+  maxPlusOnes
+  requireApprovalForPlusOnes
+  rsvpDeadline
+  approvalMode
+  allowGuestSeatSelection
+  allowSeatOverbooking
+  isPublic
+  publicRsvpWebsite
+  category
+  ticketReleaseAt
   createdAt
   updatedAt
 }

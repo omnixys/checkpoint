@@ -6,8 +6,11 @@ import {
   alpha,
   Box,
   Button,
+  Checkbox,
   CircularProgress,
   Container,
+  FormControlLabel,
+  FormGroup,
   Paper,
   Stack,
   TextField,
@@ -49,14 +52,14 @@ function ErrorState({ title, message }: { title: string; message: string }) {
         background:
           "radial-gradient(circle at 50% 15%, rgba(216,184,121,0.16), transparent 34%), #050506",
         color: "#f1ece2",
-        minHeight: "100vh",
+        minHeight: "100dvh",
       }}
     >
       <Container maxWidth="sm">
         <Box
           sx={{
             display: "flex",
-            minHeight: "100vh",
+            minHeight: "100dvh",
             justifyContent: "center",
             alignItems: "center",
           }}
@@ -82,7 +85,7 @@ function LoadingScreen() {
           "radial-gradient(circle at 50% 15%, rgba(216,184,121,0.16), transparent 34%), #050506",
         color: "#f1ece2",
         display: "flex",
-        minHeight: "100vh",
+        minHeight: "100dvh",
         flexDirection: "column",
         gap: 2,
         justifyContent: "center",
@@ -158,6 +161,8 @@ export default function RsvpClient({
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [guestNote, setGuestNote] = useState("");
+  const [selectedInvitedBy, setSelectedInvitedBy] = useState<string[]>([]);
   const [submitted, setSubmitted] = useState(false);
   const [validationMessages, setValidationMessages] = useState<string[]>([]);
   const [phoneDialogIndex, setPhoneDialogIndex] = useState<number | null>(null);
@@ -211,6 +216,31 @@ export default function RsvpClient({
       children: childEvents,
     });
 
+  const invitedByOptions = useMemo(() => {
+    if (!publicEventTree || !eventId) {
+      return [];
+    }
+
+    const effectiveEventId = isRootSelected
+      ? eventId
+      : selectedEventIds.length === 1
+        ? selectedEventIds[0]
+        : eventId;
+
+    const settings =
+      effectiveEventId === eventId || effectiveEventId === publicEventTree.rootEvent.id
+        ? publicEventTree.rootEvent.settings
+        : publicEventTree.subEvents?.find((child) => child.id === effectiveEventId)?.settings;
+
+    return settings?.invitedByOptions ?? [];
+  }, [eventId, isRootSelected, publicEventTree, selectedEventIds]);
+
+  const toggleInvitedBy = (value: string) => {
+    setSelectedInvitedBy((prev) =>
+      prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value],
+    );
+  };
+
   /* ---------------- Guards ---------------- */
 
   if (!eventId) {
@@ -237,17 +267,6 @@ export default function RsvpClient({
     return <RsvpSuccess />;
   }
 
-  const resolvePublicEventEndsAt = (selectedEventId: string): string | null => {
-    if (selectedEventId === eventId || selectedEventId === publicEventTree.rootEvent.id) {
-      return publicEventTree.rootEvent.settings?.endsAt ?? null;
-    }
-
-    return (
-      publicEventTree.subEvents?.find((child) => child.id === selectedEventId)?.settings?.endsAt ??
-      null
-    );
-  };
-
   const handleSubmit = async () => {
     const validPhones = getValidPhones();
     const mappedPlusOnes = toGraphQL();
@@ -262,8 +281,17 @@ export default function RsvpClient({
       nextValidationMessages.push(t("validation.lastNameRequired"));
     }
 
-    if (!email.trim() && validPhones.length === 0) {
+    if (validPhones.length === 0) {
       nextValidationMessages.push(t("validation.contactRequired"));
+    }
+
+    if (
+      plusOnes.some(
+        (plusOne) =>
+          (plusOne.firstName.trim() || plusOne.lastName.trim()) && !plusOne.plusOneAgeCategory,
+      )
+    ) {
+      nextValidationMessages.push(t("validation.plusOneAgeRequired"));
     }
 
     if (childEvents.length > 0 && selectedEventIds.length === 0) {
@@ -286,23 +314,17 @@ export default function RsvpClient({
       return;
     }
 
-    const eventEndsAt = resolvePublicEventEndsAt(effectiveEventId);
-
-    if (!eventEndsAt) {
-      setValidationMessages([t("validation.eventEndTimeMissing")]);
-      return;
-    }
-
     await createPublicInvitation({
       variables: {
         input: {
           eventId: effectiveEventId,
-          eventEndsAt,
           firstName: firstName.trim(),
           lastName: lastName.trim(),
           message: null,
           email: email.trim() || null,
           phoneNumbers: validPhones,
+          selectedInvitedBy,
+          guestNote: guestNote.trim() || null,
           plusOnes: mappedPlusOnes,
         },
       },
@@ -387,9 +409,46 @@ export default function RsvpClient({
         />
       </RsvpChapter>
 
+      {invitedByOptions.length > 0 && (
+        <RsvpChapter
+          description={t("public.invitedByDescription")}
+          index="04"
+          title={t("public.invitedByTitle")}
+        >
+          <FormGroup
+            sx={{
+              display: "grid",
+              gap: 1,
+              gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))" },
+            }}
+          >
+            {invitedByOptions.map((option) => (
+              <FormControlLabel
+                key={option}
+                control={
+                  <Checkbox
+                    checked={selectedInvitedBy.includes(option)}
+                    onChange={() => toggleInvitedBy(option)}
+                  />
+                }
+                label={option}
+                sx={{
+                  border: "1px solid",
+                  borderColor: "divider",
+                  borderRadius: 2,
+                  minHeight: 48,
+                  mx: 0,
+                  px: 1.5,
+                }}
+              />
+            ))}
+          </FormGroup>
+        </RsvpChapter>
+      )}
+
       <RsvpChapter
         description={t("public.companionsDescription")}
-        index="04"
+        index={invitedByOptions.length > 0 ? "05" : "04"}
         title={t("public.companionsTitle")}
       >
         <PlusOneListAccordion
@@ -397,6 +456,21 @@ export default function RsvpClient({
           onAdd={add}
           onEdit={setPlusOneDialogIndex}
           onRemove={remove}
+        />
+      </RsvpChapter>
+
+      <RsvpChapter
+        description={t("public.guestNoteDescription")}
+        index={invitedByOptions.length > 0 ? "06" : "05"}
+        title={t("public.guestNoteTitle")}
+      >
+        <TextField
+          fullWidth
+          label={t("public.guestNoteLabel")}
+          minRows={4}
+          multiline
+          value={guestNote}
+          onChange={(event) => setGuestNote(event.target.value)}
         />
       </RsvpChapter>
 

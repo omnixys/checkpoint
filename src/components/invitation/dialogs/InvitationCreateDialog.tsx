@@ -127,20 +127,9 @@ export default function InvitationCreateDialog({
       setLoading(true);
       setAppError(null);
 
-      const selectedEvent = logic.allEventOptions.find((event) => event.id === values.eventId);
-      const eventEndsAt = selectedEvent?.settings?.endsAt;
-
-      if (!eventEndsAt) {
-        throw new Error("Missing event end time for invitation creation");
-      }
-
       await logic.createInvitationMutation({
         variables: {
-          input: buildCreateInput({
-            autoApproveOnAccept: false,
-            eventEndsAt,
-            eventName: selectedEvent?.name ?? null,
-          }),
+          input: buildCreateInput(),
         },
       });
 

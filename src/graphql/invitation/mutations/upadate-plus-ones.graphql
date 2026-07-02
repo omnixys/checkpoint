@@ -11,6 +11,7 @@ mutation UpdatePlusOne($input: UpdatePlusOneInput!) {
     lastName
     email
     status
+    plusOneAgeCategory
     phoneNumbers {
       countryCode
       number

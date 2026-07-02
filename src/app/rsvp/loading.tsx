@@ -16,7 +16,7 @@ export default async function RsvpLoading(): Promise<JSX.Element> {
           "radial-gradient(circle at 50% 18%, rgba(216,184,121,0.18), transparent 34%), #050506",
         color: "#f1ece2",
         justifyContent: "center",
-        minHeight: "100vh",
+        minHeight: "100dvh",
       }}
     >
       <Typography
@@ -24,7 +24,7 @@ export default async function RsvpLoading(): Promise<JSX.Element> {
           color: "#d8b879",
           fontFamily: "var(--font-wedding-serif), Georgia, serif",
           fontSize: "1.25rem",
-          letterSpacing: "0.28em",
+          letterSpacing: 0,
         }}
       >
         {WEDDING_MONOGRAM}

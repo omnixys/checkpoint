@@ -61,8 +61,8 @@ export default function EventsHeader({
       }}
     >
       {/* TITLE */}
-      <Stack direction="row" spacing={1}>
-        <Typography variant="h4" sx={{ fontWeight: 800 }}>
+      <Stack direction={{ xs: "column", sm: "row" }} spacing={{ xs: 0.5, sm: 1 }}>
+        <Typography variant="h4" sx={{ fontWeight: 800, overflowWrap: "anywhere" }}>
           {tEvent("header.title")}
         </Typography>
 
@@ -108,7 +108,11 @@ export default function EventsHeader({
           />
         </motion.div>
 
-        <Stack direction={{ xs: "row", sm: "row" }} spacing={2}>
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={2}
+          sx={{ width: { xs: "100%", sm: "auto" } }}
+        >
           {/* FILTER SELECT */}
           <motion.div
             initial={{ opacity: 0, y: 6 }}
@@ -121,7 +125,7 @@ export default function EventsHeader({
               value={filter}
               onChange={(e) => onFilterChange(e.target.value as EventsFilter)}
               sx={{
-                minWidth: 150,
+                minWidth: { xs: "100%", sm: 150 },
                 borderRadius: "20px",
               }}
             >
@@ -142,7 +146,7 @@ export default function EventsHeader({
               disabled={currentUser?.role !== "ADMIN"}
               onClick={onRefresh}
               sx={{
-                width: 44,
+                width: { xs: "100%", sm: 44 },
                 height: 44,
                 borderRadius: "50%",
                 bgcolor: alpha(theme.palette.action.hover, 0.8),
@@ -170,6 +174,7 @@ export default function EventsHeader({
                 px: 3,
                 height: 44,
                 fontWeight: 600,
+                width: { xs: "100%", sm: "auto" },
               }}
             >
               {tEvent("header.create")}

@@ -100,7 +100,7 @@ export default React.forwardRef<EventListHandle, Props>(function EventList(
         {viewMode === "grid" && (
           <Grid container spacing={2}>
             {eventsFiltered.map((ev) => (
-              <Grid sx={{ xs: 12, sm: 6, md: 4 }} key={ev.id}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={ev.id}>
                 <EventCardPro
                   ev={ev}
                   isActive={ev.isActive}

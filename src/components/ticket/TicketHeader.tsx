@@ -21,7 +21,7 @@ export default function TicketHeader({ total, onCreate, onFilter }: Props) {
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       sx={{
-        px: 3,
+        px: { xs: 2, sm: 3 },
         py: 2.2,
         mb: 3,
         borderRadius: 4,
@@ -35,6 +35,7 @@ export default function TicketHeader({ total, onCreate, onFilter }: Props) {
         spacing={2}
         sx={{
           justifyContent: "space-between",
+          alignItems: { xs: "stretch", sm: "center" },
         }}
       >
         {/* Back Button */}
@@ -53,7 +54,7 @@ export default function TicketHeader({ total, onCreate, onFilter }: Props) {
           </Typography>
         </Stack>
 
-        <Stack direction="row" spacing={1.4}>
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={1.4}>
           <Button variant="outlined" startIcon={<FilterListRoundedIcon />} onClick={onFilter}>
             Filter
           </Button>

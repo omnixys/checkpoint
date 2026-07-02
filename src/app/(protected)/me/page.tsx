@@ -46,7 +46,8 @@ export default function MePage() {
             variant="h3"
             sx={{
               fontWeight: 700,
-              letterSpacing: "-0.02em",
+              letterSpacing: 0,
+              overflowWrap: "anywhere",
             }}
           >
             {name}

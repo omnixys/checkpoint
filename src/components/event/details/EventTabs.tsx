@@ -42,9 +42,12 @@ export default function EventTabs({ active, onChange }: Props) {
         px: 2,
         py: 1.2,
         boxShadow: theme.shadows[3],
+        overflowX: "auto",
+        scrollbarWidth: "none",
+        "&::-webkit-scrollbar": { display: "none" },
       }}
     >
-      <Stack direction="row" spacing={2}>
+      <Stack direction="row" spacing={1.5} sx={{ minWidth: "max-content" }}>
         {TABS.map((tab) => {
           const selected = active === tab.key;
 
@@ -57,10 +60,11 @@ export default function EventTabs({ active, onChange }: Props) {
               <Typography
                 sx={{
                   px: 1,
-                  py: 0.4,
+                  py: 0.8,
                   fontWeight: selected ? 700 : 500,
                   color: selected ? theme.palette.primary.main : theme.palette.text.secondary,
                   transition: "0.25s ease",
+                  whiteSpace: "nowrap",
                 }}
               >
                 {t(tab.tKey)}

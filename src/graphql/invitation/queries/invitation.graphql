@@ -27,12 +27,16 @@ query GetInvitation($invitationId: ID!) {
     }
 
     approvedAt
+    guestNote
+    selectedInvitedBy
+    plusOneAgeCategory
     plusOnes {
       id
 
       lastName
       firstName
       email
+      plusOneAgeCategory
       phoneNumbers {
         countryCode
         number
@@ -52,6 +56,7 @@ query PlusOneInvitations($invitationId: ID!) {
       lastName
       email
       status
+      plusOneAgeCategory
       phoneNumbers {
         countryCode
         number

@@ -23,9 +23,9 @@ export default function MeLayout({ children }: { children: ReactNode }) {
   return (
     <Box
       sx={{
-        minHeight: "100vh",
-        px: { xs: 2, md: 6 },
-        py: 4,
+        minHeight: "100dvh",
+        px: { xs: 1.5, sm: 2, md: 6 },
+        py: { xs: 2, sm: 4 },
       }}
     >
       <Stack
@@ -34,6 +34,7 @@ export default function MeLayout({ children }: { children: ReactNode }) {
           maxWidth: 1200,
           mx: "auto",
           backdropFilter: "blur(20px)",
+          minWidth: 0,
         }}
       >
         {children}

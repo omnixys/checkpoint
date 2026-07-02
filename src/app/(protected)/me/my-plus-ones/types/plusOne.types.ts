@@ -1,4 +1,5 @@
 export type PlusOnePhoneNumberType = "WHATSAPP" | "MOBILE" | "PRIVATE" | "WORK" | "HOME" | "OTHER";
+export type PlusOneAgeCategory = "OVER_SIX" | "UNDER_SIX";
 
 export type PlusOnePhoneNumberInput = {
   countryCode: string;
@@ -20,6 +21,7 @@ export type PlusOneItem = {
   email?: string | null;
   phoneNumber?: string | null;
   phoneNumbers: PlusOnePhoneNumberInput[];
+  plusOneAgeCategory?: PlusOneAgeCategory | null;
   status?: string | null;
   seat?: PlusOneSeat | null;
 };
@@ -28,6 +30,7 @@ export type CreatePlusOneInput = {
   firstName: string;
   lastName: string;
   email?: string;
+  plusOneAgeCategory: PlusOneAgeCategory;
   phoneNumbers: PlusOnePhoneNumberInput[];
 };
 
@@ -35,6 +38,7 @@ export type UpdatePlusOneInput = {
   id: string;
   firstName: string;
   lastName: string;
-  email?: string;
+  email?: string | null;
+  plusOneAgeCategory: PlusOneAgeCategory;
   phoneNumbers: PlusOnePhoneNumberInput[];
 };

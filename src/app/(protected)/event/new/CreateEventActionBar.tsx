@@ -28,9 +28,11 @@ export default function CreateEventActionBar({
 
   return (
     <Stack
-      direction="row"
+      direction={{ xs: "column-reverse", sm: "row" }}
+      spacing={{ xs: 1.5, sm: 0 }}
       sx={{
         justifyContent: "space-between",
+        alignItems: "stretch",
         mt: 4,
         pt: 3,
         borderTop: `1px solid ${theme.palette.divider}`,
@@ -42,6 +44,7 @@ export default function CreateEventActionBar({
         disabled={activeStep === 0 || isSubmitting}
         sx={{
           textTransform: "none",
+          width: { xs: "100%", sm: "auto" },
         }}
       >
         {t("actions.back")}
@@ -56,6 +59,7 @@ export default function CreateEventActionBar({
           textTransform: "none",
           borderRadius: 3,
           px: 3,
+          width: { xs: "100%", sm: "auto" },
         }}
       >
         {isLastStep ? t("actions.create") : t("actions.next")}

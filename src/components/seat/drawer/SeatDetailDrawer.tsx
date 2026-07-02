@@ -34,7 +34,8 @@ export default function SeatDetailDrawer({
         paper: {
           sx: {
             width: { xs: "100%", sm: 420 },
-            p: 3,
+            maxWidth: "100vw",
+            p: { xs: 2, sm: 3 },
             backdropFilter: "blur(20px)",
             background: alpha(theme.palette.background.paper, 0.5),
           },
@@ -71,9 +72,9 @@ export default function SeatDetailDrawer({
           <Divider />
 
           {role && role === "ADMIN" && (
-            <Stack direction="row" spacing={1}>
-              <Button variant="contained" onClick={onEdit}>
-                Bearbeiten
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+            <Button variant="contained" onClick={onEdit}>
+              Bearbeiten
               </Button>
               <Button variant="outlined" onClick={onClose}>
                 Schließen

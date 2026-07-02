@@ -5,7 +5,19 @@ import type { PhoneNumberInput } from "@/checkpoint/generated/graphql";
 import { CallingCodeCountry } from "@/checkpoint/types/country.type";
 import { NormalizedPlusOne } from "@/checkpoint/types/event.type";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Box, Button, IconButton, Stack, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  IconButton,
+  Radio,
+  RadioGroup,
+  Stack,
+  TextField,
+} from "@mui/material";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 type Props = {
   value: NormalizedPlusOne;
@@ -41,10 +53,12 @@ export default function PlusOneField({
   onUpdatePhone,
   onRemovePhone,
 }: Props) {
+  const t = useTypedTranslations("common");
+
   return (
     <Box
       sx={{
-        p: 2,
+        p: { xs: 1.5, sm: 2 },
         border: "1px solid",
         borderColor: "divider",
         borderRadius: 2,
@@ -54,7 +68,7 @@ export default function PlusOneField({
         <DeleteIcon fontSize="small" />
       </IconButton>
 
-      <Stack spacing={2}>
+      <Stack spacing={2} sx={{ minWidth: 0 }}>
         <TextField
           label="First name"
           value={value.firstName}
@@ -75,6 +89,34 @@ export default function PlusOneField({
           onChange={(e) => onChange(index, "email", e.target.value || null)}
           fullWidth
         />
+
+        <FormControl required fullWidth>
+          <FormLabel>{t("plusOne.ageCategory")}</FormLabel>
+          <RadioGroup
+            row
+            value={value.plusOneAgeCategory ?? ""}
+            onChange={(event) =>
+              onChange(
+                index,
+                "plusOneAgeCategory",
+                event.target.value as NormalizedPlusOne["plusOneAgeCategory"],
+              )
+            }
+            sx={{
+              gap: { xs: 0.5, sm: 2 },
+              "& .MuiFormControlLabel-root": {
+                minHeight: 44,
+              },
+            }}
+          >
+            <FormControlLabel value="OVER_SIX" control={<Radio />} label={t("plusOne.overSix")} />
+            <FormControlLabel
+              value="UNDER_SIX"
+              control={<Radio />}
+              label={t("plusOne.underSix")}
+            />
+          </RadioGroup>
+        </FormControl>
 
         {/* 📞 Nested Phones */}
         <Stack spacing={2}>
@@ -100,6 +142,7 @@ export default function PlusOneField({
                 isPrimary: value.phoneNumbers.length === 0,
               })
             }
+            fullWidth={true}
           >
             + Add phone
           </Button>

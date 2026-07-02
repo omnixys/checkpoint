@@ -19,7 +19,7 @@ export default function VisionStripItem({
       onMouseLeave={handleLeave}
       sx={{
         flex: "0 0 auto",
-        width,
+        width: `min(${width}px, calc(100vw - 48px))`,
         scrollSnapAlign: "center",
 
         transform: `perspective(1200px) rotateX(${tiltY}deg) rotateY(${tiltX}deg)`,

@@ -126,6 +126,10 @@
     "allowGuests": "Allow plus-ones",
     "enableWaitlist": "Enable waitlist",
     "ticketingEnabled": "Sell tickets",
+    "invitedByOptions": "RSVP source options",
+    "invitedByOptionsHint": "Configure optional choices guests can select in public RSVP.",
+    "invitedByOptionsPlaceholder": "Add an option",
+    "invitedByOptionsAdd": "Add option",
 
     "title": "Access and capacity",
     "description": "Control capacity, QR rotation and re-entry so that security and admins can operate immediately.",

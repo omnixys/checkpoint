@@ -31,9 +31,7 @@ export interface BulkApproveEntry {
   invitationId: string;
   locale: string;
   eventId: string;
-  eventName: string;
   seatId: string | null;
-  seatLabel: string | null;
 }
 
 /* ---------------------------------------------------------------------------
@@ -172,24 +170,6 @@ export function useInvitationLogic(eventId: string) {
 
     return map;
   }, [subEvents, rootEventId, rootEventName]);
-
-  const eventEndsAtById = useMemo<Record<string, string>>(() => {
-    const map: Record<string, string> = {};
-
-    for (const option of allEventOptions) {
-      const endsAt = option.settings?.endsAt;
-
-      if (endsAt) {
-        map[option.id] = endsAt;
-      }
-    }
-
-    return map;
-  }, [allEventOptions]);
-
-  function getEventEndsAt(eventId: string) {
-    return eventEndsAtById[eventId] ?? null;
-  }
 
   const invitationById = useMemo(() => {
     const map = new Map<string, GetGlobalEventInvitationListQuery["getFullByEventIds"][number]>();
@@ -403,16 +383,11 @@ export function useInvitationLogic(eventId: string) {
     const defaults: Record<string, BulkApproveEntry> = {};
 
     for (const invitation of selectedInvitations) {
-      const resolvedEventId = invitation.eventId;
-      const resolvedEventName = eventNameById[resolvedEventId] ?? rootEventName;
-
       defaults[invitation.id] = {
         invitationId: invitation.id,
         locale: "en-US",
-        eventId: resolvedEventId,
-        eventName: resolvedEventName,
+        eventId: invitation.eventId,
         seatId: null,
-        seatLabel: null,
       };
     }
 
@@ -470,9 +445,7 @@ export function useInvitationLogic(eventId: string) {
         [invitationId]: {
           ...existing,
           eventId: selectedEventId,
-          eventName: eventNameById[selectedEventId] ?? rootEventName,
           seatId: null,
-          seatLabel: "debug",
         },
       };
     });
@@ -486,15 +459,11 @@ export function useInvitationLogic(eventId: string) {
         return prev;
       }
 
-      const seatOptions = seatOptionsByEventId[existing.eventId] ?? [];
-      const selectedSeat = seatOptions.find((seat) => seat.id === seatId);
-
       return {
         ...prev,
         [invitationId]: {
           ...existing,
           seatId,
-          seatLabel: selectedSeat?.label ?? "debug",
         },
       };
     });
@@ -510,12 +479,6 @@ export function useInvitationLogic(eventId: string) {
         throw new Error("No invitations selected");
       }
 
-      const eventEndsAt = fullEventTree?.rootEvent?.settings?.endsAt;
-
-      if (!eventEndsAt) {
-        throw new Error("Missing event end time for bulk approval");
-      }
-
       const payload = effectiveIds.map((invitationId) => {
         const entry = bulkApproveEntries[invitationId];
 
@@ -525,9 +488,6 @@ export function useInvitationLogic(eventId: string) {
 
         return {
           invitationId: entry.invitationId,
-          eventEndAt: eventEndsAt,
-          eventName: entry.eventName,
-          seat: entry.seatLabel || "debug",
           seatId: entry.seatId ?? null,
         };
       });
@@ -538,7 +498,6 @@ export function useInvitationLogic(eventId: string) {
             invitationIds: payload,
             approved: true,
           },
-          eventEndsAt,
         },
       });
 
@@ -715,8 +674,6 @@ export function useInvitationLogic(eventId: string) {
     subEvents,
     allEventOptions,
     eventNameById,
-    eventEndsAtById,
-    getEventEndsAt,
 
     /* selection */
     selected,

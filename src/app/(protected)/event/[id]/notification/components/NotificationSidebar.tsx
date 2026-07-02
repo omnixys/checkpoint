@@ -89,10 +89,12 @@ export function NotificationSidebar({ channel, selectedChatId, onSelect }: Props
   return (
     <Box
       sx={{
-        width: 370,
-        maxWidth: 370,
-        height: "100%",
-        borderRight: `1px solid ${tone.divider}`,
+        width: { xs: "100%", md: 370 },
+        maxWidth: { xs: "100%", md: 370 },
+        height: { xs: "auto", md: "100%" },
+        maxHeight: { xs: "38dvh", md: "none" },
+        borderRight: { xs: 0, md: `1px solid ${tone.divider}` },
+        borderBottom: { xs: `1px solid ${tone.divider}`, md: 0 },
         backgroundColor: theme.palette.background.paper,
         display: "flex",
         flexDirection: "column",
@@ -104,7 +106,8 @@ export function NotificationSidebar({ channel, selectedChatId, onSelect }: Props
             color: theme.palette.text.primary,
             fontWeight: 700,
             fontSize: 18,
-            letterSpacing: "-0.02em",
+            letterSpacing: 0,
+            overflowWrap: "anywhere",
           }}
         >
           Conversations
@@ -196,7 +199,7 @@ export function NotificationSidebar({ channel, selectedChatId, onSelect }: Props
                           sx={{
                             color: theme.palette.text.primary,
                             fontWeight: 700,
-                            letterSpacing: "-0.02em",
+                            letterSpacing: 0,
                           }}
                         >
                           {getTitle(item)}

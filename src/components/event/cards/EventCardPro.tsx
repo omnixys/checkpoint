@@ -88,8 +88,12 @@ export default function EventCardPro({
 
         <CardContent sx={{ flexGrow: 1 }}>
           <Stack spacing={1.5}>
-            <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-              <Typography variant="h6" sx={{ fontWeight: 700 }}>
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{ alignItems: "center", flexWrap: "wrap", minWidth: 0 }}
+            >
+              <Typography variant="h6" sx={{ fontWeight: 700, overflowWrap: "anywhere" }}>
                 {ev.name}
               </Typography>
 

@@ -27,6 +27,8 @@ function SegmentedControl<T>({ value, onChange, segments }: Props<T>) {
     <Box
       sx={{
         display: "flex",
+        maxWidth: "100%",
+        overflowX: "auto",
         p: 0.5,
         borderRadius: 999,
         backdropFilter: "blur(20px)",
@@ -44,6 +46,7 @@ function SegmentedControl<T>({ value, onChange, segments }: Props<T>) {
               position: "relative",
               px: 2.5,
               py: 0.8,
+              minHeight: 40,
               cursor: "pointer",
               borderRadius: 999,
               fontSize: 13,
@@ -127,10 +130,12 @@ export default function CalendarToolbar({
 
         <Typography
           sx={{
-            fontWeight: 700,
-            fontSize: 18,
-          }}
-        >
+          fontWeight: 700,
+          fontSize: 18,
+          overflowWrap: "anywhere",
+          textAlign: "center",
+        }}
+      >
           {label}
         </Typography>
 
@@ -145,6 +150,7 @@ export default function CalendarToolbar({
           display: "flex",
           gap: 1,
           flexWrap: "wrap",
+          alignItems: "center",
         }}
       >
         <SegmentedControl
@@ -170,6 +176,7 @@ export default function CalendarToolbar({
           sx={{
             px: 2,
             py: 0.8,
+            minHeight: 40,
             borderRadius: 999,
             cursor: "pointer",
             fontWeight: 600,

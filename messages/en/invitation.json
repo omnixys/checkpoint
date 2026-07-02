@@ -71,6 +71,10 @@
 
     "sendWhatsappMessage": "Send WhatsApp message",
     "whatsappInvitation": "Send WhatsApp invitation",
+    "rsvpDetails": "RSVP details",
+    "selectedInvitedBy": "Selected source",
+    "guestNote": "Guest note",
+    "plusOneAgeCategory": "Plus-one age",
     "copyRsvpLink": "Copy RSVP link",
     "copied": "Copied!",
     "administration": "Administration",

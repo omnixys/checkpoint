@@ -193,7 +193,15 @@ export default function EventVariantToggle({ variant, onChange }: Props) {
 
       {/* DESKTOP: Normal UI */}
       {!isMobile && (
-        <Stack direction="row" spacing={1.5}>
+        <Stack
+          direction="row"
+          spacing={1.5}
+          sx={{
+            overflowX: "auto",
+            scrollbarWidth: "none",
+            "&::-webkit-scrollbar": { display: "none" },
+          }}
+        >
           {OPTIONS.map((o) => (
             <DesktopOption
               key={o.value}

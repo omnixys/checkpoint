@@ -70,6 +70,7 @@ const DEFAULT_SETTINGS: CreateSettingsInput = {
   isActive: true,
   isPublic: true,
   publicRsvpWebsite: "",
+  invitedByOptions: [],
   category: "GENERAL",
   allowPlusOneUpdate: false,
   maxPlusOnes: 1,
@@ -78,6 +79,7 @@ const DEFAULT_SETTINGS: CreateSettingsInput = {
   approvalMode: "AUTO",
   allowGuestSeatSelection: false,
   allowSeatOverbooking: false,
+  ticketReleaseAt: null,
 };
 
 /**
@@ -217,12 +219,13 @@ export function useEventSettings(eventId: string) {
     /**
      * Remove Role
      */
-    removeRole: (userId: string) =>
+    removeRole: (role: RoleAssign) =>
       removeRole({
         variables: {
           input: {
             eventId,
-            userId,
+            userId: role.userId,
+            eventRole: role.role,
           },
         },
       }),

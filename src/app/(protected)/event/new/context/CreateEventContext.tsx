@@ -67,6 +67,7 @@ const initialState: State = {
       allowPublicRsvp: true,
       allowPublicPlusOne: true,
       allowPublicRsvpWebsite: false,
+      invitedByOptions: [],
       isActive: true,
       isPublic: false,
       publicRsvpWebsite: "",

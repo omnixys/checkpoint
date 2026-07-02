@@ -122,6 +122,7 @@ const seatSegments: SeatSegment[] = [
           borderRadius: 4,
           border: 1,
           borderColor: alpha(color, 0.36),
+          minWidth: 0,
           background: `linear-gradient(145deg, ${alpha(
             theme.palette.background.paper,
             0.76,
@@ -132,7 +133,11 @@ const seatSegments: SeatSegment[] = [
         }}
       >
         <Stack spacing={2}>
-          <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={1.5}
+            sx={{ alignItems: { xs: "flex-start", sm: "center" } }}
+          >
             <Box
               sx={{
                 width: theme.spacing(5.5),
@@ -180,6 +185,7 @@ const seatSegments: SeatSegment[] = [
                   fontWeight: 800,
                   lineHeight: 1.18,
                   mt: 1,
+                  overflowWrap: "anywhere",
                 }}
               >
                 {result.message}
@@ -220,9 +226,9 @@ const seatSegments: SeatSegment[] = [
               <Stack spacing={1.25}>
                 {guestName ? (
                   <Stack
-                    direction="row"
+                    direction={{ xs: "column", sm: "row" }}
                     spacing={1.25}
-                    sx={{ alignItems: "center" }}
+                    sx={{ alignItems: { xs: "flex-start", sm: "center" } }}
                   >
                     <PersonRoundedIcon
                       sx={{
@@ -380,7 +386,7 @@ const seatSegments: SeatSegment[] = [
                 </Typography>
                 <Typography
                   variant="caption"
-                  sx={{ color: theme.palette.text.secondary }}
+                  sx={{ color: theme.palette.text.secondary, overflowWrap: "anywhere" }}
                 >
                   {tTicket("deviceHash", { hash: result.device.hash })}
                 </Typography>

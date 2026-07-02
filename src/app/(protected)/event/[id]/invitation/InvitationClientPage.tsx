@@ -43,7 +43,7 @@ export default function InvitationClientPage({ countries }: { countries: Calling
     <Box
       ref={scrollRef}
       sx={{
-        height: "100vh",
+        height: "100dvh",
         overflowY: "auto",
         position: "relative",
         width: "100%",
@@ -55,7 +55,7 @@ export default function InvitationClientPage({ countries }: { countries: Calling
 
       {/* CONTENT */}
       {/* <PullToRefresh onReload={logic.reload}> */}
-      <Box sx={{ px: { xs: 2, md: 3 }, pb: 12, pt: isMobile ? 6 : 0 }}>
+      <Box sx={{ px: { xs: 1.5, md: 3 }, pb: 12, pt: isMobile ? 3 : 0, minWidth: 0 }}>
         <InvitationContent logic={logic} isMobile={isMobile} />
       </Box>
       {/* </PullToRefresh> */}

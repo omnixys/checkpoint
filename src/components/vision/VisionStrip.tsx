@@ -55,10 +55,11 @@ export default function VisionStrip({ children }: { children: React.ReactNode })
         display: "flex",
         flexDirection: "row",
         overflowX: "auto",
-        gap: 3,
-        px: 2,
+        gap: { xs: 1.5, sm: 3 },
+        px: { xs: 0.5, sm: 2 },
         py: 2,
         scrollSnapType: "x mandatory",
+        WebkitOverflowScrolling: "touch",
         "&::-webkit-scrollbar": { display: "none" },
         position: "relative",
       }}

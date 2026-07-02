@@ -1,0 +1,3 @@
+mutation RedoLayout($eventId: String!) {
+  redoLayout(eventId: $eventId)
+}

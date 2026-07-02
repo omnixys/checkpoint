@@ -1,0 +1,14 @@
+# import SeatLayoutSection from "../fragments/seat-layout.fragment.graphql"
+
+query SeatMapView($eventId: ID!) {
+  seatLayout(eventId: $eventId) {
+    ...SeatLayoutSection
+  }
+  seatPresencesByEvent(eventId: $eventId) {
+    seatId
+    presenceState
+    checkedInAt
+    revoked
+    revokedAt
+  }
+}

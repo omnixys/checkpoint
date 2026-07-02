@@ -46,6 +46,7 @@ export default function NavigationTablet(): JSX.Element {
         backgroundColor: (t) => t.palette.apple.secondarySystemBackground,
         borderRight: (t) => `1px solid ${t.palette.apple.separator}`,
         height: "100dvh",
+        overflowY: "auto",
         p: 2,
       }}
     >

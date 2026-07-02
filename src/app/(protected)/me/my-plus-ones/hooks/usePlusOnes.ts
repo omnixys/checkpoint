@@ -39,7 +39,6 @@ export const usePlusOnes = (): UsePlusOnesResult => {
     return myInvitationIdMap.get(eventId)?.id ?? null;
   };
   const invitationId = eventId ? getInvitationId(eventId) : null;
-  const eventEndsAt = activeEvent?.settings?.endsAt ?? null;
 
   const { plusOneInvitationList, plusOneInvitationListLoading } = useInvitationQuery({
     invitationId: invitationId ?? undefined,
@@ -60,6 +59,7 @@ export const usePlusOnes = (): UsePlusOnesResult => {
       lastName: entry.lastName ?? "",
       email: entry.email ?? null,
       status: entry.status ?? null,
+      plusOneAgeCategory: entry.plusOneAgeCategory ?? null,
       phoneNumbers:
         entry.phoneNumbers?.map((phone) => ({
           countryCode: phone.countryCode,
@@ -81,7 +81,7 @@ export const usePlusOnes = (): UsePlusOnesResult => {
 
   const createPlusOne = useCallback(
     async (input: CreatePlusOneInput) => {
-      if (!invitationId || !eventId || !eventEndsAt) {
+      if (!invitationId || !eventId) {
         enqueueSnackbar(t("plusOnes.errorMissingInvitation"), {
           variant: "error",
         });
@@ -97,9 +97,9 @@ export const usePlusOnes = (): UsePlusOnesResult => {
               firstName: input.firstName.trim(),
               lastName: input.lastName.trim(),
               email: input.email?.trim() || null,
+              plusOneAgeCategory: input.plusOneAgeCategory,
               phoneNumbers: input.phoneNumbers,
             },
-            eventEndsAt,
           },
         });
 
@@ -112,7 +112,7 @@ export const usePlusOnes = (): UsePlusOnesResult => {
         });
       }
     },
-    [createPlusOneMutation, enqueueSnackbar, eventEndsAt, eventId, invitationId, t],
+    [createPlusOneMutation, enqueueSnackbar, eventId, invitationId, t],
   );
 
   const updatePlusOne = useCallback(
@@ -125,6 +125,7 @@ export const usePlusOnes = (): UsePlusOnesResult => {
               firstName: input.firstName.trim(),
               lastName: input.lastName.trim(),
               email: input.email?.trim() || null,
+              plusOneAgeCategory: input.plusOneAgeCategory,
               phoneNumbers: input.phoneNumbers,
             },
           },

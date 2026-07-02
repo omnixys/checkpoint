@@ -107,227 +107,233 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
   };
 
   return (
-    <Table
-      sx={{
-        borderRadius: "20px",
-        overflow: "hidden",
-        backdropFilter: "blur(14px)",
-      }}
-    >
-      <TableHead>
-        <TableRow>
-          <TableCell width={48} />
-          <TableCell>{t("table.type")}</TableCell>
-          <TableCell>{t("table.name")}</TableCell>
-          <TableCell>{t("table.phone")}</TableCell>
-          <TableCell>{t("table.email")}</TableCell>
-          <TableCell>{t("table.status")}</TableCell>
-          <TableCell>{t("table.link")}</TableCell>
-          <TableCell align="right">{t("table.actions")}</TableCell>
-        </TableRow>
-      </TableHead>
+    <Box sx={{ width: "100%", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+      <Table
+        sx={{
+          minWidth: 860,
+          borderRadius: "20px",
+          overflow: "hidden",
+          backdropFilter: "blur(14px)",
+        }}
+      >
+        <TableHead>
+          <TableRow>
+            <TableCell width={48} />
+            <TableCell>{t("table.type")}</TableCell>
+            <TableCell>{t("table.name")}</TableCell>
+            <TableCell>{t("table.phone")}</TableCell>
+            <TableCell>{t("table.email")}</TableCell>
+            <TableCell>{t("table.status")}</TableCell>
+            <TableCell>{t("table.link")}</TableCell>
+            <TableCell align="right">{t("table.actions")}</TableCell>
+          </TableRow>
+        </TableHead>
 
-      <TableBody>
-        {parents.map((parent) => {
-          const children = plusOnesByParent[parent.id] ?? [];
-          const isExpanded = expanded[parent.id] ?? false;
+        <TableBody>
+          {parents.map((parent) => {
+            const children = plusOnesByParent[parent.id] ?? [];
+            const isExpanded = expanded[parent.id] ?? false;
 
-          return (
-            <React.Fragment key={parent.id}>
-              {/* PARENT ROW */}
-              <TableRow
-                hover
-                onClick={() => logic.openInvitation(parent as InvitationPayload)}
-                sx={{
-                  cursor: "pointer",
-                  transition: "transform .25s ease, box-shadow .25s ease",
-                  "&:hover": {
-                    transform: "translateY(-2px)",
-                    boxShadow: theme.shadows[6],
-                  },
-                }}
-              >
-                {/* CHECKBOX */}
-                <TableCell onClick={(event) => event.stopPropagation()}>
-                  <Checkbox
-                    checked={
-                      selected.includes(parent.id) &&
-                      children.every((child) => selected.includes(child.id))
-                    }
-                    indeterminate={
-                      selected.includes(parent.id) &&
-                      children.some((child) => !selected.includes(child.id))
-                    }
-                    onChange={() => toggleParentWithChildren(parent)}
-                  />
-                </TableCell>
+            return (
+              <React.Fragment key={parent.id}>
+                {/* PARENT ROW */}
+                <TableRow
+                  hover
+                  onClick={() => logic.openInvitation(parent as InvitationPayload)}
+                  sx={{
+                    cursor: "pointer",
+                    transition: "transform .25s ease, box-shadow .25s ease",
+                    "&:hover": {
+                      transform: "translateY(-2px)",
+                      boxShadow: theme.shadows[6],
+                    },
+                  }}
+                >
+                  {/* CHECKBOX */}
+                  <TableCell onClick={(event) => event.stopPropagation()}>
+                    <Checkbox
+                      checked={
+                        selected.includes(parent.id) &&
+                        children.every((child) => selected.includes(child.id))
+                      }
+                      indeterminate={
+                        selected.includes(parent.id) &&
+                        children.some((child) => !selected.includes(child.id))
+                      }
+                      onChange={() => toggleParentWithChildren(parent)}
+                    />
+                  </TableCell>
 
-                {/* Type */}
-                <TableCell>{t(`rsvpType.${parent.type as RsvpType}`)}</TableCell>
+                  {/* Type */}
+                  <TableCell>{t(`rsvpType.${parent.type as RsvpType}`)}</TableCell>
 
-                {/* NAME + EXPAND */}
-                <TableCell>
-                  <Stack
-                    direction="row"
-                    spacing={1}
-                    sx={{
-                      alignItems: "center",
-                    }}
-                  >
-                    {children.length > 0 && (
-                      <IconButton
-                        size="small"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          toggleExpand(parent.id);
-                        }}
-                        sx={{
-                          transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
-                          transition: "transform .25s ease",
-                        }}
-                      >
-                        <ExpandMoreIcon />
-                      </IconButton>
-                    )}
-
-                    <Typography
+                  {/* NAME + EXPAND */}
+                  <TableCell>
+                    <Stack
+                      direction="row"
+                      spacing={1}
                       sx={{
-                        fontWeight: 600,
+                        alignItems: "center",
+                        minWidth: 0,
                       }}
                     >
-                      {parent.firstName ?? "-"} {parent.lastName ?? ""}
-                    </Typography>
-                  </Stack>
-                </TableCell>
-
-                {/* Phone */}
-                <TableCell>{parent.phoneNumber ?? "-"}</TableCell>
-
-                {/* Email */}
-                <TableCell>{parent.email ?? "-"}</TableCell>
-
-                {/* Status */}
-                <TableCell>
-                  <InvitationStatusChip
-                    status={parent.status}
-                    rsvp={parent.rsvpChoice ?? undefined}
-                  />
-                </TableCell>
-
-                {/* Link */}
-                <TableCell onClick={(event) => event.stopPropagation()}>
-                  <Tooltip title={t("copyLink")}>
-                    <IconButton
-                      size="small"
-                      onClick={() => {
-                        void handleCopyLink(parent.id);
-                      }}
-                    >
-                      <ContentCopyIcon fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
-                </TableCell>
-
-                {/* Actions */}
-                <TableCell align="right" onClick={(event) => event.stopPropagation()}>
-                  <Tooltip title={t("delete")}>
-                    <IconButton
-                      color="error"
-                      onClick={() => {
-                        void handleDelete(parent.id);
-                      }}
-                    >
-                      <DeleteForeverIcon />
-                    </IconButton>
-                  </Tooltip>
-                </TableCell>
-              </TableRow>
-
-              {/* PLUS-ONES TREE */}
-              <AnimatePresence initial={false}>
-                {isExpanded && children.length > 0 && (
-                  <TableRow>
-                    <TableCell colSpan={8} sx={{ p: 0 }}>
-                      <motion.div
-                        initial={{ opacity: 0, height: 0, filter: "blur(6px)" }}
-                        animate={{
-                          opacity: 1,
-                          height: "auto",
-                          filter: "blur(0px)",
-                        }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{
-                          type: "spring",
-                          stiffness: 200,
-                          damping: 24,
-                        }}
-                      >
-                        <Stack
-                          spacing={1}
+                      {children.length > 0 && (
+                        <IconButton
+                          size="small"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            toggleExpand(parent.id);
+                          }}
                           sx={{
-                            pl: 8,
-                            py: 1.5,
-                            borderLeft: `2px solid ${theme.palette.divider}`,
-                            background:
-                              "linear-gradient(90deg, rgba(255,255,255,0.05), transparent)",
+                            transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
+                            transition: "transform .25s ease",
                           }}
                         >
-                          {children.map((plusOne) => (
-                            <Box
-                              key={plusOne.id}
-                              onClick={() => logic.openInvitation(plusOne as InvitationPayload)}
-                              sx={{
-                                px: 2,
-                                py: 1.2,
-                                borderRadius: 2,
-                                cursor: "pointer",
-                                backdropFilter: "blur(8px)",
-                                background: theme.palette.action.hover,
-                                "&:hover": {
-                                  background: theme.palette.action.selected,
-                                },
-                              }}
-                            >
-                              <Stack
-                                direction="row"
+                          <ExpandMoreIcon />
+                        </IconButton>
+                      )}
+
+                      <Typography
+                        sx={{
+                          fontWeight: 600,
+                          overflowWrap: "anywhere",
+                        }}
+                      >
+                        {parent.firstName ?? "-"} {parent.lastName ?? ""}
+                      </Typography>
+                    </Stack>
+                  </TableCell>
+
+                  {/* Phone */}
+                  <TableCell>{parent.phoneNumber ?? "-"}</TableCell>
+
+                  {/* Email */}
+                  <TableCell>{parent.email ?? "-"}</TableCell>
+
+                  {/* Status */}
+                  <TableCell>
+                    <InvitationStatusChip
+                      status={parent.status}
+                      rsvp={parent.rsvpChoice ?? undefined}
+                    />
+                  </TableCell>
+
+                  {/* Link */}
+                  <TableCell onClick={(event) => event.stopPropagation()}>
+                    <Tooltip title={t("copyLink")}>
+                      <IconButton
+                        size="small"
+                        onClick={() => {
+                          void handleCopyLink(parent.id);
+                        }}
+                      >
+                        <ContentCopyIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  </TableCell>
+
+                  {/* Actions */}
+                  <TableCell align="right" onClick={(event) => event.stopPropagation()}>
+                    <Tooltip title={t("delete")}>
+                      <IconButton
+                        color="error"
+                        onClick={() => {
+                          void handleDelete(parent.id);
+                        }}
+                      >
+                        <DeleteForeverIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </TableCell>
+                </TableRow>
+
+                {/* PLUS-ONES TREE */}
+                <AnimatePresence initial={false}>
+                  {isExpanded && children.length > 0 && (
+                    <TableRow>
+                      <TableCell colSpan={8} sx={{ p: 0 }}>
+                        <motion.div
+                          initial={{ opacity: 0, height: 0, filter: "blur(6px)" }}
+                          animate={{
+                            opacity: 1,
+                            height: "auto",
+                            filter: "blur(0px)",
+                          }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 200,
+                            damping: 24,
+                          }}
+                        >
+                          <Stack
+                            spacing={1}
+                            sx={{
+                              pl: 8,
+                              py: 1.5,
+                              borderLeft: `2px solid ${theme.palette.divider}`,
+                              background:
+                                "linear-gradient(90deg, rgba(255,255,255,0.05), transparent)",
+                            }}
+                          >
+                            {children.map((plusOne) => (
+                              <Box
+                                key={plusOne.id}
+                                onClick={() => logic.openInvitation(plusOne as InvitationPayload)}
                                 sx={{
-                                  justifyContent: "space-between",
-                                  alignItems: "center",
+                                  px: 2,
+                                  py: 1.2,
+                                  borderRadius: 2,
+                                  cursor: "pointer",
+                                  backdropFilter: "blur(8px)",
+                                  background: theme.palette.action.hover,
+                                  "&:hover": {
+                                    background: theme.palette.action.selected,
+                                  },
                                 }}
                               >
-                                <Stack direction="row" spacing={1}>
-                                  <Checkbox
-                                    checked={selected.includes(plusOne.id)}
-                                    onClick={(event) => event.stopPropagation()}
-                                    onChange={() => toggleSelect(plusOne.id)}
+                                <Stack
+                                  direction="row"
+                                  sx={{
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <Stack direction="row" spacing={1}>
+                                    <Checkbox
+                                      checked={selected.includes(plusOne.id)}
+                                      onClick={(event) => event.stopPropagation()}
+                                      onChange={() => toggleSelect(plusOne.id)}
+                                    />
+
+                                    <Typography
+                                      sx={{
+                                        fontWeight: 500,
+                                        overflowWrap: "anywhere",
+                                      }}
+                                    >
+                                      {plusOne.firstName ?? "-"} {plusOne.lastName ?? ""}
+                                    </Typography>
+                                  </Stack>
+
+                                  <InvitationStatusChip
+                                    status={plusOne.status}
+                                    rsvp={plusOne.rsvpChoice ?? undefined}
                                   />
-
-                                  <Typography
-                                    sx={{
-                                      fontWeight: 500,
-                                    }}
-                                  >
-                                    {plusOne.firstName ?? "-"} {plusOne.lastName ?? ""}
-                                  </Typography>
                                 </Stack>
-
-                                <InvitationStatusChip
-                                  status={plusOne.status}
-                                  rsvp={plusOne.rsvpChoice ?? undefined}
-                                />
-                              </Stack>
-                            </Box>
-                          ))}
-                        </Stack>
-                      </motion.div>
-                    </TableCell>
-                  </TableRow>
-                )}
-              </AnimatePresence>
-            </React.Fragment>
-          );
-        })}
-      </TableBody>
-    </Table>
+                              </Box>
+                            ))}
+                          </Stack>
+                        </motion.div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </AnimatePresence>
+              </React.Fragment>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </Box>
   );
 }

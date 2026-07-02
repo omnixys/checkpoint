@@ -64,6 +64,7 @@ export default function TicketCard({ code, status, seatLabel, presence, onDelete
         p: 2.4,
         borderRadius: 4,
         cursor: "pointer",
+        minWidth: 0,
         bgcolor: alpha(theme.palette.background.paper, 0.55),
         backdropFilter: "blur(22px)",
         border: `1px solid ${alpha(theme.palette.divider, 0.4)}`,
@@ -94,6 +95,7 @@ export default function TicketCard({ code, status, seatLabel, presence, onDelete
           variant="subtitle1"
           sx={{
             fontWeight: 600,
+            overflowWrap: "anywhere",
           }}
         >
           {code}

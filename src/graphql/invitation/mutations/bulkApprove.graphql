@@ -1,5 +1,5 @@
-mutation BulkApproveInvitations($input: BulkApproveInvitationInput!, $eventEndsAt: DateTime!) {
-  bulkApproveInvitations(input: $input, eventEndsAt: $eventEndsAt) {
+mutation BulkApproveInvitations($input: BulkApproveInvitationInput!) {
+  bulkApproveInvitations(input: $input) {
     id
     status
     approvedAt

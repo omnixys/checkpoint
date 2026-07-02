@@ -146,8 +146,8 @@ export default function CreateEventWizard() {
   return (
     <Box
       sx={{
-        minHeight: "100vh",
-        px: 2,
+        minHeight: "100dvh",
+        px: { xs: 1.5, sm: 2 },
         py: 0,
         background: theme.palette.background.default,
       }}
@@ -164,7 +164,7 @@ export default function CreateEventWizard() {
             width: "100%",
             maxWidth: 900,
             mx: "auto",
-            py: 4,
+            py: { xs: 2, sm: 4 },
           }}
         >
           {/* HEADER */}
@@ -180,7 +180,8 @@ export default function CreateEventWizard() {
               exit={{ opacity: 0, x: -24 }}
               transition={{ duration: 0.3 }}
               sx={{
-                pt: 10,
+                pt: { xs: 6, sm: 10 },
+                minWidth: 0,
               }}
             >
               {renderStep()}

@@ -1,0 +1,7 @@
+mutation MoveTable($input: MoveTableInput!) {
+  moveTable(input: $input) {
+    id
+    x
+    y
+  }
+}

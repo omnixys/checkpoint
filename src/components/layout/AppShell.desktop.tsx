@@ -33,8 +33,9 @@ export default function AppShellDesktop({ children }: { children: React.ReactNod
         sx={{
           flexGrow: 1,
           height: "100%",
+          minWidth: 0,
           overflowY: "auto",
-          p: 4,
+          p: { lg: 4, xl: 5 },
         }}
       >
         {children}

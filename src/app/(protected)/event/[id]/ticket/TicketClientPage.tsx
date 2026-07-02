@@ -117,12 +117,12 @@ export default function TicketClientPage() {
       />
 
       {/* ---------------- DIALOG: DELETE/REVOKE ---------------- */}
-      <Dialog open={!!deleteId} onClose={() => setDeleteId(null)}>
+      <Dialog open={!!deleteId} onClose={() => setDeleteId(null)} fullWidth maxWidth="xs">
         <DeleteTicketDialog onCancel={() => setDeleteId(null)} onConfirm={handleDelete} />
       </Dialog>
 
       {/* ---------------- DIALOG: CREATE ---------------- */}
-      <Dialog open={openCreate} onClose={() => setOpenCreate(false)}>
+      <Dialog open={openCreate} onClose={() => setOpenCreate(false)} fullWidth maxWidth="sm">
         <CreateTicketDialog onCancel={() => setOpenCreate(false)} onConfirm={() => {}} />
       </Dialog>
     </Box>

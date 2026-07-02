@@ -22,7 +22,15 @@ type FullSettingsPatch = Partial<SettingsPayload> & {
   allowPublicPlusOne?: boolean;
   allowPublicRsvpWebsite?: boolean;
   allowPlusOneUpdate?: boolean;
+  allowGuestSeatSelection?: boolean;
+  allowSeatOverbooking?: boolean;
+  ticketReleaseAt?: string | null;
+  maxPlusOnes?: number;
+  requireApprovalForPlusOnes?: boolean;
+  rsvpDeadline?: string | null;
+  approvalMode?: SettingsPayload["approvalMode"];
   publicRsvpWebsite?: string | null;
+  invitedByOptions?: string[];
   isPublic?: boolean;
   category?: EventCategory;
 };
@@ -50,21 +58,21 @@ export function mapSettingsToUpdateInput(
     startsAt: payload.startsAt ?? null,
     endsAt: payload.endsAt ?? null,
 
-    ...(payload.allowPublicRsvp !== undefined && { allowPublicRsvp: payload.allowPublicRsvp }),
-    ...(payload.allowPublicPlusOne !== undefined && {
-      allowPublicPlusOne: payload.allowPublicPlusOne,
-    }),
-    ...(payload.allowPublicRsvpWebsite !== undefined && {
-      allowPublicRsvpWebsite: payload.allowPublicRsvpWebsite,
-    }),
-    ...(payload.allowPlusOneUpdate !== undefined && {
-      allowPlusOneUpdate: payload.allowPlusOneUpdate,
-    }),
-    ...(payload.publicRsvpWebsite !== undefined && {
-      publicRsvpWebsite: payload.publicRsvpWebsite,
-    }),
-    ...(payload.isPublic !== undefined && { isPublic: payload.isPublic }),
-    ...(payload.category !== undefined && { category: payload.category }),
+    allowPublicRsvp: payload.allowPublicRsvp ?? null,
+    allowPublicPlusOne: payload.allowPublicPlusOne ?? null,
+    allowPublicRsvpWebsite: payload.allowPublicRsvpWebsite ?? null,
+    allowPlusOneUpdate: payload.allowPlusOneUpdate ?? null,
+    allowGuestSeatSelection: payload.allowGuestSeatSelection ?? null,
+    allowSeatOverbooking: payload.allowSeatOverbooking ?? null,
+    maxPlusOnes: payload.maxPlusOnes ?? null,
+    requireApprovalForPlusOnes: payload.requireApprovalForPlusOnes ?? null,
+    rsvpDeadline: payload.rsvpDeadline ?? null,
+    approvalMode: payload.approvalMode ?? null,
+    ticketReleaseAt: payload.ticketReleaseAt ?? null,
+    publicRsvpWebsite: payload.publicRsvpWebsite ?? null,
+    invitedByOptions: payload.invitedByOptions ?? null,
+    isPublic: payload.isPublic ?? null,
+    category: payload.category ?? null,
   };
 }
 

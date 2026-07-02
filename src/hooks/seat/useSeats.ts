@@ -49,11 +49,15 @@ export function useSeats(eventId: string) {
       const txt = filter.search.toLowerCase();
 
       result = result.filter((s) => {
+        const holderName = getSeatHolderName(s.guestId ?? s.invitationId);
+
         return (
           (s.number + "").toLowerCase().includes(txt) ||
           (s.section.name ?? "").toLowerCase().includes(txt) ||
           (s.table?.name ?? "").toLowerCase().includes(txt) ||
-          (s.note ?? "").toLowerCase().includes(txt)
+          (s.note ?? "").toLowerCase().includes(txt) ||
+          (s.label ?? "").toLowerCase().includes(txt) ||
+          holderName.toLowerCase().includes(txt)
         );
       });
     }

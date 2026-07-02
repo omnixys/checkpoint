@@ -30,7 +30,7 @@ export default function RSVPSuccessPage() {
         backgroundColor: "background.default",
         backgroundImage: `radial-gradient(circle at 50% 18%, ${alpha(theme.palette.primary.main, 0.2)}, transparent 36%)`,
         display: "flex",
-        minHeight: "100vh",
+        minHeight: "100dvh",
         overflow: "hidden",
         py: 8,
         position: "relative",

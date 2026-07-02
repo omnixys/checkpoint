@@ -6,6 +6,7 @@ import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import {
   Box,
   Button,
+  Chip,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -78,7 +79,11 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
 
   const currentSeat = seatData?.getSeatByGuestAndEvent ?? null;
 
-  const freeSeats = seatsData?.seats?.filter((s) => !s.guestId && !s.note) ?? [];
+  const allSeats = seatsData?.seats ?? [];
+
+  const freeSeats = allSeats.filter((s) => !s.guestId && !s.note) ?? [];
+
+  const preselectedSeatId = currentSeat?.id ?? allSeats.find((s) => s.invitationId === inv.id)?.id;
 
   const filteredSeats = freeSeats.filter((s) => {
     const q = seatQuery.toLowerCase();
@@ -97,22 +102,22 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
   }, {});
 
   const rsvpUrl = rsvpLinkForInvitationId(inv.id);
+  const selectedInvitedBy = inv.selectedInvitedBy ?? [];
+  const plusOneAgeLabel =
+    inv.plusOneAgeCategory === "OVER_SIX"
+      ? tCommon("plusOne.overSix")
+      : inv.plusOneAgeCategory === "UNDER_SIX"
+        ? tCommon("plusOne.underSix")
+        : null;
+  const hasRsvpDetails =
+    selectedInvitedBy.length > 0 || Boolean(inv.guestNote?.trim()) || Boolean(plusOneAgeLabel);
 
-  const approveInvitation = async (approved: boolean) => {
-    const eventEndsAt = logic.getEventEndsAt(inv.eventId);
-
-    if (!eventEndsAt) {
-      throw new Error("Missing event end time for invitation approval");
-    }
-
+  const approveInvitation = async (approved: boolean, seatId?: string) => {
     await logic.approveInvitationMutation({
       variables: {
         input: {
+          seatId: seatId ?? "",
           eventId: inv.eventId,
-          eventEndsAt,
-          eventName: "",
-          seat: "",
-          seatId: "",
           invitationId: inv.id,
           approved,
         },
@@ -186,7 +191,10 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                   variant="contained"
                   color="success"
                   disabled={!freeSeats.length}
-                  onClick={() => setApproveSeatOpen(true)}
+                  onClick={() => {
+                    setApproveSeatId(preselectedSeatId);
+                    setApproveSeatOpen(true);
+                  }}
                 >
                   {tInvitation("approveAndSeat")}
                 </Button>
@@ -200,6 +208,50 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                 </Button>
               </Stack>
             </Box>
+
+            {hasRsvpDetails && (
+              <>
+                <Divider />
+
+                <Box>
+                  <Typography variant="subtitle2" gutterBottom>
+                    {tInvitation("detail.rsvpDetails")}
+                  </Typography>
+                  <Stack spacing={1.5}>
+                    {selectedInvitedBy.length > 0 && (
+                      <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", gap: 1 }}>
+                        {selectedInvitedBy.map((item) => (
+                          <Chip
+                            key={item}
+                            label={`${tInvitation("detail.selectedInvitedBy")}: ${item}`}
+                            size="small"
+                          />
+                        ))}
+                      </Stack>
+                    )}
+
+                    {plusOneAgeLabel && (
+                      <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                        <Typography variant="body2">
+                          {tInvitation("detail.plusOneAgeCategory")}:
+                        </Typography>
+                        {inv.plusOneAgeCategory === "OVER_SIX" ? (
+                          <Chip label={plusOneAgeLabel} size="small" color="default" />
+                        ) : (
+                          <Chip label={plusOneAgeLabel} size="small" color="info" />
+                        )}
+                      </Stack>
+                    )}
+
+                    {inv.guestNote?.trim() && (
+                      <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
+                        {tInvitation("detail.guestNote")}: {inv.guestNote.trim()}
+                      </Typography>
+                    )}
+                  </Stack>
+                </Box>
+              </>
+            )}
 
             <Divider />
 
@@ -424,7 +476,16 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                 position: "sticky",
                 bottom: 0,
               }}
-            ></Box>
+            >
+              <Button
+                fullWidth
+                variant="contained"
+                disabled={!approveSeatId}
+                onClick={() => approveInvitation(true, approveSeatId)}
+              >
+                {tInvitation("approveAndSeat")}
+              </Button>
+            </Box>
           </Stack>
         </DialogContent>
       </Dialog>

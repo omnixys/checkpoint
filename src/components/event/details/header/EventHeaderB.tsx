@@ -59,13 +59,18 @@ export default function EventHeaderB({ eventPageData }: EventHeaderProps) {
         spacing={1}
         sx={{
           position: "absolute",
-          bottom: 24,
-          left: 24,
+          right: { xs: 16, sm: "auto" },
+          bottom: { xs: 16, sm: 24 },
+          left: { xs: 16, sm: 24 },
         }}
       >
         <Typography
           variant="h4"
-          sx={{ fontWeight: 800, color: theme.palette.primary.contrastText }}
+          sx={{
+            fontWeight: 800,
+            color: theme.palette.primary.contrastText,
+            overflowWrap: "anywhere",
+          }}
         >
           {eventPageData.name}
         </Typography>

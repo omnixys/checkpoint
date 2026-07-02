@@ -28,7 +28,9 @@ export default function InvitationBulkBar({ logic }: InvitationBulkBarProps) {
         bottom: 24,
         left: "50%",
         transform: "translateX(-50%)",
-        px: 3,
+        width: { xs: "calc(100% - 24px)", sm: "auto" },
+        maxWidth: "calc(100vw - 24px)",
+        px: { xs: 1.5, sm: 3 },
         py: 2,
         borderRadius: "20px",
         backdropFilter: "blur(12px)",
@@ -39,9 +41,10 @@ export default function InvitationBulkBar({ logic }: InvitationBulkBarProps) {
     >
       <Stack
         direction="row"
-        spacing={2}
+        spacing={{ xs: 1, sm: 2 }}
         sx={{
           flexWrap: "wrap",
+          justifyContent: "center",
         }}
       >
         <Button

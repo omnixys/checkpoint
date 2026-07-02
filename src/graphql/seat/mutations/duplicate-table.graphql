@@ -1,0 +1,7 @@
+# import TableFull from "../fragments/table.fragment.graphql"
+
+mutation DuplicateTable($input: DuplicateTableInput!) {
+  duplicateTable(input: $input) {
+    ...TableFull
+  }
+}

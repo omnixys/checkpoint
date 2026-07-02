@@ -63,7 +63,7 @@ export default function AcceptForm({ invitation, countries, onAccepted }: Accept
   return (
     <Box
       sx={{
-        p: 4,
+        p: { xs: 2, sm: 4 },
         borderRadius: 4,
         background: theme.palette.background.paper,
       }}
@@ -78,7 +78,7 @@ export default function AcceptForm({ invitation, countries, onAccepted }: Accept
           {t("acceptForm.title")}
         </Typography>
 
-        <Stack direction="row" spacing={2}>
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
           <TextField
             fullWidth={true}
             label={t("acceptForm.firstName")}
@@ -121,7 +121,21 @@ export default function AcceptForm({ invitation, countries, onAccepted }: Accept
           onRemove={form.removePlusOne}
         />
 
-        <Button variant="contained" disabled={!form.isValid} onClick={handleSubmit}>
+        <TextField
+          fullWidth
+          label={t("public.guestNoteLabel")}
+          minRows={4}
+          multiline
+          value={form.state.guestNote}
+          onChange={(e) => form.update("guestNote", e.target.value)}
+        />
+
+        <Button
+          variant="contained"
+          disabled={!form.isValid}
+          onClick={handleSubmit}
+          sx={{ alignSelf: { xs: "stretch", sm: "flex-start" } }}
+        >
           {t("acceptForm.submit")}
         </Button>
       </Stack>

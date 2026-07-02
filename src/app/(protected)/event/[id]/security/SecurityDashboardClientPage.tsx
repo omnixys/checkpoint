@@ -45,7 +45,7 @@ export default function SecurityDashboardClientPage(): JSX.Element {
   }
 
   return (
-    <Box sx={{ p: isMobile ? 1.5 : 3 }}>
+    <Box sx={{ p: isMobile ? 1.5 : 3, minWidth: 0 }}>
       <Stack spacing={3}>
         {/* Back Button */}
         <BackToEventDetailButton />

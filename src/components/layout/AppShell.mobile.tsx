@@ -14,12 +14,13 @@ export default function AppShellMobile({ children }: { children: React.ReactNode
   const [open, setOpen] = useState(false);
   const { isAuthenticated } = useAuth();
 
-  const HEADER_HEIGHT = 56; // Apple-like
+  const HEADER_HEIGHT = 56;
 
   return (
     <Box
       sx={{
         width: "100%",
+        minHeight: "100dvh",
         height: "100dvh",
         display: "flex",
         flexDirection: "column",
@@ -52,10 +53,11 @@ export default function AppShellMobile({ children }: { children: React.ReactNode
       <Box
         sx={{
           flexGrow: 1,
+          minWidth: 0,
           overflowY: "auto",
-          pt: `${HEADER_HEIGHT}px`,
-          pb: "72px", // Platz für BottomNav!
-          px: 2,
+          pt: `calc(${HEADER_HEIGHT}px + env(safe-area-inset-top))`,
+          pb: "calc(76px + env(safe-area-inset-bottom))",
+          px: { xs: 1.5, sm: 2 },
         }}
       >
         {children}
