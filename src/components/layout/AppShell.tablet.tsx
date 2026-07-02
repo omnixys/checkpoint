@@ -13,8 +13,9 @@ export default function AppShellTablet({ children }: { children: React.ReactNode
       sx={{
         display: "flex",
         width: "100%",
-        height: "100dvh", // eigener Viewport
-        overflow: "hidden", // body wird ignoriert
+        minHeight: "100dvh",
+        height: "100dvh",
+        overflow: "hidden",
       }}
     >
       {/* Sticky Sidebar */}
@@ -37,6 +38,7 @@ export default function AppShellTablet({ children }: { children: React.ReactNode
           display: "flex",
           flexDirection: "column",
           height: "100dvh",
+          minWidth: 0,
           overflow: "hidden",
         }}
       >
@@ -44,8 +46,9 @@ export default function AppShellTablet({ children }: { children: React.ReactNode
         <Box
           sx={{
             flexGrow: 1,
+            minWidth: 0,
             overflowY: "auto",
-            p: 3,
+            p: { sm: 2.5, md: 3 },
           }}
         >
           {children}

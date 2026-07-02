@@ -66,6 +66,7 @@ export function InvitationHeaderBar({ collapsed, onToggle, logic }: Props) {
             sx={{
               alignItems: "center",
               justifyContent: "space-between",
+              gap: 1,
             }}
           >
             {/* BACK */}
@@ -191,9 +192,13 @@ export function InvitationHeaderBar({ collapsed, onToggle, logic }: Props) {
                 borderRadius: "12px",
                 px: 2,
                 py: 1,
+                minWidth: 0,
               }}
             >
-              <Typography variant={collapsed ? "h6" : "h5"} sx={{ fontWeight: 700 }}>
+              <Typography
+                variant={collapsed ? "h6" : "h5"}
+                sx={{ fontWeight: 700, overflowWrap: "anywhere" }}
+              >
                 {t("title")}
               </Typography>
 
@@ -206,7 +211,7 @@ export function InvitationHeaderBar({ collapsed, onToggle, logic }: Props) {
           </Stack>
 
           {/* ACTIONS */}
-          <Stack direction="row" spacing={1}>
+          <Stack direction="row" spacing={1} sx={{ flexShrink: 0, flexWrap: "wrap" }}>
             <Tooltip title={t("create")}>
               <motion.div whileTap={{ scale: 0.9 }}>
                 <IconButton

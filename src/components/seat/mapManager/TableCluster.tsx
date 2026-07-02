@@ -32,9 +32,10 @@ export default function TableCluster({
   getSeatHolderLabel,
   onTableClick,
 }: Props) {
-  const containerSize = 260;
+  const containerSize = 220;
+  const containerSizeCss = "min(220px, calc(100vw - 80px))";
   const containerSizeMd = 320;
-  const tableDiameter = 120;
+  const tableDiameter = 104;
   const tableDiameterMd = 160;
   const chairSize = 36;
 
@@ -62,7 +63,7 @@ export default function TableCluster({
         sx={{ borderRadius: 3, cursor: "pointer" }}
       />
 
-      <CardContent sx={{ pt: 0 }}>
+      <CardContent sx={{ pt: 0, px: { xs: 1, sm: 2 } }}>
         <Box
           sx={{
             width: "100%",
@@ -74,8 +75,8 @@ export default function TableCluster({
           <Box
             sx={{
               position: "relative",
-              width: { xs: containerSize, md: containerSizeMd },
-              height: { xs: containerSize, md: containerSizeMd },
+              width: { xs: containerSizeCss, md: containerSizeMd },
+              height: { xs: containerSizeCss, md: containerSizeMd },
               mx: "auto",
             }}
           >

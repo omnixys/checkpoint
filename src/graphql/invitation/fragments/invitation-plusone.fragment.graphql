@@ -3,6 +3,7 @@ fragment InvitationPlusOne on InvitationPayload {
   firstName
   lastName
   email
+  plusOneAgeCategory
 
   status
   guestProfileId

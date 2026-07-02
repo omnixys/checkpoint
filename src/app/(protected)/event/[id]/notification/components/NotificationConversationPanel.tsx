@@ -152,7 +152,8 @@ function EmptyState({ channel }: { channel: NotificationChannel }) {
           sx={{
             color: theme.palette.text.primary,
             fontWeight: 700,
-            letterSpacing: "-0.03em",
+            letterSpacing: 0,
+            overflowWrap: "anywhere",
           }}
         >
           Select a conversation
@@ -176,13 +177,18 @@ function WhatsAppHeader({ item }: { item: WhatsAppChat }) {
   const theme = useTheme();
 
   return (
-    <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
-      <Box>
+    <Stack
+      direction={{ xs: "column", sm: "row" }}
+      spacing={1.5}
+      sx={{ justifyContent: "space-between", alignItems: { xs: "stretch", sm: "center" } }}
+    >
+      <Box sx={{ minWidth: 0 }}>
         <Typography
           sx={{
             color: theme.palette.text.primary,
             fontWeight: 700,
             fontSize: 20,
+            overflowWrap: "anywhere",
           }}
         >
           {item.contactName}
@@ -198,7 +204,7 @@ function WhatsAppHeader({ item }: { item: WhatsAppChat }) {
         </Typography>
       </Box>
 
-      <Stack direction="row" spacing={1}>
+      <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
         {item.labels.map((label) => (
           <Chip
             key={label}
@@ -221,13 +227,18 @@ function InAppHeader({ item }: { item: InAppChat }) {
   const statusColor = getStatusColor(theme, item.status);
 
   return (
-    <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
-      <Box>
+    <Stack
+      direction={{ xs: "column", sm: "row" }}
+      spacing={1.5}
+      sx={{ justifyContent: "space-between", alignItems: { xs: "stretch", sm: "center" } }}
+    >
+      <Box sx={{ minWidth: 0 }}>
         <Typography
           sx={{
             color: theme.palette.text.primary,
             fontWeight: 700,
             fontSize: 20,
+            overflowWrap: "anywhere",
           }}
         >
           {item.title}
@@ -243,7 +254,7 @@ function InAppHeader({ item }: { item: InAppChat }) {
         </Typography>
       </Box>
 
-      <Stack direction="row" spacing={1}>
+      <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
         <Chip
           label={item.priority}
           sx={{
@@ -269,13 +280,18 @@ function EmailHeader({ item }: { item: EmailThread }) {
   const theme = useTheme();
 
   return (
-    <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
-      <Box>
+    <Stack
+      direction={{ xs: "column", sm: "row" }}
+      spacing={1.5}
+      sx={{ justifyContent: "space-between", alignItems: { xs: "stretch", sm: "center" } }}
+    >
+      <Box sx={{ minWidth: 0 }}>
         <Typography
           sx={{
             color: theme.palette.text.primary,
             fontWeight: 700,
             fontSize: 20,
+            overflowWrap: "anywhere",
           }}
         >
           {item.subject}
@@ -291,7 +307,7 @@ function EmailHeader({ item }: { item: EmailThread }) {
         </Typography>
       </Box>
 
-      <Stack direction="row" spacing={1}>
+      <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
         <Chip
           label={item.category}
           sx={{
@@ -336,7 +352,7 @@ function WhatsAppTimeline({ messages }: { messages: WhatsAppMessage[] }) {
           >
             <Box
               sx={{
-                maxWidth: "62%",
+                maxWidth: { xs: "86%", sm: "62%" },
                 px: 2,
                 py: 1.35,
                 borderRadius: own ? "22px 22px 8px 22px" : "22px 22px 22px 8px",
@@ -572,10 +588,13 @@ function ConversationInput({ channel }: { channel: NotificationChannel }) {
       }}
     >
       <Stack
-        direction="row"
+        direction={{ xs: "column", sm: "row" }}
         spacing={1.25}
         sx={{
-          alignItems: channel === NotificationChannel.EMAIL ? "stretch" : "center",
+          alignItems: {
+            xs: "stretch",
+            sm: channel === NotificationChannel.EMAIL ? "stretch" : "center",
+          },
         }}
       >
         <SharedTextField
@@ -590,7 +609,7 @@ function ConversationInput({ channel }: { channel: NotificationChannel }) {
           variant="contained"
           startIcon={buttonIcon}
           sx={{
-            minWidth: channel === NotificationChannel.IN_APP ? 170 : 160,
+            minWidth: { xs: "100%", sm: channel === NotificationChannel.IN_APP ? 170 : 160 },
             borderRadius: channel === NotificationChannel.EMAIL ? 3 : 999,
             backgroundColor: tone.accent,
             color: theme.palette.getContrastText(tone.accent),
@@ -637,7 +656,7 @@ export function NotificationConversationPanel({ channel, chatId }: Props) {
     >
       <Box
         sx={{
-          px: 3,
+          px: { xs: 2, md: 3 },
           py: 2.25,
           borderBottom: `1px solid ${tone.divider}`,
           backgroundColor: theme.palette.background.paper,

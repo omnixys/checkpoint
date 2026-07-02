@@ -46,7 +46,7 @@ export function AppleNavBar({
         right: 0,
         zIndex: 2000,
 
-        height: "56px",
+        minHeight: "calc(56px + env(safe-area-inset-top))",
         paddingTop: "env(safe-area-inset-top)",
 
         // display: "flex",
@@ -60,7 +60,15 @@ export function AppleNavBar({
         transition: "background-color 0.3s cubic-bezier(.4,0,.2,1)",
       }}
     >
-      <Toolbar sx={{ minHeight: "54px", display: "flex", alignItems: "center" }}>
+      <Toolbar
+        sx={{
+          minHeight: "54px",
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
+          px: { xs: 1.5, sm: 2 },
+        }}
+      >
         {onBack && (
           <IconButton edge="start" onClick={onBack} sx={{ mr: 1 }} aria-label="Zurück">
             <ArrowBackIosNewIcon />
@@ -85,6 +93,7 @@ export function AppleNavBar({
         <Box
           sx={{
             flexGrow: 1,
+            minWidth: 0,
             overflow: "hidden",
             whiteSpace: "nowrap",
             textOverflow: "ellipsis",
@@ -126,6 +135,7 @@ export function AppleNavBar({
             justifyContent: "flex-end",
             alignItems: "center",
             gap: 1.2,
+            flexShrink: 0,
           }}
         >
           {rightActions}

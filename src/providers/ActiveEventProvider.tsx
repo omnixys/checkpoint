@@ -9,6 +9,10 @@ import {
 } from "@/checkpoint/generated/graphql";
 import useEventQuery from "@/checkpoint/hooks/events/useEventQuery";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
+import {
+  clearActiveEventCookie,
+  writeActiveEventCookie,
+} from "@/checkpoint/providers/active-event-cookie";
 import { getLogger } from "@/checkpoint/utils/logger";
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
@@ -57,6 +61,7 @@ export function ActiveEventProvider({ children }: { children: React.ReactNode })
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       setActiveEventId(stored);
+      writeActiveEventCookie(stored);
     }
   }, []);
 
@@ -78,6 +83,7 @@ export function ActiveEventProvider({ children }: { children: React.ReactNode })
 
       if (typeof window !== "undefined") {
         localStorage.setItem(STORAGE_KEY, eventId);
+        writeActiveEventCookie(eventId);
       }
     },
     [logger],
@@ -93,6 +99,7 @@ export function ActiveEventProvider({ children }: { children: React.ReactNode })
 
     if (typeof window !== "undefined") {
       localStorage.removeItem(STORAGE_KEY);
+      clearActiveEventCookie();
     }
   }, [logger]);
 

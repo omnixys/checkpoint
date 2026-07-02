@@ -65,8 +65,8 @@ export default function InitialView({
             background: theme.palette.background.paper + "BB",
             borderRadius: "24px",
             boxShadow: theme.shadows[4],
-            px: 4,
-            py: 4,
+            px: { xs: 2.5, sm: 4 },
+            py: { xs: 3, sm: 4 },
           }}
         >
           <Stack spacing={2}>
@@ -74,8 +74,9 @@ export default function InitialView({
               variant={isMobile ? "h6" : "h5"}
               sx={{
                 fontWeight: 700,
-                fontSize: 12,
+                fontSize: { xs: "1rem", sm: "1.125rem" },
                 alignItems: "center",
+                overflowWrap: "anywhere",
               }}
             >
               {t("initial.greeting", { firstName, lastName })}

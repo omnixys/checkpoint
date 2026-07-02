@@ -53,7 +53,7 @@ export default function InvitationFilters({ logic }: { logic: InvitationLogic })
     <Box
       sx={{
         position: "relative",
-        px: 3,
+        px: { xs: 1.5, md: 3 },
         pb: 2,
 
         overflow: "hidden",
@@ -109,14 +109,14 @@ export default function InvitationFilters({ logic }: { logic: InvitationLogic })
         />
 
         <Stack
-          direction="row"
+          direction={{ xs: "column", lg: "row" }}
           spacing={2}
           sx={{
-            alignItems: "center",
+            alignItems: { xs: "stretch", lg: "center" },
             flexWrap: "wrap",
           }}
         >
-          <Box>
+          <Box sx={{ minWidth: 0 }}>
             <Typography variant="caption" sx={{ opacity: 0.7 }}>
               {tInvitation("event")}
             </Typography>
@@ -164,7 +164,7 @@ export default function InvitationFilters({ logic }: { logic: InvitationLogic })
             </Box>
           </Box>
 
-          <Box>
+          <Box sx={{ minWidth: 0 }}>
             <Typography variant="caption" sx={{ opacity: 0.7 }}>
               {tInvitation("type")}
             </Typography>
@@ -202,7 +202,7 @@ export default function InvitationFilters({ logic }: { logic: InvitationLogic })
             </Box>
           </Box>
 
-          <Box>
+          <Box sx={{ minWidth: 0 }}>
             <Typography variant="caption" sx={{ opacity: 0.7 }}>
               {tInvitation("status")}
             </Typography>

@@ -1,0 +1,7 @@
+mutation MoveSection($input: MoveSectionInput!) {
+  moveSection(input: $input) {
+    id
+    x
+    y
+  }
+}

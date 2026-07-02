@@ -40,12 +40,7 @@ export default function TicketList({ tickets, onOpen, onDelete }: Props) {
     >
       {tickets.map((t) => (
         <Grid
-          sx={{
-            xs: 12,
-            sm: 6,
-            md: 4,
-            lg: 3,
-          }}
+          size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
           key={t.id}
           component={motion.div}
           variants={{

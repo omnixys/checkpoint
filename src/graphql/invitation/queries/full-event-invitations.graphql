@@ -26,5 +26,6 @@ query GetGlobalEventInvitationList($eventIds: [ID!]!) {
     maxInvitees
     invitedByInvitationId
     rsvpChoice
+    plusOneAgeCategory
   }
 }

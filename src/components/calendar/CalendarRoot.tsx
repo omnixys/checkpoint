@@ -27,7 +27,7 @@ export default function MyCalendarContent() {
   if (!calendar.groupedEvents) return;
 
   return (
-    <Box sx={{ p: 2 }}>
+    <Box sx={{ p: { xs: 1.5, sm: 2 }, minWidth: 0 }}>
       <CalendarToolbar
         date={calendar.visibleDate}
         mode={calendar.mode}

@@ -20,7 +20,11 @@
     "title": "Companions ({count})",
     "add": "+ Add companion",
     "guest": "Guest",
-    "noEmail": "No email"
+    "noEmail": "No email",
+    "ageCategory": "Age category",
+    "overSix": "Over 6",
+    "underSix": "Under 6",
+    "ageMissing": "Age category missing"
   },
 
   "language": {

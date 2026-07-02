@@ -1,0 +1,3 @@
+mutation AutoGenerateSeatMap($input: AutoGenerateSeatMapInput!) {
+  autoGenerateSeatMap(input: $input)
+}

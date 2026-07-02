@@ -4,6 +4,10 @@ import { useCallback, useMemo, useState } from "react";
 import type { PublicPlusOneInput, PhoneNumberInput } from "@/checkpoint/generated/graphql";
 import { NormalizedPlusOne } from "@/checkpoint/types/event.type";
 
+type CompleteNormalizedPlusOne = NormalizedPlusOne & {
+  plusOneAgeCategory: PublicPlusOneInput["plusOneAgeCategory"];
+};
+
 /**
  * Strongly typed handler contracts
  * This prevents accidental mixing with invitee handlers
@@ -29,6 +33,7 @@ export function usePlusOnes() {
         firstName: "",
         lastName: "",
         email: null,
+        plusOneAgeCategory: null,
         phoneNumbers: [],
       },
     ]);
@@ -121,7 +126,10 @@ export function usePlusOnes() {
    * Validation layer
    */
   const valid = useMemo(() => {
-    return plusOnes.filter((p) => p.firstName.trim() && p.lastName.trim());
+    return plusOnes.filter(
+      (p): p is CompleteNormalizedPlusOne =>
+        Boolean(p.firstName.trim() && p.lastName.trim() && p.plusOneAgeCategory),
+    );
   }, [plusOnes]);
 
   /**
@@ -132,6 +140,7 @@ export function usePlusOnes() {
       firstName: p.firstName.trim(),
       lastName: p.lastName.trim(),
       email: p.email?.trim() || null,
+      plusOneAgeCategory: p.plusOneAgeCategory,
       phoneNumbers: p.phoneNumbers.length ? p.phoneNumbers : null,
     }));
   }, [valid]);

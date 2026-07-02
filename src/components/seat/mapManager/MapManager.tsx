@@ -46,12 +46,12 @@ export default function MapManager({
   } | null>(null);
 
   return (
-    <Stack spacing={3} sx={{ width: "100%" }}>
+    <Stack spacing={3} sx={{ width: "100%", minWidth: 0 }}>
       {/* Map Type Switcher */}
       <MapSwitcher value={mapType} onChange={setMapType} />
 
       {/* Renderer */}
-      <Box sx={{ width: "100%", py: 2 }}>
+      <Box sx={{ width: "100%", minWidth: 0, py: 2, overflow: "hidden" }}>
         {mapType === "default" && (
           <SeatMapRegular
             seats={seats}

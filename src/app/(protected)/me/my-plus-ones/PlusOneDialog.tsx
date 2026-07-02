@@ -12,7 +12,12 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
   MenuItem,
+  Radio,
+  RadioGroup,
   Stack,
   TextField,
   Typography,
@@ -22,6 +27,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 
 import {
+  PlusOneAgeCategory,
   PlusOneItem,
   PlusOnePhoneNumberType,
   UpdatePlusOneInput,
@@ -72,6 +78,7 @@ export default function PlusOneDialog({
   const [number, setNumber] = useState("");
   const [phoneType, setPhoneType] = useState<PlusOnePhoneNumberType>("WHATSAPP");
   const [label, setLabel] = useState("");
+  const [plusOneAgeCategory, setPlusOneAgeCategory] = useState<PlusOneAgeCategory | "">("");
 
   useEffect(() => {
     if (!open) {
@@ -81,6 +88,7 @@ export default function PlusOneDialog({
     setFirstName(initialValue?.firstName ?? "");
     setLastName(initialValue?.lastName ?? "");
     setEmail(initialValue?.email ?? "");
+    setPlusOneAgeCategory(initialValue?.plusOneAgeCategory ?? "");
 
     const primaryPhone =
       initialValue?.phoneNumbers?.find((phone) => phone.isPrimary) ??
@@ -118,10 +126,16 @@ export default function PlusOneDialog({
     ];
   }, [countryCode, label, number, phoneType]);
 
-  const isValid = firstName.trim().length > 0 && lastName.trim().length > 0;
+  const isValid =
+    firstName.trim().length > 0 && lastName.trim().length > 0 && plusOneAgeCategory !== "";
 
   const handleSubmit = async (): Promise<void> => {
     if (!isValid) {
+      return;
+    }
+
+    const selectedAgeCategory = plusOneAgeCategory;
+    if (!selectedAgeCategory) {
       return;
     }
 
@@ -134,7 +148,8 @@ export default function PlusOneDialog({
           invitedByInvitationId: "",
           firstName: firstName.trim(),
           lastName: lastName.trim(),
-          email: email?.trim() ?? null,
+          email: email.trim() || null,
+          plusOneAgeCategory: selectedAgeCategory,
           phoneNumbers,
         });
       } else if (initialValue) {
@@ -142,7 +157,8 @@ export default function PlusOneDialog({
           id: initialValue.id,
           firstName: firstName.trim(),
           lastName: lastName.trim(),
-          email: email.trim() ?? null,
+          email: email.trim() || null,
+          plusOneAgeCategory: selectedAgeCategory,
           phoneNumbers,
         });
       }
@@ -223,6 +239,45 @@ export default function PlusOneDialog({
                   type="email"
                   sx={glassInputSx(theme)}
                 />
+              </MotionBox>
+
+              <MotionBox
+                initial={{ opacity: 0, x: -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.09, duration: 0.2 }}
+              >
+                <FormControl required fullWidth>
+                  <FormLabel>{tCommon("plusOne.ageCategory")}</FormLabel>
+                  <RadioGroup
+                    row
+                    value={plusOneAgeCategory}
+                    onChange={(event) =>
+                      setPlusOneAgeCategory(event.target.value as PlusOneAgeCategory)
+                    }
+                    sx={{
+                      gap: 1,
+                      mt: 1,
+                      "& .MuiFormControlLabel-root": {
+                        border: `1px solid ${alpha(theme.palette.divider, 0.7)}`,
+                        borderRadius: 2,
+                        m: 0,
+                        minHeight: 44,
+                        px: 1.25,
+                      },
+                    }}
+                  >
+                    <FormControlLabel
+                      value="OVER_SIX"
+                      control={<Radio />}
+                      label={tCommon("plusOne.overSix")}
+                    />
+                    <FormControlLabel
+                      value="UNDER_SIX"
+                      control={<Radio />}
+                      label={tCommon("plusOne.underSix")}
+                    />
+                  </RadioGroup>
+                </FormControl>
               </MotionBox>
 
               <MotionBox

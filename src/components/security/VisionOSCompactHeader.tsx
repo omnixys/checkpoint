@@ -62,7 +62,7 @@ export default function VisionOSCompactHeader({
                 <Typography
                   variant="h6"
                   sx={{
-                    letterSpacing: "-0.4px",
+                    letterSpacing: 0,
                     background: "linear-gradient(90deg,#000,#555)",
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",

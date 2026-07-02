@@ -11,6 +11,7 @@ mutation RemoveAllPlusOnes($id: ID!) {
     lastName
     email
     status
+    plusOneAgeCategory
     phoneNumbers {
       countryCode
       number

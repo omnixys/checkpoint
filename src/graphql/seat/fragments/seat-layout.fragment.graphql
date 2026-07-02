@@ -3,6 +3,10 @@ fragment SeatLayoutSection on SectionPayload {
   name
   x
   y
+  width
+  height
+  shape
+  rotation
   meta
 
   tables {
@@ -10,6 +14,10 @@ fragment SeatLayoutSection on SectionPayload {
     name
     x
     y
+    width
+    height
+    shape
+    rotation
     meta
     sectionId
 

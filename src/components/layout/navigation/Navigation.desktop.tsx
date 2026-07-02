@@ -57,6 +57,7 @@ export default function NavigationDesktop(): JSX.Element {
         display: "flex",
         flexDirection: "column",
         height: "100dvh",
+        minWidth: collapsed ? 72 : 260,
         borderRight: (t) => `1px solid ${t.palette.apple.separator}`,
         backgroundColor: (t) => t.palette.apple.systemBackground,
         p: collapsed ? 1.5 : 3,

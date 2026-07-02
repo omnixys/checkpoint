@@ -64,22 +64,24 @@ export default function SeatListView({
           >
             <CardContent sx={{ py: 1.25 }}>
               <Stack
-                direction="row"
+                direction={{ xs: "column", sm: "row" }}
                 spacing={1}
                 sx={{
-                  alignItems: "center",
+                  alignItems: { xs: "flex-start", sm: "center" },
+                  minWidth: 0,
                 }}
               >
                 <Typography
                   sx={{
                     fontWeight: 700,
+                    overflowWrap: "anywhere",
                   }}
                 >
                   Section {s.section.name || "—"} • Tisch {s.table?.name || "—"} • Sitz{" "}
                   {seatLabel(s)}
                 </Typography>
 
-                <Box sx={{ flex: 1 }} />
+                <Box sx={{ flex: 1, display: { xs: "none", sm: "block" } }} />
 
                 <Chip
                   size="small"
@@ -91,7 +93,7 @@ export default function SeatListView({
 
               {/* GAST INFO */}
               {s.invitationId && (
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: "anywhere" }}>
                   {fullName(s)}
                   <Typography component="span" sx={{ ml: 1, opacity: 0.6 }}>
                     ({s.invitationId})
@@ -100,7 +102,7 @@ export default function SeatListView({
               )}
 
               {guestId && (
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: "anywhere" }}>
                   {fullName(s)}
                   <Typography component="span" sx={{ ml: 1, opacity: 0.6 }}>
                     ({guestId})

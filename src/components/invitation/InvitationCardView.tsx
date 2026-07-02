@@ -45,7 +45,6 @@ export default function InvitationCardView({ logic }: { logic: InvitationLogic }
     <Stack spacing={2}>
       {logic.invitations.map((inv) => {
         const copied = copiedMap[inv.id] ?? false;
-        const eventEndsAt = logic.getEventEndsAt(inv.eventId);
 
         return (
           <Paper
@@ -62,14 +61,16 @@ export default function InvitationCardView({ logic }: { logic: InvitationLogic }
             <Stack spacing={1.5}>
               {/* HEADER */}
               <Stack
-                direction="row"
+                direction={{ xs: "column", sm: "row" }}
                 sx={{
                   justifyContent: "space-between",
+                  alignItems: { xs: "flex-start", sm: "center" },
                 }}
               >
                 <Typography
                   sx={{
                     fontWeight: 600,
+                    overflowWrap: "anywhere",
                   }}
                 >
                   {inv.firstName} {inv.lastName}
@@ -125,26 +126,18 @@ export default function InvitationCardView({ logic }: { logic: InvitationLogic }
 
               {/* ACTIONS */}
               <Stack direction="row" spacing={1}>
-                <IconButton
-                  color="success"
-                  disabled={!eventEndsAt}
-                  onClick={(e) => {
-                    e.stopPropagation();
-
-                    if (!eventEndsAt) {
-                      throw new Error("Missing event end time for invitation approval");
-                    }
+                    <IconButton
+                      color="success"
+                      onClick={(e) => {
+                        e.stopPropagation();
 
                     logic
                       .approveInvitationMutation({
                         variables: {
                           input: {
                             eventId: inv.eventId,
-                            eventEndsAt,
                             invitationId: inv.id,
                             approved: true,
-                            eventName: "",
-                            seat: "",
                             seatId: "",
                           },
                         },

@@ -1,0 +1,7 @@
+# import SectionFull from "../fragments/section.fragment.graphql"
+
+mutation CreateSection($input: CreateSectionInput!) {
+  createSection(input: $input) {
+    ...SectionFull
+  }
+}

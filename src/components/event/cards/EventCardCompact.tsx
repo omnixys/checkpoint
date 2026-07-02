@@ -65,8 +65,12 @@ export default function EventCardCompact({ ev, toLocal, isActive, onSetActive }:
         }}
       >
         <CardContent sx={{ pb: 1.5 }}>
-          <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-            <Typography variant="h6" sx={{ fontWeight: 700 }}>
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={1}
+            sx={{ alignItems: { xs: "flex-start", sm: "center" }, minWidth: 0 }}
+          >
+            <Typography variant="h6" sx={{ fontWeight: 700, overflowWrap: "anywhere" }}>
               {ev.name}
             </Typography>
 
@@ -79,7 +83,7 @@ export default function EventCardCompact({ ev, toLocal, isActive, onSetActive }:
               />
             )}
 
-            <Box sx={{ flex: 1 }} />
+            <Box sx={{ flex: 1, display: { xs: "none", sm: "block" } }} />
 
             <Chip label={t(`status.${status}`)} size="small" color={STATUS_COLOR[status]} />
           </Stack>
@@ -95,6 +99,7 @@ export default function EventCardCompact({ ev, toLocal, isActive, onSetActive }:
             pb: 2,
             gap: 1,
             display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
             justifyContent: "space-between",
           }}
         >
@@ -102,13 +107,16 @@ export default function EventCardCompact({ ev, toLocal, isActive, onSetActive }:
             component={Link}
             href={`${env.CHECKPOINT_BASE_PATH}event/${ev.id}`}
             variant="contained"
-            sx={{ borderRadius: 3, fontWeight: 600 }}
+            sx={{ borderRadius: 3, fontWeight: 600, width: { xs: "100%", sm: "auto" } }}
           >
             {t("actions.details")}
           </Button>
 
           {!isActive && (
-            <Button sx={{ fontWeight: 700, borderRadius: 3 }} onClick={onSetActive}>
+            <Button
+              sx={{ fontWeight: 700, borderRadius: 3, width: { xs: "100%", sm: "auto" } }}
+              onClick={onSetActive}
+            >
               {t("actions.setActive")}
             </Button>
           )}

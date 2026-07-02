@@ -18,10 +18,11 @@ export default function SeatFilters({ filter, onChange }: Props) {
       spacing={2}
       sx={{
         background: alpha(theme.palette.background.paper, 0.5),
-        p: 2,
+        p: { xs: 1.5, sm: 2 },
         borderRadius: "20px",
         backdropFilter: "blur(12px)",
         border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+        minWidth: 0,
       }}
     >
       <TextField
@@ -33,6 +34,7 @@ export default function SeatFilters({ filter, onChange }: Props) {
 
       <Select
         fullWidth
+        sx={{ minWidth: 0 }}
         value={filter.status}
         onChange={(e) =>
           onChange({

@@ -13,6 +13,7 @@ mutation RemovePlusOne($id: ID!) {
     lastName
     email
     status
+    plusOneAgeCategory
     phoneNumbers {
       countryCode
       number

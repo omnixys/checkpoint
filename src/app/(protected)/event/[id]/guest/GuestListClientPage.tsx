@@ -165,7 +165,7 @@ export default function GuestListClientPage() {
 
   return (
     <Container maxWidth={isMobile ? false : "lg"} disableGutters={isMobile}>
-      <Stack spacing={3} sx={{ px: isMobile ? 1.5 : 0 }}>
+      <Stack spacing={3} sx={{ px: isMobile ? 1.5 : 0, minWidth: 0 }}>
         <BackToEventDetailButton />
 
         {/* ================================================================ */}
@@ -266,6 +266,9 @@ export default function GuestListClientPage() {
                 spacing={2}
                 sx={{
                   alignItems: "center",
+                  flexWrap: "wrap",
+                  rowGap: 1,
+                  minWidth: 0,
                 }}
               >
                 <Typography
@@ -349,7 +352,7 @@ export default function GuestListClientPage() {
             direction={{ xs: "column", md: "row" }}
             spacing={2}
             sx={{
-              alignItems: "center",
+              alignItems: { xs: "stretch", md: "center" },
             }}
           >
             <TextField
@@ -359,7 +362,7 @@ export default function GuestListClientPage() {
               fullWidth
             />
 
-            <FormControl sx={{ minWidth: 220 }}>
+            <FormControl sx={{ minWidth: { xs: "100%", md: 220 } }}>
               <Select value={filter} onChange={(e) => setFilter(e.target.value as Filter)}>
                 <MenuItem value="ALL">{t("filter.allGuests")}</MenuItem>
                 <MenuItem value="NOT_ARRIVED">{t("filter.notArrived")}</MenuItem>
@@ -403,11 +406,11 @@ export default function GuestListClientPage() {
               <Typography color={apple.secondaryLabel}>{t("guests.subtitle")} </Typography>
             </Stack>
             <Stack
-              direction={{ xs: "row", md: "row" }}
+              direction={{ xs: "column", sm: "row" }}
               spacing={2}
               sx={{
                 justifyContent: "space-between",
-                alignItems: "center",
+                alignItems: { xs: "stretch", sm: "center" },
               }}
             >
               <FormControlLabel
@@ -438,10 +441,11 @@ export default function GuestListClientPage() {
           <Stack
             direction="row"
             spacing={1}
-            sx={{
-              alignItems: "center",
-            }}
-          >
+              sx={{
+                alignItems: "center",
+                minWidth: 0,
+              }}
+            >
             <TextField
               placeholder={t("search.placeholder2")}
               value={search}
@@ -468,6 +472,7 @@ export default function GuestListClientPage() {
               gap: 1,
               overflowX: "auto",
               scrollSnapType: "x mandatory",
+              pb: 0.5,
               "&::-webkit-scrollbar": { display: "none" },
             }}
           >
@@ -545,6 +550,8 @@ export default function GuestListClientPage() {
                 spacing={1}
                 sx={{
                   mt: 1,
+                  flexWrap: "wrap",
+                  rowGap: 1,
                 }}
               >
                 <Chip

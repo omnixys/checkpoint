@@ -133,7 +133,7 @@ export default function ScanContent() {
     <Box
       sx={{
         width: "100%",
-        minHeight: "100vh",
+        minHeight: "100dvh",
         display: "flex",
         flexDirection: "column",
         background: `radial-gradient(circle at top, ${alpha(
@@ -149,11 +149,12 @@ export default function ScanContent() {
           flex: 1,
           display: "flex",
           justifyContent: "center",
+          minWidth: 0,
           px: { xs: 2, sm: 3 },
           py: { xs: 3, sm: 4 },
         }}
       >
-        <Stack spacing={2.5} sx={{ width: "100%", maxWidth: theme.spacing(64) }}>
+        <Stack spacing={2.5} sx={{ width: "100%", maxWidth: theme.spacing(64), minWidth: 0 }}>
           <MotionBox
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}

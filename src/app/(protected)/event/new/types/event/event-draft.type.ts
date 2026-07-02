@@ -17,6 +17,7 @@ export interface CreateSettingsDraft {
   allowPublicRsvp: boolean;
   allowPublicPlusOne: boolean;
   allowPublicRsvpWebsite: boolean;
+  invitedByOptions: string[];
   publicRsvpWebsite: string | null;
   isActive: boolean;
   isPublic: boolean;

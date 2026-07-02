@@ -30,7 +30,7 @@ export default function EventsNavBar() {
         fontSize: { xs: "0.75rem", sm: "0.9rem" },
       }}
     >
-      <Stack direction="row" spacing={2}>
+      <Stack direction="row" spacing={2} sx={{ alignItems: "center", minWidth: 0 }}>
         {!isMobile && (
           <>
             <Typography variant="h5" sx={{ fontWeight: 800, color: theme.palette.text.primary }}>
@@ -43,9 +43,12 @@ export default function EventsNavBar() {
 
         <Stack
           direction="row"
-          spacing={isMobile ? 3 : 1.5}
+          spacing={isMobile ? 1 : 1.5}
           sx={{
-            px: { xs: 5, sm: 0 },
+            px: 0,
+            overflowX: "auto",
+            scrollbarWidth: "none",
+            "&::-webkit-scrollbar": { display: "none" },
           }}
         >
           <EventsNavButton href={`${CHECKPOINT_BASE_PATH}event`} label={t("overview")} />

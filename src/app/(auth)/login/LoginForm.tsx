@@ -67,12 +67,14 @@ export default function LoginForm(): JSX.Element {
   return (
     <Box
       sx={{
-        minHeight: "100vh",
+        minHeight: "100dvh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         position: "relative",
         overflow: "hidden",
+        px: 2,
+        py: "calc(24px + env(safe-area-inset-top))",
         background: `
           radial-gradient(circle at 20% 30%, ${theme.palette.primary.main}22, transparent 40%),
           radial-gradient(circle at 80% 70%, ${theme.palette.secondary.main}22, transparent 40%),
@@ -86,8 +88,8 @@ export default function LoginForm(): JSX.Element {
         transition={{ duration: 6, repeat: Number.POSITIVE_INFINITY }}
         style={{
           position: "absolute",
-          width: 600,
-          height: 600,
+          width: "min(600px, 120vw)",
+          height: "min(600px, 120vw)",
           borderRadius: "50%",
           background: theme.palette.primary.main,
           filter: "blur(160px)",
@@ -102,7 +104,7 @@ export default function LoginForm(): JSX.Element {
         initial={{ opacity: 0, y: 60, scale: 0.96 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.6 }}
-        style={{ zIndex: 1 }}
+        style={{ zIndex: 1, width: "100%", maxWidth: 420 }}
       >
         <AppleCard>
           <form
@@ -111,7 +113,7 @@ export default function LoginForm(): JSX.Element {
               void submitForm();
             }}
           >
-            <Stack spacing={3} sx={{ width: 380, maxWidth: "90vw" }}>
+            <Stack spacing={3} sx={{ width: "100%", minWidth: 0 }}>
               {/* Branding */}
               <Stack spacing={1} sx={{ textAlign: "center" }}>
                 <Typography variant="h4" sx={{ fontWeight: 800 }}>

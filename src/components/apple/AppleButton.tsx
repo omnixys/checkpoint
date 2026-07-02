@@ -31,6 +31,7 @@ export interface AppleButtonProps extends Omit<ButtonProps, "variant"> {
 const BaseButton = styled(Button)(() => ({
   borderRadius: 14,
   fontWeight: 600,
+  minHeight: 44,
   padding: "10px 18px",
   textTransform: "none",
 }));

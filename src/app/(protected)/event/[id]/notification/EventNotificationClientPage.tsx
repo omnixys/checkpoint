@@ -38,8 +38,8 @@ export default function EventNotificationClientPage() {
   return (
     <Box
       sx={{
-        minHeight: "100vh",
-        height: "100vh",
+        minHeight: "100dvh",
+        height: "100dvh",
         overflow: "hidden",
         backgroundColor: theme.palette.background.default,
         px: { xs: 0, md: 1.5 },
@@ -66,6 +66,7 @@ export default function EventNotificationClientPage() {
         <Box
           sx={{
             display: "flex",
+            flexDirection: { xs: "column", md: "row" },
             flex: 1,
             minHeight: 0,
           }}

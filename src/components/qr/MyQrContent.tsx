@@ -81,7 +81,7 @@ export default function MyQrContent() {
     <Box
       sx={{
         width: "100%",
-        minHeight: "100vh",
+        minHeight: "100dvh",
         px: { xs: 2, sm: 3, md: 4 },
         py: { xs: 3, sm: 4 },
         background: `radial-gradient(circle at top, ${alpha(
@@ -90,7 +90,7 @@ export default function MyQrContent() {
         )}, ${alpha(theme.palette.background.default, 0)} 44%), ${theme.palette.background.default}`,
       }}
     >
-      <Stack spacing={3} sx={{ width: "100%", maxWidth: theme.spacing(108), mx: "auto" }}>
+      <Stack spacing={3} sx={{ width: "100%", maxWidth: theme.spacing(108), mx: "auto", minWidth: 0 }}>
         <MotionBox
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
@@ -111,6 +111,7 @@ export default function MyQrContent() {
               color: theme.palette.text.primary,
               fontWeight: 900,
               lineHeight: 1.1,
+              overflowWrap: "anywhere",
             }}
           >
             {tQr("title")}

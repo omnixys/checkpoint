@@ -4,6 +4,7 @@ export const buttonComponents = (theme: Theme): Components["MuiButton"] => ({
   styleOverrides: {
     root: {
       borderRadius: 999,
+      minHeight: 44,
       padding: "10px 18px",
       fontWeight: 600,
       textTransform: "none",

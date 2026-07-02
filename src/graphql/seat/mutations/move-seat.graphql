@@ -1,0 +1,8 @@
+mutation MoveSeat($input: MoveSeatInput!) {
+  moveSeat(input: $input) {
+    id
+    x
+    y
+    rotation
+  }
+}

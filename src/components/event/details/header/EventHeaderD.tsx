@@ -84,13 +84,14 @@ export default function EventHeaderD({ eventPageData: ev }: EventHeaderProps) {
             spacing={1.5}
             sx={{
               position: "absolute",
-              bottom: 24,
-              left: 24,
+              right: { xs: 16, sm: "auto" },
+              bottom: { xs: 16, sm: 24 },
+              left: { xs: 16, sm: 24 },
               color: theme.palette.primary.contrastText,
               textShadow: "0 2px 12px rgba(0,0,0,0.4)",
             }}
           >
-            <Typography variant="h3" sx={{ fontWeight: 900 }}>
+            <Typography variant="h3" sx={{ fontWeight: 900, overflowWrap: "anywhere" }}>
               {ev.name}
             </Typography>
 

@@ -24,7 +24,7 @@ export default function EventHeaderA({ ev }: Props) {
       }}
     >
       <Stack spacing={1}>
-        <Typography variant="h4" sx={{ fontWeight: 800 }}>
+        <Typography variant="h4" sx={{ fontWeight: 800, overflowWrap: "anywhere" }}>
           {ev.name}
         </Typography>
 

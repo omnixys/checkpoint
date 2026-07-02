@@ -37,10 +37,11 @@ export default function SecurityStatusHeader({
         }}
       >
         <Stack
-          direction="row"
-          spacing={4}
+          direction={{ xs: "column", sm: "row" }}
+          spacing={{ xs: 2, sm: 4 }}
           sx={{
             justifyContent: "space-between",
+            alignItems: "stretch",
           }}
         >
           <StatusItem label="Inside" value={inside} />
@@ -67,13 +68,15 @@ function StatusItem({
       spacing={0.4}
       sx={{
         alignItems: "center",
+        minWidth: 0,
       }}
     >
       <Typography
         sx={{
           fontSize: "0.78rem",
           opacity: 0.7,
-          letterSpacing: 0.4,
+          letterSpacing: 0,
+          textAlign: "center",
         }}
       >
         {label}

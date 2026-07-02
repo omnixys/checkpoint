@@ -19,7 +19,14 @@ export default function CalendarDaySheet({ open, date, events, onClose }: Props)
 
   return (
     <Drawer anchor="bottom" open={open} onClose={onClose}>
-      <Box sx={{ p: 3 }}>
+      <Box
+        sx={{
+          maxHeight: "80dvh",
+          overflowY: "auto",
+          p: { xs: 2, sm: 3 },
+          pb: "calc(24px + env(safe-area-inset-bottom))",
+        }}
+      >
         <Typography sx={{ fontWeight: 700, mb: 2 }}>{date.toLocaleDateString("de-DE")}</Typography>
 
         {dayEvents.map((e) => (

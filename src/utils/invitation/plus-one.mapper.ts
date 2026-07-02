@@ -8,11 +8,12 @@ import { PublicPlusOneInput } from "@/checkpoint/generated/graphql";
  */
 export function mapPlusOnes(plusOnes: PublicPlusOneInput[]): PublicPlusOneInput[] {
   return plusOnes
-    .filter((p) => p.firstName && p.lastName)
+    .filter((p) => p.firstName && p.lastName && p.plusOneAgeCategory)
     .map((p) => ({
       firstName: p.firstName.trim(),
       lastName: p.lastName.trim(),
       email: p.email ?? null,
+      plusOneAgeCategory: p.plusOneAgeCategory,
       phoneNumbers: p.phoneNumbers ?? null,
     }));
 }

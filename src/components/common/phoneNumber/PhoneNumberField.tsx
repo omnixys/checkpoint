@@ -36,7 +36,7 @@ export default function PhoneNumberField({
   return (
     <Box
       sx={{
-        p: 2,
+        p: { xs: 1.5, sm: 2 },
         borderRadius: 2,
         border: "1px solid",
         borderColor: "divider",
@@ -52,9 +52,9 @@ export default function PhoneNumberField({
         <DeleteIcon fontSize="small" />
       </IconButton>
 
-      <Stack spacing={2} sx={{ p: 2 }}>
+      <Stack spacing={2} sx={{ p: { xs: 1, sm: 2 }, pt: 3 }}>
         {/* TYPE + LABEL */}
-        <Stack direction="row" spacing={2}>
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
           <TextField
             select
             fullWidth
@@ -78,13 +78,13 @@ export default function PhoneNumberField({
         </Stack>
 
         {/* COUNTRY + NUMBER */}
-        <Stack direction="row" spacing={2}>
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
           <TextField
             select
             label="Country"
             value={value?.countryCode}
             onChange={(e) => onChange(index, "countryCode", e.target.value)}
-            sx={{ minWidth: 160 }}
+            sx={{ minWidth: { xs: "100%", sm: 160 } }}
           >
             {callingCodeCountries.map((c) => (
               <MenuItem key={c.iso2} value={c.callingCode ?? undefined}>

@@ -96,7 +96,7 @@ export default function AddressStep() {
             sx={{
               fontSize: 28,
               fontWeight: 700,
-              letterSpacing: "-0.02em",
+              letterSpacing: 0,
               color: theme.palette.text.primary,
             }}
           >

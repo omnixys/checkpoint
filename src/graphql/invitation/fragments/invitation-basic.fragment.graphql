@@ -15,6 +15,9 @@ fragment InvitationBase on InvitationPayload {
 
   pendingContactId
   phoneNumber
+  selectedInvitedBy
+  guestNote
+  plusOneAgeCategory
 
   rsvpChoice
   rsvpAt

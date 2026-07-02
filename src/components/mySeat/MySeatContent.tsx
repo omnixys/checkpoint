@@ -77,7 +77,7 @@ export default function MySeatContent(): JSX.Element {
       : "Bitte gedulde dich noch. Ein Platz wird dir noch zugewiesen.";
 
     return (
-      <Box sx={{ p: 2, pt: 30 }}>
+      <Box sx={{ p: { xs: 1.5, sm: 2 }, pt: { xs: 10, sm: 18, md: 30 } }}>
         <Card
           sx={{
             borderRadius: 4,
@@ -110,8 +110,10 @@ export default function MySeatContent(): JSX.Element {
                 <EventSeatIcon fontSize="large" />
               </Box>
 
-              <Stack spacing={0.75}>
-                <Typography variant="h6">{title}</Typography>
+              <Stack spacing={0.75} sx={{ minWidth: 0 }}>
+                <Typography variant="h6" sx={{ overflowWrap: "anywhere" }}>
+                  {title}
+                </Typography>
                 <Typography color="text.secondary">{message}</Typography>
               </Stack>
             </Stack>
@@ -125,7 +127,7 @@ export default function MySeatContent(): JSX.Element {
    * UI
    * ----------------------------------------------------- */
   return (
-    <Box sx={{ p: 2, pt: 30 }}>
+    <Box sx={{ p: { xs: 1.5, sm: 2 }, pt: { xs: 10, sm: 18, md: 30 } }}>
       <Card
         sx={{
           borderRadius: 4,
@@ -137,14 +139,14 @@ export default function MySeatContent(): JSX.Element {
             <Typography variant="h6">Dein Sitzplatz</Typography>
 
             <Stack
-              direction="row"
+              direction={{ xs: "column", sm: "row" }}
               spacing={1}
               sx={{
-                alignItems: "center",
+                alignItems: { xs: "flex-start", sm: "center" },
               }}
             >
               <EventSeatIcon />
-              <Typography>
+              <Typography sx={{ overflowWrap: "anywhere" }}>
                 Bereich {fullSeatInfo?.section?.name} · Tisch {fullSeatInfo.table?.name} · Sitz{" "}
                 {fullSeatInfo.number}
               </Typography>
@@ -152,14 +154,14 @@ export default function MySeatContent(): JSX.Element {
 
             {fullSeatInfo.label && (
               <Stack
-                direction="row"
+                direction={{ xs: "column", sm: "row" }}
                 spacing={1}
                 sx={{
-                  alignItems: "center",
+                  alignItems: { xs: "flex-start", sm: "center" },
                 }}
               >
                 <LocationOnIcon />
-                <Typography>{fullSeatInfo.label}</Typography>
+                <Typography sx={{ overflowWrap: "anywhere" }}>{fullSeatInfo.label}</Typography>
               </Stack>
             )}
           </Stack>

@@ -70,7 +70,8 @@ export function NotificationChannelTabs({ value, onChange }: Props) {
             sx={{
               color: theme.palette.text.primary,
               fontWeight: 700,
-              letterSpacing: "-0.03em",
+              letterSpacing: 0,
+              overflowWrap: "anywhere",
             }}
           >
             Notification Center
@@ -119,6 +120,7 @@ export function NotificationChannelTabs({ value, onChange }: Props) {
               sx={{
                 minWidth: 0,
                 flex: 1,
+                flexBasis: { xs: "100%", sm: 0 },
                 cursor: "pointer",
               }}
             >

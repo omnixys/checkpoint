@@ -47,10 +47,11 @@ export default function CreateEventHeader({ activeStep, progress }: CreateEventH
         <Stack>
           <Typography
             sx={{
-              fontSize: 32,
+              fontSize: { xs: 26, sm: 32 },
               fontWeight: 700,
-              letterSpacing: "-0.02em",
+              letterSpacing: 0,
               color: theme.palette.text.primary,
+              overflowWrap: "anywhere",
             }}
           >
             {t("meta.title")}
@@ -76,12 +77,14 @@ export default function CreateEventHeader({ activeStep, progress }: CreateEventH
             background: alpha(theme.palette.primary.main, 0.08),
             border: `1px solid ${alpha(theme.palette.primary.main, 0.16)}`,
             alignItems: "center",
+            maxWidth: "100%",
           }}
         >
           <ChecklistRoundedIcon color="primary" />
           <Typography
             sx={{
               fontWeight: 700,
+              overflowWrap: "anywhere",
             }}
           >
             {currentStepTitle}

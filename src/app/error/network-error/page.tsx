@@ -74,7 +74,7 @@ export default function NetworkErrorPage() {
             variant="h5"
             sx={{
               fontWeight: 700,
-              letterSpacing: "-0.02em",
+              letterSpacing: 0,
             }}
           >
             {t("network.title")}

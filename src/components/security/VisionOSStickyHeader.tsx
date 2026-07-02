@@ -40,11 +40,11 @@ export default function VisionOSStickyHeader({
         }}
       >
         <Stack
-          direction="row"
+          direction={{ xs: "column", md: "row" }}
           spacing={2}
           sx={{
             justifyContent: "space-between",
-            alignItems: "center",
+            alignItems: { xs: "stretch", md: "center" },
           }}
         >
           {/* ---------- Title ---------- */}
@@ -54,15 +54,16 @@ export default function VisionOSStickyHeader({
               background: "linear-gradient(90deg,#000,#555)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
-              letterSpacing: "-0.5px",
+              letterSpacing: 0,
               fontWeight: 600,
+              overflowWrap: "anywhere",
             }}
           >
             Security Dashboard
           </Typography>
 
           {/* ---------- Connectivity Status ---------- */}
-          <Stack direction="row" spacing={2}>
+          <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
             <StatusDot label="WS" active={connectivity.ws} />
             <StatusDot label="Kafka" active={connectivity.kafka} />
             <StatusDot label="API" active={connectivity.api} />

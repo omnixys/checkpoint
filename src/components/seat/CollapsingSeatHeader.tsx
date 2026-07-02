@@ -29,14 +29,16 @@ export default function CollapsingSeatHeader() {
         sx={{
           alignItems: "center",
           justifyContent: "space-between",
-          px: 3,
+          px: { xs: 1.5, sm: 3 },
           height: "100%",
+          minWidth: 0,
         }}
       >
         <Typography
           variant="h6"
           sx={{
             fontWeight: 700,
+            overflowWrap: "anywhere",
           }}
         >
           Sitzplätze

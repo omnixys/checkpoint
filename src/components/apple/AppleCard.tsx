@@ -10,6 +10,7 @@ interface AppleCardProps {
 const GlassCard = styled(Paper)(({ theme }) => ({
   borderRadius: 20,
   padding: "16px",
+  width: "100%",
   background: theme.palette.mode === "dark" ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.65)",
   backdropFilter: "blur(20px)",
 }));

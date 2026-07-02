@@ -17,6 +17,7 @@ type RsvpFormState = {
   firstName: string;
   lastName: string;
   email: string;
+  guestNote: string;
   phoneNumbers: PhoneNumberInput[];
   plusOnes: NormalizedPlusOne[];
 };
@@ -36,6 +37,7 @@ function createEmptyPlusOne(): NormalizedPlusOne {
     firstName: "",
     lastName: "",
     email: "",
+    plusOneAgeCategory: null,
     phoneNumbers: [],
   };
 }
@@ -44,6 +46,9 @@ type PhoneNumberInput = Omit<
   InvitationPayload["phoneNumbers"][number],
   "id" | "createdAt" | "updatedAt" | "infoId" | "__typename"
 >;
+type CompleteNormalizedPlusOne = NormalizedPlusOne & {
+  plusOneAgeCategory: PublicPlusOneInput["plusOneAgeCategory"];
+};
 
 function normalizePhoneNumbers(phoneNumbers: PhoneNumberInput[]): PhoneNumberInput[] {
   return (phoneNumbers ?? []).map((phone) => ({
@@ -62,15 +67,17 @@ function normalizePlusOne(
     firstName: input.firstName ?? "",
     lastName: input.lastName ?? "",
     email: input.email ?? null,
+    plusOneAgeCategory: input.plusOneAgeCategory ?? null,
     phoneNumbers: normalizePhoneNumbers(input.phoneNumbers),
   };
 }
 
-function toGraphQlPlusOne(input: NormalizedPlusOne): PublicPlusOneInput {
+function toGraphQlPlusOne(input: CompleteNormalizedPlusOne): PublicPlusOneInput {
   return {
     firstName: input.firstName.trim(),
     lastName: input.lastName.trim(),
     email: input?.email?.trim() || null,
+    plusOneAgeCategory: input.plusOneAgeCategory,
     phoneNumbers: input.phoneNumbers.length > 0 ? input.phoneNumbers : null,
   };
 }
@@ -89,6 +96,7 @@ export function useRsvpForm(invitation: GetInvitationQuery["invitation"]) {
     firstName: invitation.firstName ?? "",
     lastName: invitation.lastName ?? "",
     email: invitation.email ?? "",
+    guestNote: invitation.guestNote ?? "",
     phoneNumbers: normalizePhoneNumbers(invitation.phoneNumbers),
     plusOnes: (invitation.plusOnes ?? []).map(normalizePlusOne),
   });
@@ -265,11 +273,16 @@ export function useRsvpForm(invitation: GetInvitationQuery["invitation"]) {
 
   const isValid = useMemo(() => {
     const hasPhone = state.phoneNumbers.some((phone) => phone.number.trim().length > 3);
-    const hasEmail = state.email.trim().length > 3;
     const hasFirstName = state.firstName.trim().length > 0;
     const hasLastName = state.lastName.trim().length > 0;
+    const plusOnesHaveAge = state.plusOnes.every(
+      (plusOne) =>
+        !plusOne.firstName.trim() ||
+        !plusOne.lastName.trim() ||
+        Boolean(plusOne.plusOneAgeCategory),
+    );
 
-    return hasFirstName && hasLastName && (hasPhone || hasEmail) && !loading;
+    return hasFirstName && hasLastName && hasPhone && plusOnesHaveAge && !loading;
   }, [state, loading]);
 
   async function submit() {
@@ -278,15 +291,20 @@ export function useRsvpForm(invitation: GetInvitationQuery["invitation"]) {
     }
 
     const cleanedPlusOnes = state.plusOnes
-      .filter((plusOne) => plusOne.firstName.trim() && plusOne.lastName.trim())
+      .filter(
+        (plusOne): plusOne is CompleteNormalizedPlusOne =>
+          Boolean(
+            plusOne.firstName.trim() &&
+              plusOne.lastName.trim() &&
+              plusOne.plusOneAgeCategory,
+          ),
+      )
       .map(toGraphQlPlusOne);
+    const cleanedPhoneNumbers = normalizePhoneNumbers(state.phoneNumbers).filter(
+      (phone) => phone.number.trim().length > 3,
+    );
 
     const trimmedEmail = state.email.trim();
-    const eventEndsAt = invitation.eventEndsAt;
-
-    if (!eventEndsAt) {
-      throw new Error("Missing event end time for RSVP");
-    }
 
     await replyInvitation({
       variables: {
@@ -296,9 +314,9 @@ export function useRsvpForm(invitation: GetInvitationQuery["invitation"]) {
           replyInput: {
             firstName: state.firstName.trim(),
             lastName: state.lastName.trim(),
-            eventEndsAt,
             email: trimmedEmail || null,
-            phoneNumbers: state.phoneNumbers.length > 0 ? state.phoneNumbers : null,
+            guestNote: state.guestNote.trim() || null,
+            phoneNumbers: cleanedPhoneNumbers,
             plusOnes: cleanedPlusOnes.length > 0 ? cleanedPlusOnes : null,
           },
         },

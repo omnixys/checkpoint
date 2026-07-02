@@ -17,13 +17,14 @@ export type Scalars = {
 export type AcceptRsvpInput = {
   /** Email address of the guest. Optional. */
   email: InputMaybe<Scalars['String']['input']>;
-  eventEndsAt: Scalars['DateTime']['input'];
   /** First name of the guest submitting the RSVP. */
   firstName: Scalars['String']['input'];
+  /** Optional note from guest. */
+  guestNote: InputMaybe<Scalars['String']['input']>;
   /** Last name of the guest submitting the RSVP. */
   lastName: Scalars['String']['input'];
-  /** Optional list of phone numbers for contact. */
-  phoneNumbers: InputMaybe<Array<PhoneNumberInput>>;
+  /** Required list of phone numbers for contact. */
+  phoneNumbers: Array<PhoneNumberInput>;
   /** Optional list of additional guests (plus-ones) */
   plusOnes: InputMaybe<Array<PublicPlusOneInput>>;
 };
@@ -93,14 +94,9 @@ export type AdminSignUpInput = {
 };
 
 export type ApproveInvitationDataInput = {
-  eventEndAt: InputMaybe<Scalars['DateTime']['input']>;
-  /** Seat to assign when approving the invitation. */
-  eventName: Scalars['String']['input'];
   /** ID of the invitation to approve/unapprove (cuid). */
   invitationId: Scalars['ID']['input'];
-  /** Eventname of the invitation. */
-  seat: Scalars['String']['input'];
-  /** Eventname of the invitation. */
+  /** ID of the seat to assign when approving the invitation. */
   seatId: InputMaybe<Scalars['ID']['input']>;
 };
 
@@ -108,15 +104,10 @@ export type ApproveInvitationDataInput = {
 export type ApproveInvitationInput = {
   /** Admin approval flag (true = approved, false = unapproved). Requires admin permissions. */
   approved: Scalars['Boolean']['input'];
-  eventEndsAt: Scalars['DateTime']['input'];
-  eventId: Scalars['ID']['input'];
-  /** Seat to assign when approving the invitation. */
-  eventName: Scalars['String']['input'];
+  eventId: InputMaybe<Scalars['ID']['input']>;
   /** ID of the invitation to approve/unapprove (cuid). */
   invitationId: Scalars['ID']['input'];
-  /** Eventname of the invitation. */
-  seat: Scalars['String']['input'];
-  /** Eventname of the invitation. */
+  /** ID of the seat to assign when approving the invitation. */
   seatId: InputMaybe<Scalars['ID']['input']>;
 };
 
@@ -137,6 +128,16 @@ export type AutoGenerateLayoutInput = {
   adaptiveRadius: Scalars['Boolean']['input'];
   eventId: Scalars['ID']['input'];
   sections: Array<SectionInput>;
+};
+
+export type AutoGenerateSeatMapInput = {
+  eventId: Scalars['ID']['input'];
+  seatCount: Scalars['Int']['input'];
+  sectionLayout: SectionShape;
+  sectionName: Scalars['String']['input'];
+  spacing: InputMaybe<Scalars['Float']['input']>;
+  tableCount: Scalars['Int']['input'];
+  tableShape: TableShape;
 };
 
 export type BulkApproveInvitationInput = {
@@ -360,6 +361,7 @@ export type CreatePlusOneInput = {
   invitedByInvitationId: Scalars['ID']['input'];
   lastName: Scalars['String']['input'];
   phoneNumbers: InputMaybe<Array<PhoneNumberInput>>;
+  plusOneAgeCategory: PlusOneAgeCategory;
 };
 
 export type CreateSeatInput = {
@@ -399,6 +401,7 @@ export type CreateSettingsInput = {
   description: InputMaybe<Scalars['String']['input']>;
   dressCode: InputMaybe<Scalars['String']['input']>;
   endsAt: InputMaybe<Scalars['DateTime']['input']>;
+  invitedByOptions: Array<Scalars['String']['input']>;
   isActive: Scalars['Boolean']['input'];
   isPublic: Scalars['Boolean']['input'];
   maxPlusOnes: Scalars['Int']['input'];
@@ -408,15 +411,22 @@ export type CreateSettingsInput = {
   rotateSeconds: Scalars['Int']['input'];
   rsvpDeadline: InputMaybe<Scalars['DateTime']['input']>;
   startsAt: InputMaybe<Scalars['DateTime']['input']>;
+  ticketReleaseAt: InputMaybe<Scalars['DateTime']['input']>;
 };
 
 export type CreateTableInput = {
   capacity: InputMaybe<Scalars['Int']['input']>;
   eventId: Scalars['ID']['input'];
+  height: InputMaybe<Scalars['Float']['input']>;
   meta: InputMaybe<Scalars['JSON']['input']>;
   name: Scalars['String']['input'];
   order: InputMaybe<Scalars['Int']['input']>;
+  rotation: InputMaybe<Scalars['Float']['input']>;
   sectionId: Scalars['String']['input'];
+  shape: InputMaybe<TableShape>;
+  width: InputMaybe<Scalars['Float']['input']>;
+  x: InputMaybe<Scalars['Float']['input']>;
+  y: InputMaybe<Scalars['Float']['input']>;
 };
 
 export type CreateTemplateInput = {
@@ -752,12 +762,9 @@ export type InvitationApprovalMode =
 
 /** Input type for creating an invitation. A guest profile is not created here; only basic invite metadata is stored. */
 export type InvitationCreateInput = {
-  autoApproveOnAccept: Scalars['Boolean']['input'];
   email: InputMaybe<Scalars['String']['input']>;
-  eventEndsAt: InputMaybe<Scalars['DateTime']['input']>;
   /** ID of the event this invitation belongs to. */
   eventId: Scalars['ID']['input'];
-  eventName: InputMaybe<Scalars['String']['input']>;
   /** Optional: first name of the invited guest. */
   firstName: Scalars['String']['input'];
   /** Optional: ID of the parent invitation (for invite chains). */
@@ -795,6 +802,7 @@ export type InvitationPayload = {
   eventId: Scalars['ID']['output'];
   eventName: Maybe<Scalars['String']['output']>;
   firstName: Scalars['String']['output'];
+  guestNote: Maybe<Scalars['String']['output']>;
   guestProfileId: Maybe<Scalars['ID']['output']>;
   id: Scalars['ID']['output'];
   invitedByInvitationId: Maybe<Scalars['ID']['output']>;
@@ -805,9 +813,11 @@ export type InvitationPayload = {
   pendingContactId: Maybe<Scalars['String']['output']>;
   phoneNumber: Maybe<Scalars['String']['output']>;
   phoneNumbers: Array<PhoneNumberPayload>;
+  plusOneAgeCategory: Maybe<PlusOneAgeCategory>;
   plusOnes: Array<InvitationPayload>;
   rsvpAt: Maybe<Scalars['DateTime']['output']>;
   rsvpChoice: Maybe<RsvpChoice>;
+  selectedInvitedBy: Array<Scalars['String']['output']>;
   status: InvitationStatus;
   type: InvitationType;
   updatedAt: Maybe<Scalars['DateTime']['output']>;
@@ -993,6 +1003,7 @@ export type Mutation = {
   assignSeat: SeatPayload;
   assignUserToEvent: Scalars['Boolean']['output'];
   autoGenerateLayout: Scalars['Boolean']['output'];
+  autoGenerateSeatMap: Scalars['Boolean']['output'];
   bulkApproveInvitations: Array<InvitationPayload>;
   bulkRenameSections: BulkRenamePayload;
   bulkRenameTables: BulkRenamePayload;
@@ -1187,8 +1198,12 @@ export type MutationAutoGenerateLayoutArgs = {
 };
 
 
+export type MutationAutoGenerateSeatMapArgs = {
+  input: AutoGenerateSeatMapInput;
+};
+
+
 export type MutationBulkApproveInvitationsArgs = {
-  eventEndsAt: Scalars['DateTime']['input'];
   input: BulkApproveInvitationInput;
 };
 
@@ -1269,7 +1284,6 @@ export type MutationCreateNotificationArgs = {
 
 
 export type MutationCreatePlusOnesInvitationArgs = {
-  eventEndsAt: Scalars['DateTime']['input'];
   input: CreatePlusOneInput;
 };
 
@@ -1778,6 +1792,10 @@ export type PhoneNumberType =
   | 'WHATSAPP'
   | 'WORK';
 
+export type PlusOneAgeCategory =
+  | 'OVER_SIX'
+  | 'UNDER_SIX';
+
 export type PostalCode = {
   __typename: 'PostalCode';
   accuracy: Maybe<Scalars['Int']['output']>;
@@ -1812,20 +1830,24 @@ export type PublicPlusOneInput = {
   firstName: Scalars['String']['input'];
   lastName: Scalars['String']['input'];
   phoneNumbers: InputMaybe<Array<PhoneNumberInput>>;
+  plusOneAgeCategory: PlusOneAgeCategory;
 };
 
 export type PublicRsvpInput = {
   email: InputMaybe<Scalars['String']['input']>;
-  eventEndsAt: Scalars['DateTime']['input'];
   /** Public event identifier (eventId or slug) */
   eventId: Scalars['ID']['input'];
   firstName: Scalars['String']['input'];
+  /** Optional note from guest */
+  guestNote: InputMaybe<Scalars['String']['input']>;
   lastName: Scalars['String']['input'];
   /** Optional RSVP message from guest */
   message: InputMaybe<Scalars['String']['input']>;
-  phoneNumbers: InputMaybe<Array<PhoneNumberInput>>;
+  phoneNumbers: Array<PhoneNumberInput>;
   /** Optional list of additional guests (plus-ones) */
   plusOnes: InputMaybe<Array<PublicPlusOneInput>>;
+  /** Configured inviter/source options selected by the guest */
+  selectedInvitedBy: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 export type Query = {
@@ -1903,6 +1925,7 @@ export type Query = {
   seat: Maybe<SeatPayload>;
   seatAssignmentLogs: Array<SeatAssignmentLogPayload>;
   seatLayout: Array<SectionPayload>;
+  seatPresencesByEvent: Array<SeatPresencePayload>;
   seats: Array<SeatPayload>;
   seatsBySection: Array<SeatPayload>;
   seatsByTable: Array<SeatPayload>;
@@ -2195,6 +2218,11 @@ export type QuerySeatLayoutArgs = {
 };
 
 
+export type QuerySeatPresencesByEventArgs = {
+  eventId: Scalars['ID']['input'];
+};
+
+
 export type QuerySeatsArgs = {
   eventId: Scalars['ID']['input'];
 };
@@ -2312,6 +2340,7 @@ export type RemoveTimelineInput = {
 
 export type RemoveUserFromEventInput = {
   eventId: Scalars['String']['input'];
+  eventRole: UserRoleType;
   userId: Scalars['String']['input'];
 };
 
@@ -2454,6 +2483,15 @@ export type SeatPayload = {
   zIndex: Maybe<Scalars['Int']['output']>;
 };
 
+export type SeatPresencePayload = {
+  __typename: 'SeatPresencePayload';
+  checkedInAt: Maybe<Scalars['DateTime']['output']>;
+  presenceState: PresenceState;
+  revoked: Scalars['Boolean']['output'];
+  revokedAt: Maybe<Scalars['DateTime']['output']>;
+  seatId: Scalars['ID']['output'];
+};
+
 export type SeatShape =
   | 'CIRCLE'
   | 'RECTANGLE'
@@ -2572,6 +2610,7 @@ export type SettingsPayload = {
   dressCode: Maybe<Scalars['String']['output']>;
   endsAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
+  invitedByOptions: Array<Scalars['String']['output']>;
   isActive: Scalars['Boolean']['output'];
   isPublic: Scalars['Boolean']['output'];
   maxPlusOnes: Scalars['Float']['output'];
@@ -2581,6 +2620,7 @@ export type SettingsPayload = {
   rotateSeconds: Scalars['Float']['output'];
   rsvpDeadline: Maybe<Scalars['DateTime']['output']>;
   startsAt: Scalars['DateTime']['output'];
+  ticketReleaseAt: Maybe<Scalars['DateTime']['output']>;
   updatedAt: Maybe<Scalars['DateTime']['output']>;
 };
 
@@ -2703,6 +2743,7 @@ export type TablePayload = {
   capacity: Maybe<Scalars['Float']['output']>;
   createdAt: Scalars['DateTime']['output'];
   eventId: Scalars['String']['output'];
+  height: Maybe<Scalars['Float']['output']>;
   id: Scalars['ID']['output'];
   meta: Scalars['JSON']['output'];
   name: Scalars['String']['output'];
@@ -2713,6 +2754,7 @@ export type TablePayload = {
   sectionId: Scalars['String']['output'];
   shape: TableShape;
   updatedAt: Maybe<Scalars['DateTime']['output']>;
+  width: Maybe<Scalars['Float']['output']>;
   x: Scalars['Float']['output'];
   y: Scalars['Float']['output'];
 };
@@ -2847,6 +2889,7 @@ export type UpdatePlusOneInput = {
   id: Scalars['ID']['input'];
   lastName: Scalars['String']['input'];
   phoneNumbers: InputMaybe<Array<PhoneNumberInput>>;
+  plusOneAgeCategory: PlusOneAgeCategory;
 };
 
 export type UpdateSeatInput = {
@@ -2863,31 +2906,55 @@ export type UpdateSeatInput = {
 
 export type UpdateSectionInput = {
   capacity: InputMaybe<Scalars['Int']['input']>;
+  height: InputMaybe<Scalars['Float']['input']>;
   id: Scalars['ID']['input'];
   meta: InputMaybe<Scalars['JSON']['input']>;
   name: InputMaybe<Scalars['String']['input']>;
   order: InputMaybe<Scalars['Int']['input']>;
+  shape: InputMaybe<SectionShape>;
+  width: InputMaybe<Scalars['Float']['input']>;
   x: InputMaybe<Scalars['Float']['input']>;
   y: InputMaybe<Scalars['Float']['input']>;
 };
 
 export type UpdateSettingsInput = {
+  allowGuestSeatSelection: InputMaybe<Scalars['Boolean']['input']>;
+  allowPlusOneUpdate: InputMaybe<Scalars['Boolean']['input']>;
+  allowPublicPlusOne: InputMaybe<Scalars['Boolean']['input']>;
+  allowPublicRsvp: InputMaybe<Scalars['Boolean']['input']>;
+  allowPublicRsvpWebsite: InputMaybe<Scalars['Boolean']['input']>;
   allowReEntry: InputMaybe<Scalars['Boolean']['input']>;
+  allowSeatOverbooking: InputMaybe<Scalars['Boolean']['input']>;
+  approvalMode: InputMaybe<InvitationApprovalMode>;
+  category: InputMaybe<EventCategory>;
   description: InputMaybe<Scalars['String']['input']>;
   dressCode: InputMaybe<Scalars['String']['input']>;
   endsAt: InputMaybe<Scalars['DateTime']['input']>;
+  invitedByOptions: InputMaybe<Array<Scalars['String']['input']>>;
   isActive: InputMaybe<Scalars['Boolean']['input']>;
+  isPublic: InputMaybe<Scalars['Boolean']['input']>;
+  maxPlusOnes: InputMaybe<Scalars['Int']['input']>;
   maxSeats: InputMaybe<Scalars['Int']['input']>;
+  publicRsvpWebsite: InputMaybe<Scalars['String']['input']>;
+  requireApprovalForPlusOnes: InputMaybe<Scalars['Boolean']['input']>;
   rotateSeconds: InputMaybe<Scalars['Int']['input']>;
+  rsvpDeadline: InputMaybe<Scalars['DateTime']['input']>;
   startsAt: InputMaybe<Scalars['DateTime']['input']>;
+  ticketReleaseAt: InputMaybe<Scalars['DateTime']['input']>;
 };
 
 export type UpdateTableInput = {
   capacity: InputMaybe<Scalars['Int']['input']>;
+  height: InputMaybe<Scalars['Float']['input']>;
   id: Scalars['ID']['input'];
   meta: InputMaybe<Scalars['JSON']['input']>;
   name: InputMaybe<Scalars['String']['input']>;
   order: InputMaybe<Scalars['Int']['input']>;
+  rotation: InputMaybe<Scalars['Float']['input']>;
+  shape: InputMaybe<TableShape>;
+  width: InputMaybe<Scalars['Float']['input']>;
+  x: InputMaybe<Scalars['Float']['input']>;
+  y: InputMaybe<Scalars['Float']['input']>;
 };
 
 export type UpdateTemplateInput = {

@@ -126,11 +126,13 @@ export default function FinalScreens({
                           background: theme.palette.background.paper + "44",
                           boxShadow: theme.shadows[1],
                           display: "flex",
+                          flexDirection: { xs: "column", sm: "row" },
+                          gap: 1,
                           alignItems: "center",
                           justifyContent: "space-between",
                         }}
                       >
-                        <Stack spacing={0.5}>
+                        <Stack spacing={0.5} sx={{ minWidth: 0, width: "100%" }}>
                           <Typography
                             sx={{
                               fontWeight: 600,
@@ -154,7 +156,10 @@ export default function FinalScreens({
                         </Stack>
 
                         <Tooltip title={t("common.copy")}>
-                          <IconButton onClick={() => copyToClipboard(link)} sx={{ opacity: 0.7 }}>
+                          <IconButton
+                            onClick={() => copyToClipboard(link)}
+                            sx={{ opacity: 0.7, alignSelf: { xs: "flex-end", sm: "center" } }}
+                          >
                             <ContentCopyIcon />
                           </IconButton>
                         </Tooltip>
@@ -244,6 +249,7 @@ export default function FinalScreens({
               py: 1.4,
               borderRadius: "14px",
               fontSize: "1.05rem",
+              width: { xs: "100%", sm: "auto" },
             }}
           >
             {t("final.declined.backHome")}

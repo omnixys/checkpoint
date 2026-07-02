@@ -33,7 +33,7 @@ type Props = {
   meta: { owner: string };
   actions: {
     assignRole: (role: EventRoleType) => Promise<any>;
-    removeRole: (userId: string) => Promise<any>;
+    removeRole: (role: EventRoleType) => Promise<any>;
   };
 };
 
@@ -190,7 +190,7 @@ function RoleRow({
   canDelete: boolean;
   actions: {
     assignRole: (role: EventRoleType) => Promise<any>;
-    removeRole: (userId: string) => Promise<any>;
+    removeRole: (role: EventRoleType) => Promise<any>;
   };
   execute: <T>(fn: () => Promise<T>) => Promise<T | null>;
   loading: boolean;
@@ -245,7 +245,7 @@ function RoleRow({
 
       <IconButton
         disabled={!canDelete}
-        onClick={() => execute(() => actions.removeRole(role.userId))}
+        onClick={() => execute(() => actions.removeRole(role))}
       >
         <DeleteIcon />
       </IconButton>

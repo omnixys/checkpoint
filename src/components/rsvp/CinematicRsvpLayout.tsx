@@ -44,7 +44,7 @@ export function CinematicRsvpLayout({
           linear-gradient(180deg, ${alpha(theme.palette.background.default, 0)} 0%, ${alpha(theme.palette.background.paper, isDark ? 0.24 : 0.18)} 100%)
         `,
         color: "text.primary",
-        minHeight: "100vh",
+        minHeight: "100dvh",
         overflow: "clip",
         position: "relative",
       }}
@@ -93,7 +93,7 @@ export function CinematicRsvpLayout({
                 color: "primary.main",
                 fontFamily: "var(--font-wedding-serif), Georgia, serif",
                 fontSize: { xs: "1.2rem", md: "1.45rem" },
-                letterSpacing: "0.32em",
+                letterSpacing: 0,
                 textTransform: "uppercase",
               }}
             >
@@ -108,7 +108,7 @@ export function CinematicRsvpLayout({
                 color: "primary.main",
                 fontSize: { xs: "0.68rem", md: "0.75rem" },
                 fontWeight: 700,
-                letterSpacing: "0.28em",
+                letterSpacing: 0,
                 textTransform: "uppercase",
               }}
             >
@@ -119,9 +119,9 @@ export function CinematicRsvpLayout({
               component="h1"
               sx={{
                 fontFamily: "var(--font-wedding-serif), Georgia, serif",
-                fontSize: "clamp(4.5rem, 18vw, 12rem)",
+                fontSize: { xs: "4.5rem", sm: "7rem", md: "10rem", lg: "12rem" },
                 fontWeight: 400,
-                letterSpacing: "-0.065em",
+                letterSpacing: 0,
                 lineHeight: 0.84,
                 maxWidth: "100%",
                 overflowWrap: "anywhere",
@@ -134,7 +134,7 @@ export function CinematicRsvpLayout({
               component="p"
               sx={{
                 fontFamily: "var(--font-wedding-serif), Georgia, serif",
-                fontSize: "clamp(1.45rem, 4vw, 2.75rem)",
+                fontSize: { xs: "1.45rem", sm: "2rem", md: "2.75rem" },
                 lineHeight: 1.2,
                 maxWidth: 760,
                 overflowWrap: "anywhere",
@@ -230,7 +230,7 @@ export function RsvpChapter({ children, description, index, title }: RsvpChapter
                 color: "primary.main",
                 fontSize: "0.72rem",
                 fontWeight: 700,
-                letterSpacing: "0.24em",
+                letterSpacing: 0,
                 pt: { md: 1 },
               }}
             >
@@ -243,7 +243,7 @@ export function RsvpChapter({ children, description, index, title }: RsvpChapter
                 id={headingId}
                 sx={{
                   fontFamily: "var(--font-wedding-serif), Georgia, serif",
-                  fontSize: "clamp(1.8rem, 5vw, 3.5rem)",
+                  fontSize: { xs: "1.8rem", sm: "2.5rem", md: "3.5rem" },
                   fontWeight: 400,
                   lineHeight: 1.08,
                   overflowWrap: "anywhere",

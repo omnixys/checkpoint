@@ -60,6 +60,7 @@ query GetActiveEvent($eventId: ID!) {
       allowGuestSeatSelection
       startsAt
       endsAt
+      invitedByOptions
     }
   }
 }
@@ -114,9 +115,11 @@ query GetEventSettings($eventId: ID!) {
       allowSeatOverbooking
       isPublic
       publicRsvpWebsite
+      invitedByOptions
       category
       createdAt
       updatedAt
+      ticketReleaseAt
     }
   }
 }
