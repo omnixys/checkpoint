@@ -3,7 +3,7 @@ import "dotenv/config";
 
 const EVENT_ID = process.env.NEXT_PUBLIC_EVENT_ID ?? "cbe6b0be-8469-4fe2-a3bf-49eef3e01787";
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_SERVER_URL ?? "http://localhost:8000/graphql";
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_SERVER_URL ?? "https://api.omnixys.com/graphql";
 
 export default defineConfig({
   testDir: "./e2e",

@@ -11,7 +11,7 @@ import {
 const schemaEndpoint =
   process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT ??
   process.env.NEXT_PUBLIC_BACKEND_SERVER_URL ??
-  "http://localhost:8000/graphql";
+  "https://api.omnixys.com/graphql";
 
 const generatedTypeConfig = {
   /**

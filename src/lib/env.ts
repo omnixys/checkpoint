@@ -46,10 +46,10 @@ function getClientEnv(key: string, fallback: string): string {
 export const env = {
   BACKEND_SERVER_URL: getClientEnv(
     "NEXT_PUBLIC_BACKEND_SERVER_URL",
-    "http://localhost:8000/graphql",
+    "https://api.omnixys.com/graphql",
   ),
 
-  BACKEND_WS_URL: getClientEnv("NEXT_PUBLIC_GRAPHQL_WS_URL", "http://localhost:8000/ws"),
+  BACKEND_WS_URL: getClientEnv("NEXT_PUBLIC_GRAPHQL_WS_URL", "https://api.omnixys.com/ws"),
 
   CHECKPOINT_BASE_PATH: getClientEnv("NEXT_PUBLIC_CHECKPOINT_BASE_PATH", "/"),
 
