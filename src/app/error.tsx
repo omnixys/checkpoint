@@ -1,5 +1,6 @@
 "use client";
 
+import * as Sentry from "@sentry/nextjs";
 import { useEffect } from "react";
 import RetryComponent from "@/checkpoint/components/error/RetryComponent";
 import { notificationService } from "@/checkpoint/errors/notification.service";
@@ -12,6 +13,7 @@ export default function ApplicationError({
   readonly reset: () => void;
 }) {
   useEffect(() => {
+    Sentry.captureException(error);
     notificationService.capture(error, {
       scope: "all",
       ...(typeof window === "undefined" ? {} : { route: window.location.pathname }),

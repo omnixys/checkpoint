@@ -1,5 +1,6 @@
 "use client";
 
+import * as Sentry from "@sentry/nextjs";
 import React from "react";
 import { notificationService } from "@/checkpoint/errors/notification.service";
 import { getLogger } from "@/checkpoint/utils/logger";
@@ -23,6 +24,7 @@ export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, E
   }
 
   override componentDidCatch(error: Error, info: React.ErrorInfo): void {
+    Sentry.captureException(error);
     const appError = notificationService.capture(error, {
       scope: "all",
       ...(typeof window === "undefined" ? {} : { route: window.location.pathname }),

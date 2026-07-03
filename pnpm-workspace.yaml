@@ -1,8 +1,22 @@
 allowBuilds:
+  '"': true
+  /: true
+  '@': true
   '@parcel/watcher': true
   '@swc/core': true
+  '[': true
+  ']': true
+  c: true
   core-js: true
+  e: true
+  i: true
+  l: true
+  n: true
+  r: true
+  s: true
   sharp: true
+  t: true
+  y: true
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver

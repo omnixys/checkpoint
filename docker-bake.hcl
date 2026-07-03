@@ -69,6 +69,12 @@ target "build" {
     NEXT_PUBLIC_EVENT_ID           = "7569a53c-49da-41b4-8f4f-a44379c59f7b"
     NEXT_PUBLIC_CHECKPOINT_BASE_PATH = "/"
     NEXT_PUBLIC_FALLBACK_URL         = "https://ui.omnixys.com"
+
+    NEXT_PUBLIC_SENTRY_DSN                       = ""
+    NEXT_PUBLIC_SENTRY_ENVIRONMENT               = "development"
+    NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE        = "0.1"
+    NEXT_PUBLIC_SENTRY_REPLAYS_SESSION_SAMPLE_RATE = "0.05"
+    NEXT_PUBLIC_SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE = "1.0"
   }
 
   labels = {

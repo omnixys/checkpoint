@@ -47,6 +47,7 @@
     "@omnixys/contracts": "^2.1.2",
     "@react-hook/window-size": "^3.1.1",
     "@react-spring/web": "^10.0.3",
+    "@sentry/nextjs": "^10.63.0",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "@zxing/browser": "^0.1.5",
