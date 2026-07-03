@@ -1,6 +1,7 @@
 "use client";
 
 import { useApolloClient } from "@apollo/client/react";
+import * as Sentry from "@sentry/nextjs";
 import type React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 import type { CurrentUserQuery } from "@/checkpoint/generated/graphql";
@@ -95,6 +96,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
      * - audit logging
      */
     setCurrentUser(currentUser);
+    Sentry.logger.info("User triggered test log", { log_source: "sentry_test" });
+
     setAuthUser(currentUser ?? null);
   }, [currentUser]);
 

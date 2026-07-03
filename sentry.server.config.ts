@@ -19,3 +19,7 @@ Sentry.init({
 
   includeLocalVariables: true,
 });
+
+// Use metrics in both server and client code
+Sentry.metrics.count('server_user_action', 1);
+Sentry.metrics.distribution('server_api_response_time', 150);

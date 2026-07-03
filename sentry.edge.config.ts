@@ -17,3 +17,7 @@ Sentry.init({
     process.env.NODE_ENV === "production" ? 0.1 : 1.0,
   ),
 });
+
+// Use metrics in both server and client code
+Sentry.metrics.count('client_user_action', 1);
+Sentry.metrics.distribution('client_api_response_time', 150);
