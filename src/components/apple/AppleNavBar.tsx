@@ -1,8 +1,9 @@
 "use client";
 
-import React, { JSX } from "react";
-import { AppBar, Box, IconButton, styled, Toolbar, Typography, useTheme } from "@mui/material";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import { AppBar, Box, IconButton, styled, Toolbar, Typography, useTheme } from "@mui/material";
+import type React from "react";
+import type { JSX } from "react";
 import { useDevice } from "@/checkpoint/providers/DeviceProvider";
 
 interface AppleNavBarProps {
@@ -13,7 +14,7 @@ interface AppleNavBarProps {
   onBack?: () => void;
 }
 
-const BlurAppBar = styled(AppBar)(({ theme }) => ({
+const _BlurAppBar = styled(AppBar)(({ theme }) => ({
   background: theme.palette.mode === "light" ? "rgba(255,255,255,0.6)" : "rgba(28,28,30,0.7)",
   backdropFilter: "blur(20px)",
   WebkitBackdropFilter: "blur(20px)",

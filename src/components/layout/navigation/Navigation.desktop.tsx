@@ -1,38 +1,23 @@
 "use client";
 
-import {
-  Box,
-  Divider,
-  IconButton,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Stack,
-  Typography,
-  useTheme,
-} from "@mui/material";
-import { JSX, useMemo, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { Box, Divider, List, Stack, Typography, useTheme } from "@mui/material";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { createNavigation } from "../navigation.config";
-import { getRoleColor, isActiveNavItem } from "./navigation.util";
+import { type JSX, useState } from "react";
 import ColorBubbleSwitcher from "@/checkpoint/components/ColorBubbleSwitcher";
+import LanguageSwitcher from "@/checkpoint/components/LanguageSwitcher";
+import NavigationItem from "@/checkpoint/components/layout/navigation/NavigationItem";
+import EventSelector from "@/checkpoint/components/Selectors/EventSelector";
 import ThemeToggleButton from "@/checkpoint/components/ThemeToggleButton";
 import UserMenu from "@/checkpoint/components/UserMenu";
+import { useTourAnchor } from "@/checkpoint/hooks/core/useTourAnchor";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { env } from "@/checkpoint/lib/env";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
-import { env } from "@/checkpoint/lib/env";
-import EventSelector from "@/checkpoint/components/Selectors/EventSelector";
-import LanguageSwitcher from "@/checkpoint/components/LanguageSwitcher";
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { useTourAnchor } from "@/checkpoint/hooks/core/useTourAnchor";
-import { useTour } from "@/checkpoint/providers/TourProvider";
-import NavigationItem from "@/checkpoint/components/layout/navigation/NavigationItem";
+import { createNavigation } from "../navigation.config";
 
 export default function NavigationDesktop(): JSX.Element {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, _setCollapsed] = useState(false);
   const theme = useTheme();
   const t = useTypedTranslations("layout");
 
@@ -64,7 +49,7 @@ export default function NavigationDesktop(): JSX.Element {
       }}
     >
       <Stack
-        direction={"row"}
+        direction="row"
         spacing={0.5}
         sx={{
           alignItems: "center",

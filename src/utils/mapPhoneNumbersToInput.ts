@@ -1,4 +1,4 @@
-import { PhoneNumberPayload, PhoneNumberInput } from "@/checkpoint/generated/graphql";
+import type { PhoneNumberInput, PhoneNumberPayload } from "@/checkpoint/generated/graphql";
 
 export function mapPhoneNumbersToInput(
   phoneNumbers?: Omit<PhoneNumberPayload, "createdAt" | "id" | "infoId" | "updatedAt">[],
@@ -24,7 +24,9 @@ export function mapPhoneNumbersToInput(
  * "+49" → "49"
  */
 function normalizeCountryCode(code?: string) {
-  if (!code) return "49";
+  if (!code) {
+    return "49";
+  }
 
   return code.startsWith("+") ? code.slice(1) : code;
 }

@@ -1,17 +1,16 @@
 "use client";
 
-import { Box, Button, Grid, MenuItem, Stack, TextField, Typography } from "@mui/material";
-
 import ImageRoundedIcon from "@mui/icons-material/ImageRounded";
 import StyleRoundedIcon from "@mui/icons-material/StyleRounded";
 import UploadRoundedIcon from "@mui/icons-material/UploadRounded";
+import { Box, Button, Grid, MenuItem, Stack, TextField, Typography } from "@mui/material";
 
 import { motion } from "framer-motion";
 
 import { useCreateEvent } from "@/checkpoint/app/(protected)/event/new/context/CreateEventContext";
 import { useField } from "@/checkpoint/app/(protected)/event/new/hooks/useField";
+import type { MediaType } from "@/checkpoint/generated/graphql";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { MediaType } from "@/checkpoint/generated/graphql";
 
 /**
  * -------------------------------------------------------------
@@ -56,8 +55,10 @@ export default function ExperienceStep() {
    * File Handlers (Preview + Form Sync)
    * -------------------------------------------------------------
    */
-  const handleFile2 = (file: File | undefined, type: MediaType, setter: (val: string) => void) => {
-    if (!file) return;
+  const _handleFile2 = (file: File | undefined, type: MediaType, setter: (val: string) => void) => {
+    if (!file) {
+      return;
+    }
 
     /**
      * 1. Preview (instant UX)
@@ -72,7 +73,9 @@ export default function ExperienceStep() {
   };
 
   const handleFile = (file: File | undefined, type: MediaType) => {
-    if (!file) return;
+    if (!file) {
+      return;
+    }
 
     addUpload(file, type);
 
@@ -107,9 +110,14 @@ export default function ExperienceStep() {
         {/* -----------------------------------------------------
          * CATEGORY + DRESS CODE
          * --------------------------------------------------- */}
-        <Grid container spacing={2}>
+        <Grid container={true} spacing={2}>
           <Grid size={{ xs: 12, md: 5 }}>
-            <TextField select label={t("experience.category")} fullWidth {...category}>
+            <TextField
+              select={true}
+              label={t("experience.category")}
+              fullWidth={true}
+              {...category}
+            >
               {CATEGORY_OPTIONS.map((opt) => (
                 <MenuItem key={opt} value={opt}>
                   {t(`experience.categories.${opt}`)}
@@ -122,7 +130,7 @@ export default function ExperienceStep() {
             <TextField
               label={t("experience.dressCode")}
               placeholder={t("experience.dressCodePlaceholder")}
-              fullWidth
+              fullWidth={true}
               {...dressCode}
             />
           </Grid>
@@ -137,13 +145,13 @@ export default function ExperienceStep() {
             <Typography sx={{ fontWeight: 700 }}>{t("experience.media")}</Typography>
           </Stack>
 
-          <Grid container spacing={2}>
+          <Grid container={true} spacing={2}>
             {/* COVER */}
             <Grid size={{ xs: 12, md: 8 }}>
               <TextField
                 label={t("experience.coverImageUrl")}
                 placeholder={t("experience.coverImageUrlPlaceholder")}
-                fullWidth
+                fullWidth={true}
                 {...coverImageUrl}
               />
             </Grid>
@@ -153,7 +161,7 @@ export default function ExperienceStep() {
                 component="label"
                 variant="outlined"
                 startIcon={<UploadRoundedIcon />}
-                fullWidth
+                fullWidth={true}
                 sx={{
                   minHeight: 56,
                   borderRadius: 3,
@@ -162,7 +170,7 @@ export default function ExperienceStep() {
               >
                 {t("experience.chooseCover")}
                 <input
-                  hidden
+                  hidden={true}
                   type="file"
                   accept="image/*"
                   onChange={(e) =>
@@ -181,7 +189,7 @@ export default function ExperienceStep() {
               <TextField
                 label={t("experience.logoUrl")}
                 placeholder={t("experience.logoUrlPlaceholder")}
-                fullWidth
+                fullWidth={true}
                 {...logoUrl}
               />
             </Grid>
@@ -191,7 +199,7 @@ export default function ExperienceStep() {
                 component="label"
                 variant="outlined"
                 startIcon={<UploadRoundedIcon />}
-                fullWidth
+                fullWidth={true}
                 sx={{
                   minHeight: 56,
                   borderRadius: 3,
@@ -200,7 +208,7 @@ export default function ExperienceStep() {
               >
                 {t("experience.chooseLogo")}
                 <input
-                  hidden
+                  hidden={true}
                   type="file"
                   accept="image/*"
                   onChange={(e) =>

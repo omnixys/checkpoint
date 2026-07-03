@@ -1,12 +1,12 @@
 "use client";
 
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { alpha, Box, Chip, Stack, Typography, useTheme } from "@mui/material";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import Image from "next/image";
-import React from "react";
-import { EventHeaderProps } from "../EventActions";
+import type React from "react";
 import { getBestImage } from "@/checkpoint/components/event/details/header/EventHeaderB";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import type { EventHeaderProps } from "../EventActions";
 
 export default function EventHeaderD({ eventPageData: ev }: EventHeaderProps) {
   const theme = useTheme();
@@ -60,7 +60,12 @@ export default function EventHeaderD({ eventPageData: ev }: EventHeaderProps) {
           }}
         >
           {/* Background Image */}
-          <Image src={hero} alt={ev.name} fill style={{ objectFit: "cover", opacity: 0.75 }} />
+          <Image
+            src={hero}
+            alt={ev.name}
+            fill={true}
+            style={{ objectFit: "cover", opacity: 0.75 }}
+          />
 
           {/* Fog Gradient */}
           <Box

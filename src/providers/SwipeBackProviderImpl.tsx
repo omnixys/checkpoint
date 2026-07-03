@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
-import { useRouter } from "next/navigation";
 import { motion, useMotionValue, useTransform } from "framer-motion";
+import { useRouter } from "next/navigation";
+import React from "react";
 
 export default function SwipeBackProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();

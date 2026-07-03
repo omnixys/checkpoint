@@ -1,7 +1,5 @@
 "use client";
 
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { env } from "@/checkpoint/lib/env";
 import {
   alpha,
   Box,
@@ -16,13 +14,15 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { env } from "@/checkpoint/lib/env";
 
-type Props = {
+interface Props {
   ev: any;
   toLocal: (dt: string | number | Date) => string;
   isActive: boolean;
   onSetActive: () => void;
-};
+}
 type EventStatus = "running" | "upcoming" | "past";
 
 const STATUS_COLOR: Record<EventStatus, "success" | "warning" | "default"> = {

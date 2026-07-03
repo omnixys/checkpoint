@@ -1,10 +1,10 @@
 // /frontend/src/app/components/ui/ThemeToggleButton.tsx
 "use client";
 
-import { useThemeMode } from "@/checkpoint/providers/ThemeModeProvider";
 import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import { IconButton, Tooltip } from "@mui/material";
+import { useThemeMode } from "@/checkpoint/providers/ThemeModeProvider";
 
 export default function ThemeToggleButton() {
   const { mode, toggle } = useThemeMode();

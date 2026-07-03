@@ -1,5 +1,6 @@
 "use client";
 
+import { Box, Stack } from "@mui/material";
 import EventList from "@/checkpoint/components/event/EventList";
 import EventsHeader from "@/checkpoint/components/event/EventsHeader";
 import EventsNavBar from "@/checkpoint/components/event/EventsNavBar";
@@ -9,7 +10,6 @@ import ViewModeToggle from "@/checkpoint/components/utils/ViewModeToggle";
 import { useEventsPageState } from "@/checkpoint/hooks/events/useEventsPageState";
 import { env } from "@/checkpoint/lib/env";
 import { toLocal } from "@/checkpoint/utils/date-utils";
-import { Box, Stack } from "@mui/material";
 
 /**
  * PURE UI LAYER

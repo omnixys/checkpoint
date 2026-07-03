@@ -1,19 +1,19 @@
 "use client";
 
-import { Box, Stack, Typography, Chip, IconButton, useTheme, alpha } from "@mui/material";
-import { motion } from "framer-motion";
-import QrCode2RoundedIcon from "@mui/icons-material/QrCode2Rounded";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
-import { PresenceState } from "@/checkpoint/generated/graphql";
+import QrCode2RoundedIcon from "@mui/icons-material/QrCode2Rounded";
+import { alpha, Box, Chip, IconButton, Stack, Typography, useTheme } from "@mui/material";
+import { motion } from "framer-motion";
+import type { PresenceState } from "@/checkpoint/generated/graphql";
 
-type Props = {
+interface Props {
   code: string;
   status: "ACTIVE" | "PENDING" | "REVOKED";
   seatLabel?: string;
   presence?: PresenceState;
   onDelete: () => void;
   onOpen: () => void;
-};
+}
 
 export default function TicketCard({ code, status, seatLabel, presence, onDelete, onOpen }: Props) {
   const theme = useTheme();
@@ -52,7 +52,7 @@ export default function TicketCard({ code, status, seatLabel, presence, onDelete
     },
   };
 
-  const statusCfg = statusCfgMap[rawStatus] ?? statusCfgMap["UNKNOWN"];
+  const statusCfg = statusCfgMap[rawStatus] ?? statusCfgMap.UNKNOWN;
 
   return (
     <Box

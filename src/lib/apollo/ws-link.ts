@@ -1,19 +1,21 @@
+import { ApolloLink, Observable } from "@apollo/client";
+import { print } from "graphql";
+import { type Client, createClient } from "graphql-ws";
 import { getAuthContext } from "@/checkpoint/lib/apollo/auth-context";
 import { env } from "@/checkpoint/lib/env";
 import { getLogger } from "@/checkpoint/utils/logger";
-import { ApolloLink, Observable } from "@apollo/client";
-import { Client, createClient } from "graphql-ws";
-import { print } from "graphql";
 
 export function createWsLinkWithAuth(getToken: () => string | null): ApolloLink | null {
-  if (typeof window === "undefined") return null;
+  if (typeof window === "undefined") {
+    return null;
+  }
 
   const logger = getLogger("ApolloWS");
 
   const client: Client = createClient({
     url: env.BACKEND_WS_URL,
     lazy: true,
-    retryAttempts: Infinity,
+    retryAttempts: Number.POSITIVE_INFINITY,
 
     retryWait: async (retries) => {
       const delay = Math.min(1000 * retries, 5000);

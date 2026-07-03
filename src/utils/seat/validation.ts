@@ -1,4 +1,9 @@
-type Rect = { x: number; y: number; width: number; height: number };
+interface Rect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
 
 const DEFAULT_TABLE_W = 120;
 const DEFAULT_TABLE_H = 60;
@@ -56,7 +61,13 @@ export function validateTablesInSection(
   sectionCy: number,
   sectionW: number | null | undefined,
   sectionH: number | null | undefined,
-  tables: { id: string; x: number | null | undefined; y: number | null | undefined; width?: number | null; height?: number | null }[],
+  tables: {
+    id: string;
+    x: number | null | undefined;
+    y: number | null | undefined;
+    width?: number | null;
+    height?: number | null;
+  }[],
 ): { tableId: string; outside: boolean }[] {
   const sBounds = toRect(sectionCx, sectionCy, sectionW, sectionH);
   return tables.map((t) => {
@@ -84,9 +95,11 @@ export function findOverlaps<T extends { id: string }>(
 ): [string, string][] {
   const result: [string, string][] = [];
   for (let i = 0; i < items.length; i++) {
+    const itemA = items[i]!;
     for (let j = i + 1; j < items.length; j++) {
-      if (rectsOverlap(getRect(items[i]), getRect(items[j]))) {
-        result.push([items[i].id, items[j].id]);
+      const itemB = items[j]!;
+      if (rectsOverlap(getRect(itemA), getRect(itemB))) {
+        result.push([itemA.id, itemB.id]);
       }
     }
   }
@@ -95,7 +108,13 @@ export function findOverlaps<T extends { id: string }>(
 
 /** Find overlapping tables */
 export function findOverlappingTables(
-  tables: { id: string; x: number | null | undefined; y: number | null | undefined; width?: number | null; height?: number | null }[],
+  tables: {
+    id: string;
+    x: number | null | undefined;
+    y: number | null | undefined;
+    width?: number | null;
+    height?: number | null;
+  }[],
 ): [string, string][] {
   return findOverlaps(tables, (t) => toRect(t.x ?? 0, t.y ?? 0, t.width, t.height));
 }

@@ -2,19 +2,19 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export type UseScrollHeaderOptions = {
+export interface UseScrollHeaderOptions {
   scrollRef?: React.RefObject<HTMLElement | null>;
   collapseThreshold?: number;
   visibilityThreshold?: number;
   glassThreshold?: number;
-};
+}
 
-export type ScrollHeaderState = {
+export interface ScrollHeaderState {
   collapsed: boolean;
   visible: boolean;
   progress: number;
   glassOpacity: number;
-};
+}
 
 /**
  * Enterprise-grade scroll header hook.
@@ -45,10 +45,14 @@ export function useScrollHeader(options: UseScrollHeaderOptions = {}): ScrollHea
   useEffect(() => {
     const target = scrollRef?.current ?? window;
 
-    if (!target) return;
+    if (!target) {
+      return;
+    }
 
     const getScrollY = () => {
-      if (target === window) return window.scrollY;
+      if (target === window) {
+        return window.scrollY;
+      }
 
       const el = target as HTMLElement;
       return el.scrollTop;

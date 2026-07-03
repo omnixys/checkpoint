@@ -1,4 +1,4 @@
-import { EventInvitationQuery, SeatListQuery, SeatsQuery } from "@/checkpoint/generated/graphql";
+import type { EventInvitationQuery, SeatListQuery } from "@/checkpoint/generated/graphql";
 
 export type SeatStatus = "free" | "taken" | "reserved" | "blocked";
 
@@ -7,11 +7,11 @@ export interface SeatFilter {
   status: "all" | SeatStatus;
 }
 
-export type RenameConflict = {
+export interface RenameConflict {
   type: string; // SECTION | TABLE
   name: string;
   id: string;
-};
+}
 
 export type SeatFilterStatus = "all" | SeatStatus;
 

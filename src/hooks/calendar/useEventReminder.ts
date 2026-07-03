@@ -3,10 +3,7 @@
  * Will later connect to Notification Service.
  */
 export function useEventReminder() {
-  const scheduleReminder = (event: any, minutesBefore: number) => {
-    // TODO: call notification service
-    console.log("Schedule reminder", event.id, minutesBefore);
-  };
+  const scheduleReminder = (_event: any, _minutesBefore: number) => {};
 
   return { scheduleReminder };
 }

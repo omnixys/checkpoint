@@ -1,12 +1,19 @@
 "use client";
 
 import {
+  type Dispatch,
+  type RefObject,
+  type SetStateAction,
+  useCallback,
+  useRef,
+  useState,
+} from "react";
+import type {
   EventListHandle,
   EventsFilter,
   EventVisualOverride,
   EventViweMode,
 } from "@/checkpoint/types/event.type";
-import { Dispatch, RefObject, SetStateAction, useCallback, useRef, useState } from "react";
 
 export interface UseEventsPageStateProp {
   listRef: RefObject<EventListHandle | null>;

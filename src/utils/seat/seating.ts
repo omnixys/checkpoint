@@ -1,7 +1,11 @@
+import { useMemo } from "react";
 import { useDevice } from "@/checkpoint/providers/DeviceProvider";
-import { SeatListType } from "@/checkpoint/types/seat.type";
+import type { SeatListType } from "@/checkpoint/types/seat.type";
 
-export type PolarPoint = { left: number; top: number };
+export interface PolarPoint {
+  left: number;
+  top: number;
+}
 
 /** Pure computation — no hook dependency, testable directly */
 export function computeCircularPositions(
@@ -11,7 +15,9 @@ export function computeCircularPositions(
   adjustedContainerRadius: number,
   adjustedTableXCoordinate: number,
 ): PolarPoint[] {
-  if (count <= 0) return [];
+  if (count <= 0) {
+    return [];
+  }
   const radius = (containerPx - tableDiameterPx) / 2 + adjustedContainerRadius;
   const center = containerPx / 2;
   return Array.from({ length: count }).map((_, i) => {
@@ -23,7 +29,7 @@ export function computeCircularPositions(
 }
 
 /** Gleichmäßig verteilte Stuhl-Positionen um runden Tisch */
-export function computeChairPositions(
+export function useChairPositions(
   count: number,
   containerPx: number,
   tableDiameterPx: number,
@@ -31,12 +37,16 @@ export function computeChairPositions(
   const { isMobile, isTablet } = useDevice();
   const adjustedContainerRadius = isMobile || isTablet ? 9 : 20;
   const adjustedTableXCoordinate = isMobile || isTablet ? -7 : -35;
-  return computeCircularPositions(
-    count,
-    containerPx,
-    tableDiameterPx,
-    adjustedContainerRadius,
-    adjustedTableXCoordinate,
+  return useMemo(
+    () =>
+      computeCircularPositions(
+        count,
+        containerPx,
+        tableDiameterPx,
+        adjustedContainerRadius,
+        adjustedTableXCoordinate,
+      ),
+    [count, containerPx, tableDiameterPx, adjustedContainerRadius, adjustedTableXCoordinate],
   );
 }
 

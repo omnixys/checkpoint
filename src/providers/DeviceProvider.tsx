@@ -1,6 +1,7 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import type React from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 export type DeviceType = "mobile" | "tablet" | "desktop";
 
@@ -21,9 +22,13 @@ export function DeviceProvider({ children }: { children: React.ReactNode }) {
     const detect = () => {
       const w = window.innerWidth;
 
-      if (w < 768) setDevice("mobile");
-      else if (w < 1200) setDevice("tablet");
-      else setDevice("desktop");
+      if (w < 768) {
+        setDevice("mobile");
+      } else if (w < 1200) {
+        setDevice("tablet");
+      } else {
+        setDevice("desktop");
+      }
     };
 
     detect();
@@ -47,6 +52,8 @@ export function DeviceProvider({ children }: { children: React.ReactNode }) {
 
 export function useDevice(): DeviceContextValue {
   const ctx = useContext(DeviceContext);
-  if (!ctx) throw new Error("useDevice must be inside DeviceProvider");
+  if (!ctx) {
+    throw new Error("useDevice must be inside DeviceProvider");
+  }
   return ctx;
 }

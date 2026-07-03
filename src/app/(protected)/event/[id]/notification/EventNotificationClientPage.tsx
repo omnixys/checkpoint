@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import { Box, useTheme } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
-import { NotificationChannelTabs } from "./components/NotificationChannelTabs";
-import { NotificationSidebar } from "./components/NotificationSidebar";
-import { NotificationConversationPanel } from "./components/NotificationConversationPanel";
-import { NotificationChannel } from "./types/notification-channel.enum";
+import { useState } from "react";
 import { getNotificationTone } from "@/checkpoint/app/(protected)/event/[id]/notification/themes/notificationTheme";
+import { NotificationChannelTabs } from "./components/NotificationChannelTabs";
+import { NotificationConversationPanel } from "./components/NotificationConversationPanel";
+import { NotificationSidebar } from "./components/NotificationSidebar";
+import { NotificationChannel } from "./types/notification-channel.enum";
 
 const MotionBox = motion.create(Box);
 

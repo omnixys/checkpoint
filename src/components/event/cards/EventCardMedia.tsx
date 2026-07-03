@@ -3,10 +3,10 @@
 import { Box, useTheme } from "@mui/material";
 import Image from "next/image";
 
-type Props = {
+interface Props {
   ev: any;
   visualStyle: "image" | "banner" | "none";
-};
+}
 
 export default function EventCardMedia({ ev, visualStyle }: Props) {
   const theme = useTheme();
@@ -45,7 +45,7 @@ export default function EventCardMedia({ ev, visualStyle }: Props) {
       <Image
         src={imageUrl}
         alt={ev.name}
-        fill
+        fill={true}
         style={{
           objectFit: "cover",
         }}

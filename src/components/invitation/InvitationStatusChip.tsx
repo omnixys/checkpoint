@@ -1,7 +1,5 @@
 "use client";
 
-import { InvitationStatus, RsvpChoice } from "@/checkpoint/generated/graphql";
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import BlockRoundedIcon from "@mui/icons-material/BlockRounded";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import ErrorOutlineRoundedIcon from "@mui/icons-material/ErrorOutlineRounded";
@@ -10,7 +8,9 @@ import HourglassEmptyRoundedIcon from "@mui/icons-material/HourglassEmptyRounded
 import RemoveCircleOutlineRoundedIcon from "@mui/icons-material/RemoveCircleOutlineRounded";
 import VerifiedRoundedIcon from "@mui/icons-material/VerifiedRounded";
 import { Chip } from "@mui/material";
-import React from "react";
+import type React from "react";
+import type { InvitationStatus, RsvpChoice } from "@/checkpoint/generated/graphql";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 /* ---------------------------------------------------------------------------
  * VisionOS-inspired Status Chip
@@ -111,7 +111,7 @@ export default function InvitationStatusChip({
       break;
   }
 
-  if (rsvp == "MAYBE") {
+  if (rsvp === "MAYBE") {
     const maybeConfig = {
       label: "Maybe",
       icon: <HelpOutlineRoundedIcon />,

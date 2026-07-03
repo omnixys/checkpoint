@@ -3,11 +3,11 @@
 import { Box, Stack, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 
-type Props = {
+interface Props {
   title: string;
   text: string;
   icon: string;
-};
+}
 
 export default function OnboardingSlide({ title, text, icon }: Props) {
   return (

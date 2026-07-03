@@ -1,8 +1,8 @@
 "use client";
 
 import dayjs from "dayjs";
-import { TimelineItem } from "../TimelineSection";
-import { TimelineDesign } from "@/checkpoint/components/event/settings/sections/timeline/TimelineRenderer";
+import type { TimelineDesign } from "@/checkpoint/components/event/settings/sections/timeline/TimelineRenderer";
+import type { TimelineItem } from "../TimelineSection";
 
 export function generateTimelineHtml(
   items: TimelineItem[],
@@ -142,7 +142,7 @@ function luxuryTemplate(items: TimelineItem[], title?: string): string {
 /* MINIMAL (Modern / Tech)                            */
 /* -------------------------------------------------- */
 
-function minimalTemplate(items: TimelineItem[], title?: string): string {
+function minimalTemplate(items: TimelineItem[], _title?: string): string {
   return `
   <html>
     <head>

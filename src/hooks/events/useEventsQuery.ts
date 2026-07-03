@@ -1,10 +1,9 @@
+import { useQuery } from "@apollo/client/react";
 import {
   MyEventsDocument,
-  MyEventsQuery,
-  MyEventsQueryVariables,
+  type MyEventsQuery,
+  type MyEventsQueryVariables,
 } from "@/checkpoint/generated/graphql";
-import { ErrorLike } from "@apollo/client";
-import { useQuery } from "@apollo/client/react";
 
 export function useEventsQuery() {
   const { data, loading, error, refetch } = useQuery<MyEventsQuery, MyEventsQueryVariables>(

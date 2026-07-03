@@ -1,16 +1,16 @@
 "use client";
 
-import { Box, Typography, Avatar, Badge, alpha, useTheme } from "@mui/material";
+import { Avatar, alpha, Badge, Box, Typography, useTheme } from "@mui/material";
 import { useMockChats } from "../hooks/useMockChats";
 
-type Props = {
+interface Props {
   selectedChatId: string | null;
   onSelect: (id: string) => void;
-};
+}
 
 export function LuxuryChatList({ selectedChatId, onSelect }: Props) {
   const { chats } = useMockChats();
-  const theme = useTheme();
+  const _theme = useTheme();
 
   return (
     <Box

@@ -11,7 +11,9 @@ import { MapContainer, Marker, TileLayer } from "react-leaflet";
  * - Lightweight and mobile-first
  */
 export default function AddressMapPreview({ lat, lon }: { lat: number; lon: number }) {
-  if (!lat || !lon) return null;
+  if (!lat || !lon) {
+    return null;
+  }
 
   return (
     <Box

@@ -1,4 +1,4 @@
-import { InMemoryCache, TypePolicies } from "@apollo/client";
+import { InMemoryCache, type TypePolicies } from "@apollo/client";
 
 /**
  * Centralized Apollo cache configuration.

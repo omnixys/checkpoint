@@ -1,6 +1,6 @@
 // src/checkpoint/mappers/plus-one.mapper.ts
 
-import { PublicPlusOneInput } from "@/checkpoint/generated/graphql";
+import type { PublicPlusOneInput } from "@/checkpoint/generated/graphql";
 
 /**
  * Ensures backend-safe payload

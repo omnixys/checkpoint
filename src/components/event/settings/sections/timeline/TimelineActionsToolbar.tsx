@@ -1,19 +1,19 @@
 "use client";
 
 import { Stack } from "@mui/material";
-import { TimelineItem } from "../TimelineSection";
+import type { TimelineItem } from "../TimelineSection";
 import TimelineDownloadButton from "./TimelineDownloadButton";
-import TimelinePrintButton from "./TimelinePrintButton";
-import TimelinePdfExport from "./TimelinePdfExport";
 import TimelineExcelExport from "./TimelineExcelExport";
+import TimelinePdfExport from "./TimelinePdfExport";
+import TimelinePrintButton from "./TimelinePrintButton";
+import type { TimelineDesign } from "./TimelineRenderer";
 import TimelineShareButton from "./TimelineShareButton";
-import { TimelineDesign } from "./TimelineRenderer";
 
-type Props = {
+interface Props {
   items: TimelineItem[];
   title?: string;
   design?: TimelineDesign;
-};
+}
 
 export default function TimelineActionsToolbar({ items, title, design = "clean" }: Props) {
   return (

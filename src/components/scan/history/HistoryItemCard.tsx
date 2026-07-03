@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Typography, Chip, Stack, useTheme } from "@mui/material";
+import { Box, Chip, Stack, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
 
 /* ---------------------------------------------------------------------
@@ -39,7 +39,7 @@ export default function HistoryItemCard({ entry }: { entry: HistoryEntry }) {
           p: 3,
           borderRadius: 4,
           backdropFilter: "blur(28px)",
-          bgcolor: theme.palette.background.paper + "BB",
+          bgcolor: `${theme.palette.background.paper}BB`,
           border: `1px solid ${theme.palette.divider}`,
           boxShadow: `0 12px 48px ${theme.palette.divider}`,
         }}
@@ -48,7 +48,7 @@ export default function HistoryItemCard({ entry }: { entry: HistoryEntry }) {
           <Chip
             label={entry.verdict}
             sx={{
-              bgcolor: color + "22",
+              bgcolor: `${color}22`,
               color,
               width: "fit-content",
               fontWeight: 600,

@@ -18,20 +18,20 @@ import {
 import CircularProgress from "@mui/material/CircularProgress";
 import { useEffect, useState } from "react";
 import { MotionDialogTransition } from "@/checkpoint/components/motion/MotionDialogTransition";
-import { rsvpLinkForInvitationId, copyToClipboard } from "@/checkpoint/utils/invitation/link";
-import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
 import {
-  AssignSeatMutation,
-  AssignSeatMutationVariables,
   AssignSeatDocument,
-  SeatsQuery,
-  SeatsQueryVariables,
-  SeatsDocument,
-  GetSeatByGuestAndEventQuery,
-  GetSeatByGuestAndEventQueryVariables,
+  type AssignSeatMutation,
+  type AssignSeatMutationVariables,
   GetSeatByGuestAndEventDocument,
+  type GetSeatByGuestAndEventQuery,
+  type GetSeatByGuestAndEventQueryVariables,
+  SeatsDocument,
+  type SeatsQuery,
+  type SeatsQueryVariables,
 } from "@/checkpoint/generated/graphql";
+import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { copyToClipboard, rsvpLinkForInvitationId } from "@/checkpoint/utils/invitation/link";
 
 export default function InvitationDetailDialog({ logic }: { logic: InvitationLogic }) {
   const inv = logic.activeInvitation;
@@ -44,7 +44,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
   const [approveSeatId, setApproveSeatId] = useState<string>();
   const [seatQuery, setSeatQuery] = useState("");
 
-  const [assignSeat] = useMutation<AssignSeatMutation, AssignSeatMutationVariables>(
+  const [_assignSeat] = useMutation<AssignSeatMutation, AssignSeatMutationVariables>(
     AssignSeatDocument,
   );
 
@@ -59,7 +59,9 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
   >(GetSeatByGuestAndEventDocument);
 
   useEffect(() => {
-    if (!inv) return;
+    if (!inv) {
+      return;
+    }
 
     loadSeats({ variables: { id: inv.eventId } });
 
@@ -73,9 +75,11 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
         },
       });
     }
-  }, [inv]);
+  }, [inv, loadSeats, loadGuestSeat]);
 
-  if (!inv) return null;
+  if (!inv) {
+    return null;
+  }
 
   const currentSeat = seatData?.getSeatByGuestAndEvent ?? null;
 
@@ -138,7 +142,9 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
   const openWhatsapp = (text: string, phone?: string | null) => {
     const params = new URLSearchParams();
     params.set("text", text);
-    if (phone) params.set("phone", phone.replace(/\D/g, ""));
+    if (phone) {
+      params.set("phone", phone.replace(/\D/g, ""));
+    }
 
     const url = `https://api.whatsapp.com/send?${params.toString()}`;
     window.open(url, "_blank", "noopener,noreferrer");
@@ -148,7 +154,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
     <>
       {/* MAIN DIALOG */}
       <Dialog
-        open
+        open={true}
         onClose={logic.closeInvitation}
         slots={{
           transition: MotionDialogTransition,
@@ -157,7 +163,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
           pt: 15,
         }}
         maxWidth="sm"
-        fullWidth
+        fullWidth={true}
       >
         <DialogContent tabIndex={-1}>
           <Stack spacing={3}>
@@ -165,7 +171,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
             <Box>
               <Typography
                 variant="h5"
-                gutterBottom
+                gutterBottom={true}
                 sx={{
                   pb: 2,
                 }}
@@ -180,7 +186,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                 }}
               >
                 <Button
-                  autoFocus
+                  autoFocus={true}
                   variant="contained"
                   onClick={() => approveInvitation(true)}
                 >
@@ -190,7 +196,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                 <Button
                   variant="contained"
                   color="success"
-                  disabled={!freeSeats.length}
+                  disabled={freeSeats.length === 0}
                   onClick={() => {
                     setApproveSeatId(preselectedSeatId);
                     setApproveSeatOpen(true);
@@ -199,11 +205,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                   {tInvitation("approveAndSeat")}
                 </Button>
 
-                <Button
-                  variant="outlined"
-                  color="warning"
-                  onClick={() => approveInvitation(false)}
-                >
+                <Button variant="outlined" color="warning" onClick={() => approveInvitation(false)}>
                   {tInvitation("decline")}
                 </Button>
               </Stack>
@@ -214,7 +216,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                 <Divider />
 
                 <Box>
-                  <Typography variant="subtitle2" gutterBottom>
+                  <Typography variant="subtitle2" gutterBottom={true}>
                     {tInvitation("detail.rsvpDetails")}
                   </Typography>
                   <Stack spacing={1.5}>
@@ -257,7 +259,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
 
             {/* SHARE */}
             <Box>
-              <Typography variant="subtitle2" gutterBottom>
+              <Typography variant="subtitle2" gutterBottom={true}>
                 {tInvitation("detail.shareAndContact")}
               </Typography>
               <Stack spacing={1.5}>
@@ -301,7 +303,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
 
             {/* SYSTEM */}
             <Box>
-              <Typography variant="subtitle2" gutterBottom>
+              <Typography variant="subtitle2" gutterBottom={true}>
                 {tCommon("management")}
               </Typography>
               <Stack direction="row" spacing={2}>
@@ -335,7 +337,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
         open={approveSeatOpen}
         onClose={() => setApproveSeatOpen(false)}
         maxWidth="xs"
-        fullWidth
+        fullWidth={true}
       >
         <DialogTitle sx={{ pb: 1 }}>
           <Stack
@@ -478,7 +480,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
               }}
             >
               <Button
-                fullWidth
+                fullWidth={true}
                 variant="contained"
                 disabled={!approveSeatId}
                 onClick={() => approveInvitation(true, approveSeatId)}

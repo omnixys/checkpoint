@@ -1,46 +1,42 @@
 "use client";
 
+import { useMutation } from "@apollo/client/react";
+import { useEffect, useMemo } from "react";
 import {
   AddTimeLinesDocument,
   AssignUserRoleToEventDocument,
   CreateEventDocument,
-  CreateEventInput,
-  CreateSettingsInput,
-  EventAddressInput,
-  EventDocument,
-  EventQuery,
-  EventQueryVariables,
-  EventTimelinePayload,
+  type CreateEventInput,
+  type CreateSettingsInput,
+  type EventAddressInput,
+  type EventTimelinePayload,
   RemoveTimeLinesDocument,
   RemoveUserFromEventDocument,
   TransferEventOwnershipDocument,
   UpdateEventDocument,
-  UpdateSettingsInput,
+  type UpdateSettingsInput,
   UpdateTimeLinesDocument,
-  UserRoleType,
+  type UserRoleType,
 } from "@/checkpoint/generated/graphql";
 import useEventQuery from "@/checkpoint/hooks/events/useEventQuery";
 
-import { useMutation, useQuery } from "@apollo/client/react";
-import { useEffect, useMemo } from "react";
-
-type TimelineCreate = {
+interface TimelineCreate {
   type: string;
   label: string;
   timestamp: string;
-};
+}
 
-type TimelineUpdate = {
+interface TimelineUpdate {
   id: string;
   type: string;
   label: string;
   timestamp: string;
-};
+}
 
-type RoleAssign = {
+interface RoleAssign {
   userId: string;
   role: UserRoleType;
-};
+}
 
 /**
  * DEFAULTS (centralized → enterprise)
@@ -91,13 +87,13 @@ export function useEventSettings(eventId: string) {
     loadEventSettings: true,
   });
 
-  const staffRoles = useMemo(() => {
-    return (eventSettings?.userRoles ?? []).filter((role) => role.role !== "GUEST");
-  }, [eventSettings]);
+  const staffRoles = useMemo(
+    () => (eventSettings?.userRoles ?? []).filter((role) => role.role !== "GUEST"),
+    [eventSettings],
+  );
 
   useEffect(() => {
     if (eventSettingsError) {
-      console.error(eventSettingsError);
     }
   }, [eventSettingsError]);
   // ─────────────────────────────
@@ -341,7 +337,9 @@ export function useEventSettings(eventId: string) {
   // ─────────────────────────────
 
   const mapped = useMemo(() => {
-    if (!eventSettings) return null;
+    if (!eventSettings) {
+      return null;
+    }
 
     // const subEvents = eventSettings.subEvents;
     //         ...(subEvents

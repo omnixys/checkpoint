@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import type { PublicPlusOneInput, PhoneNumberInput } from "@/checkpoint/generated/graphql";
-import { NormalizedPlusOne } from "@/checkpoint/types/event.type";
+import type { PhoneNumberInput, PublicPlusOneInput } from "@/checkpoint/generated/graphql";
+import type { NormalizedPlusOne } from "@/checkpoint/types/event.type";
 
 type CompleteNormalizedPlusOne = NormalizedPlusOne & {
   plusOneAgeCategory: PublicPlusOneInput["plusOneAgeCategory"];
@@ -125,25 +125,28 @@ export function usePlusOnes() {
   /**
    * Validation layer
    */
-  const valid = useMemo(() => {
-    return plusOnes.filter(
-      (p): p is CompleteNormalizedPlusOne =>
+  const valid = useMemo(
+    () =>
+      plusOnes.filter((p): p is CompleteNormalizedPlusOne =>
         Boolean(p.firstName.trim() && p.lastName.trim() && p.plusOneAgeCategory),
-    );
-  }, [plusOnes]);
+      ),
+    [plusOnes],
+  );
 
   /**
    * GraphQL mapping (safe + normalized)
    */
-  const toGraphQL = useCallback((): PublicPlusOneInput[] => {
-    return valid.map((p) => ({
-      firstName: p.firstName.trim(),
-      lastName: p.lastName.trim(),
-      email: p.email?.trim() || null,
-      plusOneAgeCategory: p.plusOneAgeCategory,
-      phoneNumbers: p.phoneNumbers.length ? p.phoneNumbers : null,
-    }));
-  }, [valid]);
+  const toGraphQl = useCallback(
+    (): PublicPlusOneInput[] =>
+      valid.map((p) => ({
+        firstName: p.firstName.trim(),
+        lastName: p.lastName.trim(),
+        email: p.email?.trim() || null,
+        plusOneAgeCategory: p.plusOneAgeCategory,
+        phoneNumbers: p.phoneNumbers.length > 0 ? p.phoneNumbers : null,
+      })),
+    [valid],
+  );
 
   return {
     plusOnes,
@@ -159,6 +162,6 @@ export function usePlusOnes() {
     removePhone,
 
     // mapping
-    toGraphQL,
+    toGraphQL: toGraphQl,
   };
 }

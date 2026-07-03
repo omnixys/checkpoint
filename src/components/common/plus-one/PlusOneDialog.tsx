@@ -1,14 +1,12 @@
 "use client";
 
 import { Dialog, DialogContent, DialogTitle } from "@mui/material";
-
-import type { Country, PhoneNumberInput } from "@/checkpoint/generated/graphql";
-
 import PlusOneField from "@/checkpoint/components/common/plus-one/PlusOneField";
-import { CallingCodeCountry } from "@/checkpoint/types/country.type";
-import { NormalizedPlusOne } from "@/checkpoint/types/event.type";
+import type { PhoneNumberInput } from "@/checkpoint/generated/graphql";
+import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
+import type { NormalizedPlusOne } from "@/checkpoint/types/event.type";
 
-type Props = {
+interface Props {
   open: boolean;
   index: number | null;
   value: NormalizedPlusOne | null;
@@ -34,7 +32,7 @@ type Props = {
   onRemovePhone: (index: number, phoneIndex: number) => void;
 
   onRemove: (index: number) => void;
-};
+}
 
 /**
  * PlusOneDialog
@@ -54,10 +52,12 @@ export default function PlusOneDialog({
   onRemovePhone,
   onRemove,
 }: Props) {
-  if (index === null || !value) return null;
+  if (index === null || !value) {
+    return null;
+  }
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={onClose} fullWidth={true} maxWidth="sm">
       <DialogTitle>Begleitperson bearbeiten</DialogTitle>
 
       <DialogContent>

@@ -1,21 +1,20 @@
 "use client";
 
 import { Box, Paper, Typography, useTheme } from "@mui/material";
-import { motion } from "framer-motion";
 import useEmblaCarousel from "embla-carousel-react";
-import { JSX, useEffect } from "react";
+import { motion } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
-import { NavItem } from "../navigation.config";
-import { isActiveNavItem } from "./navigation.util";
-import { env } from "@/checkpoint/lib/env";
+import { useEffect } from "react";
 import { useThemeMode } from "@/checkpoint/providers/ThemeModeProvider";
+import type { NavItem } from "../navigation.config";
+import { isActiveNavItem } from "./navigation.util";
 
-type Props = {
+interface Props {
   items: NavItem[];
   eventId: string | undefined;
-};
+}
 
-export function MobileNavCarousel({ items, eventId }: Props) {
+export function MobileNavCarousel({ items }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const theme = useTheme();
@@ -29,7 +28,9 @@ export function MobileNavCarousel({ items, eventId }: Props) {
 
   /* Auto-scroll to active item */
   useEffect(() => {
-    if (!emblaApi) return;
+    if (!emblaApi) {
+      return;
+    }
 
     const index = items.findIndex((i) =>
       isActiveNavItem(
@@ -38,7 +39,9 @@ export function MobileNavCarousel({ items, eventId }: Props) {
         items.map((i) => i.path),
       ),
     );
-    if (index >= 0) emblaApi.scrollTo(index);
+    if (index >= 0) {
+      emblaApi.scrollTo(index);
+    }
   }, [pathname, emblaApi, items]);
 
   return (
@@ -124,7 +127,7 @@ export function MobileNavCarousel({ items, eventId }: Props) {
                   </motion.div>
 
                   <Typography
-                    noWrap
+                    noWrap={true}
                     sx={{
                       fontSize: 12,
                       fontWeight: active ? 700 : 500,

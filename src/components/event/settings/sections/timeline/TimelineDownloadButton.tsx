@@ -1,16 +1,16 @@
 "use client";
 
 import { Button } from "@mui/material";
-import { useTheme, alpha } from "@mui/material/styles";
-import { TimelineItem } from "../TimelineSection";
+import { alpha, useTheme } from "@mui/material/styles";
+import type { TimelineDesign } from "@/checkpoint/components/event/settings/sections/timeline/TimelineRenderer";
+import type { TimelineItem } from "../TimelineSection";
 import { generateTimelineHtml } from "./TimelineHtmlTemplates";
-import { TimelineDesign } from "@/checkpoint/components/event/settings/sections/timeline/TimelineRenderer";
 
-type Props = {
+interface Props {
   items: TimelineItem[];
   design?: TimelineDesign;
   title?: string | undefined;
-};
+}
 
 export default function TimelineDownloadButton({ items, design = "clean", title }: Props) {
   const theme = useTheme();

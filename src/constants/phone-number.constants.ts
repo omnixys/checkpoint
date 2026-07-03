@@ -1,6 +1,6 @@
 // src/checkpoint/constants/phone-number.constants.ts
 
-import { PhoneNumberInput } from "@/checkpoint/generated/graphql";
+import type { PhoneNumberInput } from "@/checkpoint/generated/graphql";
 
 /**
  * Runtime-safe list of supported phone number types.

@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, type RefObject } from "react";
-import { MotionValue } from "framer-motion";
-import { OmnixysColorScheme } from "@/checkpoint/themes/paletteTypes";
+import type { MotionValue } from "framer-motion";
+import { type RefObject, useEffect } from "react";
 import { fragShader, isClient } from "@/checkpoint/components/startup/config/constants";
 import { omnixysPresets } from "@/checkpoint/themes/colors/omnixysPresets";
+import type { OmnixysColorScheme } from "@/checkpoint/themes/paletteTypes";
 
 type Mode = "light" | "dark";
 
@@ -12,7 +12,7 @@ type Mode = "light" | "dark";
  * Converts HEX → normalized vec3 for GLSL
  */
 function hexToVec3(hex: string): [number, number, number] {
-  const bigint = parseInt(hex.replace("#", ""), 16);
+  const bigint = Number.parseInt(hex.replace("#", ""), 16);
   return [((bigint >> 16) & 255) / 255, ((bigint >> 8) & 255) / 255, (bigint & 255) / 255];
 }
 
@@ -28,17 +28,25 @@ export function useSpaceWarpShader(
   mode: Mode,
 ) {
   useEffect(() => {
-    if (!isClient) return;
+    if (!isClient) {
+      return;
+    }
 
     const canvas = canvasRef.current;
-    if (!canvas) return; // ✅ runtime safety
+    if (!canvas) {
+      return; // ✅ runtime safety
+    }
 
     const gl = canvas.getContext("webgl");
-    if (!gl) return;
+    if (!gl) {
+      return;
+    }
 
-    const preset = omnixysPresets[scheme] ?? omnixysPresets["original"];
+    const preset = omnixysPresets[scheme] ?? omnixysPresets.original;
 
-    if (!preset.visual) return;
+    if (!preset.visual) {
+      return;
+    }
 
     const visual = preset.visual[mode];
 
@@ -49,7 +57,7 @@ export function useSpaceWarpShader(
     const c3 = hexToVec3(g[2]);
 
     const vertex = gl.createShader(gl.VERTEX_SHADER)!;
-    gl.shaderSource(vertex, `attribute vec4 position; void main(){gl_Position=position;}`);
+    gl.shaderSource(vertex, "attribute vec4 position; void main(){gl_Position=position;}");
     gl.compileShader(vertex);
 
     const fragment = gl.createShader(gl.FRAGMENT_SHADER)!;
@@ -60,6 +68,7 @@ export function useSpaceWarpShader(
     gl.attachShader(program, vertex);
     gl.attachShader(program, fragment);
     gl.linkProgram(program);
+    // biome-ignore lint/correctness/useHookAtTopLevel: WebGLRenderingContext.useProgram is not a React hook.
     gl.useProgram(program);
 
     function render(time: number) {

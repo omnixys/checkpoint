@@ -1,22 +1,20 @@
 "use client";
 
-import React from "react";
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
+  alpha,
+  Box,
   Button,
-  Stack,
-  Typography,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   MenuItem,
   Select,
-  Box,
+  Stack,
+  Typography,
   useTheme,
-  alpha,
 } from "@mui/material";
-import { InvitationPayload } from "@/checkpoint/generated/graphql";
-import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
+import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 /* ---------------------------------------------------------------------------
@@ -28,14 +26,16 @@ export default function InvitationBulkSendDialog({ logic }: { logic: InvitationL
   const tInvitation = useTypedTranslations("invitation");
   const tCommon = useTypedTranslations("common");
 
-  if (!open) return null;
+  if (!open) {
+    return null;
+  }
 
   const selectedInvitations = logic.invitations.filter((inv) =>
     logic.bulkSendIds?.includes(inv.id),
   );
 
   return (
-    <Dialog open={open} onClose={logic.closeBulkSendDialog} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={logic.closeBulkSendDialog} maxWidth="sm" fullWidth={true}>
       <DialogTitle> {tInvitation("bulkSend.title")}</DialogTitle>
 
       <DialogContent>

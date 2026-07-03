@@ -1,7 +1,5 @@
 "use client";
 
-import useSeatMutation from "@/checkpoint/hooks/seat/useSeatMutation";
-import { SeatListType } from "@/checkpoint/types/seat.type";
 import {
   Button,
   Chip,
@@ -14,14 +12,16 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
+import useSeatMutation from "@/checkpoint/hooks/seat/useSeatMutation";
+import type { SeatListType } from "@/checkpoint/types/seat.type";
 
-type Props = {
+interface Props {
   open: boolean;
   sectionName: string;
   seats: SeatListType[];
   onClose: () => void;
   refetch: () => void;
-};
+}
 
 // TODO conflict handling im frontend
 
@@ -44,10 +44,12 @@ export default function SectionInfoDialog({ open, sectionName, seats, onClose, r
     }
   }, [data, refetch, onClose]);
 
-  if (!sectionId) return;
+  if (!sectionId) {
+    return;
+  }
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth={true}>
       <DialogTitle>Section</DialogTitle>
 
       <DialogContent>
@@ -56,7 +58,7 @@ export default function SectionInfoDialog({ open, sectionName, seats, onClose, r
             label="Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            fullWidth
+            fullWidth={true}
           />
 
           <Stack direction="row" spacing={1}>

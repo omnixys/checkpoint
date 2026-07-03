@@ -1,11 +1,11 @@
 // /frontend/src/app/components/user/LogoutButton.tsx
 "use client";
 
-import { env } from "@/checkpoint/lib/env";
-import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import { IconButton, Tooltip } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { env } from "@/checkpoint/lib/env";
+import { useAuth } from "@/checkpoint/providers/AuthProvider";
 
 export default function LogoutButton() {
   const router = useRouter();
@@ -15,10 +15,7 @@ export default function LogoutButton() {
     try {
       await logout();
       router.replace(`${env.CHECKPOINT_BASE_PATH}login`);
-    } catch (e) {
-      // Optional: in-app toast
-      console.error(e);
-    }
+    } catch (_e) {}
   };
 
   return (

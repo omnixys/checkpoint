@@ -1,13 +1,13 @@
 "use client";
 
 import { Button } from "@mui/material";
-import { TimelineItem } from "../TimelineSection";
-import * as XLSX from "xlsx";
 import dayjs from "dayjs";
+import * as Xlsx from "xlsx";
+import type { TimelineItem } from "../TimelineSection";
 
-type Props = {
+interface Props {
   items: TimelineItem[];
-};
+}
 
 export default function TimelineExcelExport({ items }: Props) {
   const handleExport = () => {
@@ -17,12 +17,12 @@ export default function TimelineExcelExport({ items }: Props) {
       Time: dayjs(i.timestamp).format("HH:mm"),
     }));
 
-    const ws = XLSX.utils.json_to_sheet(data);
-    const wb = XLSX.utils.book_new();
+    const ws = Xlsx.utils.json_to_sheet(data);
+    const wb = Xlsx.utils.book_new();
 
-    XLSX.utils.book_append_sheet(wb, ws, "Timeline");
+    Xlsx.utils.book_append_sheet(wb, ws, "Timeline");
 
-    XLSX.writeFile(wb, "timeline.xlsx");
+    Xlsx.writeFile(wb, "timeline.xlsx");
   };
 
   return <Button onClick={handleExport}>📊 Export Excel</Button>;

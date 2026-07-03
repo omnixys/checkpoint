@@ -1,8 +1,8 @@
 "use client";
 
-import { useScrollHeader } from "@/checkpoint/hooks/useScrollHeader";
-import { Box, Stack, Typography, useTheme, alpha } from "@mui/material";
+import { alpha, Stack, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
+import { useScrollHeader } from "@/checkpoint/hooks/useScrollHeader";
 
 export default function CollapsingSeatHeader() {
   const theme = useTheme();

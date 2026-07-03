@@ -1,8 +1,7 @@
 "use client";
 
-import React from "react";
 import { Box, Typography } from "@mui/material";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 /* -------------------------------------------------------------------
  * SecurityAnalyticsCharts
@@ -45,8 +44,8 @@ function ChartBlock({ data, color }: { data: { time: string; value: number }[]; 
       <ResponsiveContainer>
         <LineChart data={data}>
           <Line type="monotone" dataKey="value" stroke={color} strokeWidth={3} dot={false} />
-          <XAxis dataKey="time" hide />
-          <YAxis hide />
+          <XAxis dataKey="time" hide={true} />
+          <YAxis hide={true} />
           <Tooltip />
         </LineChart>
       </ResponsiveContainer>

@@ -1,15 +1,9 @@
-import {
-  EventPageDocument,
-  EventPageQuery,
-  EventPageQueryVariables,
-  GetEventMetaDocument,
-  GetEventMetaQuery,
-  GetEventMetaQueryVariables,
-  GetMyEventCalendarDataDocument,
-  GetMyEventCalendarDataQuery,
-  GetMyEventCalendarDataQueryVariables,
-} from "@/checkpoint/generated/graphql";
 import { useQuery } from "@apollo/client/react";
+import {
+  GetMyEventCalendarDataDocument,
+  type GetMyEventCalendarDataQuery,
+  type GetMyEventCalendarDataQueryVariables,
+} from "@/checkpoint/generated/graphql";
 
 interface Props {
   isAuthenticated?: boolean | undefined;

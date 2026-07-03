@@ -1,9 +1,9 @@
 "use client";
 
-import { TimelineItem } from "@/checkpoint/components/event/settings/sections/TimelineSection";
 import { Button, useTheme } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import dayjs from "dayjs";
+import type { TimelineItem } from "@/checkpoint/components/event/settings/sections/TimelineSection";
 
 /**
  * TimelineExport
@@ -129,7 +129,9 @@ export default function TimelineExport({ items }: { items: TimelineItem[] }) {
 
     const newWindow = window.open("", "_blank");
 
-    if (!newWindow) return;
+    if (!newWindow) {
+      return;
+    }
 
     newWindow.document.write(html);
     newWindow.document.close();
@@ -142,7 +144,7 @@ export default function TimelineExport({ items }: { items: TimelineItem[] }) {
   return (
     <Button
       onClick={handleDownload}
-      fullWidth
+      fullWidth={true}
       sx={{
         mt: 3,
         py: 1.8,

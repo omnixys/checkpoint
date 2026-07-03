@@ -11,7 +11,9 @@ export function useImportProgress(uploadId: string | null) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    if (!uploadId) return;
+    if (!uploadId) {
+      return;
+    }
 
     let active = true;
 
@@ -20,7 +22,9 @@ export function useImportProgress(uploadId: string | null) {
         const res = await fetch(`/api/import-progress?uploadId=${uploadId}`);
         const json = await res.json();
 
-        if (!active) return;
+        if (!active) {
+          return;
+        }
 
         setProgress(json.progress);
 

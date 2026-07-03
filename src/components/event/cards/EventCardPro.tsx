@@ -20,13 +20,13 @@ import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
 import EventCardMedia from "./EventCardMedia";
 
-type Props = {
+interface Props {
   ev: any;
   toLocal: (dt: string | number | Date) => string;
   visualOverride: "auto" | "image" | "banner" | "none";
   isActive: boolean;
   onSetActive: () => void;
-};
+}
 
 type EventStatus = "running" | "upcoming" | "past";
 
@@ -146,7 +146,7 @@ export default function EventCardPro({
           <Button
             component={Link}
             href={`${env.CHECKPOINT_BASE_PATH}event/${ev.id}`}
-            fullWidth
+            fullWidth={true}
             variant="contained"
             sx={{ borderRadius: 3, fontWeight: 600 }}
           >
@@ -155,7 +155,7 @@ export default function EventCardPro({
 
           {!isActive && (
             <Button
-              fullWidth
+              fullWidth={true}
               variant="text"
               sx={{ borderRadius: 3, fontWeight: 700 }}
               onClick={onSetActive}

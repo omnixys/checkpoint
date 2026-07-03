@@ -1,7 +1,7 @@
-import QrClientPage from "@/checkpoint/app/(protected)/me/my-qr/QrClientPage";
-import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
 import { Skeleton } from "@mui/material";
 import { Suspense } from "react";
+import QrClientPage from "@/checkpoint/app/(protected)/me/my-qr/QrClientPage";
+import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
 
 export const metadata = buildMetadata({
   title: "My Ticket",

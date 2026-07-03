@@ -10,7 +10,7 @@ import Typography from "@mui/material/Typography";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-export type ErrorViewProps = {
+export interface ErrorViewProps {
   title: string;
   message?: ReactNode;
   actions?: Array<{
@@ -19,9 +19,12 @@ export type ErrorViewProps = {
     variant?: "contained" | "outlined";
   }>;
   chips?: string[];
-};
+}
 
 export default function ErrorView({ title, message, actions, chips }: ErrorViewProps) {
+  const visibleActions = actions ?? [];
+  const visibleChips = chips ?? [];
+
   return (
     <Box
       sx={{
@@ -49,23 +52,23 @@ export default function ErrorView({ title, message, actions, chips }: ErrorViewP
                 {message}
               </Typography>
             )}
-            {!!chips?.length && (
+            {visibleChips.length > 0 && (
               <Stack
                 direction="row"
                 spacing={1}
-                useFlexGap
+                useFlexGap={true}
                 sx={{
                   flexWrap: "wrap",
                 }}
               >
-                {chips.map((c) => (
+                {visibleChips.map((c) => (
                   <Chip key={c} label={c} size="small" />
                 ))}
               </Stack>
             )}
-            {!!actions?.length && (
+            {visibleActions.length > 0 && (
               <Stack direction="row" spacing={1} sx={{ pt: 1 }}>
-                {actions.map(({ href, label, variant = "contained" }) => (
+                {visibleActions.map(({ href, label, variant = "contained" }) => (
                   <Button key={href + label} component={Link} href={href} variant={variant}>
                     {label}
                   </Button>

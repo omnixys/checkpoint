@@ -1,17 +1,16 @@
 "use client";
 
-import { Box, useTheme, alpha, ToggleButtonGroup, ToggleButton } from "@mui/material";
+import { alpha, Box, ToggleButton, ToggleButtonGroup, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
-import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import { useEffect, useState } from "react";
+import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
+import DarkModeIcon from "@mui/icons-material/DarkMode";
 import MapIcon from "@mui/icons-material/Map";
 import SatelliteIcon from "@mui/icons-material/SatelliteAlt";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
-
-import { useMapMarker } from "@/checkpoint/hooks/theme/useMapMarker";
 import { useEventAddressQuery } from "@/checkpoint/hooks/address/useAddressQuery";
+import { useMapMarker } from "@/checkpoint/hooks/theme/useMapMarker";
 
 /* --------------------------------------------------------
  * Map Styles
@@ -55,12 +54,16 @@ export default function EventLocationMapClient({ eventId }: { eventId: string })
     }
   }, [theme.palette.mode]);
 
-  if (loading || !address) return null;
+  if (loading || !address) {
+    return null;
+  }
 
   const lat = address.lat;
   const lon = address.lon;
 
-  if (!lat || !lon) return null;
+  if (!lat || !lon) {
+    return null;
+  }
 
   return (
     <Box
@@ -95,7 +98,7 @@ export default function EventLocationMapClient({ eventId }: { eventId: string })
       >
         <ToggleButtonGroup
           value={style}
-          exclusive
+          exclusive={true}
           onChange={(_, v: MapStyle | null) => v && setStyle(v)}
           size="small"
         >

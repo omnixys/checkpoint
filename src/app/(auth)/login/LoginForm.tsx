@@ -45,7 +45,9 @@ export default function LoginForm(): JSX.Element {
   const passwordError = useFieldError(appError, "password");
 
   async function submitForm(): Promise<void> {
-    if (loading) return;
+    if (loading) {
+      return;
+    }
 
     try {
       setLoading(true);

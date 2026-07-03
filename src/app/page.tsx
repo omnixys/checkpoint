@@ -1,15 +1,15 @@
 "use client";
 
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { env } from "@/checkpoint/lib/env";
-import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
-import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import EventIcon from "@mui/icons-material/Event";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 import { Box, Button, Card, CardActionArea, Stack, Typography, useTheme } from "@mui/material";
 import Link from "next/link";
-import { JSX } from "react";
+import type { JSX } from "react";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { env } from "@/checkpoint/lib/env";
+import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
+import { useAuth } from "@/checkpoint/providers/AuthProvider";
 
 const basePath = env.CHECKPOINT_BASE_PATH;
 const EVENT_ID = env.EVENT_ID;
@@ -54,13 +54,13 @@ export default function HomePage(): JSX.Element {
 
         <Stack spacing={2}>
           <Link href={`${basePath}login`}>
-            <Button size="large" variant="contained" fullWidth>
+            <Button size="large" variant="contained" fullWidth={true}>
               {t("auth.login")}
             </Button>
           </Link>
 
           <Link href={`${basePath}rsvp?eventId=${EVENT_ID}`}>
-            <Button size="large" variant="text" fullWidth>
+            <Button size="large" variant="text" fullWidth={true}>
               {t("auth.redeem")}
             </Button>
           </Link>

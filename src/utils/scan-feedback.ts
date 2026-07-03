@@ -1,13 +1,15 @@
-import { ScanResult } from "@/checkpoint/types/scan.type";
 import { Capacitor } from "@capacitor/core";
 import type { ImpactStyle } from "@capacitor/haptics";
+import type { ScanResult } from "@/checkpoint/types/scan.type";
 
 /* ---------------------------------------------
  * Lazy imports (native only)
  * ------------------------------------------- */
 
 async function hapticImpact(style: ImpactStyle) {
-  if (!Capacitor.isNativePlatform()) return;
+  if (!Capacitor.isNativePlatform()) {
+    return;
+  }
 
   try {
     const { Haptics } = await import("@capacitor/haptics");
@@ -74,8 +76,6 @@ export async function playScanFeedback(result: ScanResult) {
       );
       playBeep(800, 120);
       break;
-
-    case "ERROR":
     default:
       await hapticImpact((await import("@capacitor/haptics")).ImpactStyle.Heavy);
       playBeep(300, 200);

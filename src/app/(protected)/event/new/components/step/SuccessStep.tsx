@@ -1,18 +1,13 @@
 "use client";
 
-import { Box, Stack, Typography, useTheme, Button } from "@mui/material";
+import { Box, Button, Stack, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import Confetti from "react-confetti";
 import Link from "next/link";
+import Confetti from "react-confetti";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
 
-type Props = {
-  onCreateAnother: () => void;
-  onViewEvent: () => void;
-};
-
-export default function SuccessStep({ eventId }: { eventId: string | undefined }) {
+export default function SuccessStep({ eventId: _eventId }: { eventId: string | undefined }) {
   const theme = useTheme();
   const t = useTypedTranslations("create");
 

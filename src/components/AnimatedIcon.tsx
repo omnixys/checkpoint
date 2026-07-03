@@ -1,11 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import * as React from "react";
+import type * as React from "react";
 
-type AnimatedIconProps = {
+interface AnimatedIconProps {
   children: React.ReactNode;
-};
+}
 
 export default function AnimatedIcon({ children }: AnimatedIconProps) {
   return (

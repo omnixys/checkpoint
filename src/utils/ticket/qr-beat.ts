@@ -20,7 +20,7 @@ export function qrBeatAnimation(
     transition: {
       duration,
       ease: "easeInOut",
-      repeat: Infinity,
+      repeat: Number.POSITIVE_INFINITY,
     },
   };
 }

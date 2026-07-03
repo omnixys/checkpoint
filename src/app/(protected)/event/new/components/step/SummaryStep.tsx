@@ -1,24 +1,22 @@
 "use client";
 
+import { Masonry } from "@mui/lab";
+import { Box, Chip, Stack, Typography, useTheme } from "@mui/material";
+import { motion } from "framer-motion";
 import { useCreateEvent } from "@/checkpoint/app/(protected)/event/new/context/CreateEventContext";
-import { CreateEventDraft } from "@/checkpoint/app/(protected)/event/new/types/event/event-draft.type";
+import type { CreateEventDraft } from "@/checkpoint/app/(protected)/event/new/types/event/event-draft.type";
 import { CreateEventWizardStep } from "@/checkpoint/app/(protected)/event/new/types/event/event-wizard.type";
 import { formatEnum } from "@/checkpoint/i18n/format-enum";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { formatChildEventDateRange } from "@/checkpoint/utils/date-utils";
 
-import { Box, Chip, Stack, Typography, useTheme } from "@mui/material";
-
-import { Masonry } from "@mui/lab";
-import { motion } from "framer-motion";
-
-type Props = {
+interface Props {
   draft: CreateEventDraft;
   onEdit: (step: CreateEventWizardStep) => void;
-};
+}
 
 export default function SummaryStep({ draft, onEdit }: Props) {
-  const theme = useTheme();
+  const _theme = useTheme();
   const t = useTypedTranslations("create");
 
   const { form } = useCreateEvent();
@@ -108,7 +106,7 @@ export default function SummaryStep({ draft, onEdit }: Props) {
           error={hasError("children")}
           onClick={() => onEdit(CreateEventWizardStep.CHILDREN)}
         >
-          {draft.children?.length ? (
+          {(draft.children?.length ?? 0) > 0 ? (
             draft.children.map((child) => {
               const date = formatChildEventDateRange(child.startsAt, child.endsAt, "de-DE", t);
 
@@ -176,7 +174,9 @@ function Section({
 /* ---------------- Items ---------------- */
 
 function Item({ label, value }: { label: string; value?: string | null }) {
-  if (!value) return null;
+  if (!value) {
+    return null;
+  }
 
   return (
     <Stack direction="row" sx={{ justifyContent: "space-between" }}>

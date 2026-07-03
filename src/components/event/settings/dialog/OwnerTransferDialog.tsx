@@ -1,22 +1,21 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
 import {
+  Alert,
+  Button,
   Dialog,
+  DialogActions,
   DialogContent,
   DialogTitle,
-  DialogActions,
-  Button,
-  Typography,
-  TextField,
-  Stack,
-  Alert,
   MenuItem,
+  Stack,
+  TextField,
+  Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { useEffect, useMemo, useState } from "react";
 import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
-import { UserRolePayload } from "@/checkpoint/generated/graphql";
-import { EventRoleType } from "@/checkpoint/types/event.type";
+import type { EventRoleType } from "@/checkpoint/types/event.type";
 
 /**
  * OwnerTransferDialog
@@ -29,13 +28,13 @@ import { EventRoleType } from "@/checkpoint/types/event.type";
  * - Explicit confirmation required
  * - State reset on close
  */
-type Props = {
+interface Props {
   open: boolean;
   onClose: () => void;
   currentOwnerId: string;
   roles: EventRoleType[];
   onTransfer: (newOwnerId: string) => void;
-};
+}
 
 export default function OwnerTransferDialog({
   open,
@@ -60,13 +59,13 @@ export default function OwnerTransferDialog({
   /**
    * Required confirmation phrase
    */
-  const REQUIRED_CONFIRMATION = "TRANSFER";
+  const RequiredConfirmation = "TRANSFER";
 
   /**
    * Validation logic
    */
   const isValid =
-    newOwnerId !== "" && newOwnerId !== currentOwnerId && confirmText === REQUIRED_CONFIRMATION;
+    newOwnerId !== "" && newOwnerId !== currentOwnerId && confirmText === RequiredConfirmation;
 
   /**
    * Reset state when dialog closes
@@ -82,14 +81,16 @@ export default function OwnerTransferDialog({
    * Execute transfer
    */
   const handleTransfer = () => {
-    if (!isValid) return;
+    if (!isValid) {
+      return;
+    }
 
     onTransfer(newOwnerId);
     onClose();
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth>
+    <Dialog open={open} onClose={onClose} fullWidth={true}>
       <DialogTitle>Transfer Ownership</DialogTitle>
 
       <DialogContent>
@@ -106,12 +107,12 @@ export default function OwnerTransferDialog({
 
           {/* OWNER SELECT */}
           <TextField
-            select
+            select={true}
             label="New Owner"
             value={newOwnerId}
             onChange={(e) => setNewOwnerId(e.target.value)}
-            fullWidth
-            disabled={!possibleOwners.length}
+            fullWidth={true}
+            disabled={possibleOwners.length === 0}
             sx={glassInputSx(theme)}
           >
             <MenuItem value="">
@@ -128,11 +129,11 @@ export default function OwnerTransferDialog({
           {/* CONFIRMATION */}
           <Stack spacing={1}>
             <Typography variant="caption">
-              Type <b>{REQUIRED_CONFIRMATION}</b> to confirm
+              Type <b>{RequiredConfirmation}</b> to confirm
             </Typography>
 
             <TextField
-              placeholder={REQUIRED_CONFIRMATION}
+              placeholder={RequiredConfirmation}
               value={confirmText}
               onChange={(e) => setConfirmText(e.target.value)}
               sx={glassInputSx(theme)}

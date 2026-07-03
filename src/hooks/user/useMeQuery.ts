@@ -1,12 +1,12 @@
+import { useQuery } from "@apollo/client/react";
 import {
   CurrentUserDocument,
-  CurrentUserQuery,
-  CurrentUserQueryVariables,
+  type CurrentUserQuery,
+  type CurrentUserQueryVariables,
   MePageDocument,
-  MePageQuery,
-  MePageQueryVariables,
+  type MePageQuery,
+  type MePageQueryVariables,
 } from "@/checkpoint/generated/graphql";
-import { useQuery } from "@apollo/client/react";
 
 interface Props {
   loadMePage?: boolean | undefined;

@@ -1,5 +1,5 @@
-import { CHECKPOINT_DEVICE_KEY, CHECKPOINT_PRIVATE_KEY } from "@/checkpoint/constants/device";
 import { Preferences } from "@capacitor/preferences";
+import { CHECKPOINT_DEVICE_KEY, CHECKPOINT_PRIVATE_KEY } from "@/checkpoint/constants/device";
 
 /**
  * Returns a stable, device-bound identifier.
@@ -30,7 +30,7 @@ export function generateUUID(): string {
   // Node.js fallback (important!)
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { randomUUID } = require("crypto");
+    const { randomUUID } = require("node:crypto");
     return randomUUID();
   } catch {
     // Last resort fallback (still RFC-like)
@@ -51,7 +51,9 @@ export async function savePrivateKey(key: CryptoKey) {
 
 export async function loadPrivateKey(): Promise<CryptoKey | null> {
   const base64 = localStorage.getItem(CHECKPOINT_PRIVATE_KEY);
-  if (!base64) return null;
+  if (!base64) {
+    return null;
+  }
 
   const buffer = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
 

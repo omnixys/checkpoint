@@ -1,7 +1,5 @@
 "use client";
 
-import { SeatPayload } from "@/checkpoint/generated/graphql";
-import { SeatListType } from "@/checkpoint/types/seat.type";
 import {
   Alert,
   Box,
@@ -12,8 +10,9 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import type { SeatListType } from "@/checkpoint/types/seat.type";
 
-type Props = {
+interface Props {
   seats: SeatListType[];
   seatsLoading?: boolean;
   occupiedSeatIds: Set<string>;
@@ -22,26 +21,27 @@ type Props = {
   seatLabel: (SeatPayload: SeatListType) => string;
   eventId: string;
   getSeatHolderLabel: (SeatPayload: SeatListType) => string;
-};
+}
 
 export default function SeatListView({
   seats,
   seatsLoading = false,
-  occupiedSeatIds,
   seatGuestMap,
   onSelectSeat,
   seatLabel,
-  eventId,
   getSeatHolderLabel,
 }: Props) {
-  if (seatsLoading) return <LinearProgress sx={{ mb: 2 }} />;
+  if (seatsLoading) {
+    return <LinearProgress sx={{ mb: 2 }} />;
+  }
 
-  if (seats.length === 0)
+  if (seats.length === 0) {
     return (
       <Alert severity="info" sx={{ mt: 1 }}>
         Noch keine Seats vorhanden.
       </Alert>
     );
+  }
 
   return (
     <Stack spacing={1} sx={{ mt: 1 }}>
@@ -93,7 +93,11 @@ export default function SeatListView({
 
               {/* GAST INFO */}
               {s.invitationId && (
-                <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: "anywhere" }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ overflowWrap: "anywhere" }}
+                >
                   {fullName(s)}
                   <Typography component="span" sx={{ ml: 1, opacity: 0.6 }}>
                     ({s.invitationId})
@@ -102,7 +106,11 @@ export default function SeatListView({
               )}
 
               {guestId && (
-                <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: "anywhere" }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ overflowWrap: "anywhere" }}
+                >
                   {fullName(s)}
                   <Typography component="span" sx={{ ml: 1, opacity: 0.6 }}>
                     ({guestId})

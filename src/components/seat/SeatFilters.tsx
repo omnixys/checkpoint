@@ -1,8 +1,8 @@
 "use client";
 
+import { alpha, MenuItem, Select, Stack, TextField, useTheme } from "@mui/material";
+import type { SeatFilter, SeatFilterStatus } from "@/checkpoint/types/seat.type";
 import { SeatStatus } from "@/checkpoint/types/seat-enum.type";
-import { SeatFilter, SeatFilterStatus } from "@/checkpoint/types/seat.type";
-import { Stack, useTheme, alpha, TextField, Select, MenuItem } from "@mui/material";
 
 interface Props {
   filter: SeatFilter;
@@ -27,13 +27,13 @@ export default function SeatFilters({ filter, onChange }: Props) {
     >
       <TextField
         label="Search Seat / Name"
-        fullWidth
+        fullWidth={true}
         value={filter.search}
         onChange={(e) => onChange({ ...filter, search: e.target.value })}
       />
 
       <Select
-        fullWidth
+        fullWidth={true}
         sx={{ minWidth: 0 }}
         value={filter.status}
         onChange={(e) =>

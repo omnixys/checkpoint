@@ -1,40 +1,41 @@
 "use client";
 
-import {
+import type React from "react";
+import { createContext, useContext, useReducer } from "react";
+import type {
   ChildEventDraft,
   CreateEventDraft,
 } from "@/checkpoint/app/(protected)/event/new/types/event/event-draft.type";
-import React, { createContext, useContext, useReducer } from "react";
+import type { MediaType } from "@/checkpoint/generated/graphql";
 import { useZodForm } from "../hooks/useZodForm";
 import { createEventWizardSchema } from "../validation/createEvent.schema";
-import { MediaType } from "@/checkpoint/generated/graphql";
 
 /**
  * -------------------------------------------------------------
  * Upload File Type
  * -------------------------------------------------------------
  */
-export type PendingUpload = {
+export interface PendingUpload {
   id: string;
   file: File;
   type: "cover" | "logo";
-};
+}
 
-type UploadItem = {
+interface UploadItem {
   file: File;
   type: MediaType;
-};
+}
 
 /**
  * -------------------------------------------------------------
  * State
  * -------------------------------------------------------------
  */
-type State = {
+interface State {
   draft: CreateEventDraft;
   uploads: UploadItem[];
   uploads2: PendingUpload[];
-};
+}
 
 /**
  * -------------------------------------------------------------
@@ -67,6 +68,14 @@ const initialState: State = {
       allowPublicRsvp: true,
       allowPublicPlusOne: true,
       allowPublicRsvpWebsite: false,
+      allowPlusOneUpdate: false,
+      allowGuestSeatSelection: false,
+      allowSeatOverbooking: false,
+      approvalMode: "AUTO",
+      maxPlusOnes: 1,
+      requireApprovalForPlusOnes: false,
+      rsvpDeadline: null,
+      ticketReleaseAt: null,
       invitedByOptions: [],
       isActive: true,
       isPublic: false,
@@ -185,7 +194,7 @@ function reducer(state: State, action: Action): State {
  * Context Type
  * -------------------------------------------------------------
  */
-type CreateEventContextType = {
+interface CreateEventContextType {
   draft: CreateEventDraft;
   uploads: UploadItem[];
   uploads2: PendingUpload[];
@@ -203,7 +212,7 @@ type CreateEventContextType = {
   addUpload2: (file: File, type: "cover" | "logo") => void;
   clearUploads: () => void;
   clearUploads2: () => void;
-};
+}
 
 /**
  * -------------------------------------------------------------

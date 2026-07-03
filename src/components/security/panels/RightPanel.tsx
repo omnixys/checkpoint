@@ -1,9 +1,9 @@
 "use client";
 
+import { Stack } from "@mui/material";
 import EntryExitHistory from "@/checkpoint/components/security/EntryExitHistory";
 import GuestsInsideList from "@/checkpoint/components/security/GuestsInsideList";
 import SecurityAnalyticsCharts from "@/checkpoint/components/security/SecurityAnalyticsCharts";
-import { Stack } from "@mui/material";
 
 // Phase 3 components
 

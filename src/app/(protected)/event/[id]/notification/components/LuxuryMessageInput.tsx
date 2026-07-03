@@ -1,7 +1,7 @@
 "use client";
 
-import { Box, TextField, IconButton } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
+import { Box, IconButton, TextField } from "@mui/material";
 import { useState } from "react";
 
 export function LuxuryMessageInput() {
@@ -17,7 +17,7 @@ export function LuxuryMessageInput() {
     >
       <Box sx={{ display: "flex", gap: 1 }}>
         <TextField
-          fullWidth
+          fullWidth={true}
           placeholder="Write a message..."
           value={value}
           onChange={(e) => setValue(e.target.value)}

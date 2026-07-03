@@ -1,17 +1,17 @@
 "use server";
 
-import { Suspense, JSX } from "react";
-import RsvpClient from "./RsvpClient";
-import RsvpLoading from "./loading";
-import { createServerClient } from "@/checkpoint/lib/apollo/server-client";
+import type { Metadata } from "next";
+import { type JSX, Suspense } from "react";
 import {
   GetAllCallingCodesDocument,
-  GetAllCallingCodesQuery,
-  GetAllCallingCodesQueryVariables,
+  type GetAllCallingCodesQuery,
+  type GetAllCallingCodesQueryVariables,
 } from "@/checkpoint/generated/graphql";
-import { CallingCodeCountry } from "@/checkpoint/types/country.type";
+import { createServerClient } from "@/checkpoint/lib/apollo/server-client";
 import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
-import { Metadata } from "next";
+import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
+import RsvpLoading from "./loading";
+import RsvpClient from "./RsvpClient";
 
 export async function generateMetadata({
   searchParams,

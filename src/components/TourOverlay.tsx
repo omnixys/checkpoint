@@ -1,29 +1,34 @@
 "use client";
 
-import { useTour } from "@/checkpoint/providers/TourProvider";
 import { Box, Button, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
+import { useTour } from "@/checkpoint/providers/TourProvider";
 
 export default function TourOverlay() {
-  const { anchors, steps, stepIndex, next, prev, stop, isActive } = useTour();
+  const { anchors, steps, stepIndex, next, prev, stop, isActive: _isActive } = useTour();
 
   const step = steps[stepIndex];
-  if (!step) return null;
-
-  const el = anchors[step.target];
-  if (!el) return null;
-
-  const rect = el.getBoundingClientRect();
+  const el = step ? anchors[step.target] : undefined;
 
   // 🚀 AUTO SCROLL
   useEffect(() => {
+    if (!el) {
+      return;
+    }
+
     el.scrollIntoView({
       behavior: "smooth",
       block: "center",
       inline: "center",
     });
   }, [el]);
+
+  if (!step || !el) {
+    return null;
+  }
+
+  const rect = el.getBoundingClientRect();
 
   return (
     <>
@@ -49,14 +54,14 @@ export default function TourOverlay() {
           borderRadius: 3,
           zIndex: 9999,
           pointerEvents: "none",
-          boxShadow: `0 0 0 9999px rgba(0,0,0,0.65), 0 0 0 2px white`,
+          boxShadow: "0 0 0 9999px rgba(0,0,0,0.65), 0 0 0 2px white",
         }}
       />
 
       {/* PULSE */}
       <motion.div
         animate={{ scale: [1, 1.05, 1] }}
-        transition={{ repeat: Infinity, duration: 1.4 }}
+        transition={{ repeat: Number.POSITIVE_INFINITY, duration: 1.4 }}
         style={{
           position: "fixed",
           top: rect.top - 6,
@@ -65,20 +70,20 @@ export default function TourOverlay() {
           height: rect.height + 12,
           borderRadius: 12,
           border: "2px solid rgba(255,255,255,0.5)",
-          zIndex: 10000,
+          zIndex: 10_000,
         }}
       />
 
       {/* ARROW */}
       <motion.div
         animate={{ y: [0, -10, 0] }}
-        transition={{ repeat: Infinity, duration: 1 }}
+        transition={{ repeat: Number.POSITIVE_INFINITY, duration: 1 }}
         style={{
           position: "fixed",
           top: rect.top - 50,
           left: rect.left + rect.width / 2,
           transform: "translateX(-50%)",
-          zIndex: 10001,
+          zIndex: 10_001,
         }}
       >
         <Box
@@ -98,7 +103,7 @@ export default function TourOverlay() {
           position: "fixed",
           top: rect.bottom + 16,
           left: rect.left,
-          zIndex: 10002,
+          zIndex: 10_002,
           p: 2,
           borderRadius: 3,
           backdropFilter: "blur(20px)",

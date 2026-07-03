@@ -2,9 +2,9 @@
 
 import { alpha, Box, Chip, Stack, Typography, useTheme } from "@mui/material";
 
-type Props = {
+interface Props {
   ev: any;
-};
+}
 
 export default function EventHeaderA({ ev }: Props) {
   const theme = useTheme();

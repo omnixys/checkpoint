@@ -1,4 +1,4 @@
-import { Components, Theme } from "@mui/material/styles";
+import type { Components, Theme } from "@mui/material/styles";
 
 export const dialogComponents = (theme: Theme): Components["MuiDialog"] => ({
   styleOverrides: {

@@ -1,10 +1,10 @@
 "use client";
 
-import { SeatPayload, UserRoleType } from "@/checkpoint/generated/graphql";
-import { SeatListType } from "@/checkpoint/types/seat.type";
 import { alpha, Button, Divider, Drawer, Stack, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import type { UserRoleType } from "@/checkpoint/generated/graphql";
+import type { SeatListType } from "@/checkpoint/types/seat.type";
 
 export default function SeatDetailDrawer({
   open,
@@ -22,7 +22,7 @@ export default function SeatDetailDrawer({
   role: UserRoleType | undefined;
 }) {
   const theme = useTheme();
-  const [seatId, setSeatId] = useState<string | null>(null);
+  const [_seatId, _setSeatId] = useState<string | null>(null);
   const fullName = (SeatPayload: SeatListType) => getSeatHolderLabel(SeatPayload);
 
   return (
@@ -72,9 +72,9 @@ export default function SeatDetailDrawer({
           <Divider />
 
           {role && role === "ADMIN" && (
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
-            <Button variant="contained" onClick={onEdit}>
-              Bearbeiten
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+              <Button variant="contained" onClick={onEdit}>
+                Bearbeiten
               </Button>
               <Button variant="outlined" onClick={onClose}>
                 Schließen

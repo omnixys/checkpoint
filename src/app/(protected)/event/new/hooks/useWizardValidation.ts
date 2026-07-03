@@ -1,21 +1,16 @@
 "use client";
 
-import { CreateEventWizardStep } from "@/checkpoint/app/(protected)/event/new/types/event/event-wizard.type";
 import { useCallback } from "react";
-import { ZodSchema } from "zod";
+import type { ZodSchema } from "zod";
+import type { CreateEventWizardStep } from "@/checkpoint/app/(protected)/event/new/types/event/event-wizard.type";
 
-type StepMap = Record<CreateEventWizardStep, ZodSchema<any>>;
+type StepMap = Record<CreateEventWizardStep, ZodSchema<unknown>>;
 
 export function useWizardValidation(
-  stepSchemas: StepMap,
+  _stepSchemas: StepMap,
   validate: () => { valid: boolean; errors?: Record<string, string> },
 ) {
-  const validateStep = useCallback(
-    (step: CreateEventWizardStep) => {
-      return validate();
-    },
-    [validate],
-  );
+  const validateStep = useCallback((_step: CreateEventWizardStep) => validate(), [validate]);
 
   return {
     validateStep,

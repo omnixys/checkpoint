@@ -1,16 +1,16 @@
 "use client";
 
-import { EventPageQuery } from "@/checkpoint/generated/graphql";
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { env } from "@/checkpoint/lib/env";
-import { Safe } from "@/checkpoint/types/core/core.type";
-import { getLogger } from "@/checkpoint/utils/logger";
 import { Button, Stack } from "@mui/material";
 import Link from "next/link";
+import type { EventPageQuery } from "@/checkpoint/generated/graphql";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { env } from "@/checkpoint/lib/env";
+import type { Safe } from "@/checkpoint/types/core/core.type";
+import { getLogger } from "@/checkpoint/utils/logger";
 
-export type EventHeaderProps = {
+export interface EventHeaderProps {
   eventPageData: Safe<EventPageQuery["event"]>;
-};
+}
 
 const basePath = env.CHECKPOINT_BASE_PATH;
 
@@ -27,11 +27,11 @@ export default function EventActions({ eventPageData }: EventHeaderProps) {
       }}
     >
       <Button
-        fullWidth
+        fullWidth={true}
         variant="contained"
         component={Link}
         //href={`${basePath}event/${ev.id}/description`}
-        href={"https://cgr.omnixys.com"}
+        href="https://cgr.omnixys.com"
         sx={{ borderRadius: 3, fontWeight: 600 }}
       >
         {t("actions.description")}
@@ -40,7 +40,7 @@ export default function EventActions({ eventPageData }: EventHeaderProps) {
       {eventPageData?.myRole === "GUEST" && (
         <>
           <Button
-            fullWidth
+            fullWidth={true}
             variant="contained"
             component={Link}
             href={`${basePath}me/my-qr?eventId=${eventPageData.id}`}
@@ -50,7 +50,7 @@ export default function EventActions({ eventPageData }: EventHeaderProps) {
           </Button>
 
           <Button
-            fullWidth
+            fullWidth={true}
             variant="outlined"
             component={Link}
             href={`${basePath}me/my-seat?eventId=${eventPageData.id}`}
@@ -65,7 +65,7 @@ export default function EventActions({ eventPageData }: EventHeaderProps) {
       {eventPageData?.myRole === "SECURITY" && (
         <>
           <Button
-            fullWidth
+            fullWidth={true}
             variant="contained"
             component={Link}
             href={`${basePath}scan?eventId=${eventPageData.id}`}
@@ -77,7 +77,7 @@ export default function EventActions({ eventPageData }: EventHeaderProps) {
           <Button
             component={Link}
             href={`${basePath}event/${eventPageData.id}/scans`}
-            fullWidth
+            fullWidth={true}
             variant="outlined"
             sx={{ borderRadius: 3 }}
           >
@@ -85,7 +85,7 @@ export default function EventActions({ eventPageData }: EventHeaderProps) {
           </Button>
 
           <Button
-            fullWidth
+            fullWidth={true}
             variant="outlined"
             component={Link}
             href={`${basePath}event/${eventPageData.id}/guest`}
@@ -95,7 +95,7 @@ export default function EventActions({ eventPageData }: EventHeaderProps) {
           </Button>
 
           <Button
-            fullWidth
+            fullWidth={true}
             variant="outlined"
             component={Link}
             href={`${basePath}event/${eventPageData.id}/seat`}
@@ -110,7 +110,7 @@ export default function EventActions({ eventPageData }: EventHeaderProps) {
       {eventPageData?.myRole === "ADMIN" && (
         <>
           <Button
-            fullWidth
+            fullWidth={true}
             variant="contained"
             component={Link}
             href={`${basePath}event/${eventPageData.id}/invitation`}
@@ -120,7 +120,7 @@ export default function EventActions({ eventPageData }: EventHeaderProps) {
           </Button>
 
           <Button
-            fullWidth
+            fullWidth={true}
             variant="outlined"
             component={Link}
             href={`${basePath}event/${eventPageData.id}/seat`}
@@ -130,7 +130,7 @@ export default function EventActions({ eventPageData }: EventHeaderProps) {
           </Button>
 
           <Button
-            fullWidth
+            fullWidth={true}
             variant="outlined"
             component={Link}
             href={`${basePath}event/${eventPageData.id}/ticket`}
@@ -140,7 +140,7 @@ export default function EventActions({ eventPageData }: EventHeaderProps) {
           </Button>
 
           <Button
-            fullWidth
+            fullWidth={true}
             variant="outlined"
             component={Link}
             href={`${basePath}event/${eventPageData.id}/security`}
@@ -152,16 +152,16 @@ export default function EventActions({ eventPageData }: EventHeaderProps) {
           <Button
             component={Link}
             href={`${basePath}event/${eventPageData.id}/scans`}
-            fullWidth
+            fullWidth={true}
             variant="outlined"
             sx={{ borderRadius: 3 }}
-            disabled
+            disabled={true}
           >
             {t("actions.scanLogs")}
           </Button>
 
           <Button
-            fullWidth
+            fullWidth={true}
             variant="outlined"
             component={Link}
             href={`${basePath}event/${eventPageData.id}/guest`}
@@ -171,7 +171,7 @@ export default function EventActions({ eventPageData }: EventHeaderProps) {
           </Button>
 
           <Button
-            fullWidth
+            fullWidth={true}
             variant="outlined"
             component={Link}
             href={`${basePath}event/${eventPageData.id}/settings`}
@@ -181,7 +181,7 @@ export default function EventActions({ eventPageData }: EventHeaderProps) {
           </Button>
 
           <Button
-            fullWidth
+            fullWidth={true}
             variant="outlined"
             component={Link}
             href={`${basePath}event/${eventPageData.id}/notification`}

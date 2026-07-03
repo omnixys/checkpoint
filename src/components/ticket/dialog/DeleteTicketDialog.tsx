@@ -1,11 +1,11 @@
 "use client";
 
-import { Box, Stack, Typography, Button, useTheme } from "@mui/material";
+import { Box, Button, Stack, Typography, useTheme } from "@mui/material";
 
-type Props = {
+interface Props {
   onCancel: () => void;
   onConfirm: () => void;
-};
+}
 
 export default function DeleteTicketDialog({ onCancel, onConfirm }: Props) {
   const theme = useTheme();

@@ -16,10 +16,10 @@ import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { getLogger } from "@/checkpoint/utils/logger";
 
-type Props = {
+interface Props {
   onDetect: (qrText: string) => Promise<boolean>;
   onRestart?: (() => void) | undefined;
-};
+}
 
 const MotionBox = motion.create(Box);
 const logger = getLogger("NativeScanner");
@@ -39,7 +39,9 @@ export default function NativeScanner({ onDetect, onRestart }: Props) {
   const [loading, setLoading] = useState(false);
 
   const startScan = useCallback(async () => {
-    if (!eventId || loading) return;
+    if (!eventId || loading) {
+      return;
+    }
 
     onRestart?.();
     setLoading(true);

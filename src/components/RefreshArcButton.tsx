@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
-import { alpha, IconButton, useTheme } from "@mui/material";
 import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
+import { alpha, IconButton, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 export default function RefreshArcButton({ onReload }: { onReload: any }) {
   const [spin, setSpin] = useState(false);
@@ -31,7 +31,7 @@ export default function RefreshArcButton({ onReload }: { onReload: any }) {
         <motion.div
           initial={{ rotate: 0 }}
           animate={{ rotate: 360 }}
-          transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}
+          transition={{ repeat: Number.POSITIVE_INFINITY, duration: 0.8, ease: "linear" }}
           style={{
             position: "absolute",
             width: 42,

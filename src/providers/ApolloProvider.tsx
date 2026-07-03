@@ -1,8 +1,8 @@
 "use client";
 
-import { createApolloClient } from "@/checkpoint/lib/apollo/client";
 import { ApolloProvider } from "@apollo/client/react";
 import type React from "react";
+import { createApolloClient } from "@/checkpoint/lib/apollo/client";
 
 /**
  * Apollo Client singleton (browser only)

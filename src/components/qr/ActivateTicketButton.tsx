@@ -17,10 +17,10 @@ import {
   savePrivateKey,
 } from "@/checkpoint/utils/ticket/device-utils";
 
-type Props = {
+interface Props {
   ticketId: string;
   onActivated?: (() => void) | undefined;
-};
+}
 
 export default function ActivateTicketButton({ ticketId, onActivated }: Props) {
   const theme = useTheme();

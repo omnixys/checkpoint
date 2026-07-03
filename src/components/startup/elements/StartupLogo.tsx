@@ -1,16 +1,15 @@
 "use client";
 
+import { type MotionValue, motion, useTransform } from "framer-motion";
 import { resolveLogoPath } from "@/checkpoint/components/startup/config/logo.utils";
 import { startupConfig } from "@/checkpoint/components/startup/config/startup.config";
-import { OmnixysColorScheme } from "@/checkpoint/themes/paletteTypes";
-import { motion, useTransform } from "framer-motion";
-import { MotionValue } from "framer-motion";
+import type { OmnixysColorScheme } from "@/checkpoint/themes/paletteTypes";
 
-type Props = {
+interface Props {
   tiltX: MotionValue<number>;
   tiltY: MotionValue<number>;
   scheme: OmnixysColorScheme;
-};
+}
 
 export function StartupLogo({ tiltX, tiltY, scheme }: Props) {
   const logoX = useTransform(tiltX, (v) => v * 0.3);

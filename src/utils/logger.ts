@@ -1,4 +1,6 @@
 // lib/logger.ts
+
+import process from "node:process";
 import chalk from "chalk";
 import { createConsola, type LogObject, type LogType } from "consola";
 
@@ -40,17 +42,17 @@ const colors: Record<LogType, (text: string) => string> = {
 
 const colorfulReporter = {
   log(logObj: LogObject) {
-    const icon = icons[logObj.type] ?? "";
-    const color = colors[logObj.type] ?? chalk.white;
+    const _icon = icons[logObj.type] ?? "";
+    const _color = colors[logObj.type] ?? chalk.white;
     const now = new Date();
-    const time = chalk.gray(
+    const _time = chalk.gray(
       `${now.getDate().toString().padStart(2, "0")}.${(now.getMonth() + 1)
         .toString()
         .padStart(2, "0")}.${now.getFullYear()} ${now.toTimeString().split(" ")[0]}`,
     );
 
-    const tag = chalk.bold(`[${logObj.tag}]`);
-    const message = logObj.args
+    const _tag = chalk.bold(`[${logObj.tag}]`);
+    const _message = logObj.args
       .map((arg) => {
         if (typeof arg === "object") {
           return JSON.stringify(arg, null, 2);
@@ -58,8 +60,6 @@ const colorfulReporter = {
         return String(arg);
       })
       .join(" ");
-
-    console.debug(`${icon} ${time} ${tag} ${color(message)}`);
   },
 
   // {
@@ -94,18 +94,7 @@ const consola = createConsola({
 // JSON-Reporter für Prod
 function jsonReporter() {
   return {
-    log(logObj: LogObject) {
-      const { type, tag, args, level } = logObj;
-      console.debug(
-        JSON.stringify({
-          date: new Date().toISOString(),
-          type,
-          tag,
-          level,
-          args,
-        }),
-      );
-    },
+    log(_logObj: LogObject) {},
   };
 }
 

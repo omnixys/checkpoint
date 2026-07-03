@@ -1,12 +1,5 @@
 "use client";
 
-import {
-  SeatPayload,
-  RenameTableMutation,
-  RenameTableMutationVariables,
-  RenameTableDocument,
-} from "@/checkpoint/generated/graphql";
-import { SeatListType } from "@/checkpoint/types/seat.type";
 import { useMutation } from "@apollo/client/react";
 import {
   Button,
@@ -19,16 +12,21 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { skip } from "node:test";
 import { useEffect, useState } from "react";
+import {
+  RenameTableDocument,
+  type RenameTableMutation,
+  type RenameTableMutationVariables,
+} from "@/checkpoint/generated/graphql";
+import type { SeatListType } from "@/checkpoint/types/seat.type";
 
-type Props = {
+interface Props {
   open: boolean;
   tableName: string;
   seats: SeatListType[];
   onClose: () => void;
   refetch: () => void;
-};
+}
 
 // TODO conflict handling im frontend
 export default function TableInfoDialog({ open, tableName, seats, onClose, refetch }: Props) {
@@ -41,7 +39,7 @@ export default function TableInfoDialog({ open, tableName, seats, onClose, refet
   const occupied = seats.filter((s) => s.guestId || s.invitationId).length;
   const free = seats.length - occupied;
 
-  const tableId = seats[0]?.table!.id;
+  const tableId = seats[0]?.table?.id;
 
   useEffect(() => {
     if (data?.renameTable.success === true) {
@@ -52,10 +50,12 @@ export default function TableInfoDialog({ open, tableName, seats, onClose, refet
     }
   }, [data, refetch, onClose]);
 
-  if (!tableId) return;
+  if (!tableId) {
+    return;
+  }
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth={true}>
       <DialogTitle>Tisch</DialogTitle>
 
       <DialogContent>
@@ -64,7 +64,7 @@ export default function TableInfoDialog({ open, tableName, seats, onClose, refet
             label="Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            fullWidth
+            fullWidth={true}
           />
 
           <Stack direction="row" spacing={1}>

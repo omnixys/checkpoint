@@ -2,16 +2,16 @@
 
 import { Box, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import CalendarToolbar from "./CalendarToolbar";
-import CalendarGridView from "./CalendarGridView";
+import { useCalendar } from "@/checkpoint/hooks/calendar/useCalendar";
+import useMyEventQuery from "@/checkpoint/hooks/events/useMyEventQuery";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import CalendarAgendaView from "./CalendarAgendaView";
 import CalendarDaySheet from "./CalendarDaySheet";
-import { useCalendar } from "@/checkpoint/hooks/calendar/useCalendar";
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import useMyEventQuery from "@/checkpoint/hooks/events/useMyEventQuery";
+import CalendarGridView from "./CalendarGridView";
+import CalendarToolbar from "./CalendarToolbar";
 
 export default function MyCalendarContent() {
-  const theme = useTheme();
+  const _theme = useTheme();
 
   const tCommon = useTypedTranslations("common");
   const tErrors = useTypedTranslations("error");
@@ -20,11 +20,19 @@ export default function MyCalendarContent() {
     useMyEventQuery({ loadMyEventCalendarData: true });
   const calendar = useCalendar(myEventCalendarData);
 
-  if (myEventCalendarDataLoading) return <Typography>{tCommon("loading")}</Typography>;
-  if (myEventCalendarDataError) return <Typography>{tErrors("generic")}</Typography>;
+  if (myEventCalendarDataLoading) {
+    return <Typography>{tCommon("loading")}</Typography>;
+  }
+  if (myEventCalendarDataError) {
+    return <Typography>{tErrors("generic")}</Typography>;
+  }
 
-  if (!myEventCalendarData) return;
-  if (!calendar.groupedEvents) return;
+  if (!myEventCalendarData) {
+    return;
+  }
+  if (!calendar.groupedEvents) {
+    return;
+  }
 
   return (
     <Box sx={{ p: { xs: 1.5, sm: 2 }, minWidth: 0 }}>

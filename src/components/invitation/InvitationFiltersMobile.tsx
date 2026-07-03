@@ -2,20 +2,20 @@
 // TODO optimieren mit InvitationFilters
 
 import {
+  alpha,
   Box,
   Button,
   Chip,
   Drawer,
   Stack,
   TextField,
-  Typography,
   ToggleButton,
   ToggleButtonGroup,
+  Typography,
   useTheme,
-  alpha,
 } from "@mui/material";
-import { useState, useMemo } from "react";
-import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
+import { useMemo, useState } from "react";
+import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 type StatusType = "PENDING" | "APPROVED" | "REJECTED" | "DECLINED" | "ACCEPTED";
@@ -31,23 +31,24 @@ export default function InvitationFiltersMobile({ logic }: { logic: InvitationLo
 
   const subEvents = logic.subEvents?.filter((child) => logic.rootEventId !== child.id);
 
-  const eventOptions = useMemo(() => {
-    return [
+  const eventOptions = useMemo(
+    () => [
       { id: "__ALL__", label: tCommon("all") },
       {
         id: logic.rootEventId,
         label: tInvitation("mainEvent", { name: logic.rootEventName }),
       },
       ...(subEvents?.map((e) => ({ id: e.id, label: e.name })) ?? []),
-    ];
-  }, [logic.subEvents, logic.rootEventId, logic.rootEventName]);
+    ],
+    [logic.rootEventId, logic.rootEventName, tInvitation, tCommon, subEvents?.map],
+  );
 
   return (
     <>
       {/* 🔥 TRIGGER BUTTON */}
       <Box sx={{ px: 2, pb: 1, background: theme.palette.background.paper }}>
         <Button
-          fullWidth
+          fullWidth={true}
           variant="outlined"
           onClick={() => setOpen(true)}
           sx={{
@@ -83,7 +84,7 @@ export default function InvitationFiltersMobile({ logic }: { logic: InvitationLo
         <Stack spacing={2}>
           {/* SEARCH */}
           <TextField
-            fullWidth
+            fullWidth={true}
             placeholder={tInvitation("searchPlaceholder")}
             value={logic.search}
             onChange={(e) => logic.setSearch(e.target.value)}
@@ -130,9 +131,9 @@ export default function InvitationFiltersMobile({ logic }: { logic: InvitationLo
             <Typography variant="caption">{tInvitation("type")}</Typography>
 
             <ToggleButtonGroup
-              fullWidth
+              fullWidth={true}
               value={logic.typeFilter ?? "ALL"}
-              exclusive
+              exclusive={true}
               onChange={(_, value) => {
                 if (!value || value === "ALL") {
                   logic.setTypeFilter(null);
@@ -176,7 +177,12 @@ export default function InvitationFiltersMobile({ logic }: { logic: InvitationLo
           </Box>
 
           {/* CLOSE */}
-          <Button fullWidth variant="contained" onClick={() => setOpen(false)} sx={{ mt: 1 }}>
+          <Button
+            fullWidth={true}
+            variant="contained"
+            onClick={() => setOpen(false)}
+            sx={{ mt: 1 }}
+          >
             {tCommon("done")}
           </Button>
         </Stack>

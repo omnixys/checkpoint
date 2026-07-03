@@ -3,10 +3,10 @@
 import { Box, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { NotificationChannel } from "../types/notification-channel.enum";
 
-type Props = {
+interface Props {
   value: NotificationChannel;
   onChange: (value: NotificationChannel) => void;
-};
+}
 
 export function LuxuryTabs({ value, onChange }: Props) {
   return (
@@ -20,7 +20,7 @@ export function LuxuryTabs({ value, onChange }: Props) {
     >
       <ToggleButtonGroup
         value={value}
-        exclusive
+        exclusive={true}
         onChange={(_, val) => val && onChange(val)}
         sx={{
           borderRadius: "999px",

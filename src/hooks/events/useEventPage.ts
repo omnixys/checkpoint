@@ -1,9 +1,9 @@
 "use client";
 
+import { useCallback, useMemo } from "react";
 import useEventQuery from "@/checkpoint/hooks/events/useEventQuery";
 import { useEventTabs } from "@/checkpoint/hooks/events/useEventTabs";
 import { useEventVariant } from "@/checkpoint/hooks/events/useEventVariant";
-import { useCallback, useMemo } from "react";
 
 interface Props {
   eventId: string;
@@ -26,8 +26,7 @@ export function useEventPage({ eventId, isAuthenticated }: Props) {
    * NOTE:
    * This is where mutation hook will be plugged later
    */
-  const handleDescriptionChange = useCallback((value: string) => {
-    console.log("Update description:", value);
+  const handleDescriptionChange = useCallback((_value: string) => {
     // TODO: integrate mutation hook
   }, []);
 

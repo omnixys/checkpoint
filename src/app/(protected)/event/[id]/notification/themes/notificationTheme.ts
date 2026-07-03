@@ -1,4 +1,4 @@
-import { Theme, alpha } from "@mui/material/styles";
+import { alpha, type Theme } from "@mui/material/styles";
 import { NotificationChannel } from "../types/notification-channel.enum";
 
 function getBaseAlpha(theme: Theme, value: number) {
@@ -46,20 +46,34 @@ export function getNotificationTone(theme: Theme, channel: NotificationChannel) 
 }
 
 export function getPriorityColor(theme: Theme, priority: string): string {
-  if (priority === "HIGH") return theme.palette.error.main;
-  if (priority === "MEDIUM") return theme.palette.warning.main;
+  if (priority === "HIGH") {
+    return theme.palette.error.main;
+  }
+  if (priority === "MEDIUM") {
+    return theme.palette.warning.main;
+  }
   return theme.palette.primary.main;
 }
 
 export function getStatusColor(theme: Theme, status: string): string {
-  if (status === "OPEN") return theme.palette.primary.main;
-  if (status === "PENDING") return theme.palette.warning.main;
+  if (status === "OPEN") {
+    return theme.palette.primary.main;
+  }
+  if (status === "PENDING") {
+    return theme.palette.warning.main;
+  }
   return theme.palette.success.main;
 }
 
 export function getEventTypeColor(theme: Theme, eventType: string): string {
-  if (eventType === "ALERT") return theme.palette.error.main;
-  if (eventType === "STATUS_CHANGE") return theme.palette.primary.main;
-  if (eventType === "INTERNAL_NOTE") return theme.palette.secondary.main;
+  if (eventType === "ALERT") {
+    return theme.palette.error.main;
+  }
+  if (eventType === "STATUS_CHANGE") {
+    return theme.palette.primary.main;
+  }
+  if (eventType === "INTERNAL_NOTE") {
+    return theme.palette.secondary.main;
+  }
   return theme.palette.info.main;
 }

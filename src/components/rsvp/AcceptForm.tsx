@@ -14,11 +14,11 @@ import { useRsvpForm } from "@/checkpoint/hooks/invitation/useRsvpForm";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
 
-type AcceptFormProps = {
+interface AcceptFormProps {
   invitation: GetInvitationQuery["invitation"];
   countries: CallingCodeCountry[];
   onAccepted: () => void;
-};
+}
 
 export default function AcceptForm({ invitation, countries, onAccepted }: AcceptFormProps) {
   const t = useTypedTranslations("rsvp");
@@ -122,10 +122,10 @@ export default function AcceptForm({ invitation, countries, onAccepted }: Accept
         />
 
         <TextField
-          fullWidth
+          fullWidth={true}
           label={t("public.guestNoteLabel")}
           minRows={4}
-          multiline
+          multiline={true}
           value={form.state.guestNote}
           onChange={(e) => form.update("guestNote", e.target.value)}
         />

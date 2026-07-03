@@ -2,7 +2,7 @@
 /* Active Navigation Logic */
 /* ------------------------------------------------------------------ */
 
-import { UserRoleType } from "@/checkpoint/generated/graphql";
+import type { UserRoleType } from "@/checkpoint/generated/graphql";
 
 /**
  * Determines the single active navigation path using
@@ -13,8 +13,8 @@ export function getActiveNavPath(pathname: string, itemPaths: string[]): string 
 
   const matches = itemPaths
     .filter((path) => {
-      const fullPath = "/" + path;
-      return normalizedPathname === fullPath || normalizedPathname.startsWith(fullPath + "/");
+      const fullPath = `/${path}`;
+      return normalizedPathname === fullPath || normalizedPathname.startsWith(`${fullPath}/`);
     })
     .sort((a, b) => b.length - a.length);
 
@@ -46,7 +46,6 @@ export function getRoleColor(role: UserRoleType): string {
       return "primary.main";
     case "SECURITY":
       return "warning.main";
-    case "GUEST":
     default:
       return "text.secondary";
   }

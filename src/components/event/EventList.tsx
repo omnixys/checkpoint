@@ -1,5 +1,7 @@
 "use client";
 
+import { Alert, Card, CardContent, Divider, Grid, Skeleton, Stack } from "@mui/material";
+import React from "react";
 import EmptyEventsCard from "@/checkpoint/components/event/cards/EmptyEventsCard";
 import EventCardCompact from "@/checkpoint/components/event/cards/EventCardCompact";
 import EventCardPro from "@/checkpoint/components/event/cards/EventCardPro";
@@ -7,17 +9,14 @@ import { useEventsQuery } from "@/checkpoint/hooks/events/useEventsQuery";
 import { useFilteredEvents } from "@/checkpoint/hooks/events/useFilteredEvents";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
-import {
+import type {
   EventListHandle,
   EventsFilter,
   EventVisualOverride,
   EventViweMode,
 } from "@/checkpoint/types/event.type";
 
-import { Card, CardContent, Alert, Stack, Skeleton, Grid, Divider } from "@mui/material";
-import React from "react";
-
-type Props = {
+interface Props {
   toLocal: (dt: string | number | Date) => string;
   search: string;
   filter: EventsFilter;
@@ -27,7 +26,7 @@ type Props = {
 
   onCountChange: (n: number) => void;
   onLoadingChange: (loading: boolean) => void;
-};
+}
 
 export default React.forwardRef<EventListHandle, Props>(function EventList(
   { toLocal, search, filter, viewMode, visualOverride, onCountChange, onLoadingChange },
@@ -98,7 +97,7 @@ export default React.forwardRef<EventListHandle, Props>(function EventList(
         )}
 
         {viewMode === "grid" && (
-          <Grid container spacing={2}>
+          <Grid container={true} spacing={2}>
             {eventsFiltered.map((ev) => (
               <Grid size={{ xs: 12, sm: 6, md: 4 }} key={ev.id}>
                 <EventCardPro

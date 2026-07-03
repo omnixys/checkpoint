@@ -1,5 +1,9 @@
 "use client";
 
+import { Box, Grid, Stack } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import { useRouter } from "next/navigation";
+import React, { type JSX } from "react";
 import { mockAlerts } from "@/checkpoint/components/security/mock/mockAlerts";
 import { mockConnectivity } from "@/checkpoint/components/security/mock/mockConnectivity";
 import { mockEntries, mockExits } from "@/checkpoint/components/security/mock/mockEntries";
@@ -15,16 +19,11 @@ import CenterPanel from "@/checkpoint/components/security/panels/CenterPanel";
 import LeftPanel from "@/checkpoint/components/security/panels/LeftPanel";
 import RightPanel from "@/checkpoint/components/security/panels/RightPanel";
 import SecurityTabs from "@/checkpoint/components/security/SecurityTabs";
-import VisionOSStickyHeader from "@/checkpoint/components/security/VisionOSStickyHeader";
+import VisionOsStickyHeader from "@/checkpoint/components/security/VisionOSStickyHeader";
 import { BackToEventDetailButton } from "@/checkpoint/components/utils/back-to-event-detail-button";
 import { env } from "@/checkpoint/lib/env";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { useDevice } from "@/checkpoint/providers/DeviceProvider";
-
-import { Box, Grid, Stack } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import { useRouter } from "next/navigation";
-import React, { JSX } from "react";
 
 /* ------------------------------------------------------------------
  * Main Security Dashboard Page
@@ -33,7 +32,7 @@ import React, { JSX } from "react";
  * ------------------------------------------------------------------ */
 
 export default function SecurityDashboardClientPage(): JSX.Element {
-  const theme = useTheme();
+  const _theme = useTheme();
   const { isTablet, isMobile, isDesktop } = useDevice();
   const [tab, setTab] = React.useState("overview");
 
@@ -55,9 +54,9 @@ export default function SecurityDashboardClientPage(): JSX.Element {
          * ========================================================== */}
         {isDesktop && (
           <>
-            <VisionOSStickyHeader connectivity={mockConnectivity} />
+            <VisionOsStickyHeader connectivity={mockConnectivity} />
 
-            <Grid container spacing={3}>
+            <Grid container={true} spacing={3}>
               {/* LEFT PANEL */}
               <Grid size={{ xs: 12, lg: 3 }}>
                 <LeftPanel gates={mockGates} onTicketVerify={mockVerifyTicket} tools={mockTools} />

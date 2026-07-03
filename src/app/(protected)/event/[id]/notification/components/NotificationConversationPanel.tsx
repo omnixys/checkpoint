@@ -1,6 +1,11 @@
 "use client";
 
+import BoltRoundedIcon from "@mui/icons-material/BoltRounded";
+import DoneAllRoundedIcon from "@mui/icons-material/DoneAllRounded";
+import MailOutlineRoundedIcon from "@mui/icons-material/MailOutlineRounded";
+import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import {
+  alpha,
   Box,
   Button,
   Chip,
@@ -8,18 +13,18 @@ import {
   Stack,
   TextField,
   Typography,
-  alpha,
   useTheme,
 } from "@mui/material";
 import { motion } from "framer-motion";
-import SendRoundedIcon from "@mui/icons-material/SendRounded";
-import DoneAllRoundedIcon from "@mui/icons-material/DoneAllRounded";
-import MailOutlineRoundedIcon from "@mui/icons-material/MailOutlineRounded";
-import BoltRoundedIcon from "@mui/icons-material/BoltRounded";
 import { useMemo, useState } from "react";
 import { useNotificationItems, useNotificationMessages } from "../hooks/useNotificationMocks";
-import { NotificationChannel } from "../types/notification-channel.enum";
 import {
+  getEventTypeColor,
+  getNotificationTone,
+  getPriorityColor,
+  getStatusColor,
+} from "../themes/notificationTheme";
+import type {
   EmailMessage,
   EmailThread,
   InAppChat,
@@ -29,17 +34,12 @@ import {
   WhatsAppChat,
   WhatsAppMessage,
 } from "../types/notification.models";
-import {
-  getEventTypeColor,
-  getNotificationTone,
-  getPriorityColor,
-  getStatusColor,
-} from "../themes/notificationTheme";
+import { NotificationChannel } from "../types/notification-channel.enum";
 
-type Props = {
+interface Props {
   channel: NotificationChannel;
   chatId: string | null;
-};
+}
 
 const MotionBox = motion.create(Box);
 
@@ -84,7 +84,7 @@ function SharedTextField({
 
   return (
     <TextField
-      fullWidth
+      fullWidth={true}
       value={value}
       onChange={(event) => onChange(event.target.value)}
       placeholder={placeholder}

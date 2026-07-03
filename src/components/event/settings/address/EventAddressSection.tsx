@@ -2,14 +2,13 @@
 
 import { Box, Button, Stack, Typography, useTheme } from "@mui/material";
 import { useState } from "react";
-import AddressForm, { FormState } from "./AddressForm";
-import AddressMapPreview from "./AddressMapPreview";
 import AddressSummaryCard from "@/checkpoint/components/event/settings/address/AddressSummaryCard";
 import { useEventAddressMutation } from "@/checkpoint/hooks/address/useAddressMutation";
 import { useEventAddressQuery } from "@/checkpoint/hooks/address/useAddressQuery";
+import AddressForm, { type FormState } from "./AddressForm";
 
 export default function EventAddressSection({ eventId }: { eventId: string }) {
-  const theme = useTheme();
+  const _theme = useTheme();
 
   const { resolveGeo, address, loading, refetch } = useEventAddressQuery(eventId);
 
@@ -18,7 +17,9 @@ export default function EventAddressSection({ eventId }: { eventId: string }) {
   const [form, setForm] = useState<FormState | null>(null);
   const [geo, setGeo] = useState<any>(null);
 
-  if (loading) return null;
+  if (loading) {
+    return null;
+  }
 
   /**
    * -------------------------------------------------------------
@@ -30,7 +31,9 @@ export default function EventAddressSection({ eventId }: { eventId: string }) {
 
     const text = `${val.formatted ?? ""}`;
 
-    if (text.length < 5) return;
+    if (text.length < 5) {
+      return;
+    }
 
     const result = await resolveGeo(text);
 
@@ -52,9 +55,11 @@ export default function EventAddressSection({ eventId }: { eventId: string }) {
    * -------------------------------------------------------------
    */
   const handleCreate = async () => {
-    if (!form || !geo) return;
+    if (!form || !geo) {
+      return;
+    }
 
-    const createPayload = await createAddressMutation({
+    const _createPayload = await createAddressMutation({
       variables: {
         input: {
           eventId,

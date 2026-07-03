@@ -1,8 +1,8 @@
 "use client";
 
-import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { Box, Button, Stack, useTheme } from "@mui/material";
+import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 /* ---------------------------------------------------------------------------
  * Floating bulk action bar for selected invitations

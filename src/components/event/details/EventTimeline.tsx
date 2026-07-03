@@ -1,18 +1,17 @@
 "use client";
 
-import React from "react";
-import { Box, Stack, Typography, useTheme, alpha } from "@mui/material";
-import { motion } from "framer-motion";
-
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import EventIcon from "@mui/icons-material/Event";
+import LogoutIcon from "@mui/icons-material/Logout";
 import MailIcon from "@mui/icons-material/Mail";
 import PeopleIcon from "@mui/icons-material/People";
 import QrCodeIcon from "@mui/icons-material/QrCode";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import LogoutIcon from "@mui/icons-material/Logout";
 import TimelineIcon from "@mui/icons-material/Timeline";
+import { alpha, Box, Stack, Typography, useTheme } from "@mui/material";
+import { motion } from "framer-motion";
+import type React from "react";
 
-import { EventTimelinePayload } from "@/checkpoint/generated/graphql";
+import type { EventTimelinePayload } from "@/checkpoint/generated/graphql";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 /**
@@ -37,9 +36,9 @@ function getIcon(type: string): React.ReactNode {
   }
 }
 
-type Props = {
+interface Props {
   items: EventTimelinePayload[];
-};
+}
 
 export default function EventTimeline({ items }: Props) {
   const theme = useTheme();

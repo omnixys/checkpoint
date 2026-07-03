@@ -11,7 +11,7 @@
  * - Reusable and safe transformations
  */
 
-import {
+import type {
   EventCategory,
   SettingsPayload,
   UpdateSettingsInput,

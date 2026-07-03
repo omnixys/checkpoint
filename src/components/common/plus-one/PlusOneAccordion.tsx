@@ -1,24 +1,24 @@
 "use client";
 
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   Accordion,
-  AccordionSummary,
   AccordionDetails,
+  AccordionSummary,
   IconButton,
   Stack,
   Typography,
 } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import { NormalizedPlusOne } from "@/checkpoint/types/event.type";
+import type { NormalizedPlusOne } from "@/checkpoint/types/event.type";
 
-type Props = {
+interface Props {
   value: NormalizedPlusOne;
   index: number;
   onEdit: (index: number) => void;
   onRemove: (index: number) => void;
-};
+}
 
 export default function PlusOneAccordion({ value, index, onEdit, onRemove }: Props) {
   return (

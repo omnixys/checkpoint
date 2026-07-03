@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
-import { useTheme, Box } from "@mui/material";
-import { motion, useMotionValue, useTransform, animate } from "framer-motion";
+import { Box, useTheme } from "@mui/material";
+import { animate, motion, useMotionValue, useTransform } from "framer-motion";
+import { useEffect, useRef } from "react";
 
 /**
  * ParallaxBanner
@@ -32,10 +32,14 @@ export default function ParallaxBanner({
 
   /** Desktop parallax: mouse move handler */
   useEffect(() => {
-    if (intensity === 0) return; // mobile mode
+    if (intensity === 0) {
+      return; // mobile mode
+    }
 
     const el = containerRef.current;
-    if (!el) return;
+    if (!el) {
+      return;
+    }
 
     const handleMove = (e: MouseEvent) => {
       const rect = el.getBoundingClientRect();
@@ -54,7 +58,7 @@ export default function ParallaxBanner({
     return () => {
       el.removeEventListener("mousemove", handleMove);
     };
-  }, [intensity]);
+  }, [intensity, y, x]);
 
   return (
     <Box

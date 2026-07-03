@@ -1,7 +1,7 @@
-export type StepValidationResult = {
+export interface StepValidationResult {
   valid: boolean;
   errors: string[];
-};
+}
 
 export enum CreateEventWizardStep {
   BASICS = 0,

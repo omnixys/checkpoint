@@ -6,10 +6,10 @@ import { alpha, Box, Button, Container, Paper, Stack, Typography, useTheme } fro
 import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import { useEffect } from "react";
+import Confetti from "react-confetti";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
 import { triggerAccentPulse } from "@/checkpoint/themes/accent-animation";
-import Confetti from "react-confetti";
 
 const WEDDING_MONOGRAM = "C · R";
 
@@ -36,14 +36,13 @@ export default function RSVPSuccessPage() {
         position: "relative",
       }}
     >
+      <Confetti
+        numberOfPieces={1350}
+        recycle={false}
+        gravity={0.15}
+        colors={["#c89b3c", "#e5c275", "#ffffff", "#f5f0e6", "#d9b46a"]}
+      />
 
-<Confetti
-          numberOfPieces={1350}
-          recycle={false}
-          gravity={0.15}
-          colors={["#c89b3c", "#e5c275", "#ffffff", "#f5f0e6", "#d9b46a"]}
-        />
-        
       <Container maxWidth="sm">
         <motion.div
           initial={reduceMotion ? false : { opacity: 0, y: 28 }}

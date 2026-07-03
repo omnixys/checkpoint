@@ -2,29 +2,19 @@
 
 // TODO implementen optimistic fetch
 
-import { useQuery } from "@apollo/client/react";
 import { Box, CircularProgress, Stack, useTheme } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import {
-  Country,
-  GetPlusOnesByInvitationDocument,
-  GetPlusOnesByInvitationQuery,
-  GetPlusOnesByInvitationQueryVariables,
-  InvitationDocument,
-  InvitationQuery,
-  InvitationQueryVariables,
-} from "@/checkpoint/generated/graphql";
-import { getLogger } from "@/checkpoint/utils/logger";
-import InvalidInvitationDialog from "@/checkpoint/components/rsvp/dialog/InvalidInvitationDialog";
-import InitialView from "@/checkpoint/components/rsvp/InitialView";
+import { useEffect, useState } from "react";
 import AcceptForm from "@/checkpoint/components/rsvp/AcceptForm";
-import FinalScreens from "@/checkpoint/components/rsvp/FinalScreens";
-import MaybeDialog from "@/checkpoint/components/rsvp/dialog/MaybeDialog";
 import DeclineDialog from "@/checkpoint/components/rsvp/dialog/DeclineDialog";
+import InvalidInvitationDialog from "@/checkpoint/components/rsvp/dialog/InvalidInvitationDialog";
 import InvitationAlreadyAcceptedDialog from "@/checkpoint/components/rsvp/dialog/InvitationAlreadyAcceptedDialog";
 import InvitationAlreadyDeclinedDialog from "@/checkpoint/components/rsvp/dialog/InvitationAlreadyDeclinedDialog";
-import { CallingCodeCountry } from "@/checkpoint/types/country.type";
+import MaybeDialog from "@/checkpoint/components/rsvp/dialog/MaybeDialog";
+import FinalScreens from "@/checkpoint/components/rsvp/FinalScreens";
+import InitialView from "@/checkpoint/components/rsvp/InitialView";
 import useInvitationQuery from "@/checkpoint/hooks/invitation/useInvitationQuery";
+import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
+import { getLogger } from "@/checkpoint/utils/logger";
 
 /**
  * RSVP State Machine
@@ -50,7 +40,7 @@ export default function RsvpContainer({
   callingCodeCountry: CallingCodeCountry[];
 }) {
   const logger = getLogger("RsvpContainer");
-  const theme = useTheme();
+  const _theme = useTheme();
 
   // local UI state
   const [screen, setScreen] = useState<RsvpScreen>("initial");
@@ -65,7 +55,9 @@ export default function RsvpContainer({
    * Validate invitation when loaded.
    */
   useEffect(() => {
-    if (invitationLoading) return;
+    if (invitationLoading) {
+      return;
+    }
 
     logger.debug({ invitation, invitationError });
 
@@ -100,7 +92,7 @@ export default function RsvpContainer({
       setInvalidDialogOpen(true);
       return;
     }
-  }, [invitation, invitationLoading, invitationError]);
+  }, [invitation, invitationLoading, invitationError, logger.debug]);
 
   /**
    * Handle Maybe

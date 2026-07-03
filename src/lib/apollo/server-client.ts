@@ -1,7 +1,7 @@
 "use server";
-import { env } from "@/checkpoint/lib/env";
 import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
 import { cookies } from "next/headers";
+import { env } from "@/checkpoint/lib/env";
 
 /**
  * Server-side Apollo client with cookie forwarding

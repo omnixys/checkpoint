@@ -5,7 +5,7 @@ import { alpha } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import { useMemo } from "react";
 
-type Props = {
+interface Props {
   nonceSeconds: number;
   signatureSeconds: number;
   size: number;
@@ -13,7 +13,7 @@ type Props = {
   innerStroke?: number;
   cycleKey?: string | number;
   criticalThresholdSeconds?: number;
-};
+}
 
 export default function QrCountdownRings({
   nonceSeconds,

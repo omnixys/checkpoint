@@ -1,33 +1,31 @@
 "use client";
 
-import React from "react";
-import {
-  Box,
-  Stack,
-  IconButton,
-  useTheme,
-  alpha,
-  ToggleButtonGroup,
-  ToggleButton,
-  Typography,
-} from "@mui/material";
-
-import TextFieldsIcon from "@mui/icons-material/TextFields";
+import EditIcon from "@mui/icons-material/Edit";
 import FormatBoldIcon from "@mui/icons-material/FormatBold";
 import FormatItalicIcon from "@mui/icons-material/FormatItalic";
-import FormatUnderlinedIcon from "@mui/icons-material/FormatUnderlined";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
+import FormatUnderlinedIcon from "@mui/icons-material/FormatUnderlined";
+import TextFieldsIcon from "@mui/icons-material/TextFields";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import EditIcon from "@mui/icons-material/Edit";
-
+import {
+  alpha,
+  Box,
+  IconButton,
+  Stack,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { motion } from "framer-motion";
+import React from "react";
 import ReactMarkdown from "react-markdown";
 
-type Props = {
+interface Props {
   value: string;
   onChange: (v: string) => void;
-};
+}
 
 export default function EventDescriptionEditor({ value, onChange }: Props) {
   const theme = useTheme();
@@ -38,12 +36,14 @@ export default function EventDescriptionEditor({ value, onChange }: Props) {
   React.useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
-  }, [value]);
+  }, []);
 
   const apply = (before: string, after = "") => {
-    if (!textareaRef.current) return;
+    if (!textareaRef.current) {
+      return;
+    }
 
     const el = textareaRef.current;
     const start = el.selectionStart;
@@ -107,7 +107,7 @@ export default function EventDescriptionEditor({ value, onChange }: Props) {
         </Stack>
 
         <ToggleButtonGroup
-          exclusive
+          exclusive={true}
           value={mode}
           onChange={(_, v) => v && setMode(v)}
           sx={{

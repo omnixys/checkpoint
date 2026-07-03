@@ -1,14 +1,21 @@
 "use client";
 
-import { useState } from "react";
-import { Box, Button, Chip, FormControlLabel, Stack, Switch, TextField, Typography } from "@mui/material";
-
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import GroupAddRoundedIcon from "@mui/icons-material/GroupAddRounded";
 import LanguageRoundedIcon from "@mui/icons-material/LanguageRounded";
 import PublicRoundedIcon from "@mui/icons-material/PublicRounded";
-
+import {
+  Box,
+  Button,
+  Chip,
+  FormControlLabel,
+  Stack,
+  Switch,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 import { useField } from "@/checkpoint/app/(protected)/event/new/hooks/useField";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
@@ -135,7 +142,7 @@ export default function VisibilityStep() {
             label={t("visibility.publicRsvpWebsite")}
             placeholder={t("visibility.publicRsvpWebsitePlaceholder")}
             disabled={!allowPublicRsvpWebsite.value}
-            fullWidth
+            fullWidth={true}
             {...publicWebsite}
           />
 
@@ -155,7 +162,7 @@ export default function VisibilityStep() {
 
           <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
             <TextField
-              fullWidth
+              fullWidth={true}
               label={t("settings.invitedByOptionsPlaceholder")}
               value={optionInput}
               onChange={(event) => setOptionInput(event.target.value)}
@@ -186,7 +193,7 @@ export default function VisibilityStep() {
           </Stack>
 
           {invitedByOptionValues.length > 0 && (
-            <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }} useFlexGap>
+            <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }} useFlexGap={true}>
               {invitedByOptionValues.map((option) => (
                 <Chip
                   key={option}

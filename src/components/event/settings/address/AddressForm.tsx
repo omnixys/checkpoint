@@ -1,16 +1,16 @@
 "use client";
 
-import StreetAutocomplete, {
-  Suggestion,
-} from "@/checkpoint/components/event/settings/address/StreetAutocomplete";
 import { Stack, useTheme } from "@mui/material";
 import { useEffect, useState } from "react";
+import StreetAutocomplete, {
+  type Suggestion,
+} from "@/checkpoint/components/event/settings/address/StreetAutocomplete";
 
-type Props = {
+interface Props {
   onChange: (val: FormState) => void;
-};
+}
 
-export type FormState = {
+export interface FormState {
   street: string;
   houseNumber: string;
   city: string;
@@ -33,7 +33,7 @@ export type FormState = {
   lat?: number | null;
   lon?: number | null;
   formatted?: string;
-};
+}
 
 /**
  * -------------------------------------------------------------
@@ -41,7 +41,7 @@ export type FormState = {
  * -------------------------------------------------------------
  */
 export default function AddressForm({ onChange }: Props) {
-  const theme = useTheme();
+  const _theme = useTheme();
 
   const [form, setForm] = useState<FormState>({
     street: "",
@@ -79,7 +79,7 @@ function StreetAutocompleteWrapper({
 }) {
   return (
     <StreetAutocomplete
-      {...(form.formatted !== undefined ? { value: form.formatted } : {})}
+      {...(form.formatted === undefined ? {} : { value: form.formatted })}
       onChange={(selected: Suggestion | null) => {
         if (!selected) {
           return;
@@ -97,12 +97,12 @@ function StreetAutocompleteWrapper({
            * Backend IDs are currently nullable.
            * Only write them into state when they actually exist.
            */
-          ...(selected.streetId !== null ? { streetId: selected.streetId } : {}),
-          ...(selected.houseNumberId !== null ? { houseNumberId: selected.houseNumberId } : {}),
-          ...(selected.cityId !== null ? { cityId: selected.cityId } : {}),
-          ...(selected.postalCodeId !== null ? { postalCodeId: selected.postalCodeId } : {}),
-          ...(selected.stateId !== null ? { stateId: selected.stateId } : {}),
-          ...(selected.countryId !== null ? { countryId: selected.countryId } : {}),
+          ...(selected.streetId === null ? {} : { streetId: selected.streetId }),
+          ...(selected.houseNumberId === null ? {} : { houseNumberId: selected.houseNumberId }),
+          ...(selected.cityId === null ? {} : { cityId: selected.cityId }),
+          ...(selected.postalCodeId === null ? {} : { postalCodeId: selected.postalCodeId }),
+          ...(selected.stateId === null ? {} : { stateId: selected.stateId }),
+          ...(selected.countryId === null ? {} : { countryId: selected.countryId }),
 
           lat: selected.lat ?? null,
           lon: selected.lon ?? null,

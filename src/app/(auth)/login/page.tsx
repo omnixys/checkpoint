@@ -1,8 +1,7 @@
-import React, { JSX, Suspense } from "react";
-import LoginForm from "./LoginForm";
 import { Skeleton } from "@mui/material";
-import { Metadata } from "next";
+import { type JSX, Suspense } from "react";
 import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
+import LoginForm from "./LoginForm";
 
 export const metadata = buildMetadata({
   title: "Login",

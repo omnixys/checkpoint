@@ -1,18 +1,18 @@
 "use client";
 
-import { Box, Chip, Stack, Typography, alpha, useTheme } from "@mui/material";
-import { AnimatePresence, motion } from "framer-motion";
-import ChatRoundedIcon from "@mui/icons-material/ChatRounded";
 import AppsRoundedIcon from "@mui/icons-material/AppsRounded";
+import ChatRoundedIcon from "@mui/icons-material/ChatRounded";
 import MailRoundedIcon from "@mui/icons-material/MailRounded";
-import { NotificationChannel } from "../types/notification-channel.enum";
-import { JSX } from "react";
+import { alpha, Box, Chip, Stack, Typography, useTheme } from "@mui/material";
+import { AnimatePresence, motion } from "framer-motion";
+import type { JSX } from "react";
 import { getNotificationTone } from "@/checkpoint/app/(protected)/event/[id]/notification/themes/notificationTheme";
+import { NotificationChannel } from "../types/notification-channel.enum";
 
-type Props = {
+interface Props {
   value: NotificationChannel;
   onChange: (value: NotificationChannel) => void;
-};
+}
 
 const MotionDiv = motion.div;
 

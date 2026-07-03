@@ -1,20 +1,20 @@
 "use client";
 
-import React, { useState } from "react";
+import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
+import MailRoundedIcon from "@mui/icons-material/MailRounded";
 import {
+  alpha,
   Badge,
+  Box,
+  Button,
   IconButton,
   Popover,
-  Box,
   Stack,
   Typography,
-  Button,
   useTheme,
-  alpha,
 } from "@mui/material";
-import MailRoundedIcon from "@mui/icons-material/MailRounded";
-import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
-import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
+import { type MouseEvent, useState } from "react";
+import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
 
 /**
  * Inbox button + panel that displays newly created users.
@@ -22,13 +22,13 @@ import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogi
  * Works for both single and bulk approve flows.
  */
 export default function UserCreationInbox({ logic }: { logic: InvitationLogic }) {
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const theme = useTheme();
 
   const open = Boolean(anchorEl);
   const { createdUsers, unreadCount, resetUserInbox } = logic;
 
-  const handleOpen = (e: any) => setAnchorEl(e.currentTarget);
+  const handleOpen = (e: MouseEvent<HTMLButtonElement>) => setAnchorEl(e.currentTarget);
   const handleClose = () => setAnchorEl(null);
 
   return (
@@ -100,9 +100,9 @@ export default function UserCreationInbox({ logic }: { logic: InvitationLogic })
           )}
 
           <Stack spacing={1.5} sx={{ maxHeight: 300, overflowY: "auto" }}>
-            {createdUsers.map((u, index) => (
+            {createdUsers.map((u) => (
               <Box
-                key={index}
+                key={`${u.invitationId}:${u.username}`}
                 sx={{
                   p: 1.4,
                   borderRadius: "14px",

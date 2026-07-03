@@ -1,5 +1,8 @@
 "use client";
 
+import MeetingRoomRoundedIcon from "@mui/icons-material/MeetingRoomRounded";
+import SecurityRoundedIcon from "@mui/icons-material/SecurityRounded";
+import SyncRoundedIcon from "@mui/icons-material/SyncRounded";
 import {
   alpha,
   Box,
@@ -12,10 +15,6 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-
-import MeetingRoomRoundedIcon from "@mui/icons-material/MeetingRoomRounded";
-import SecurityRoundedIcon from "@mui/icons-material/SecurityRounded";
-import SyncRoundedIcon from "@mui/icons-material/SyncRounded";
 
 import { motion } from "framer-motion";
 
@@ -66,7 +65,7 @@ export default function SettingsStep() {
         {/* -----------------------------------------------------
          * NUMERIC SETTINGS
          * --------------------------------------------------- */}
-        <Grid container spacing={2}>
+        <Grid container={true} spacing={2}>
           {/* MAX SEATS */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Stack spacing={1.25}>
@@ -84,7 +83,7 @@ export default function SettingsStep() {
               <TextField
                 label={t("settings.maxSeatsField")}
                 type="number"
-                fullWidth
+                fullWidth={true}
                 {...maxSeats}
               />
             </Stack>
@@ -107,7 +106,7 @@ export default function SettingsStep() {
               <TextField
                 label={t("settings.rotateSecondsField")}
                 type="number"
-                fullWidth
+                fullWidth={true}
                 {...rotateSeconds}
               />
             </Stack>
@@ -117,7 +116,7 @@ export default function SettingsStep() {
         {/* -----------------------------------------------------
          * BOOLEAN SETTINGS
          * --------------------------------------------------- */}
-        <Grid container spacing={2}>
+        <Grid container={true} spacing={2}>
           {/* RE-ENTRY */}
           <Grid size={{ xs: 12, md: 6 }}>
             <CreateWizardCard

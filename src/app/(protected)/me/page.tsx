@@ -1,10 +1,10 @@
 "use client";
 
+import { alpha, Box, Card, CardContent, Stack, Typography, useTheme } from "@mui/material";
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import useMeQuery from "@/checkpoint/hooks/user/useMeQuery";
 import { env } from "@/checkpoint/lib/env";
-import { alpha, Box, Card, CardContent, Stack, Typography, useTheme } from "@mui/material";
-import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
 
 const basePath = env.CHECKPOINT_BASE_PATH;
 
@@ -16,7 +16,9 @@ export default function MePage() {
     loadMePage: true,
   });
 
-  if (mePageLoading) return null;
+  if (mePageLoading) {
+    return null;
+  }
 
   const name = `${mePage?.personalInfo?.firstName ?? ""} ${mePage?.personalInfo?.lastName ?? ""}`;
 

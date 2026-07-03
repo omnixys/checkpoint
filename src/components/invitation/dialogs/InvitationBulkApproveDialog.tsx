@@ -1,7 +1,5 @@
 "use client";
 
-import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import {
   Box,
   Button,
@@ -18,6 +16,8 @@ import {
   useTheme,
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
+import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 export interface InvitationBulkApproveDialogProps {
   logic: InvitationLogic;
@@ -28,13 +28,18 @@ export default function InvitationBulkApproveDialog({ logic }: InvitationBulkApp
   const tInvitation = useTypedTranslations("invitation");
   const tCommon = useTypedTranslations("common");
 
-  const LOCALE_OPTIONS = [
+  const LocaleOptions = [
     { value: "en-US", label: tCommon("language.en-US") },
     { value: "de-DE", label: tCommon("language.de-DE") },
   ];
 
   return (
-    <Dialog open={logic.approveOpen} onClose={logic.closeBulkApproveDialog} fullWidth maxWidth="md">
+    <Dialog
+      open={logic.approveOpen}
+      onClose={logic.closeBulkApproveDialog}
+      fullWidth={true}
+      maxWidth="md"
+    >
       <DialogTitle> {tInvitation("bulkApprove.title")}</DialogTitle>
 
       <DialogContent>
@@ -85,7 +90,7 @@ export default function InvitationBulkApproveDialog({ logic }: InvitationBulkApp
                   </Box>
 
                   <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
-                    <FormControl fullWidth>
+                    <FormControl fullWidth={true}>
                       <InputLabel id={`bulk-approve-locale-${invitation.id}`}>
                         {tInvitation("bulkApprove.locale")}
                       </InputLabel>
@@ -97,7 +102,7 @@ export default function InvitationBulkApproveDialog({ logic }: InvitationBulkApp
                           logic.setBulkApproveLocale(invitation.id, event.target.value)
                         }
                       >
-                        {LOCALE_OPTIONS.map((locale) => (
+                        {LocaleOptions.map((locale) => (
                           <MenuItem key={locale.value} value={locale.value}>
                             {locale.label}
                           </MenuItem>
@@ -106,7 +111,7 @@ export default function InvitationBulkApproveDialog({ logic }: InvitationBulkApp
                     </FormControl>
 
                     {/* EVENT */}
-                    <FormControl fullWidth>
+                    <FormControl fullWidth={true}>
                       <InputLabel id={`bulk-approve-event-${invitation.id}`}>
                         {tInvitation("bulkApprove.event")}
                       </InputLabel>
@@ -128,7 +133,7 @@ export default function InvitationBulkApproveDialog({ logic }: InvitationBulkApp
 
                     {/* SEAT */}
                     {/* TODO SELECT optimieren! mit Group und autocomplete */}
-                    <FormControl fullWidth>
+                    <FormControl fullWidth={true}>
                       <InputLabel id={`bulk-approve-seat-${invitation.id}`}>
                         {tInvitation("bulkApprove.seat")}
                       </InputLabel>

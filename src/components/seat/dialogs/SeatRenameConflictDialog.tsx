@@ -1,6 +1,5 @@
 "use client";
 
-import { RenameConflict } from "@/checkpoint/types/seat.type";
 import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 import {
   Box,
@@ -13,20 +12,25 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import type { RenameConflict } from "@/checkpoint/types/seat.type";
 
-type Props = {
+interface Props {
   open: boolean;
   conflicts: RenameConflict[];
   onClose: () => void;
-};
+}
 
 export function useRenameConflicts(conflicts: RenameConflict[] | null) {
   const sectionNames = new Set<string>();
   const tableNames = new Set<string>();
 
   conflicts?.forEach((c) => {
-    if (c.type === "SECTION") sectionNames.add(c.name);
-    if (c.type === "TABLE") tableNames.add(c.name);
+    if (c.type === "SECTION") {
+      sectionNames.add(c.name);
+    }
+    if (c.type === "TABLE") {
+      tableNames.add(c.name);
+    }
   });
 
   return {
@@ -40,7 +44,7 @@ export default function SeatRenameConflictDialog({ open, conflicts, onClose }: P
   const tables = conflicts.filter((c) => c.type === "TABLE");
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth={true}>
       <DialogTitle sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <WarningAmberRoundedIcon color="warning" />
         Namenskonflikte erkannt
@@ -57,7 +61,7 @@ export default function SeatRenameConflictDialog({ open, conflicts, onClose }: P
             <Box>
               <Typography
                 variant="subtitle2"
-                gutterBottom
+                gutterBottom={true}
                 sx={{
                   fontWeight: 700,
                   fontSize: 12,
@@ -85,7 +89,7 @@ export default function SeatRenameConflictDialog({ open, conflicts, onClose }: P
             <Box>
               <Typography
                 variant="subtitle2"
-                gutterBottom
+                gutterBottom={true}
                 sx={{
                   fontWeight: 700,
                   fontSize: 12,

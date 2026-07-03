@@ -1,16 +1,16 @@
 "use client";
 
-import { BackToEventDetailButton } from "@/checkpoint/components/utils/back-to-event-detail-button";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import FilterListRoundedIcon from "@mui/icons-material/FilterListRounded";
 import { alpha, Box, Button, Stack, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
+import { BackToEventDetailButton } from "@/checkpoint/components/utils/back-to-event-detail-button";
 
-type Props = {
+interface Props {
   total: number;
   onCreate: () => void;
   onFilter: () => void;
-};
+}
 
 export default function TicketHeader({ total, onCreate, onFilter }: Props) {
   const theme = useTheme();

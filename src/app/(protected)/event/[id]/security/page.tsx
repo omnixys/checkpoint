@@ -1,8 +1,8 @@
-import React, { JSX, Suspense } from "react";
 import { Skeleton } from "@mui/material";
-import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import { type JSX, Suspense } from "react";
 import SecurityDashboardClientPage from "@/checkpoint/app/(protected)/event/[id]/security/SecurityDashboardClientPage";
+import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
 
 export const metadata: Metadata = buildMetadata({
   title: "Security Dashboard",

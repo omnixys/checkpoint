@@ -42,16 +42,20 @@ type AuthEvent =
   | "user:changed";
 
 class AuthEventEmitter {
-  private listeners = new Map<AuthEvent, Array<(payload?: unknown) => void>>();
+  private readonly listeners = new Map<AuthEvent, Array<(payload?: unknown) => void>>();
 
   on(name: AuthEvent, fn: (payload?: unknown) => void) {
-    if (!this.listeners.has(name)) this.listeners.set(name, []);
+    if (!this.listeners.has(name)) {
+      this.listeners.set(name, []);
+    }
     this.listeners.get(name)?.push(fn);
   }
 
   off(name: AuthEvent, fn: (payload?: unknown) => void) {
     const list = this.listeners.get(name);
-    if (!list) return;
+    if (!list) {
+      return;
+    }
 
     this.listeners.set(
       name,
@@ -99,10 +103,14 @@ class AuthManagerClass {
    * - Prevents race conditions in API calls
    */
   private async checkRefresh() {
-    if (this.isRefreshing) return;
+    if (this.isRefreshing) {
+      return;
+    }
 
     const expRaw = getCookie("access_expires_at");
-    if (!expRaw) return;
+    if (!expRaw) {
+      return;
+    }
 
     const expiresAt = Number(expRaw);
     const remainingMs = expiresAt - Date.now();
@@ -128,7 +136,7 @@ class AuthManagerClass {
   async login(input: { username: string; password: string }): Promise<void> {
     this.assertApollo();
 
-    const res = await this.apollo!.mutate<LoginMutation, LoginMutationVariables>({
+    const res = await this.apollo?.mutate<LoginMutation, LoginMutationVariables>({
       mutation: LoginDocument,
       variables: { input },
       fetchPolicy: "no-cache",
@@ -159,7 +167,7 @@ class AuthManagerClass {
   async forceRefresh(): Promise<void> {
     this.assertApollo();
 
-    const res = await this.apollo!.mutate<RefreshMutation, RefreshMutationVariables>({
+    const res = await this.apollo?.mutate<RefreshMutation, RefreshMutationVariables>({
       mutation: RefreshDocument,
       fetchPolicy: "no-cache",
       context: { fetchOptions: { credentials: "include" } },
@@ -185,7 +193,7 @@ class AuthManagerClass {
   async logout(): Promise<void> {
     this.assertApollo();
 
-    await this.apollo!.mutate<LogoutMutation, LogoutMutationVariables>({
+    await this.apollo?.mutate<LogoutMutation, LogoutMutationVariables>({
       mutation: LogoutDocument,
       fetchPolicy: "no-cache",
       context: { fetchOptions: { credentials: "include" } },

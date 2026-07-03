@@ -1,12 +1,12 @@
 "use client";
 
-import CalendarEventCard from "@/checkpoint/components/calendar/CalendarEventCard";
 import { Box, Typography } from "@mui/material";
+import CalendarEventCard from "@/checkpoint/components/calendar/CalendarEventCard";
 
-type Props = {
+interface Props {
   grouped: Map<string, any[]>;
   onSelectDay: (date: Date) => void;
-};
+}
 
 export default function CalendarAgendaView({ grouped, onSelectDay }: Props) {
   return (

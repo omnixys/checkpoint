@@ -1,38 +1,36 @@
+import { useMutation } from "@apollo/client/react";
 import {
   AddPlusOneDocument,
-  AddPlusOneMutation,
-  AddPlusOneMutationVariables,
+  type AddPlusOneMutation,
+  type AddPlusOneMutationVariables,
   ApproveInvitationDocument,
-  ApproveInvitationMutation,
-  ApproveInvitationMutationVariables,
+  type ApproveInvitationMutation,
+  type ApproveInvitationMutationVariables,
   BulkApproveInvitationsDocument,
-  BulkApproveInvitationsMutation,
-  BulkApproveInvitationsMutationVariables,
+  type BulkApproveInvitationsMutation,
+  type BulkApproveInvitationsMutationVariables,
   CreateInvitationDocument,
-  CreateInvitationMutation,
-  CreateInvitationMutationVariables,
+  type CreateInvitationMutation,
+  type CreateInvitationMutationVariables,
   ImportInvitationsDocument,
-  ImportInvitationsMutation,
-  ImportInvitationsMutationVariables,
+  type ImportInvitationsMutation,
+  type ImportInvitationsMutationVariables,
   RemoveAllPlusOnesDocument,
-  RemoveAllPlusOnesMutation,
-  RemoveAllPlusOnesMutationVariables,
+  type RemoveAllPlusOnesMutation,
+  type RemoveAllPlusOnesMutationVariables,
   RemoveInvitationDocument,
-  RemoveInvitationMutation,
-  RemoveInvitationMutationVariables,
+  type RemoveInvitationMutation,
+  type RemoveInvitationMutationVariables,
   RemovePlusOneDocument,
-  RemovePlusOneMutation,
-  RemovePlusOneMutationVariables,
+  type RemovePlusOneMutation,
+  type RemovePlusOneMutationVariables,
   SendBulkInvitationsDocument,
-  SendBulkInvitationsMutation,
-  SendBulkInvitationsMutationVariables,
+  type SendBulkInvitationsMutation,
+  type SendBulkInvitationsMutationVariables,
   UpdatePlusOneDocument,
-  UpdatePlusOneMutation,
-  UpdatePlusOneMutationVariables,
+  type UpdatePlusOneMutation,
+  type UpdatePlusOneMutationVariables,
 } from "@/checkpoint/generated/graphql";
-import { useMutation } from "@apollo/client/react";
-
-interface Props {}
 
 export default function useInvitationMutation() {
   /* -----------------------------------------------------------------------
@@ -67,27 +65,27 @@ export default function useInvitationMutation() {
   /* -----------------------------------------------------------------------
    * INVITEE
    * --------------------------------------------------------------------- */
-  const [createInvitationMutation, createInvitationMutationResult] = useMutation<
+  const [createInvitationMutation, _createInvitationMutationResult] = useMutation<
     CreateInvitationMutation,
     CreateInvitationMutationVariables
   >(CreateInvitationDocument);
 
-  const [approveInvitationMutation, approveInvitationMutationResult] = useMutation<
+  const [approveInvitationMutation, _approveInvitationMutationResult] = useMutation<
     ApproveInvitationMutation,
     ApproveInvitationMutationVariables
   >(ApproveInvitationDocument);
 
-  const [deleteInvitationMutation, deleteInvitationMutationResult] = useMutation<
+  const [deleteInvitationMutation, _deleteInvitationMutationResult] = useMutation<
     RemoveInvitationMutation,
     RemoveInvitationMutationVariables
   >(RemoveInvitationDocument);
 
-  const [importInvitationsMutation, importInvitationsMutationResult] = useMutation<
+  const [importInvitationsMutation, _importInvitationsMutationResult] = useMutation<
     ImportInvitationsMutation,
     ImportInvitationsMutationVariables
   >(ImportInvitationsDocument);
 
-  const [sendBulkInvitationsMutation, sendBulkInvitationsMutationMutationResult] = useMutation<
+  const [sendBulkInvitationsMutation, _sendBulkInvitationsMutationMutationResult] = useMutation<
     SendBulkInvitationsMutation,
     SendBulkInvitationsMutationVariables
   >(SendBulkInvitationsDocument);

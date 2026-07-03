@@ -1,21 +1,21 @@
 "use client";
 
-import { Box, IconButton, Typography } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
+import { Box, IconButton, Typography } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import { motion } from "framer-motion";
 
-type Segment<T> = {
+interface Segment<T> {
   label: string;
   value: T;
-};
+}
 
-type Props<T> = {
+interface Props<T> {
   value: T;
   onChange: (v: T) => void;
   segments: Segment<T>[];
-};
+}
 
 /**
  * Animated segmented control (Apple-style)
@@ -75,7 +75,7 @@ function SegmentedControl<T>({ value, onChange, segments }: Props<T>) {
   );
 }
 
-type ToolbarProps = {
+interface ToolbarProps {
   date: Date;
   view: "list" | "grid";
   mode: "month" | "year";
@@ -83,7 +83,7 @@ type ToolbarProps = {
   onChangeView: (v: "list" | "grid") => void;
   onChangeMode: (m: "month" | "year") => void;
   onToday: () => void;
-};
+}
 
 export default function CalendarToolbar({
   date,
@@ -130,12 +130,12 @@ export default function CalendarToolbar({
 
         <Typography
           sx={{
-          fontWeight: 700,
-          fontSize: 18,
-          overflowWrap: "anywhere",
-          textAlign: "center",
-        }}
-      >
+            fontWeight: 700,
+            fontSize: 18,
+            overflowWrap: "anywhere",
+            textAlign: "center",
+          }}
+        >
           {label}
         </Typography>
 

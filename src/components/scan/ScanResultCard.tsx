@@ -4,15 +4,14 @@ import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import ErrorRoundedIcon from "@mui/icons-material/ErrorRounded";
 import InfoRoundedIcon from "@mui/icons-material/InfoRounded";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
-import WeekendRoundedIcon from "@mui/icons-material/WeekendRounded";
 import { Box, Chip, Divider, Stack, Typography, useTheme } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import { useLocale } from "next-intl";
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import type { ScanResult } from "@/checkpoint/types/scan.type";
 import { Fragment } from "react/jsx-runtime";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { useDevice } from "@/checkpoint/providers/DeviceProvider";
+import type { ScanResult } from "@/checkpoint/types/scan.type";
 
 type ResultTone = "success" | "error" | "warning";
 
@@ -35,10 +34,19 @@ function formatDateTime(value: string, locale: string) {
   }).format(new Date(value));
 }
 
+interface SeatSegment {
+  label: string;
+  value: string;
+}
+
+function seatSegmentKey(segment: SeatSegment) {
+  return `${segment.label}:${segment.value}`;
+}
+
 export default function ScanResultCard({ result }: { result: ScanResult }) {
   const theme = useTheme();
   const locale = useLocale();
-  const { isMobile} = useDevice();
+  const { isMobile } = useDevice();
   const tTicket = useTypedTranslations("ticket");
 
   const tone = getResultTone(result.status);
@@ -87,28 +95,19 @@ export default function ScanResultCard({ result }: { result: ScanResult }) {
   //   result.seat?.number ? tTicket("seatNumberWithValue", { number: result.seat.number }) : null,
   // ].filter(Boolean);
 
-type SeatSegment = {
-  label: string;
-  value: string;
-};
+  const seatSegments: SeatSegment[] = [
+    result.seat?.section?.name
+      ? { label: tTicket("section"), value: result.seat.section.name }
+      : null,
 
-const seatSegments: SeatSegment[] = [
-  result.seat?.section?.name
-    ? { label: tTicket("section"), value: result.seat.section.name }
-    : null,
+    result.seat?.table?.name ? { label: tTicket("table"), value: result.seat.table.name } : null,
 
-  result.seat?.table?.name
-    ? { label: tTicket("table"), value: result.seat.table.name }
-    : null,
+    // result.seat?.label
+    //   ? { label: tTicket("seat"), value: result.seat.label }
+    //   : null,
 
-  // result.seat?.label
-  //   ? { label: tTicket("seat"), value: result.seat.label }
-  //   : null,
-
-  result.seat?.number
-    ? { label: "#", value: String(result.seat.number) }
-    : null,
-].filter((v): v is SeatSegment => v !== null);
+    result.seat?.number ? { label: "#", value: String(result.seat.number) } : null,
+  ].filter((v): v is SeatSegment => v !== null);
 
   return (
     <motion.div
@@ -156,13 +155,9 @@ const seatSegments: SeatSegment[] = [
                   sx={{ width: theme.spacing(3), height: theme.spacing(3) }}
                 />
               ) : tone === "error" ? (
-                <ErrorRoundedIcon
-                  sx={{ width: theme.spacing(3), height: theme.spacing(3) }}
-                />
+                <ErrorRoundedIcon sx={{ width: theme.spacing(3), height: theme.spacing(3) }} />
               ) : (
-                <InfoRoundedIcon
-                  sx={{ width: theme.spacing(3), height: theme.spacing(3) }}
-                />
+                <InfoRoundedIcon sx={{ width: theme.spacing(3), height: theme.spacing(3) }} />
               )}
             </Box>
 
@@ -207,21 +202,15 @@ const seatSegments: SeatSegment[] = [
               <Typography variant="body2" sx={{ fontWeight: 700 }}>
                 {result.valid ? tTicket("hint") : tTicket("reasonLabel")}
               </Typography>
-              <Typography
-                variant="body2"
-                sx={{ color: theme.palette.text.secondary, mt: 0.25 }}
-              >
+              <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mt: 0.25 }}>
                 {reasonLabel}
               </Typography>
             </Box>
           ) : null}
 
-          {result.status === "SUCCESS" &&
-          (guestName || seatSegments.length > 0) ? (
+          {result.status === "SUCCESS" && (guestName || seatSegments.length > 0) ? (
             <>
-              <Divider
-                sx={{ borderColor: alpha(theme.palette.divider, 0.72) }}
-              />
+              <Divider sx={{ borderColor: alpha(theme.palette.divider, 0.72) }} />
 
               <Stack spacing={1.25}>
                 {guestName ? (
@@ -237,10 +226,7 @@ const seatSegments: SeatSegment[] = [
                         color: theme.palette.text.secondary,
                       }}
                     />
-                    <Typography
-                      variant="body2"
-                      sx={{ color: theme.palette.text.secondary }}
-                    >
+                    <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
                       {tTicket("guest")}
                     </Typography>
                     <Typography variant="body2" sx={{ fontWeight: 700 }}>
@@ -251,66 +237,67 @@ const seatSegments: SeatSegment[] = [
 
                 {isMobile ? (
                   <Stack spacing={1}>
-                      {seatSegments.map((seg, index) => {
-                        const isLast = index === seatSegments.length - 1;
-                        return (
-                          <Box
-                            key={index}
-                            sx={{
-                              px: 1.5,
-                              py: 1,
-                              borderRadius: 3,
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
+                    {seatSegments.map((seg) => {
+                      const isLast = seg === seatSegments[seatSegments.length - 1];
+                      return (
+                        <Box
+                          key={seatSegmentKey(seg)}
+                          sx={{
+                            px: 1.5,
+                            py: 1,
+                            borderRadius: 3,
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
 
-                              background: isLast
-                                ? `linear-gradient(135deg, ${alpha(theme.palette.success.main, 0.25)}, ${alpha(
+                            background: isLast
+                              ? `linear-gradient(135deg, ${alpha(theme.palette.success.main, 0.25)}, ${alpha(
                                   theme.palette.success.main,
                                   0.1,
                                 )})`
-                                : `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.12)}, ${alpha(
+                              : `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.12)}, ${alpha(
                                   theme.palette.background.paper,
                                   0.4,
                                 )})`,
 
-                              border: `1px solid ${isLast
+                            border: `1px solid ${
+                              isLast
                                 ? alpha(theme.palette.success.main, 0.4)
                                 : alpha(theme.palette.primary.main, 0.25)
-                                }`,
+                            }`,
 
-                              backdropFilter: "blur(12px)",
+                            backdropFilter: "blur(12px)",
+                          }}
+                        >
+                          {/* Label */}
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              color: theme.palette.text.secondary,
+                              fontWeight: 600,
                             }}
                           >
-                            {/* Label */}
-                            <Typography
-                              variant="caption"
-                              sx={{
-                                color: theme.palette.text.secondary,
-                                fontWeight: 600,
-                              }}
-                            >
-                              {seg.label}
-                            </Typography>
+                            {seg.label}
+                          </Typography>
 
-                            {/* Value */}
-                            <Typography
-                              sx={{
-                                fontWeight: 900,
-                                fontSize: "0.95rem",
-                                letterSpacing: 0.3,
-                                maxWidth: "60%",
-                                textAlign: "right",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                whiteSpace: "nowrap",
-                              }}
-                            >
-                              {seg.value}
-                            </Typography>
-                          </Box>
-                        );
-                      })}
+                          {/* Value */}
+                          <Typography
+                            sx={{
+                              fontWeight: 900,
+                              fontSize: "0.95rem",
+                              letterSpacing: 0.3,
+                              maxWidth: "60%",
+                              textAlign: "right",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {seg.value}
+                          </Typography>
+                        </Box>
+                      );
+                    })}
                   </Stack>
                 ) : (
                   <Stack
@@ -318,8 +305,8 @@ const seatSegments: SeatSegment[] = [
                     spacing={1}
                     sx={{ gap: 1, flexWrap: "wrap", alignItems: "center" }}
                   >
-                    {seatSegments.map((seg, index) => (
-                      <Fragment key={index}>
+                    {seatSegments.map((seg) => (
+                      <Fragment key={seatSegmentKey(seg)}>
                         <Box
                           sx={{
                             px: 1.5,
@@ -333,15 +320,12 @@ const seatSegments: SeatSegment[] = [
                             backdropFilter: "blur(10px)",
                           }}
                         >
-                          <Typography
-                            variant="caption"
-                            sx={{ fontWeight: 800 }}
-                          >
+                          <Typography variant="caption" sx={{ fontWeight: 800 }}>
                             {seg.value}
                           </Typography>
                         </Box>
 
-                        {index < seatSegments.length - 1 && (
+                        {seg !== seatSegments[seatSegments.length - 1] && (
                           <Typography
                             variant="caption"
                             sx={{ color: theme.palette.text.secondary }}
@@ -359,13 +343,8 @@ const seatSegments: SeatSegment[] = [
 
           {result.ticket ? (
             <>
-              <Divider
-                sx={{ borderColor: alpha(theme.palette.divider, 0.72) }}
-              />
-              <Typography
-                variant="caption"
-                sx={{ color: theme.palette.text.secondary }}
-              >
+              <Divider sx={{ borderColor: alpha(theme.palette.divider, 0.72) }} />
+              <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
                 {tTicket("ticketState", {
                   status: result.ticket.revoked
                     ? tTicket("status.revoked")
@@ -377,9 +356,7 @@ const seatSegments: SeatSegment[] = [
 
           {result.status === "ERROR" && result.device ? (
             <>
-              <Divider
-                sx={{ borderColor: alpha(theme.palette.divider, 0.72) }}
-              />
+              <Divider sx={{ borderColor: alpha(theme.palette.divider, 0.72) }} />
               <Stack spacing={0.75}>
                 <Typography variant="subtitle2" sx={{ fontWeight: 800 }}>
                   {tTicket("deviceBinding")}
@@ -390,25 +367,16 @@ const seatSegments: SeatSegment[] = [
                 >
                   {tTicket("deviceHash", { hash: result.device.hash })}
                 </Typography>
-                <Typography
-                  variant="caption"
-                  sx={{ color: theme.palette.text.secondary }}
-                >
+                <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
                   {tTicket("deviceActivated", {
                     date: formatDateTime(result.device.activatedAt, locale),
                   })}
                 </Typography>
-                <Typography
-                  variant="caption"
-                  sx={{ color: theme.palette.text.secondary }}
-                >
+                <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
                   {tTicket("deviceIp", { ip: result.device.activationIP })}
                 </Typography>
                 {result.deviceMatched ? null : (
-                  <Typography
-                    variant="body2"
-                    sx={{ color: theme.palette.error.main }}
-                  >
+                  <Typography variant="body2" sx={{ color: theme.palette.error.main }}>
                     {tTicket("reason.deviceMismatch")}
                   </Typography>
                 )}

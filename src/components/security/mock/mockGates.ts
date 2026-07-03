@@ -1,4 +1,4 @@
-import { GateTrendType } from "@/checkpoint/types/security.typa";
+import type { GateTrendType } from "@/checkpoint/types/security.typa";
 
 export const mockGates: {
   id: string;

@@ -1,23 +1,23 @@
 "use client";
 
-import React from "react";
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
+import React from "react";
 
-type Props = {
+interface Props {
   open: boolean;
   sectionName: string;
   onClose: () => void;
   onSave: (input: { type: "SECTION"; from: string; to: string }) => Promise<void>;
-};
+}
 
 export default function SectionRenameDialog({ open, sectionName, onClose, onSave }: Props) {
   const [value, setValue] = React.useState(sectionName);
@@ -28,7 +28,7 @@ export default function SectionRenameDialog({ open, sectionName, onClose, onSave
   }, [sectionName]);
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={onClose} fullWidth={true} maxWidth="sm">
       <DialogTitle>Section umbenennen</DialogTitle>
 
       <DialogContent>
@@ -37,12 +37,12 @@ export default function SectionRenameDialog({ open, sectionName, onClose, onSave
             Diese Änderung betrifft alle Tische und Seats in dieser Section.
           </Typography>
 
-          <TextField label="Aktueller Name" value={sectionName} disabled />
+          <TextField label="Aktueller Name" value={sectionName} disabled={true} />
 
           <TextField
             label="Neuer Name"
             value={value}
-            autoFocus
+            autoFocus={true}
             onChange={(e) => setValue(e.target.value)}
           />
         </Stack>

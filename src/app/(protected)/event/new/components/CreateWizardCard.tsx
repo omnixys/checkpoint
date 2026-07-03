@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { Box, SxProps, Theme, useTheme, alpha } from "@mui/material";
+import { alpha, Box, type SxProps, type Theme, useTheme } from "@mui/material";
+import type React from "react";
 
 export default function CreateWizardCard({
   children,

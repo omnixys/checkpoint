@@ -1,11 +1,5 @@
 "use client";
 
-import {
-  ChangeMyPasswordMutation,
-  ChangeMyPasswordMutationVariables,
-  ChangeMyPasswordDocument,
-} from "@/checkpoint/generated/graphql";
-
 import { useMutation } from "@apollo/client/react";
 import {
   alpha,
@@ -17,10 +11,14 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
+import {
+  ChangeMyPasswordDocument,
+  type ChangeMyPasswordMutation,
+  type ChangeMyPasswordMutationVariables,
+} from "@/checkpoint/generated/graphql";
 
 export default function ChangePasswordCard() {
   const theme = useTheme();
@@ -41,12 +39,13 @@ export default function ChangePasswordCard() {
   /* ------------------------------------------------------------
    * Validation
    * ------------------------------------------------------------ */
-  const errors = useMemo(() => {
-    return {
+  const errors = useMemo(
+    () => ({
       mismatch: form.confirm !== "" && form.confirm !== form.newPassword,
       weak: form.newPassword.length > 0 && form.newPassword.length < 8,
-    };
-  }, [form]);
+    }),
+    [form],
+  );
 
   const disabled = !form.oldPassword || !form.newPassword || errors.mismatch || errors.weak;
 
@@ -132,7 +131,7 @@ export default function ChangePasswordCard() {
               type="password"
               value={form.oldPassword}
               onChange={(e) => setForm({ ...form, oldPassword: e.target.value })}
-              fullWidth
+              fullWidth={true}
             />
 
             <TextField
@@ -142,7 +141,7 @@ export default function ChangePasswordCard() {
               onChange={(e) => setForm({ ...form, newPassword: e.target.value })}
               error={errors.weak}
               helperText={errors.weak ? "Password must be at least 8 characters" : " "}
-              fullWidth
+              fullWidth={true}
             />
 
             <TextField
@@ -152,7 +151,7 @@ export default function ChangePasswordCard() {
               onChange={(e) => setForm({ ...form, confirm: e.target.value })}
               error={errors.mismatch}
               helperText={errors.mismatch ? "Passwords do not match" : " "}
-              fullWidth
+              fullWidth={true}
             />
           </Stack>
         </CardContent>
@@ -201,7 +200,7 @@ export default function ChangePasswordCard() {
                 opacity: disabled ? 0.4 : 1,
                 fontWeight: 600,
               }}
-              onClick={!disabled ? submit : undefined}
+              onClick={disabled ? undefined : submit}
             >
               Update
             </Typography>

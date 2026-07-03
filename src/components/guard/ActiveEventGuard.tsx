@@ -1,9 +1,9 @@
 "use client";
 
-import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { Box, Button, Modal, Stack, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
 import React from "react";
+import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 
 /* --------------------------------------------------------------------
  * Guard Component
@@ -75,13 +75,13 @@ export default function ActiveEventGuard({ children }: { children: React.ReactNo
           </Typography>
 
           <Stack direction="row" spacing={2} sx={{ mt: 3 }}>
-            <Button variant="contained" fullWidth href="/event" sx={{ borderRadius: 2 }}>
+            <Button variant="contained" fullWidth={true} href="/event" sx={{ borderRadius: 2 }}>
               Event auswählen
             </Button>
 
             <Button
               variant="text"
-              fullWidth
+              fullWidth={true}
               onClick={() => setOpen(false)}
               sx={{ borderRadius: 2 }}
             >
@@ -112,7 +112,7 @@ export default function ActiveEventGuard({ children }: { children: React.ReactNo
               p: 4,
               borderRadius: 4,
               backdropFilter: "blur(40px)",
-              bgcolor: theme.palette.background.default + "60",
+              bgcolor: `${theme.palette.background.default}60`,
               border: `1px solid ${theme.palette.divider}`,
               boxShadow: `0 8px 32px ${theme.palette.divider}`,
               maxWidth: 420,

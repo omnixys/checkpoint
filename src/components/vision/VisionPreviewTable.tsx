@@ -3,31 +3,31 @@
 "use client";
 
 import {
+  alpha,
   Box,
+  Chip,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
-  Typography,
-  alpha,
-  useTheme,
   TextField,
-  Chip,
+  Typography,
+  useTheme,
 } from "@mui/material";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 /* ---------------------------------------------------------------------------
  * TYPES
  * ------------------------------------------------------------------------- */
 type Row = Record<string, unknown>;
 
-type Props = {
+interface Props {
   rows: Row[];
   duplicates: number[];
   errors: string[];
   onChange?: (rows: Row[]) => void;
-};
+}
 
 /* ---------------------------------------------------------------------------
  * VALIDATION
@@ -45,13 +45,13 @@ function autoFixValue(key: string, value: string): string {
     v = v.replace(/\s+/g, "");
 
     if (!v.startsWith("0") && !v.startsWith("+")) {
-      v = "0" + v;
+      v = `0${v}`;
     }
   }
 
   if (key === "maxPlusOnes") {
     const num = Number(v);
-    if (!isNaN(num)) {
+    if (!Number.isNaN(num)) {
       return String(Math.max(0, num));
     }
   }
@@ -66,16 +66,34 @@ export default function VisionPreviewTable({ rows, duplicates, errors, onChange 
   const theme = useTheme();
 
   const [localRows, setLocalRows] = useState<Row[]>(rows);
+  const rowKeyMap = useRef<WeakMap<Row, string>>(new WeakMap());
+  const nextRowKey = useRef(0);
 
-  if (!rows.length) return null;
+  if (rows.length === 0) {
+    return null;
+  }
 
   const headers = Object.keys(rows[0] ?? {});
+
+  function getRowKey(row: Row) {
+    const existing = rowKeyMap.current.get(row);
+    if (existing) {
+      return existing;
+    }
+
+    const key = `row-${nextRowKey.current}`;
+    nextRowKey.current += 1;
+    rowKeyMap.current.set(row, key);
+    return key;
+  }
 
   /* -----------------------------------------------------------------------
    * VALIDATION CHECK
    * --------------------------------------------------------------------- */
   function isCellInvalid(row: Row, key: string): boolean {
-    if (!REQUIRED_FIELDS.includes(key)) return false;
+    if (!REQUIRED_FIELDS.includes(key)) {
+      return false;
+    }
 
     return !String(row[key] ?? "").trim();
   }
@@ -141,7 +159,7 @@ export default function VisionPreviewTable({ rows, duplicates, errors, onChange 
 
             return (
               <TableRow
-                key={rowIndex}
+                key={getRowKey(row)}
                 sx={{
                   background: isDuplicate ? alpha(theme.palette.warning.main, 0.12) : "transparent",
 
@@ -166,7 +184,7 @@ export default function VisionPreviewTable({ rows, duplicates, errors, onChange 
                         value={value}
                         onChange={(e) => updateCell(rowIndex, key, e.target.value)}
                         variant="standard"
-                        fullWidth
+                        fullWidth={true}
                         size="small"
                         error={invalid}
                         slotProps={{

@@ -27,7 +27,9 @@ export function useQueryError(
   );
 
   useEffect(() => {
-    if (appError) report(appError);
+    if (appError) {
+      report(appError);
+    }
   }, [appError, report]);
 
   return appError;

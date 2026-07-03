@@ -1,5 +1,5 @@
-import { BackButtonBase } from "@/checkpoint/components/utils/back-button-base";
 import { Box, Stack, Typography } from "@mui/material";
+import { BackButtonBase } from "@/checkpoint/components/utils/back-button-base";
 import { env } from "@/checkpoint/lib/env";
 
 interface Props {
@@ -33,7 +33,7 @@ export default function NoTicket({ eventId, eventName }: Props) {
         }}
       >
         <Box
-          aria-hidden
+          aria-hidden={true}
           sx={{
             width: 72,
             height: 72,

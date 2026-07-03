@@ -1,25 +1,25 @@
 "use client";
 
+import DeleteIcon from "@mui/icons-material/Delete";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   Accordion,
-  AccordionSummary,
   AccordionDetails,
+  AccordionSummary,
+  alpha,
   IconButton,
   Stack,
   Typography,
   useTheme,
-  alpha,
 } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { PhoneNumberInput } from "@/checkpoint/generated/graphql";
+import type { PhoneNumberInput } from "@/checkpoint/generated/graphql";
 
-type Props = {
+interface Props {
   value: PhoneNumberInput;
   index: number;
   onRemove: (index: number) => void;
   onEdit: (index: number) => void;
-};
+}
 
 export default function PhoneNumberAccordion({ value, index, onRemove, onEdit }: Props) {
   const theme = useTheme();

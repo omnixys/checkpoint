@@ -1,7 +1,7 @@
 "use client";
 
-import React, { JSX } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import type { JSX } from "react";
 
 interface SlideProps {
   step: number;

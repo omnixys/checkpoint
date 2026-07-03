@@ -1,8 +1,5 @@
 "use client";
 
-import useMeMutation from "@/checkpoint/hooks/user/useMeMutation";
-import useMeQuery from "@/checkpoint/hooks/user/useMeQuery";
-
 import {
   alpha,
   Box,
@@ -14,10 +11,11 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import useMeMutation from "@/checkpoint/hooks/user/useMeMutation";
+import useMeQuery from "@/checkpoint/hooks/user/useMeQuery";
 
 export default function ProfileClientPage() {
   const theme = useTheme();
@@ -59,9 +57,10 @@ export default function ProfileClientPage() {
   /* ------------------------------------------------------------
    * Dirty check
    * ------------------------------------------------------------ */
-  const isDirty = useMemo(() => {
-    return JSON.stringify(form) !== JSON.stringify(savedState);
-  }, [form, savedState]);
+  const isDirty = useMemo(
+    () => JSON.stringify(form) !== JSON.stringify(savedState),
+    [form, savedState],
+  );
 
   /* ------------------------------------------------------------
    * Prevent accidental leave (optional but useful)
@@ -81,7 +80,9 @@ export default function ProfileClientPage() {
    * Update handler
    * ------------------------------------------------------------ */
   const update = async () => {
-    if (!isDirty || updateProfileLoading) return;
+    if (!isDirty || updateProfileLoading) {
+      return;
+    }
 
     try {
       setStatus("saving");
@@ -108,7 +109,9 @@ export default function ProfileClientPage() {
     }
   };
 
-  if (mePageLoading) return null;
+  if (mePageLoading) {
+    return null;
+  }
 
   return (
     <Stack spacing={4}>
@@ -148,9 +151,11 @@ export default function ProfileClientPage() {
               value={form.firstName}
               onChange={(e) => setForm({ ...form, firstName: e.target.value })}
               onKeyDown={(e) => {
-                if (e.key === "Enter") update();
+                if (e.key === "Enter") {
+                  update();
+                }
               }}
-              fullWidth
+              fullWidth={true}
             />
 
             <TextField
@@ -158,9 +163,11 @@ export default function ProfileClientPage() {
               value={form.lastName}
               onChange={(e) => setForm({ ...form, lastName: e.target.value })}
               onKeyDown={(e) => {
-                if (e.key === "Enter") update();
+                if (e.key === "Enter") {
+                  update();
+                }
               }}
-              fullWidth
+              fullWidth={true}
             />
 
             <TextField
@@ -169,9 +176,11 @@ export default function ProfileClientPage() {
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
               onKeyDown={(e) => {
-                if (e.key === "Enter") update();
+                if (e.key === "Enter") {
+                  update();
+                }
               }}
-              fullWidth
+              fullWidth={true}
             />
           </Stack>
         </CardContent>
@@ -223,7 +232,7 @@ export default function ProfileClientPage() {
             {/* CTA */}
             <Button
               variant="contained"
-              disableElevation
+              disableElevation={true}
               onClick={update}
               disabled={!isDirty || updateProfileLoading}
               sx={{

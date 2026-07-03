@@ -1,4 +1,4 @@
-import { Components, Theme } from "@mui/material/styles";
+import type { Components, Theme } from "@mui/material/styles";
 
 export const paperComponents = (theme: Theme): Components["MuiPaper"] => ({
   styleOverrides: {

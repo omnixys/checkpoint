@@ -20,12 +20,12 @@ import {
 import type { PhoneNumberInput } from "@/checkpoint/generated/graphql";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
-type Props = {
+interface Props {
   values: PhoneNumberInput[];
   onAdd: () => void;
   onEdit: (index: number) => void;
   onRemove: (index: number) => void;
-};
+}
 
 export default function PhoneNumberListAccordion({ values, onAdd, onEdit, onRemove }: Props) {
   const t = useTypedTranslations("common");
@@ -84,7 +84,11 @@ export default function PhoneNumberListAccordion({ values, onAdd, onEdit, onRemo
                   {p.label || p.type}
                 </Typography>
 
-                <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: "anywhere" }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ overflowWrap: "anywhere" }}
+                >
                   {p.countryCode} {p.number || t("empty")}
                 </Typography>
               </Stack>

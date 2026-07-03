@@ -1,19 +1,20 @@
 "use client";
 
+import type React from "react";
+import { createContext, useContext, useState } from "react";
 import TourOverlay from "@/checkpoint/components/TourOverlay";
-import React, { createContext, useContext, useState } from "react";
 
 type AnchorMap = Record<string, HTMLElement>;
 
-export type TourStep = {
+export interface TourStep {
   id: string;
   target: string;
   title: string;
   description: string;
   allowInteraction?: boolean; // 🔥 Blocking Mode Control
-};
+}
 
-type TourContextType = {
+interface TourContextType {
   register: (id: string, el: HTMLElement | null) => void;
   anchors: AnchorMap;
   start: (steps: TourStep[]) => void;
@@ -23,13 +24,15 @@ type TourContextType = {
   next: () => void;
   prev: () => void;
   isActive: boolean;
-};
+}
 
 const TourContext = createContext<TourContextType | null>(null);
 
 export function useTour() {
   const ctx = useContext(TourContext);
-  if (!ctx) throw new Error("useTour outside provider");
+  if (!ctx) {
+    throw new Error("useTour outside provider");
+  }
   return ctx;
 }
 
@@ -41,7 +44,9 @@ export default function TourProvider({ children }: { children: React.ReactNode }
   const isActive = steps.length > 0;
 
   const register = (id: string, el: HTMLElement | null) => {
-    if (!el) return;
+    if (!el) {
+      return;
+    }
     setAnchors((prev) => ({ ...prev, [id]: el }));
   };
 
@@ -67,7 +72,9 @@ export default function TourProvider({ children }: { children: React.ReactNode }
         isActive,
         next: () =>
           setStepIndex((i) => {
-            if (i === steps.length - 1) return i;
+            if (i === steps.length - 1) {
+              return i;
+            }
             return i + 1;
           }),
         prev: () => setStepIndex((i) => Math.max(i - 1, 0)),

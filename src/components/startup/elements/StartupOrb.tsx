@@ -1,9 +1,9 @@
 "use client";
 
+import { type MotionValue, motion, useTransform } from "framer-motion";
 import { startupConfig } from "@/checkpoint/components/startup/config/startup.config";
 import { useThemeMode } from "@/checkpoint/providers/ThemeModeProvider";
 import { omnixysPresets } from "@/checkpoint/themes/colors/omnixysPresets";
-import { motion, useTransform, MotionValue } from "framer-motion";
 
 /**
  * StartupOrb
@@ -12,10 +12,10 @@ import { motion, useTransform, MotionValue } from "framer-motion";
  * No hardcoded colors or animation values.
  * Uses Omnixys presets + startupConfig only.
  */
-type Props = {
+interface Props {
   tiltX: MotionValue<number>;
   tiltY: MotionValue<number>;
-};
+}
 
 export function StartupOrb({ tiltX, tiltY }: Props) {
   const { scheme, mode } = useThemeMode();

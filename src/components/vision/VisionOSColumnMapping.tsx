@@ -1,14 +1,14 @@
 "use client";
 
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogTitle,
+  MenuItem,
+  Select,
   Stack,
   Typography,
-  Select,
-  MenuItem,
-  Button,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -27,15 +27,14 @@ export function VisionOSColumnMapping({
   onFinish: (mapping: Record<string, string>) => void;
 }) {
   const defaultMapping: Record<string, string> = {};
-  REQUIRED.forEach(
-    (k) =>
-      (defaultMapping[k] = headers.find((h) => h.toLowerCase().includes(k.toLowerCase())) ?? ""),
-  );
+  REQUIRED.forEach((k) => {
+    defaultMapping[k] = headers.find((h) => h.toLowerCase().includes(k.toLowerCase())) ?? "";
+  });
 
   const [mapping, setMapping] = useState(defaultMapping);
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth={true}>
       <motion.div
         initial={{ opacity: 0, y: 25 }}
         animate={{ opacity: 1, y: 0 }}

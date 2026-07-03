@@ -1,9 +1,9 @@
-import {
+import type { FieldErrors, UseFormReturn } from "react-hook-form";
+import type {
   ChildEventFormValue,
   CreateEventWizardFormValue,
   EventAddressFormValue,
 } from "@/checkpoint/app/(protected)/event/new/validation/createEvent.schema";
-import type { FieldErrors, UseFormReturn } from "react-hook-form";
 
 export enum CreateEventWizardStep {
   Basics = 0,
@@ -14,7 +14,7 @@ export enum CreateEventWizardStep {
   Success = 5,
 }
 
-export type GeoSuggestion = {
+export interface GeoSuggestion {
   cityId?: string;
   postalCodeId?: string;
   stateId?: string;
@@ -31,9 +31,9 @@ export type GeoSuggestion = {
   lat?: number;
   lon?: number;
   label: string;
-};
+}
 
-export type CreateEventWizardApi = {
+export interface CreateEventWizardApi {
   form: UseFormReturn<CreateEventWizardFormValue>;
   step: CreateEventWizardStep;
   isFirstStep: boolean;
@@ -57,4 +57,4 @@ export type CreateEventWizardApi = {
   getSummaryAddress: () => EventAddressFormValue | null;
   getChildren: () => ChildEventFormValue[];
   getErrors: () => FieldErrors<CreateEventWizardFormValue>;
-};
+}

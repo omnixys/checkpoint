@@ -104,7 +104,9 @@ export class AppError extends Error {
 
 export function normalizeAppError(error: unknown, context: AppErrorContext = {}): AppError {
   if (error instanceof AppError) {
-    if (!context.operationName && !context.route && !context.userId) return error;
+    if (!context.operationName && !context.route && !context.userId) {
+      return error;
+    }
     return new AppError({
       code: error.code,
       message: error.message,
@@ -204,18 +206,34 @@ function canonicalCode(value: unknown): ErrorCode {
 }
 
 function codeForStatus(status: number): ErrorCode {
-  if (status === 401) return ErrorCode.UNAUTHORIZED;
-  if (status === 403) return ErrorCode.FORBIDDEN;
-  if (status === 429) return ErrorCode.RATE_LIMIT_EXCEEDED;
-  if (status >= 500) return ErrorCode.SERVICE_UNAVAILABLE;
+  if (status === 401) {
+    return ErrorCode.UNAUTHORIZED;
+  }
+  if (status === 403) {
+    return ErrorCode.FORBIDDEN;
+  }
+  if (status === 429) {
+    return ErrorCode.RATE_LIMIT_EXCEEDED;
+  }
+  if (status >= 500) {
+    return ErrorCode.SERVICE_UNAVAILABLE;
+  }
   return ErrorCode.NETWORK_ERROR;
 }
 
 function messageForStatus(status: number): string {
-  if (status === 401) return "Authentication is required";
-  if (status === 403) return "Access is not authorized";
-  if (status === 429) return "Too many requests";
-  if (status >= 500) return "The service is temporarily unavailable";
+  if (status === 401) {
+    return "Authentication is required";
+  }
+  if (status === 403) {
+    return "Access is not authorized";
+  }
+  if (status === 429) {
+    return "Too many requests";
+  }
+  if (status >= 500) {
+    return "The service is temporarily unavailable";
+  }
   return "The request could not be completed";
 }
 
@@ -227,17 +245,27 @@ function statusForCode(code: ErrorCode): number | "UNKNOWN" {
   ) {
     return 401;
   }
-  if (code === ErrorCode.FORBIDDEN || code === ErrorCode.UNAUTHORIZED_TENANT) return 403;
-  if (code === ErrorCode.RATE_LIMIT_EXCEEDED) return 429;
-  if (code === ErrorCode.SERVICE_UNAVAILABLE) return 503;
+  if (code === ErrorCode.FORBIDDEN || code === ErrorCode.UNAUTHORIZED_TENANT) {
+    return 403;
+  }
+  if (code === ErrorCode.RATE_LIMIT_EXCEEDED) {
+    return 429;
+  }
+  if (code === ErrorCode.SERVICE_UNAVAILABLE) {
+    return 503;
+  }
   return "UNKNOWN";
 }
 
 function normalizeStatus(value: unknown): number | "UNKNOWN" {
-  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value;
+  }
   if (typeof value === "string" && value.trim() !== "") {
     const parsed = Number(value);
-    if (Number.isFinite(parsed)) return parsed;
+    if (Number.isFinite(parsed)) {
+      return parsed;
+    }
   }
   return "UNKNOWN";
 }

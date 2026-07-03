@@ -38,14 +38,18 @@ export class NotificationService {
       options.scope === "global"
         ? AppErrorMapper.mapGlobal(appError)
         : AppErrorMapper.map(appError);
-    if (actions.length > 0) this.publish({ error: appError, actions });
+    if (actions.length > 0) {
+      this.publish({ error: appError, actions });
+    }
     return appError;
   }
 
   subscribe(listener: ErrorNotificationListener): () => void {
     this.listeners.add(listener);
     if (this.listeners.size === 1 && this.pending.length > 0) {
-      for (const notification of this.pending.splice(0)) listener(notification);
+      for (const notification of this.pending.splice(0)) {
+        listener(notification);
+      }
     }
     return () => this.listeners.delete(listener);
   }
@@ -64,16 +68,22 @@ export class NotificationService {
       notification.actions.map((action) => action.type).join(","),
     ].join(":");
     const lastSeen = this.recent.get(fingerprint);
-    if (lastSeen !== undefined && now - lastSeen < 2000) return;
+    if (lastSeen !== undefined && now - lastSeen < 2000) {
+      return;
+    }
     this.recent.set(fingerprint, now);
 
     if (this.listeners.size === 0) {
       this.pending.push(notification);
-      if (this.pending.length > 20) this.pending.shift();
+      if (this.pending.length > 20) {
+        this.pending.shift();
+      }
       return;
     }
 
-    for (const listener of this.listeners) listener(notification);
+    for (const listener of this.listeners) {
+      listener(notification);
+    }
   }
 }
 

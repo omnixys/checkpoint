@@ -1,4 +1,4 @@
-import { GetMyEventCalendarDataQuery } from "@/checkpoint/generated/graphql";
+import type { GetMyEventCalendarDataQuery } from "@/checkpoint/generated/graphql";
 
 /**
  * Normalize any date into a stable day key.
@@ -32,7 +32,7 @@ export function groupEventsByDay(
       map.set(key, []);
     }
 
-    map.get(key)!.push(event);
+    map.get(key)?.push(event);
   }
 
   return map;

@@ -1,34 +1,34 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import {
-  Stack,
-  TextField,
-  Button,
-  IconButton,
-  MenuItem,
-  Typography,
-  Box,
-  Divider,
-} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
-import dayjs from "dayjs";
-import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
+import {
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  MenuItem,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { alpha, useTheme } from "@mui/material/styles";
-import { TimelineImportExport } from "@/checkpoint/components/event/settings/sections/timeline/TimelineImportExport";
-import TimelineTicketPreview from "@/checkpoint/components/event/settings/sections/timeline/TimelineTicketPreview";
+import dayjs from "dayjs";
+import { useEffect, useMemo, useState } from "react";
 import TimelineActionsToolbar from "@/checkpoint/components/event/settings/sections/timeline/TimelineActionsToolbar";
-import { TimelineDesign } from "@/checkpoint/components/event/settings/sections/timeline/TimelineRenderer";
+import { TimelineImportExport } from "@/checkpoint/components/event/settings/sections/timeline/TimelineImportExport";
+import type { TimelineDesign } from "@/checkpoint/components/event/settings/sections/timeline/TimelineRenderer";
+import TimelineTicketPreview from "@/checkpoint/components/event/settings/sections/timeline/TimelineTicketPreview";
+import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
 
-export type TimelineItem = {
+export interface TimelineItem {
   id: string;
   type: string;
   label: string;
   timestamp: string;
-};
+}
 
-type Props = {
+interface Props {
   eventName: string;
   timeline: TimelineItem[];
   actions: {
@@ -36,19 +36,19 @@ type Props = {
     updateTimeline: (items: TimelineItem[]) => Promise<unknown>;
     removeTimeline: (ids: string[]) => Promise<unknown>;
   };
-};
+}
 
-type DraftTimelineItem = {
+interface DraftTimelineItem {
   id: string;
   label: string;
   type: string;
   timestamp: string;
-};
+}
 
 const DEFAULT_TIME = "18:00";
 const DEFAULT_TYPE = "INFO";
 
-const TIMELINE_TYPE_OPTIONS = ["INFO", "PROGRAM", "CHECKIN", "CHECKOUT", "CUSTOM"] as const;
+const _TIMELINE_TYPE_OPTIONS = ["INFO", "PROGRAM", "CHECKIN", "CHECKOUT", "CUSTOM"] as const;
 
 const TICKET_DESIGN_OPTIONS: ReadonlyArray<{
   value: TimelineDesign;
@@ -264,7 +264,7 @@ export default function TimelineSection({ timeline, actions, eventName }: Props)
             </Stack>
 
             <TextField
-              select
+              select={true}
               label="Ticket Design"
               value={design}
               onChange={(e) => setDesign(e.target.value as TimelineDesign)}
@@ -319,12 +319,12 @@ export default function TimelineSection({ timeline, actions, eventName }: Props)
                   label: e.target.value,
                 }))
               }
-              fullWidth
+              fullWidth={true}
               sx={glassInputSx(theme)}
             />
 
             <TextField
-              select
+              select={true}
               label="Type"
               value={draft.type}
               onChange={(e) =>
@@ -407,12 +407,12 @@ export default function TimelineSection({ timeline, actions, eventName }: Props)
                     label: e.target.value,
                   })
                 }
-                fullWidth
+                fullWidth={true}
                 sx={glassInputSx(theme)}
               />
 
               <TextField
-                select
+                select={true}
                 label="Type"
                 value={item.type}
                 onChange={(e) =>

@@ -1,17 +1,17 @@
 "use client";
 
-import TicketCard from "@/checkpoint/components/ticket/TicketCard";
-import { PresenceState, TicketPageQuery, TicketPayload } from "@/checkpoint/generated/graphql";
-import useSeatQuery from "@/checkpoint/hooks/seat/useSeatQuery";
 import { Grid } from "@mui/material";
 import { motion } from "framer-motion";
+import TicketCard from "@/checkpoint/components/ticket/TicketCard";
+import type { TicketPageQuery } from "@/checkpoint/generated/graphql";
+import useSeatQuery from "@/checkpoint/hooks/seat/useSeatQuery";
 
-type Props = {
+interface Props {
   tickets: TicketPageQuery["ticketsByEvent"];
   onOpen: (id: string) => void;
   onDelete: (id: string) => void;
   onFilter: () => void;
-};
+}
 
 export default function TicketList({ tickets, onOpen, onDelete }: Props) {
   const { seatMap } = useSeatQuery({
@@ -19,12 +19,10 @@ export default function TicketList({ tickets, onOpen, onDelete }: Props) {
     loadSeatIdList: true,
   });
 
-  const getSeatLabel = (seatId: string) => {
-    return seatMap.get(seatId)?.label ?? "—";
-  };
+  const getSeatLabel = (seatId: string) => seatMap.get(seatId)?.label ?? "—";
   return (
     <Grid
-      container
+      container={true}
       spacing={2.4}
       component={motion.div}
       initial="hidden"

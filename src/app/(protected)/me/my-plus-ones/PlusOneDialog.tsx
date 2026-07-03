@@ -1,6 +1,5 @@
 "use client";
 
-import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 import {
@@ -25,26 +24,26 @@ import {
 } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
-
-import {
+import type {
   PlusOneAgeCategory,
   PlusOneItem,
   PlusOnePhoneNumberType,
   UpdatePlusOneInput,
 } from "@/checkpoint/app/(protected)/me/my-plus-ones/types/plusOne.types";
-import { CreatePlusOneInput } from "@/checkpoint/generated/graphql";
+import type { CreatePlusOneInput } from "@/checkpoint/generated/graphql";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
 
 type PlusOneDialogMode = "create" | "edit";
 
-type Props = {
+interface Props {
   open: boolean;
   mode: PlusOneDialogMode;
   initialValue?: PlusOneItem | null;
   onClose: () => void;
   onCreate: (input: CreatePlusOneInput) => Promise<void>;
   onUpdate: (input: UpdatePlusOneInput) => Promise<void>;
-};
+}
 
 const phoneTypeOptions: PlusOnePhoneNumberType[] = [
   "WHATSAPP",
@@ -110,7 +109,15 @@ export default function PlusOneDialog({
       ? tInvitation("plusOnes.dialog.createAction")
       : tInvitation("plusOnes.dialog.updateAction");
 
-  const phoneNumbers = useMemo<any[]>(() => {
+  const phoneNumbers = useMemo<
+    Array<{
+      countryCode: string;
+      number: string;
+      type: PlusOnePhoneNumberType;
+      label: string | null;
+      isPrimary: boolean;
+    }>
+  >(() => {
     if (!number.trim()) {
       return [];
     }
@@ -120,7 +127,7 @@ export default function PlusOneDialog({
         countryCode: countryCode.trim(),
         number: number.trim(),
         type: phoneType,
-        label: label.trim() || undefined,
+        label: label.trim() || null,
         isPrimary: true,
       },
     ];
@@ -170,7 +177,7 @@ export default function PlusOneDialog({
   };
 
   return (
-    <Dialog open={open} onClose={submitting ? undefined : onClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={submitting ? undefined : onClose} fullWidth={true} maxWidth="sm">
       <DialogTitle sx={{ pb: 1 }}>
         <MotionBox
           initial={{ opacity: 0, y: 10, scale: 0.98 }}
@@ -213,14 +220,14 @@ export default function PlusOneDialog({
                     label={tInvitation("plusOnes.fields.firstName")}
                     value={firstName}
                     onChange={(event) => setFirstName(event.target.value)}
-                    fullWidth
+                    fullWidth={true}
                     sx={glassInputSx(theme)}
                   />
                   <TextField
                     label={tInvitation("plusOnes.fields.lastName")}
                     value={lastName}
                     onChange={(event) => setLastName(event.target.value)}
-                    fullWidth
+                    fullWidth={true}
                     sx={glassInputSx(theme)}
                   />
                 </Stack>
@@ -235,7 +242,7 @@ export default function PlusOneDialog({
                   label={tInvitation("plusOnes.fields.email")}
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
-                  fullWidth
+                  fullWidth={true}
                   type="email"
                   sx={glassInputSx(theme)}
                 />
@@ -246,10 +253,10 @@ export default function PlusOneDialog({
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.09, duration: 0.2 }}
               >
-                <FormControl required fullWidth>
+                <FormControl required={true} fullWidth={true}>
                   <FormLabel>{tCommon("plusOne.ageCategory")}</FormLabel>
                   <RadioGroup
-                    row
+                    row={true}
                     value={plusOneAgeCategory}
                     onChange={(event) =>
                       setPlusOneAgeCategory(event.target.value as PlusOneAgeCategory)
@@ -311,7 +318,7 @@ export default function PlusOneDialog({
                         label={tInvitation("plusOnes.fields.countryCode")}
                         value={countryCode}
                         onChange={(event) => setCountryCode(event.target.value)}
-                        fullWidth
+                        fullWidth={true}
                         sx={glassInputSx(theme)}
                       />
 
@@ -319,20 +326,20 @@ export default function PlusOneDialog({
                         label={tInvitation("plusOnes.fields.phoneNumber")}
                         value={number}
                         onChange={(event) => setNumber(event.target.value)}
-                        fullWidth
+                        fullWidth={true}
                         sx={glassInputSx(theme)}
                       />
                     </Stack>
 
                     <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
                       <TextField
-                        select
+                        select={true}
                         label={tInvitation("plusOnes.fields.phoneType")}
                         value={phoneType}
                         onChange={(event) =>
                           setPhoneType(event.target.value as PlusOnePhoneNumberType)
                         }
-                        fullWidth
+                        fullWidth={true}
                         sx={glassInputSx(theme)}
                       >
                         {phoneTypeOptions.map((option) => (
@@ -346,7 +353,7 @@ export default function PlusOneDialog({
                         label={tInvitation("plusOnes.fields.phoneLabel")}
                         value={label}
                         onChange={(event) => setLabel(event.target.value)}
-                        fullWidth
+                        fullWidth={true}
                         sx={glassInputSx(theme)}
                       />
                     </Stack>

@@ -30,10 +30,10 @@ import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
 /**
  * Props for InvitationCreateDialog
  */
-type Props = {
+interface Props {
   logic: InvitationLogic;
   callingCodeCountries: CallingCodeCountry[];
-};
+}
 
 /**
  * Reusable section container for dialog layout
@@ -121,7 +121,9 @@ export default function InvitationCreateDialog({
    * Handles invitation creation
    */
   const handleCreate = async () => {
-    if (!isValid || loading) return;
+    if (!isValid || loading) {
+      return;
+    }
 
     try {
       setLoading(true);

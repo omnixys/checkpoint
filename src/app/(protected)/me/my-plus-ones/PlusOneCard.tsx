@@ -1,8 +1,5 @@
 "use client";
 
-import { PlusOneItem } from "@/checkpoint/app/(protected)/me/my-plus-ones/types/plusOne.types";
-import { formatEnum } from "@/checkpoint/i18n/format-enum";
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import BlockRoundedIcon from "@mui/icons-material/BlockRounded";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
@@ -14,13 +11,16 @@ import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import PhoneIphoneRoundedIcon from "@mui/icons-material/PhoneIphoneRounded";
 import { alpha, Box, Chip, IconButton, Stack, Tooltip, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
+import type { PlusOneItem } from "@/checkpoint/app/(protected)/me/my-plus-ones/types/plusOne.types";
+import { formatEnum } from "@/checkpoint/i18n/format-enum";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
-type Props = {
+interface Props {
   plusOne: PlusOneItem;
   index: number;
   onEdit: (plusOne: PlusOneItem) => void;
   onDelete: (id: string) => Promise<void>;
-};
+}
 
 const MotionBox = motion.create(Box);
 
@@ -56,7 +56,7 @@ export default function PlusOneCard({ plusOne, index, onEdit, onDelete }: Props)
       }}
       whileHover={{ y: -4, scale: 1.01 }}
       whileTap={{ scale: 0.99 }}
-      layout
+      layout={true}
       sx={{
         borderRadius: 4,
         overflow: "hidden",
@@ -116,7 +116,7 @@ export default function PlusOneCard({ plusOne, index, onEdit, onDelete }: Props)
               <Stack
                 direction="row"
                 spacing={1}
-                useFlexGap
+                useFlexGap={true}
                 sx={{
                   flexWrap: "wrap",
                 }}
@@ -172,7 +172,7 @@ export default function PlusOneCard({ plusOne, index, onEdit, onDelete }: Props)
           <Stack
             direction="row"
             spacing={1}
-            useFlexGap
+            useFlexGap={true}
             sx={{
               flexWrap: "wrap",
               alignItems: "center",

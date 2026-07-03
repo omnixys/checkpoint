@@ -1,11 +1,11 @@
 "use client";
 
-import * as React from "react";
 import createCache from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
-import { ThemeProvider, CssBaseline } from "@mui/material";
-import { createAppTheme } from "@/checkpoint/themes/createAppTheme";
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import * as React from "react";
 import { useThemeMode } from "@/checkpoint/providers/ThemeModeProvider";
+import { createAppTheme } from "@/checkpoint/themes/createAppTheme";
 
 /**
  * Emotion cache must be stable across renders
@@ -26,9 +26,7 @@ export default function ThemeRegistry({ children }: { children: React.ReactNode 
    * IMPORTANT:
    * No mounted check → must be deterministic SSR/CSR
    */
-  const theme = React.useMemo(() => {
-    return createAppTheme(mode, scheme);
-  }, [mode, scheme]);
+  const theme = React.useMemo(() => createAppTheme(mode, scheme), [mode, scheme]);
 
   return (
     <CacheProvider value={cache}>

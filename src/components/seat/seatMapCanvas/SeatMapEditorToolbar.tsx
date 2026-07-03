@@ -1,25 +1,17 @@
 "use client";
 
-import React from "react";
-import {
-  Box,
-  Divider,
-  IconButton,
-  Stack,
-  Tooltip,
-  Typography,
-} from "@mui/material";
 import {
   Add,
   AutoFixHigh,
   ContentCopy,
   DeleteOutlined,
+  DriveFileRenameOutline,
   EditOutlined,
   Redo,
   Undo,
   VisibilityOutlined,
-  DriveFileRenameOutline,
 } from "@mui/icons-material";
+import { Box, Divider, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 
 export type EditorMode = "view" | "edit";
 
@@ -44,20 +36,36 @@ interface Props {
 }
 
 function selectionLabel(items: SelectedItem[]): string | null {
-  if (items.length === 0) return null;
+  if (items.length === 0) {
+    return null;
+  }
   if (items.length === 1) {
     const s = items[0]!;
-    if (s.type === "section") return s.name;
-    if (s.type === "table") return `Tisch ${s.name}`;
+    if (s.type === "section") {
+      return s.name;
+    }
+    if (s.type === "table") {
+      return `Tisch ${s.name}`;
+    }
     return `Sitz ${s.label}`;
   }
-  const sections = items.filter((s): s is SelectedItem & { type: "section" } => s.type === "section").length;
-  const tables = items.filter((s): s is SelectedItem & { type: "table" } => s.type === "table").length;
+  const sections = items.filter(
+    (s): s is SelectedItem & { type: "section" } => s.type === "section",
+  ).length;
+  const tables = items.filter(
+    (s): s is SelectedItem & { type: "table" } => s.type === "table",
+  ).length;
   const seats = items.filter((s): s is SelectedItem & { type: "seat" } => s.type === "seat").length;
   const parts: string[] = [];
-  if (sections) parts.push(`${sections} Bereich${sections > 1 ? "e" : ""}`);
-  if (tables) parts.push(`${tables} Tisch${tables > 1 ? "e" : ""}`);
-  if (seats) parts.push(`${seats} Sitz${seats > 1 ? "plätze" : ""}`);
+  if (sections) {
+    parts.push(`${sections} Bereich${sections > 1 ? "e" : ""}`);
+  }
+  if (tables) {
+    parts.push(`${tables} Tisch${tables > 1 ? "e" : ""}`);
+  }
+  if (seats) {
+    parts.push(`${seats} Sitz${seats > 1 ? "plätze" : ""}`);
+  }
   return `${parts.join(", ")} ausgewählt`;
 }
 

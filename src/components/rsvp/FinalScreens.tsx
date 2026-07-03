@@ -1,18 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import {
   Box,
-  Stack,
-  Typography,
   Button,
   IconButton,
+  Stack,
+  Tooltip,
+  Typography,
   useMediaQuery,
   useTheme,
-  Tooltip,
 } from "@mui/material";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { motion } from "framer-motion";
+import { useState } from "react";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
 
@@ -35,10 +35,10 @@ export default function FinalScreens({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const [whDialogOpen, setWhDialogOpen] = useState(false);
+  const [_whDialogOpen, setWhDialogOpen] = useState(false);
 
   const firstName = invitation?.firstName ?? "";
-  const lastName = invitation?.lastName ?? "";
+  const _lastName = invitation?.lastName ?? "";
 
   /** Helper for copy to clipboard */
   const copyToClipboard = async (text: string) => {
@@ -59,7 +59,7 @@ export default function FinalScreens({
           sx={{
             backdropFilter: "blur(26px)",
             WebkitBackdropFilter: "blur(26px)",
-            background: theme.palette.background.paper + "BB",
+            background: `${theme.palette.background.paper}BB`,
             borderRadius: "24px",
             p: isMobile ? 3 : 4,
             boxShadow: theme.shadows[3],
@@ -123,7 +123,7 @@ export default function FinalScreens({
                           borderRadius: "16px",
                           backdropFilter: "blur(20px)",
                           WebkitBackdropFilter: "blur(20px)",
-                          background: theme.palette.background.paper + "44",
+                          background: `${theme.palette.background.paper}44`,
                           boxShadow: theme.shadows[1],
                           display: "flex",
                           flexDirection: { xs: "column", sm: "row" },
@@ -211,7 +211,7 @@ export default function FinalScreens({
         sx={{
           backdropFilter: "blur(26px)",
           WebkitBackdropFilter: "blur(26px)",
-          background: theme.palette.background.paper + "BB",
+          background: `${theme.palette.background.paper}BB`,
           borderRadius: "24px",
           p: isMobile ? 3 : 4,
           boxShadow: theme.shadows[3],

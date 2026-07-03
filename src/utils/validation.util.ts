@@ -24,7 +24,7 @@ export function validatePhoneNumber(phone: PhoneNumberInput): ValidationError[] 
   const raw = `${phone.countryCode}${phone.number}`;
   const parsed = parsePhoneNumberFromString(raw);
 
-  if (!parsed || !parsed.isValid()) {
+  if (!parsed?.isValid()) {
     errors.push({
       field: "phone",
       message: "Invalid phone number",

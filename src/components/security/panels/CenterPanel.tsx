@@ -1,10 +1,10 @@
 "use client";
 
+import { Stack } from "@mui/material";
 import SecurityAlertsRow from "@/checkpoint/components/security/SecurityAlertsRow";
 import SecurityConnectivityBadge from "@/checkpoint/components/security/SecurityConnectivityBadge";
 import SecurityLiveFeed from "@/checkpoint/components/security/SecurityLiveFeed";
 import SecurityStatusHeader from "@/checkpoint/components/security/SecurityStatusHeader";
-import { Stack } from "@mui/material";
 
 // Phase 1 components
 

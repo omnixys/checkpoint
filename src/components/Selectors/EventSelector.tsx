@@ -1,9 +1,16 @@
 "use client";
 
+import {
+  Box,
+  FormControl,
+  MenuItem,
+  Select,
+  type SelectChangeEvent,
+  Typography,
+} from "@mui/material";
+import type { JSX } from "react";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
-import { Box, FormControl, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
-import { JSX } from "react";
 
 export default function EventSelector(): JSX.Element {
   const { myEventList, activeEventId, selectEvent } = useActiveEvent();
@@ -32,7 +39,7 @@ export default function EventSelector(): JSX.Element {
 
   return (
     <Box sx={{ width: "100%", px: 2, mt: 1 }}>
-      <FormControl fullWidth size="small">
+      <FormControl fullWidth={true} size="small">
         <Select
           value={activeEventId ?? ""}
           onChange={handleChange}

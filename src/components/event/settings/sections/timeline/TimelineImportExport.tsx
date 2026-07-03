@@ -2,8 +2,8 @@
 
 import { alpha, Box, Button, Stack, Typography, useTheme } from "@mui/material";
 import dayjs from "dayjs";
-import * as XLSX from "xlsx";
-import { TimelineItem } from "../TimelineSection";
+import * as Xlsx from "xlsx";
+import type { TimelineItem } from "../TimelineSection";
 
 export function TimelineImportExport({ onImport }: { onImport: (items: TimelineItem[]) => void }) {
   const theme = useTheme();
@@ -13,12 +13,14 @@ export function TimelineImportExport({ onImport }: { onImport: (items: TimelineI
 
     if (ext === "xlsx") {
       const buffer = await file.arrayBuffer();
-      const wb = XLSX.read(buffer);
+      const wb = Xlsx.read(buffer);
       const firstSheetName = wb.SheetNames[0];
-      if (!firstSheetName) return;
+      if (!firstSheetName) {
+        return;
+      }
       const sheet = wb.Sheets[firstSheetName];
 
-      const json = XLSX.utils.sheet_to_json<any>(sheet || {});
+      const json = Xlsx.utils.sheet_to_json<any>(sheet || {});
 
       const items = json.map((row) => ({
         id: crypto.randomUUID(),
@@ -39,7 +41,9 @@ export function TimelineImportExport({ onImport }: { onImport: (items: TimelineI
       .map((row) => {
         const [label, type, time] = row.split(",");
 
-        if (!label || !time) return null;
+        if (!label || !time) {
+          return null;
+        }
 
         return {
           id: crypto.randomUUID(),
@@ -71,12 +75,14 @@ export function TimelineImportExport({ onImport }: { onImport: (items: TimelineI
         <Button component="label" variant="contained">
           Upload CSV / Excel
           <input
-            hidden
+            hidden={true}
             type="file"
             accept=".csv,.xlsx"
             onChange={(e) => {
               const file = e.target.files?.[0];
-              if (file) handleFile(file);
+              if (file) {
+                handleFile(file);
+              }
             }}
           />
         </Button>

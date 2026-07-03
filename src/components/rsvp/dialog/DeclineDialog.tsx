@@ -1,14 +1,14 @@
 "use client";
 
-import {
-  ReplyInvitationMutation,
-  ReplyInvitationMutationVariables,
-  ReplyInvitationDocument,
-} from "@/checkpoint/generated/graphql";
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { useMutation } from "@apollo/client/react";
 import { Button, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
+import {
+  ReplyInvitationDocument,
+  type ReplyInvitationMutation,
+  type ReplyInvitationMutationVariables,
+} from "@/checkpoint/generated/graphql";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 /**
  * DeclineDialog
@@ -69,7 +69,7 @@ export default function DeclineDialog({
         zIndex: 9999,
         backdropFilter: "blur(28px)",
         WebkitBackdropFilter: "blur(28px)",
-        background: theme.palette.background.paper + "CC",
+        background: `${theme.palette.background.paper}CC`,
         borderRadius: "24px",
         padding: "32px 40px",
         boxShadow: theme.shadows[6],
@@ -138,7 +138,7 @@ export default function DeclineDialog({
         zIndex: 9999,
         backdropFilter: "blur(28px)",
         WebkitBackdropFilter: "blur(28px)",
-        background: theme.palette.background.paper + "DD",
+        background: `${theme.palette.background.paper}DD`,
         padding: "32px 24px",
         display: "flex",
         flexDirection: "column",
@@ -166,7 +166,7 @@ export default function DeclineDialog({
         </Typography>
 
         <Button
-          fullWidth
+          fullWidth={true}
           variant="contained"
           color="error"
           disabled={loading}
@@ -182,7 +182,7 @@ export default function DeclineDialog({
         </Button>
 
         <Button
-          fullWidth
+          fullWidth={true}
           variant="text"
           onClick={onCancel}
           sx={{

@@ -1,9 +1,9 @@
-import {
-  AutocompleteAddressQuery,
-  AutocompleteAddressQueryVariables,
-  AutocompleteAddressDocument,
-} from "@/checkpoint/generated/graphql";
 import { useLazyQuery } from "@apollo/client/react";
+import {
+  AutocompleteAddressDocument,
+  type AutocompleteAddressQuery,
+  type AutocompleteAddressQueryVariables,
+} from "@/checkpoint/generated/graphql";
 
 export function useAddressAutocomplete() {
   return useLazyQuery<AutocompleteAddressQuery, AutocompleteAddressQueryVariables>(

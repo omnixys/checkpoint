@@ -11,26 +11,25 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { JSX, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import { createNavigation } from "../navigation.config";
 import { motion } from "framer-motion";
-import { getRoleColor, isActiveNavItem } from "./navigation.util";
-import { useAuth } from "@/checkpoint/providers/AuthProvider";
-import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
-import EventSelector from "@/checkpoint/components/Selectors/EventSelector";
-import { env } from "@/checkpoint/lib/env";
-import LanguageSwitcher from "@/checkpoint/components/LanguageSwitcher";
+import { usePathname, useRouter } from "next/navigation";
+import { type JSX, useState } from "react";
 import ColorBubbleSwitcher from "@/checkpoint/components/ColorBubbleSwitcher";
+import LanguageSwitcher from "@/checkpoint/components/LanguageSwitcher";
+import EventSelector from "@/checkpoint/components/Selectors/EventSelector";
 import ThemeToggleButton from "@/checkpoint/components/ThemeToggleButton";
 import UserMenu from "@/checkpoint/components/UserMenu";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
+import { useAuth } from "@/checkpoint/providers/AuthProvider";
+import { createNavigation } from "../navigation.config";
+import { getRoleColor, isActiveNavItem } from "./navigation.util";
 
 export default function NavigationTablet(): JSX.Element {
   const theme = useTheme();
   const t = useTypedTranslations("layout");
 
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, _setCollapsed] = useState(false);
   const { isAuthenticated } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -51,7 +50,7 @@ export default function NavigationTablet(): JSX.Element {
       }}
     >
       <Stack
-        direction={"row"}
+        direction="row"
         spacing={0.0001}
         sx={{
           alignItems: "center",

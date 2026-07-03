@@ -1,21 +1,15 @@
+import { useQuery } from "@apollo/client/react";
 import {
   EventGuestIdListDocument,
-  EventGuestIdListQuery,
-  EventGuestIdListQueryVariables,
+  type EventGuestIdListQuery,
+  type EventGuestIdListQueryVariables,
   GetGuestListDocument,
-  GetGuestListQuery,
-  GetGuestListQueryVariables,
+  type GetGuestListQuery,
+  type GetGuestListQueryVariables,
   GetSecurityGuestInfoDocument,
-  GetSecurityGuestInfoQuery,
-  GetSecurityGuestInfoQueryVariables,
-  GetUserListDocument,
-  GetUserListQuery,
-  GetUserListQueryVariables,
-  MePageDocument,
-  MePageQuery,
-  MePageQueryVariables,
+  type GetSecurityGuestInfoQuery,
+  type GetSecurityGuestInfoQueryVariables,
 } from "@/checkpoint/generated/graphql";
-import { useQuery } from "@apollo/client/react";
 
 interface Props {
   eventId?: string | undefined;
@@ -46,7 +40,7 @@ export default function useGuestQuery({
     GetGuestListDocument,
     {
       variables: { guestIdList: eventGuestIdList! },
-      skip: !eventGuestIdList || !eventGuestIdList.length,
+      skip: !eventGuestIdList || eventGuestIdList.length === 0,
       fetchPolicy: "cache-and-network",
     },
   );

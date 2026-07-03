@@ -4,7 +4,7 @@ import EventHeaderA from "@/checkpoint/components/event/details/header/EventHead
 import EventHeaderB from "@/checkpoint/components/event/details/header/EventHeaderB";
 import EventHeaderC from "@/checkpoint/components/event/details/header/EventHeaderC";
 import EventHeaderD from "@/checkpoint/components/event/details/header/EventHeaderD";
-import { EventVariant } from "@/checkpoint/hooks/events/useEventVariant";
+import type { EventVariant } from "@/checkpoint/hooks/events/useEventVariant";
 
 /**
  * Factory for rendering event headers.
@@ -14,10 +14,10 @@ import { EventVariant } from "@/checkpoint/hooks/events/useEventVariant";
  * - Central place for variant control
  * - Scalable for future variants
  */
-type Props = {
+interface Props {
   ev: any;
   variant: EventVariant;
-};
+}
 
 export default function EventHeaderFactory({ ev, variant }: Props) {
   switch (variant) {

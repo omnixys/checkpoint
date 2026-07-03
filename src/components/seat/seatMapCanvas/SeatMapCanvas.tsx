@@ -1,15 +1,15 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { SeatMapViewQuery } from "@/checkpoint/generated/graphql";
-import type { SeatListQuery } from "@/checkpoint/generated/graphql";
+import { FitScreen, ZoomIn, ZoomOut } from "@mui/icons-material";
 import { Box, Chip, IconButton, LinearProgress, Stack, Tooltip } from "@mui/material";
-import { ZoomIn, ZoomOut, FitScreen } from "@mui/icons-material";
-import SeatNode from "./SeatNode";
+import type React from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { SeatListQuery, SeatMapViewQuery } from "@/checkpoint/generated/graphql";
 import SeatMapDebugOverlay from "./SeatMapDebugOverlay";
 import type { SelectedItem } from "./SeatMapEditorToolbar";
+import SeatNode from "./SeatNode";
 
-type Props = {
+interface Props {
   sections: SeatMapViewQuery["seatLayout"];
   presenceMap: Map<string, NonNullable<SeatMapViewQuery["seatPresencesByEvent"]>[number]>;
   seats: SeatListQuery["seats"];
@@ -28,23 +28,29 @@ type Props = {
   onMoveSeat?: (seatId: string, x: number, y: number) => void;
   onMoveTable?: (tableId: string, x: number, y: number) => void;
   onMoveSection?: (sectionId: string, x: number, y: number) => void;
-};
+}
 
-type DragState = {
+interface DragState {
   type: "section" | "table" | "seat";
   id: string;
   startMouseX: number;
   startMouseY: number;
   startX: number;
   startY: number;
-};
+}
 
 const MIN_ZOOM = 0.1;
 const MAX_ZOOM = 5;
 const ZOOM_STEP = 0.1;
 
-function isSelected(selectedItems: SelectedItem[] | undefined, type: SelectedItem["type"], id: string): boolean {
-  if (!selectedItems) return false;
+function isSelected(
+  selectedItems: SelectedItem[] | undefined,
+  type: SelectedItem["type"],
+  id: string,
+): boolean {
+  if (!selectedItems) {
+    return false;
+  }
   return selectedItems.some((s) => s.type === type && s.id === id);
 }
 
@@ -52,7 +58,6 @@ export default function SeatMapCanvas({
   sections,
   presenceMap,
   seats,
-  seatGuestMap,
   getSeatHolderLabel,
   loading,
   highlightedSeatIds,
@@ -105,7 +110,10 @@ export default function SeatMapCanvas({
   }, [seats, getSeatHolderLabel]);
 
   const bounds = useMemo(() => {
-    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    let minX = Number.POSITIVE_INFINITY;
+    let minY = Number.POSITIVE_INFINITY;
+    let maxX = Number.NEGATIVE_INFINITY;
+    let maxY = Number.NEGATIVE_INFINITY;
     for (const section of sections) {
       const cx = section.x ?? 0;
       const cy = section.y ?? 0;
@@ -130,12 +138,16 @@ export default function SeatMapCanvas({
         }
       }
     }
-    if (!isFinite(minX)) return null;
+    if (!Number.isFinite(minX)) {
+      return null;
+    }
     return { minX, minY, width: maxX - minX + 60, height: maxY - minY + 60 };
   }, [sections]);
 
   const fitToScreen = useCallback(() => {
-    if (!bounds || !containerRef.current) return;
+    if (!bounds || !containerRef.current) {
+      return;
+    }
     const cw = containerRef.current.clientWidth;
     const ch = containerRef.current.clientHeight;
     const sx = cw / bounds.width;
@@ -164,11 +176,26 @@ export default function SeatMapCanvas({
   // ── Drag handling ──
 
   const onItemMouseDown = useCallback(
-    (e: React.MouseEvent, type: DragState["type"], id: string, currentX: number, currentY: number) => {
-      if (!isEditing) return;
+    (
+      e: React.MouseEvent,
+      type: DragState["type"],
+      id: string,
+      currentX: number,
+      currentY: number,
+    ) => {
+      if (!isEditing) {
+        return;
+      }
       e.stopPropagation();
       e.preventDefault();
-      setDragState({ type, id, startMouseX: e.clientX, startMouseY: e.clientY, startX: currentX, startY: currentY });
+      setDragState({
+        type,
+        id,
+        startMouseX: e.clientX,
+        startMouseY: e.clientY,
+        startX: currentX,
+        startY: currentY,
+      });
       setDragOffset({ x: 0, y: 0 });
     },
     [isEditing],
@@ -176,8 +203,12 @@ export default function SeatMapCanvas({
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
-      if (e.button !== 0) return;
-      if (dragState) return;
+      if (e.button !== 0) {
+        return;
+      }
+      if (dragState) {
+        return;
+      }
 
       setDragging(true);
       dragStart.current = { x: e.clientX, y: e.clientY };
@@ -200,7 +231,9 @@ export default function SeatMapCanvas({
       const cy = (e.clientY - rect.top - translate.y) / scale;
       setMouseCanvasPos({ x: cx, y: cy });
 
-      if (!dragging) return;
+      if (!dragging) {
+        return;
+      }
       const dx = e.clientX - dragStart.current.x;
       const dy = e.clientY - dragStart.current.y;
       setTranslate({
@@ -230,8 +263,16 @@ export default function SeatMapCanvas({
   }, [dragState, dragOffset, onMoveSeat, onMoveTable, onMoveSection]);
 
   const handleItemClick = useCallback(
-    (e: React.MouseEvent, type: SelectedItem["type"], id: string, name: string, sectionId?: string) => {
-      if (!isEditing || !onSelectItem) return;
+    (
+      e: React.MouseEvent,
+      type: SelectedItem["type"],
+      id: string,
+      name: string,
+      sectionId?: string,
+    ) => {
+      if (!isEditing || !onSelectItem) {
+        return;
+      }
       e.stopPropagation();
 
       const item: SelectedItem =
@@ -288,7 +329,13 @@ export default function SeatMapCanvas({
         overflow: "hidden",
         position: "relative",
         bgcolor: "action.hover",
-        cursor: isDraggingItem ? "grabbing" : dragging ? "grabbing" : isEditing ? "default" : "grab",
+        cursor: isDraggingItem
+          ? "grabbing"
+          : dragging
+            ? "grabbing"
+            : isEditing
+              ? "default"
+              : "grab",
         userSelect: "none",
       }}
       ref={containerRef}
@@ -496,7 +543,10 @@ export default function SeatMapCanvas({
     </Box>
   );
 
-  function renderSeat(seat: SeatMapViewQuery["seatLayout"][number]["seats"][number], sectionId: string) {
+  function renderSeat(
+    seat: SeatMapViewQuery["seatLayout"][number]["seats"][number],
+    _sectionId: string,
+  ) {
     const isDraggingSeat = dragState?.type === "seat" && dragState.id === seat.id;
     const seatDragOffset = isDraggingSeat ? dragOffset : { x: 0, y: 0 };
     const seatX = (seat.x ?? 0) + seatDragOffset.x;
@@ -514,7 +564,7 @@ export default function SeatMapCanvas({
         presence={presenceMap.get(seat.id) ?? null}
         isOccupied={occupiedSeatIds.has(seat.id)}
         occupantName={ownerMap.get(seat.id) ?? undefined}
-        highlighted={hasFilter ? highlightedSeatIds?.has(seat.id) ?? false : undefined}
+        highlighted={hasFilter ? (highlightedSeatIds?.has(seat.id) ?? false) : undefined}
         role={role}
         isOwnSeat={ownSeatIds?.has(seat.id) ?? false}
         isEditing={isEditing}

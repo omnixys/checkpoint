@@ -1,13 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-
 import { useApolloClient } from "@apollo/client/react";
-import { CurrentUserQuery, UserPayload } from "@/checkpoint/generated/graphql";
-import { setCurrentUser } from "@/checkpoint/lib/apollo/auth-context";
-import { AuthManager, AuthEventsBus } from "@/checkpoint/lib/auth/AuthManager";
-import { CurrentUser } from "@/checkpoint/lib/auth/auth.types";
+import type React from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import type { CurrentUserQuery } from "@/checkpoint/generated/graphql";
 import useMeQuery from "@/checkpoint/hooks/user/useMeQuery";
+import { setCurrentUser } from "@/checkpoint/lib/apollo/auth-context";
+import { AuthEventsBus, AuthManager } from "@/checkpoint/lib/auth/AuthManager";
 
 /* -------------------------------------------------------------------------- */
 /* Types                                                                      */
@@ -85,7 +84,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   /* ------------------------------------------------------------------------ */
 
   useEffect(() => {
-    if (!currentUser) return;
+    if (!currentUser) {
+      return;
+    }
 
     /**
      * This is REQUIRED for:
@@ -170,7 +171,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   /* ------------------------------------------------------------------------ */
 
   const value = {
-    ...(currentUser !== undefined ? { currentUser } : {}),
+    ...(currentUser === undefined ? {} : { currentUser }),
     isAuthenticated: !!authUser,
     currentUserLoading,
     logout,

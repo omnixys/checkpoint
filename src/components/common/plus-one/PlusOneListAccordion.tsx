@@ -21,12 +21,12 @@ import {
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import type { NormalizedPlusOne } from "@/checkpoint/types/event.type";
 
-type Props = {
+interface Props {
   values: NormalizedPlusOne[];
   onAdd: () => void;
   onEdit: (index: number) => void;
   onRemove: (index: number) => void;
-};
+}
 
 export default function PlusOneListAccordion({ values, onAdd, onEdit, onRemove }: Props) {
   const theme = useTheme();
@@ -85,7 +85,11 @@ export default function PlusOneListAccordion({ values, onAdd, onEdit, onRemove }
                   {p.firstName || t("plusOne.guest")} {p.lastName}
                 </Typography>
 
-                <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: "anywhere" }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ overflowWrap: "anywhere" }}
+                >
                   {p.email || t("plusOne.noEmail")}
                 </Typography>
 

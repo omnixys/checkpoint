@@ -1,24 +1,24 @@
 "use client";
 
-import { TimelineDesign } from "@/checkpoint/components/event/settings/sections/timeline/TimelineRenderer";
 import { Box, Stack, Typography } from "@mui/material";
 import dayjs from "dayjs";
-import QRCode from "qrcode";
+import QrCode from "qrcode";
 import { useEffect, useState } from "react";
+import type { TimelineDesign } from "@/checkpoint/components/event/settings/sections/timeline/TimelineRenderer";
 
-export type TimelineItem = {
+export interface TimelineItem {
   id: string;
   type: string;
   label: string;
   timestamp: string;
-};
+}
 
-type Props = {
+interface Props {
   items: TimelineItem[];
   title?: string | undefined;
   design?: TimelineDesign | undefined;
   qrValue?: string;
-};
+}
 
 /**
  * TicketRenderer
@@ -30,8 +30,10 @@ export function TimelineTicketRenderer({ items, title, design = "vip", qrValue }
   const [qr, setQr] = useState<string>();
 
   useEffect(() => {
-    if (!qrValue) return;
-    QRCode.toDataURL(qrValue).then(setQr);
+    if (!qrValue) {
+      return;
+    }
+    QrCode.toDataURL(qrValue).then(setQr);
   }, [qrValue]);
 
   const sorted = [...items].sort(

@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import type { EventSelectionNode } from "@/checkpoint/hooks/events/useEventSelection";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
-type Props = {
+interface Props {
   rootEventId: string;
   rootEventName: string;
   events: EventSelectionNode[];
@@ -13,15 +13,15 @@ type Props = {
   isChildSelected: (childId: string) => boolean;
   onToggleRoot: () => void;
   onToggleChild: (childId: string) => void;
-};
+}
 
-type SelectionCardProps = {
+interface SelectionCardProps {
   checked: boolean;
   indeterminate?: boolean;
   label: string;
   onChange: () => void;
   subtitle: string;
-};
+}
 
 function SelectionCard({
   checked,

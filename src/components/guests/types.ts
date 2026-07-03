@@ -1,13 +1,13 @@
 // app/security/guests/types.ts
 
-import { GetFullSeatInfoQuery } from "@/checkpoint/generated/graphql";
-import { StripMeta } from "@/checkpoint/types/core/core.type";
+import type { GetFullSeatInfoQuery } from "@/checkpoint/generated/graphql";
+import type { StripMeta } from "@/checkpoint/types/core/core.type";
 
 export type GuestStatus = "NOT_ARRIVED" | "CHECKED_IN";
 export type Presence = "INSIDE" | "OUTSIDE";
 export type Filter = "ALL" | GuestStatus | Presence;
 
-export type GuestDTO = {
+export interface GuestDTO {
   ticketId: string;
   guestId: string;
 
@@ -19,6 +19,6 @@ export type GuestDTO = {
   presence: Presence;
 
   checkedInAt?: string;
-};
+}
 
 export type fullSeatInfo = StripMeta<GetFullSeatInfoQuery["seat"]>;

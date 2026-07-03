@@ -1,6 +1,6 @@
-import { Metadata } from "next";
-import { AppMetadata } from "./types";
+import type { Metadata } from "next";
 import { baseMetadata } from "@/checkpoint/lib/metadata/base.metadata";
+import type { AppMetadata } from "./types";
 
 /**
  * -------------------------------------------------------------

@@ -27,8 +27,6 @@ export function createMutationUpdater<TData>(updater: SafeUpdater<TData>): SafeU
   return (cache, result, options) => {
     try {
       updater(cache, result, options);
-    } catch (err) {
-      console.error("[CACHE UPDATE ERROR]", err);
-    }
+    } catch (_err) {}
   };
 }

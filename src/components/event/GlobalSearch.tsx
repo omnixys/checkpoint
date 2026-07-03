@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
-import { Box, Modal, TextField, Stack, Typography, useTheme, alpha } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import { alpha, Box, Modal, Stack, TextField, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
+import React from "react";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 export default function GlobalSearch() {
@@ -26,46 +26,44 @@ export default function GlobalSearch() {
   }, []);
 
   return (
-    <>
-      <Modal open={open} onClose={() => setOpen(false)}>
-        <Box
-          component={motion.div}
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          sx={{
-            position: "absolute",
-            top: "15%",
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: "90%",
-            maxWidth: 500,
-            bgcolor: alpha(theme.palette.background.paper, 0.4),
-            backdropFilter: "blur(20px)",
-            borderRadius: "20px",
-            boxShadow: theme.shadows[10],
-            p: 3,
-          }}
-        >
-          <Stack spacing={2}>
-            <Typography variant="h6" sx={{ fontWeight: 700 }}>
-              {t("search.title")}
-            </Typography>
+    <Modal open={open} onClose={() => setOpen(false)}>
+      <Box
+        component={motion.div}
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        sx={{
+          position: "absolute",
+          top: "15%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "90%",
+          maxWidth: 500,
+          bgcolor: alpha(theme.palette.background.paper, 0.4),
+          backdropFilter: "blur(20px)",
+          borderRadius: "20px",
+          boxShadow: theme.shadows[10],
+          p: 3,
+        }}
+      >
+        <Stack spacing={2}>
+          <Typography variant="h6" sx={{ fontWeight: 700 }}>
+            {t("search.title")}
+          </Typography>
 
-            <TextField
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={t("search.placeholder")}
-              autoFocus
-              slotProps={{
-                input: {
-                  startAdornment: <SearchIcon sx={{ mr: 1 }} />,
-                  sx: { borderRadius: 3 },
-                },
-              }}
-            />
-          </Stack>
-        </Box>
-      </Modal>
-    </>
+          <TextField
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t("search.placeholder")}
+            autoFocus={true}
+            slotProps={{
+              input: {
+                startAdornment: <SearchIcon sx={{ mr: 1 }} />,
+                sx: { borderRadius: 3 },
+              },
+            }}
+          />
+        </Stack>
+      </Box>
+    </Modal>
   );
 }

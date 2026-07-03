@@ -1,21 +1,14 @@
 "use client";
 
+import { useLazyQuery, useQuery } from "@apollo/client/react";
 import {
-  CreateEventAddressDocument,
-  CreateEventAddressMutation,
-  CreateEventAddressMutationVariables,
-  DeleteEventAddressByEventIdDocument,
-  DeleteEventAddressByEventIdMutation,
-  DeleteEventAddressByEventIdMutationVariables,
   GetEventAddressesByEventIdDocument,
-  GetEventAddressesByEventIdQuery,
-  GetEventAddressesByEventIdQueryVariables,
+  type GetEventAddressesByEventIdQuery,
+  type GetEventAddressesByEventIdQueryVariables,
   GetGeoLocationInfoDocument,
-  GetGeoLocationInfoQuery,
-  GetGeoLocationInfoQueryVariables,
+  type GetGeoLocationInfoQuery,
+  type GetGeoLocationInfoQueryVariables,
 } from "@/checkpoint/generated/graphql";
-
-import { useMutation, useLazyQuery, useQuery } from "@apollo/client/react";
 
 /**
  * -------------------------------------------------------------

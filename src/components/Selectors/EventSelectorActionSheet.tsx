@@ -1,9 +1,9 @@
 "use client";
 
-import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { Box, Fade, TextField, Typography } from "@mui/material";
 import { animated, useSpring } from "@react-spring/web";
-import React, { JSX } from "react";
+import React, { type JSX } from "react";
+import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 
 interface Props {
   open: boolean;
@@ -85,7 +85,7 @@ export default function EventSelectorActionSheet({ open, onClose }: Props): JSX.
 
           {/* Search */}
           <TextField
-            fullWidth
+            fullWidth={true}
             placeholder="Event suchen"
             value={search}
             onChange={(e) => setSearch(e.target.value)}

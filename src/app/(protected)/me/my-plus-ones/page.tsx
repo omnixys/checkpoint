@@ -1,14 +1,5 @@
 "use client";
 
-import PlusOneCard from "@/checkpoint/app/(protected)/me/my-plus-ones/PlusOneCard";
-import PlusOneDialog from "@/checkpoint/app/(protected)/me/my-plus-ones/PlusOneDialog";
-import { usePlusOnes } from "@/checkpoint/app/(protected)/me/my-plus-ones/hooks/usePlusOnes";
-import type {
-  PlusOneItem,
-  UpdatePlusOneInput,
-} from "@/checkpoint/app/(protected)/me/my-plus-ones/types/plusOne.types";
-import { CreatePlusOneInput } from "@/checkpoint/generated/graphql";
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import DeleteSweepRoundedIcon from "@mui/icons-material/DeleteSweepRounded";
 import EventSeatRoundedIcon from "@mui/icons-material/EventSeatRounded";
@@ -25,6 +16,15 @@ import {
 } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 import { useMemo, useState } from "react";
+import { usePlusOnes } from "@/checkpoint/app/(protected)/me/my-plus-ones/hooks/usePlusOnes";
+import PlusOneCard from "@/checkpoint/app/(protected)/me/my-plus-ones/PlusOneCard";
+import PlusOneDialog from "@/checkpoint/app/(protected)/me/my-plus-ones/PlusOneDialog";
+import type {
+  PlusOneItem,
+  UpdatePlusOneInput,
+} from "@/checkpoint/app/(protected)/me/my-plus-ones/types/plusOne.types";
+import type { CreatePlusOneInput } from "@/checkpoint/generated/graphql";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 const MotionBox = motion.create(Box);
 
@@ -48,9 +48,10 @@ export default function MyPlusOnesPage() {
 
   const usedSlots = plusOnes?.length;
 
-  const seatsAssigned = useMemo(() => {
-    return plusOnes?.filter((entry: any) => entry.seat?.label).length;
-  }, [plusOnes]);
+  const seatsAssigned = useMemo(
+    () => plusOnes?.filter((entry) => entry.seat?.label).length,
+    [plusOnes],
+  );
 
   const openCreateDialog = (): void => {
     setEditingPlusOne(null);
@@ -255,7 +256,7 @@ export default function MyPlusOnesPage() {
                 startIcon={<AddRoundedIcon />}
                 onClick={openCreateDialog}
                 disabled={!hasRootInvitation || remaining <= 0}
-                fullWidth
+                fullWidth={true}
               >
                 {t("plusOnes.add")}
               </Button>
@@ -267,7 +268,7 @@ export default function MyPlusOnesPage() {
                 startIcon={<DeleteSweepRoundedIcon />}
                 onClick={() => void removeAllPlusOnes()}
                 disabled={!hasRootInvitation || plusOnes?.length === 0}
-                fullWidth
+                fullWidth={true}
               >
                 {t("plusOnes.removeAll")}
               </Button>
@@ -289,7 +290,47 @@ export default function MyPlusOnesPage() {
             <CircularProgress />
             <Typography color="text.secondary">{t("plusOnes.loading")}</Typography>
           </Stack>
-        ) : !hasRootInvitation ? (
+        ) : hasRootInvitation ? (
+          plusOnes?.length === 0 ? (
+            <MotionBox
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2 }}
+              sx={{
+                borderRadius: 4,
+                p: 3,
+                border: `1px solid ${alpha(theme.palette.divider, 0.8)}`,
+                backgroundColor: alpha(theme.palette.background.paper, 0.75),
+              }}
+            >
+              <Stack spacing={1.2}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontWeight: 700,
+                  }}
+                >
+                  {t("plusOnes.emptyTitle")}
+                </Typography>
+                <Typography color="text.secondary">{t("plusOnes.emptyDescription")}</Typography>
+              </Stack>
+            </MotionBox>
+          ) : (
+            <Stack spacing={1.5}>
+              <AnimatePresence mode="popLayout">
+                {plusOnes?.map((plusOne, index) => (
+                  <PlusOneCard
+                    key={plusOne.id}
+                    plusOne={plusOne}
+                    index={index}
+                    onEdit={openEditDialog}
+                    onDelete={removePlusOne}
+                  />
+                ))}
+              </AnimatePresence>
+            </Stack>
+          )
+        ) : (
           <Box
             sx={{
               borderRadius: 4,
@@ -310,44 +351,6 @@ export default function MyPlusOnesPage() {
               {t("plusOnes.noInvitationDescription")}
             </Typography>
           </Box>
-        ) : plusOnes?.length === 0 ? (
-          <MotionBox
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
-            sx={{
-              borderRadius: 4,
-              p: 3,
-              border: `1px solid ${alpha(theme.palette.divider, 0.8)}`,
-              backgroundColor: alpha(theme.palette.background.paper, 0.75),
-            }}
-          >
-            <Stack spacing={1.2}>
-              <Typography
-                variant="h6"
-                sx={{
-                  fontWeight: 700,
-                }}
-              >
-                {t("plusOnes.emptyTitle")}
-              </Typography>
-              <Typography color="text.secondary">{t("plusOnes.emptyDescription")}</Typography>
-            </Stack>
-          </MotionBox>
-        ) : (
-          <Stack spacing={1.5}>
-            <AnimatePresence mode="popLayout">
-              {plusOnes?.map((plusOne: any, index: any) => (
-                <PlusOneCard
-                  key={plusOne.id}
-                  plusOne={plusOne}
-                  index={index}
-                  onEdit={openEditDialog}
-                  onDelete={removePlusOne}
-                />
-              ))}
-            </AnimatePresence>
-          </Stack>
         )}
       </Stack>
 

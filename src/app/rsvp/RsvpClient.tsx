@@ -186,7 +186,7 @@ export default function RsvpClient({
     loadPublicEventTree: true,
   });
 
-  const { createPublicInvitation, publicRsvpError, publicRsvpLoading } = usePublicRsvpMutation({});
+  const { createPublicInvitation, publicRsvpError, publicRsvpLoading } = usePublicRsvpMutation();
 
   const childEvents: EventSelectionNode[] = useMemo(() => {
     const children = publicEventTree?.subEvents?.filter((child) => child.id !== eventId);
@@ -201,12 +201,16 @@ export default function RsvpClient({
   }, [eventId, publicEventTree]);
 
   const selectedPhone = useMemo(() => {
-    if (phoneDialogIndex === null) return null;
+    if (phoneDialogIndex === null) {
+      return null;
+    }
     return phoneNumbers[phoneDialogIndex] ?? null;
   }, [phoneDialogIndex, phoneNumbers]);
 
   const selectedPlusOne = useMemo(() => {
-    if (plusOneDialogIndex === null) return null;
+    if (plusOneDialogIndex === null) {
+      return null;
+    }
     return plusOnes[plusOneDialogIndex] ?? null;
   }, [plusOneDialogIndex, plusOnes]);
 
@@ -465,10 +469,10 @@ export default function RsvpClient({
         title={t("public.guestNoteTitle")}
       >
         <TextField
-          fullWidth
+          fullWidth={true}
           label={t("public.guestNoteLabel")}
           minRows={4}
-          multiline
+          multiline={true}
           value={guestNote}
           onChange={(event) => setGuestNote(event.target.value)}
         />

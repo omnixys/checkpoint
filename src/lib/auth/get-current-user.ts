@@ -1,11 +1,5 @@
-import {
-  MeQuery,
-  MeDocument,
-  CurrentUserQuery,
-  CurrentUserDocument,
-} from "@/checkpoint/generated/graphql";
+import { CurrentUserDocument, type CurrentUserQuery } from "@/checkpoint/generated/graphql";
 import { createServerClient } from "@/checkpoint/lib/apollo/server-client";
-import { CurrentUser } from "@/checkpoint/lib/auth/auth.types";
 
 /**
  * Fetches current authenticated user via SSR.
@@ -25,7 +19,9 @@ export async function getCurrentUser() {
       fetchPolicy: "cache-first",
     });
 
-    if (!data?.me) return null;
+    if (!data?.me) {
+      return null;
+    }
 
     return data.me;
   } catch {

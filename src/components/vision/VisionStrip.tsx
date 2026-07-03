@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
 import { Box } from "@mui/material";
+import type React from "react";
+import { useEffect, useRef } from "react";
 
 export default function VisionStrip({ children }: { children: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -9,7 +10,9 @@ export default function VisionStrip({ children }: { children: React.ReactNode })
   // Smooth swipe inertia + snap-to-center
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el) {
+      return;
+    }
 
     el.style.scrollSnapType = "x mandatory";
     el.style.scrollBehavior = "smooth";
@@ -28,7 +31,9 @@ export default function VisionStrip({ children }: { children: React.ReactNode })
     const up = () => (isDown = false);
 
     const move = (e: any) => {
-      if (!isDown) return;
+      if (!isDown) {
+        return;
+      }
       e.preventDefault();
       const x = e.pageX - el.offsetLeft;
       const walk = (x - startX) * 1.2; // inertia multiplier

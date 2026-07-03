@@ -1,10 +1,10 @@
 "use client";
 
-import { useField } from "@/checkpoint/app/(protected)/event/new/hooks/useField";
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
 import { Box, Stack, TextField, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
+import { useField } from "@/checkpoint/app/(protected)/event/new/hooks/useField";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 export default function BasicsStep() {
   const theme = useTheme();
@@ -39,20 +39,30 @@ export default function BasicsStep() {
 
       {/* FORM */}
       <Stack spacing={3}>
-        <TextField label={t("basics.name")} fullWidth {...name} />
+        <TextField label={t("basics.name")} fullWidth={true} {...name} />
 
         <TextField
           label={t("basics.description")}
-          multiline
+          multiline={true}
           minRows={3}
-          fullWidth
+          fullWidth={true}
           {...description}
         />
 
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-          <TextField type="datetime-local" label={t("basics.startsAt")} fullWidth {...startsAt} />
+          <TextField
+            type="datetime-local"
+            label={t("basics.startsAt")}
+            fullWidth={true}
+            {...startsAt}
+          />
 
-          <TextField type="datetime-local" label={t("basics.endsAt")} fullWidth {...endsAt} />
+          <TextField
+            type="datetime-local"
+            label={t("basics.endsAt")}
+            fullWidth={true}
+            {...endsAt}
+          />
         </Stack>
       </Stack>
     </Box>

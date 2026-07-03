@@ -1,11 +1,11 @@
 "use client";
 
-import { Tabs, Tab, Box, Stack, Tooltip, IconButton } from "@mui/material";
+import ArrowCircleLeftIcon from "@mui/icons-material/ArrowCircleLeft";
+import { Box, IconButton, Stack, Tab, Tabs, Tooltip } from "@mui/material";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useState } from "react";
-import ArrowCircleLeftIcon from "@mui/icons-material/ArrowCircleLeft";
 import { useParams } from "next/navigation";
+import { useState } from "react";
 
 type TabKey = "meta" | "settings" | "timeline" | "roles" | "address";
 
@@ -25,15 +25,15 @@ export default function EventSettingsLayout({
 
   return (
     <Stack spacing={2}>
-      <Stack spacing={2} direction={"row"}>
-        <Link href={`/event/${id}`} passHref>
-          <Tooltip title={"Zurück zum Event"}>
+      <Stack spacing={2} direction="row">
+        <Link href={`/event/${id}`} passHref={true}>
+          <Tooltip title="Zurück zum Event">
             <motion.div
               transition={{ duration: 0.25, ease: "easeInOut" }}
               whileTap={{ scale: 0.9 }}
             >
               <IconButton>
-                <ArrowCircleLeftIcon fontSize="large" color={"primary"} />
+                <ArrowCircleLeftIcon fontSize="large" color="primary" />
               </IconButton>
             </motion.div>
           </Tooltip>

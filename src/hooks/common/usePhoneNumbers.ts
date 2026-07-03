@@ -4,7 +4,7 @@
 
 import { useCallback, useState } from "react";
 import { DEFAULT_PHONE_TYPE } from "@/checkpoint/constants/phone-number.constants";
-import { PhoneNumberInput } from "@/checkpoint/generated/graphql";
+import type { PhoneNumberInput } from "@/checkpoint/generated/graphql";
 
 /**
  * usePhoneNumbers
@@ -15,7 +15,7 @@ import { PhoneNumberInput } from "@/checkpoint/generated/graphql";
  * - GraphQL-compatible structure
  * - Production-ready for forms and mutations
  */
-export function usePhoneNumbers(defaultCountry: string = "+49") {
+export function usePhoneNumbers(defaultCountry = "+49") {
   const [phoneNumbers, setPhoneNumbers] = useState<PhoneNumberInput[]>([
     {
       type: DEFAULT_PHONE_TYPE,
@@ -94,9 +94,10 @@ export function usePhoneNumbers(defaultCountry: string = "+49") {
   /**
    * Returns only valid phone numbers for backend submission
    */
-  const getValidPhones = useCallback((): PhoneNumberInput[] => {
-    return phoneNumbers.filter((p) => p.number && p.number.trim().length > 0);
-  }, [phoneNumbers]);
+  const getValidPhones = useCallback(
+    (): PhoneNumberInput[] => phoneNumbers.filter((p) => p.number && p.number.trim().length > 0),
+    [phoneNumbers],
+  );
 
   return {
     phoneNumbers,

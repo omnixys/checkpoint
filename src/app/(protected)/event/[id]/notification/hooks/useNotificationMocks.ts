@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { getNotificationItems, getNotificationMessages } from "../mock/notification.mock";
-import { NotificationChannel } from "../types/notification-channel.enum";
+import type { NotificationChannel } from "../types/notification-channel.enum";
 
 export function useNotificationItems(channel: NotificationChannel) {
   const items = useMemo(() => getNotificationItems(channel), [channel]);

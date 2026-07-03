@@ -1,27 +1,29 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
 import { Box, useTheme } from "@mui/material";
-import useEmblaCarousel from "embla-carousel-react";
+import type { EmblaOptionsType } from "embla-carousel";
 import Autoplay from "embla-carousel-autoplay";
-import { EmblaOptionsType } from "embla-carousel";
+import useEmblaCarousel from "embla-carousel-react";
 import { motion } from "framer-motion";
+import React, { useEffect, useMemo } from "react";
 
 type Axis = "x" | "y";
 
-type VisionEmblaCarouselProps<T> = {
+interface VisionEmblaCarouselProps<T> {
   items: T[];
   renderItem: (item: T, index: number) => React.ReactNode;
+  getKey?: (item: T, index: number) => React.Key;
   slidesPerView?: number;
   autoplay?: boolean;
   delay?: number;
   axis?: Axis;
   options?: EmblaOptionsType;
-};
+}
 
 export function VisionEmblaCarousel<T>({
   items,
   renderItem,
+  getKey,
   slidesPerView = 2,
   autoplay = true,
   delay = 3200,
@@ -56,7 +58,9 @@ export function VisionEmblaCarousel<T>({
   );
 
   useEffect(() => {
-    if (!emblaApi) return;
+    if (!emblaApi) {
+      return;
+    }
 
     const onSelect = () => {
       setActiveIndex(emblaApi.selectedScrollSnap());
@@ -86,10 +90,13 @@ export function VisionEmblaCarousel<T>({
       >
         {items.map((item, index) => {
           const isActive = index === activeIndex;
+          const itemKey =
+            getKey?.(item, index) ??
+            (typeof item === "string" || typeof item === "number" ? item : JSON.stringify(item));
 
           return (
             <Box
-              key={index}
+              key={itemKey}
               sx={{
                 flex: axis === "x" ? `0 0 ${100 / slidesPerView}%` : "0 0 auto",
                 px: axis === "x" ? 0.75 : 0,

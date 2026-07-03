@@ -1,10 +1,10 @@
 "use client";
 
+import { Stack } from "@mui/material";
 import GateOverviewHeatmap from "@/checkpoint/components/security/GateOverviewHeatmap";
 import SecurityQuickToolsPanel from "@/checkpoint/components/security/SecurityQuickToolsPanel";
 import TicketVerificationTool from "@/checkpoint/components/security/TicketVerificationTool";
-import { GateTrendType, VerdictType } from "@/checkpoint/types/security.typa";
-import { Stack } from "@mui/material";
+import type { GateTrendType, VerdictType } from "@/checkpoint/types/security.typa";
 
 // Imported components (from previous phases)
 

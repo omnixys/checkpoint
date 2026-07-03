@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-import { Box, Stack, Typography, Avatar } from "@mui/material";
+import { Avatar, Box, Stack, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 
 /* -------------------------------------------------------------------

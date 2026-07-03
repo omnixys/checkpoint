@@ -1,6 +1,6 @@
+import { Button, Stack, useTheme } from "@mui/material";
 import { CreateEventWizardStep } from "@/checkpoint/app/(protected)/event/new/types/event/event-wizard.type";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { Button, Stack, useTheme } from "@mui/material";
 
 interface CreateEventActionBarProps {
   previousStep: () => void;

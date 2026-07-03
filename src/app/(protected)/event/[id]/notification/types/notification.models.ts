@@ -1,6 +1,6 @@
-import { NotificationChannel } from "./notification-channel.enum";
+import type { NotificationChannel } from "./notification-channel.enum";
 
-export type WhatsAppChat = {
+export interface WhatsAppChat {
   id: string;
   channel: NotificationChannel.WHATSAPP;
   chatId: string;
@@ -12,9 +12,9 @@ export type WhatsAppChat = {
   unreadCount: number;
   isOnline: boolean;
   labels: string[];
-};
+}
 
-export type InAppChat = {
+export interface InAppChat {
   id: string;
   channel: NotificationChannel.IN_APP;
   chatId: string;
@@ -27,9 +27,9 @@ export type InAppChat = {
   unreadCount: number;
   priority: "LOW" | "MEDIUM" | "HIGH";
   status: "OPEN" | "PENDING" | "RESOLVED";
-};
+}
 
-export type EmailThread = {
+export interface EmailThread {
   id: string;
   channel: NotificationChannel.EMAIL;
   chatId: string;
@@ -41,11 +41,11 @@ export type EmailThread = {
   unreadCount: number;
   hasAttachment: boolean;
   category: "Primary" | "Business" | "Contracts" | "VIP";
-};
+}
 
 export type NotificationListItem = WhatsAppChat | InAppChat | EmailThread;
 
-export type WhatsAppMessage = {
+export interface WhatsAppMessage {
   id: string;
   channel: NotificationChannel.WHATSAPP;
   direction: "INBOUND" | "OUTBOUND";
@@ -53,9 +53,9 @@ export type WhatsAppMessage = {
   timestamp: string;
   delivered: boolean;
   seen: boolean;
-};
+}
 
-export type InAppMessage = {
+export interface InAppMessage {
   id: string;
   channel: NotificationChannel.IN_APP;
   actor: "SYSTEM" | "USER" | "AGENT";
@@ -63,9 +63,9 @@ export type InAppMessage = {
   body: string;
   timestamp: string;
   eventType: "COMMENT" | "STATUS_CHANGE" | "INTERNAL_NOTE" | "ALERT";
-};
+}
 
-export type EmailMessage = {
+export interface EmailMessage {
   id: string;
   channel: NotificationChannel.EMAIL;
   fromName: string;
@@ -75,6 +75,6 @@ export type EmailMessage = {
   body: string;
   timestamp: string;
   subject: string;
-};
+}
 
 export type NotificationMessage = WhatsAppMessage | InAppMessage | EmailMessage;

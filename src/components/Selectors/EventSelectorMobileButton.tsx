@@ -1,8 +1,7 @@
 "use client";
 
-import React from "react";
-import { Button } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { Button } from "@mui/material";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 
 interface Props {

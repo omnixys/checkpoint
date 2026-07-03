@@ -1,15 +1,15 @@
+import type { Metadata } from "next";
+import { type JSX, Suspense } from "react";
 import InvitationClientPage from "@/checkpoint/app/(protected)/event/[id]/invitation/InvitationClientPage";
 import RsvpLoading from "@/checkpoint/app/rsvp/loading";
 import {
   GetAllCallingCodesDocument,
-  GetAllCallingCodesQuery,
-  GetAllCallingCodesQueryVariables,
+  type GetAllCallingCodesQuery,
+  type GetAllCallingCodesQueryVariables,
 } from "@/checkpoint/generated/graphql";
 import { createServerClient } from "@/checkpoint/lib/apollo/server-client";
 import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
-import { CallingCodeCountry } from "@/checkpoint/types/country.type";
-import { Metadata } from "next";
-import { JSX, Suspense } from "react";
+import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
 
 export const metadata: Metadata = buildMetadata({
   title: "Invitations",

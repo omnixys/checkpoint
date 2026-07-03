@@ -41,11 +41,13 @@ export function localInputToISO(localStr: string): string {
  * GraphQL Date → string → can break UI
  */
 export function parseDate(value?: string | Date | null): Date | null {
-  if (!value) return null;
+  if (!value) {
+    return null;
+  }
 
   const date = new Date(value);
 
-  if (isNaN(date.getTime())) {
+  if (Number.isNaN(date.getTime())) {
     return null;
   }
 

@@ -1,6 +1,6 @@
-import { ColorScale, OmnixysPresetExtended } from "./paletteTypes";
-import { appleLight } from "./colors/appleColors";
 import { OmnixysColorScheme } from "@/checkpoint/themes/paletteTypes";
+import { appleLight } from "./colors/appleColors";
+import { OmnixysPresetExtended } from "./paletteTypes";
 
 declare module "@mui/material/styles" {
   interface Shape {

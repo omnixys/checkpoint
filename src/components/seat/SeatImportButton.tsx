@@ -1,9 +1,7 @@
 "use client";
 
-// TODO optimieren!!
-import React from "react";
-import { Button } from "@mui/material";
 import UploadRoundedIcon from "@mui/icons-material/UploadRounded";
+import { Button } from "@mui/material";
 
 export default function SeatImportButton({ onOpen }: { onOpen: () => void }) {
   return (

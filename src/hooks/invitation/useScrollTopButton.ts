@@ -1,7 +1,7 @@
 "use client";
 
-import { getLogger } from "@/checkpoint/utils/logger";
 import { useEffect, useState } from "react";
+import { getLogger } from "@/checkpoint/utils/logger";
 
 /* ----------------------------------------------------------------------------
  * Hook controlling Back-to-Top FAB visibility
@@ -20,7 +20,7 @@ export function useScrollTopButton() {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [logger.debug]);
 
   return { visible };
 }

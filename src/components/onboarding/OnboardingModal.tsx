@@ -1,17 +1,17 @@
 "use client";
 
-import { Box, Button, IconButton, Stack, Typography, useTheme } from "@mui/material";
 import CloseRounded from "@mui/icons-material/CloseRounded";
+import { Box, Button, IconButton, Stack, Typography, useTheme } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { useSwipeable } from "react-swipeable";
 import OnboardingSlide from "./OnboardingSlide";
 
-type Slide = {
+interface Slide {
   title: string;
   text: string;
   icon: string;
-};
+}
 
 const slides = [
   {
@@ -38,7 +38,9 @@ export default function OnboardingModal({ open, onClose }: { open: boolean; onCl
   const isLast = step === slides.length - 1;
 
   const next = () => {
-    if (isLast) return onClose();
+    if (isLast) {
+      return onClose();
+    }
     setStep((s) => s + 1);
   };
 
@@ -52,7 +54,9 @@ export default function OnboardingModal({ open, onClose }: { open: boolean; onCl
     trackMouse: true,
   });
 
-  if (!open) return null;
+  if (!open) {
+    return null;
+  }
 
   return (
     <Box
@@ -115,9 +119,9 @@ export default function OnboardingModal({ open, onClose }: { open: boolean; onCl
 
         {/* Progress */}
         <Stack direction="row" spacing={1} sx={{ pb: 1, justifyContent: "center" }}>
-          {slides.map((_, i) => (
+          {slides.map((slide, i) => (
             <Box
-              key={i}
+              key={slide.title}
               sx={{
                 width: 8,
                 height: 8,
@@ -131,11 +135,11 @@ export default function OnboardingModal({ open, onClose }: { open: boolean; onCl
 
         {/* Actions */}
         <Stack direction="row" spacing={1} sx={{ p: 2 }}>
-          <Button fullWidth onClick={back} disabled={step === 0}>
+          <Button fullWidth={true} onClick={back} disabled={step === 0}>
             Zurück
           </Button>
 
-          <Button fullWidth variant="contained" onClick={next}>
+          <Button fullWidth={true} variant="contained" onClick={next}>
             {isLast ? "Starten" : "Weiter"}
           </Button>
         </Stack>

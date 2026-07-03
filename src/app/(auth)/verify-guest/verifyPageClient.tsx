@@ -54,7 +54,9 @@ export default function VerifyPageClient() {
   const pdfRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!token || executedRef.current) return;
+    if (!token || executedRef.current) {
+      return;
+    }
 
     executedRef.current = true;
 
@@ -70,7 +72,9 @@ export default function VerifyPageClient() {
   /* ------------------------------------------------------------------------ */
 
   const handleDownload = async () => {
-    if (!pdfRef.current) return;
+    if (!pdfRef.current) {
+      return;
+    }
 
     const canvas = await html2canvas(pdfRef.current, {
       scale: 2,
@@ -94,7 +98,9 @@ export default function VerifyPageClient() {
   };
 
   const login = async (username: string, password: string) => {
-    if (loading) return;
+    if (loading) {
+      return;
+    }
 
     try {
       setIsLoggingIn(true);
@@ -160,7 +166,7 @@ export default function VerifyPageClient() {
 
   const result = data?.verifyGuestSignUp;
 
-  if (!result || !result.results || result.results.length === 0 || !result.results[0]) {
+  if (!result?.results || result.results.length === 0 || !result.results[0]) {
     return (
       <CenteredContainer>
         <Alert severity="error">{t("verify.unexpected")}</Alert>

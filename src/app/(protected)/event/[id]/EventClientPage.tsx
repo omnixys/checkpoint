@@ -37,15 +37,17 @@ export default function EventPage() {
   /**
    * AFTER hooks → conditional rendering
    */
-  if (!isAuthenticated) return null;
+  if (!isAuthenticated) {
+    return null;
+  }
   // TODO statt text ein skeleton oder loader
-  if (eventPageLoading) return <div>{tCommon("loading")}</div>;
+  if (eventPageLoading) {
+    return <div>{tCommon("loading")}</div>;
+  }
 
   // TODO statt text etwas bessere
-  if (eventPageError || !eventPage) {
-    if (eventPageError || !eventPage) {
-      return <div>{tErrors("eventNotFound")}</div>;
-    }
+  if ((eventPageError || !eventPage) && (eventPageError || !eventPage)) {
+    return <div>{tErrors("eventNotFound")}</div>;
   }
 
   return (

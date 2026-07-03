@@ -1,7 +1,6 @@
 "use client";
 
-import { ChipProps } from "@mui/material";
-import { useMemo } from "react";
+import type { ChipProps } from "@mui/material";
 
 export interface EventFormatterProps {
   roleChipColor: string;
@@ -22,40 +21,33 @@ export function eventFormatter(ev: any): EventFormatterProps {
   /**
    * Role → Chip color mapping
    */
-  const roleChipColor: ChipProps["color"] = useMemo(() => {
-    switch (ev.myRole) {
-      case "ADMIN":
-        return "primary";
-      case "SECURITY":
-        return "success";
-      default:
-        return "default";
-    }
-  }, [ev.myRole]);
+  let roleChipColor: ChipProps["color"] = "default";
+  switch (ev.myRole) {
+    case "ADMIN":
+      roleChipColor = "primary";
+      break;
+    case "SECURITY":
+      roleChipColor = "success";
+      break;
+  }
 
   /**
    * Date formatting (centralized)
    */
-  const startFormatted = useMemo(() => {
-    return new Date(ev.settings.startsAt).toLocaleString("de-DE", {
-      dateStyle: "medium",
-      timeStyle: "short",
-    });
-  }, [ev.settings.startsAt]);
+  const startFormatted = new Date(ev.settings.startsAt).toLocaleString("de-DE", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
 
-  const endFormatted = useMemo(() => {
-    return new Date(ev.settings.endsAt).toLocaleString("de-DE", {
-      dateStyle: "medium",
-      timeStyle: "short",
-    });
-  }, [ev.settings.endsAt]);
+  const endFormatted = new Date(ev.settings.endsAt).toLocaleString("de-DE", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
 
   /**
    * Hero image fallback logic
    */
-  const heroImage = useMemo(() => {
-    return (ev as unknown as { imageUrl?: string }).imageUrl || "/event/event-default.png";
-  }, [ev]);
+  const heroImage = (ev as unknown as { imageUrl?: string }).imageUrl || "/event/event-default.png";
 
   return {
     roleChipColor,

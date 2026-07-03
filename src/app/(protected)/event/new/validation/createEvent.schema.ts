@@ -4,7 +4,7 @@ export const childEventSchema = z.object({
   name: z.string().trim().min(1, "Child event name is required."),
   startsAt: z.string().optional(),
   endsAt: z.string().optional(),
-  maxSeats: z.coerce.number().int().min(1).max(50000).optional(),
+  maxSeats: z.coerce.number().int().min(1).max(50_000).optional(),
 });
 
 export const eventAddressSchema = z.object({
@@ -20,7 +20,7 @@ export const eventAddressSchema = z.object({
 export const createSettingsSchema = z.object({
   allowReEntry: z.boolean(),
   rotateSeconds: z.coerce.number().int().min(30).max(3600),
-  maxSeats: z.coerce.number().int().min(1).max(50000),
+  maxSeats: z.coerce.number().int().min(1).max(50_000),
   allowPublicRsvp: z.boolean(),
   allowPublicPlusOne: z.boolean(),
   allowPublicRsvpWebsite: z.boolean(),

@@ -1,21 +1,11 @@
 "use client";
 
-import {
-  Menu,
-  MenuItem,
-  Stack,
-  Typography,
-  IconButton,
-  alpha,
-  useTheme,
-  Button,
-  Box,
-} from "@mui/material";
 import LanguageIcon from "@mui/icons-material/Language";
+import { alpha, Box, Button, Menu, MenuItem, Stack, Typography, useTheme } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import React from "react";
-import { Locale } from "@/checkpoint/i18n/request";
+import type { Locale } from "@/checkpoint/i18n/request";
 
 const LOCALES: { code: Locale; label: string; flag: string }[] = [
   { code: "de-DE", label: "Deutsch", flag: "🇩🇪" },
@@ -35,8 +25,9 @@ export default function LanguageSwitcher() {
   const handleClose = () => setAnchorEl(null);
 
   const switchLocale = (nextLocale: Locale) => {
-    if (nextLocale === locale) return;
-    // biome-ignore lint/suspicious/noDocumentCookie: egal
+    if (nextLocale === locale) {
+      return;
+    }
     document.cookie = `locale=${nextLocale}; path=/; max-age=31536000`;
     handleClose();
     router.refresh();

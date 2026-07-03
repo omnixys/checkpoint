@@ -1,28 +1,16 @@
 "use client";
 
-import {
-  Paper,
-  Stack,
-  Typography,
-  IconButton,
-  Box,
-  Chip,
-  useTheme,
-  alpha,
-  Tooltip,
-} from "@mui/material";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
-
-import { motion } from "framer-motion";
-import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
-import { InvitationPayload } from "@/checkpoint/generated/graphql";
-import InvitationStatusChip from "./InvitationStatusChip";
-import { env } from "@/checkpoint/lib/env";
+import { alpha, IconButton, Paper, Stack, Tooltip, Typography, useTheme } from "@mui/material";
 import { useState } from "react";
+import type { InvitationPayload } from "@/checkpoint/generated/graphql";
+import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { env } from "@/checkpoint/lib/env";
+import InvitationStatusChip from "./InvitationStatusChip";
 
 export default function InvitationCardView({ logic }: { logic: InvitationLogic }) {
   const theme = useTheme();
@@ -126,10 +114,10 @@ export default function InvitationCardView({ logic }: { logic: InvitationLogic }
 
               {/* ACTIONS */}
               <Stack direction="row" spacing={1}>
-                    <IconButton
-                      color="success"
-                      onClick={(e) => {
-                        e.stopPropagation();
+                <IconButton
+                  color="success"
+                  onClick={(e) => {
+                    e.stopPropagation();
 
                     logic
                       .approveInvitationMutation({

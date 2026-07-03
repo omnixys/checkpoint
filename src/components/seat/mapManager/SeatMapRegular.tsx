@@ -1,13 +1,12 @@
 "use client";
 
+import { Alert, Card, CardContent, CardHeader, Chip, LinearProgress, Stack } from "@mui/material";
 import TableCluster from "@/checkpoint/components/seat/mapManager/TableCluster";
 import VisionStrip from "@/checkpoint/components/vision/VisionStrip";
 import VisionStripItem from "@/checkpoint/components/vision/VisionStripItem";
-import { SeatPayload } from "@/checkpoint/generated/graphql";
-import { SeatListType } from "@/checkpoint/types/seat.type";
-import { Alert, Card, CardContent, CardHeader, Chip, LinearProgress, Stack } from "@mui/material";
+import type { SeatListType } from "@/checkpoint/types/seat.type";
 
-type Props = {
+interface Props {
   seats: SeatListType[];
   seatsLoading?: boolean;
   grouped: Record<string, Record<string, SeatListType[]>>;
@@ -17,10 +16,9 @@ type Props = {
   getSeatHolderLabel: (seat: SeatListType) => string;
   onSectionClick?: (sectionName: string, seats: SeatListType[]) => void;
   onTableClick?: (tableName: string, seats: SeatListType[]) => void;
-};
+}
 
 export default function SeatMapRegular({
-  seats,
   seatsLoading = false,
   grouped,
   occupiedSeatIds,

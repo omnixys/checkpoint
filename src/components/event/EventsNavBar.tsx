@@ -1,13 +1,10 @@
 "use client";
 
+import { AppBar, alpha, Box, Stack, Typography, useTheme } from "@mui/material";
 import EventsNavButton from "@/checkpoint/components/event/EventsNavButton";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
 import { useDevice } from "@/checkpoint/providers/DeviceProvider";
-import { alpha, AppBar, Box, Button, Stack, Typography, useTheme } from "@mui/material";
-import { motion } from "framer-motion";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 
 const CHECKPOINT_BASE_PATH = env.CHECKPOINT_BASE_PATH;
 

@@ -1,7 +1,7 @@
 // src/checkpoint/utils/validation/rsvp.validation.ts
 
 import type { PhoneNumberInput, PublicPlusOneInput } from "@/checkpoint/generated/graphql";
-import { validatePhoneNumber, ValidationError } from "@/checkpoint/utils/validation.util";
+import { type ValidationError, validatePhoneNumber } from "@/checkpoint/utils/validation.util";
 
 /**
  * Validate invitee (main guest)

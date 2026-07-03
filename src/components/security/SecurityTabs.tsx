@@ -1,10 +1,10 @@
 "use client";
 
-import { Tabs, Tab, Box } from "@mui/material";
-import { useState } from "react";
+import { Box, Tab, Tabs } from "@mui/material";
 import { motion } from "framer-motion";
-import VisionOSCompactHeader from "./VisionOSCompactHeader";
+import { useState } from "react";
 import { mockConnectivity } from "./mock/mockConnectivity";
+import VisionOsCompactHeader from "./VisionOSCompactHeader";
 
 /* --------------------------------------------------------------
  * VisionOS Premium Sticky Tabbar for Tablet & Mobile
@@ -28,7 +28,7 @@ export default function SecurityTabs({ onChange }: { onChange: (tab: string) => 
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25 }}
     >
-      <VisionOSCompactHeader connectivity={mockConnectivity} />
+      <VisionOsCompactHeader connectivity={mockConnectivity} />
       <Box
         sx={{
           background: "rgba(255,255,255,0.18)",
@@ -42,7 +42,7 @@ export default function SecurityTabs({ onChange }: { onChange: (tab: string) => 
         <Tabs
           value={value}
           onChange={handleChange}
-          centered
+          centered={true}
           textColor="inherit"
           slotProps={{
             indicator: {

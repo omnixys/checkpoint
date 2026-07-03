@@ -1,10 +1,10 @@
 "use client";
 
-export type MockMessage = {
+export interface MockMessage {
   id: string;
   body: string;
   direction: "INBOUND" | "OUTBOUND";
-};
+}
 
 export function useMockMessages(chatId: string | null) {
   return {

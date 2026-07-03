@@ -1,13 +1,8 @@
 "use client";
 
-import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
-import InvitationStatusChip from "@/checkpoint/components/invitation/InvitationStatusChip";
-import { env } from "@/checkpoint/lib/env";
-
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-
 import {
   Box,
   Checkbox,
@@ -24,8 +19,11 @@ import {
 } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useMemo, useState } from "react";
-import { InvitationPayload } from "@/checkpoint/generated/graphql";
+import InvitationStatusChip from "@/checkpoint/components/invitation/InvitationStatusChip";
+import type { InvitationPayload } from "@/checkpoint/generated/graphql";
+import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { env } from "@/checkpoint/lib/env";
 
 /* ---------------------------------------------------------------------------
  * Local derived types
@@ -47,23 +45,26 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   /** Parent invitations */
-  const parents = useMemo(() => {
-    return invitations.filter((invitation) => !invitation.invitedByInvitationId);
-  }, [invitations]);
+  const parents = useMemo(
+    () => invitations.filter((invitation) => !invitation.invitedByInvitationId),
+    [invitations],
+  );
 
   /** Plus-ones grouped by parent */
-  const plusOnesByParent = useMemo(() => {
-    return invitations.reduce<Record<string, InvitationRow[]>>((acc, invitation) => {
-      const parentId = invitation.invitedByInvitationId;
+  const plusOnesByParent = useMemo(
+    () =>
+      invitations.reduce<Record<string, InvitationRow[]>>((acc, invitation) => {
+        const parentId = invitation.invitedByInvitationId;
 
-      if (parentId) {
-        const existingChildren = acc[parentId] ?? [];
-        acc[parentId] = [...existingChildren, invitation];
-      }
+        if (parentId) {
+          const existingChildren = acc[parentId] ?? [];
+          acc[parentId] = [...existingChildren, invitation];
+        }
 
-      return acc;
-    }, {});
-  }, [invitations]);
+        return acc;
+      }, {}),
+    [invitations],
+  );
 
   /** Toggle expand without opening dialog */
   const toggleExpand = (parentId: string) => {
@@ -92,7 +93,7 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
   };
 
   const handleCopyLink = async (invitationId: string) => {
-    const origin = typeof window !== "undefined" ? window.location.origin : "";
+    const origin = typeof window === "undefined" ? "" : window.location.origin;
 
     const url = `${origin}${env.CHECKPOINT_BASE_PATH}rsvp/${invitationId}`;
     await navigator.clipboard.writeText(url);
@@ -138,7 +139,7 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
               <React.Fragment key={parent.id}>
                 {/* PARENT ROW */}
                 <TableRow
-                  hover
+                  hover={true}
                   onClick={() => logic.openInvitation(parent as InvitationPayload)}
                   sx={{
                     cursor: "pointer",

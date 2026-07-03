@@ -1,8 +1,8 @@
-import React, { JSX, Suspense } from "react";
 import { Skeleton } from "@mui/material";
-import VerifyPageClient from "./verifyPageClient";
+import type { Metadata } from "next";
+import { type JSX, Suspense } from "react";
 import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
-import { Metadata } from "next";
+import VerifyPageClient from "./verifyPageClient";
 
 export const metadata: Metadata = buildMetadata({
   title: "Verify your access",

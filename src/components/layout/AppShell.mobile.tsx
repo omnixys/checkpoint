@@ -1,20 +1,19 @@
 "use client";
 
-import ThemeToggleButton from "@/checkpoint/components/ThemeToggleButton";
-import UserMenu from "@/checkpoint/components/UserMenu";
-import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { Box } from "@mui/material";
 import { useState } from "react";
-import NavigationMobile from "./navigation/Navigation.mobile";
-import EventSelectorMobileButton from "@/checkpoint/components/Selectors/EventSelectorMobileButton";
 import { AppleNavBar } from "@/checkpoint/components/apple/AppleNavBar";
 import EventSelectorActionSheet from "@/checkpoint/components/Selectors/EventSelectorActionSheet";
+import EventSelectorMobileButton from "@/checkpoint/components/Selectors/EventSelectorMobileButton";
+import UserMenu from "@/checkpoint/components/UserMenu";
+import { useAuth } from "@/checkpoint/providers/AuthProvider";
+import NavigationMobile from "./navigation/Navigation.mobile";
 
 export default function AppShellMobile({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const { isAuthenticated } = useAuth();
 
-  const HEADER_HEIGHT = 56;
+  const HeaderHeight = 56;
 
   return (
     <Box
@@ -55,7 +54,7 @@ export default function AppShellMobile({ children }: { children: React.ReactNode
           flexGrow: 1,
           minWidth: 0,
           overflowY: "auto",
-          pt: `calc(${HEADER_HEIGHT}px + env(safe-area-inset-top))`,
+          pt: `calc(${HeaderHeight}px + env(safe-area-inset-top))`,
           pb: "calc(76px + env(safe-area-inset-bottom))",
           px: { xs: 1.5, sm: 2 },
         }}
@@ -68,7 +67,7 @@ export default function AppShellMobile({ children }: { children: React.ReactNode
         sx={{
           position: "sticky",
           bottom: 0,
-          zIndex: 12000000,
+          zIndex: 12_000_000,
         }}
       >
         <NavigationMobile />

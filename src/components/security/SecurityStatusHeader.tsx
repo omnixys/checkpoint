@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 
@@ -47,7 +46,7 @@ export default function SecurityStatusHeader({
           <StatusItem label="Inside" value={inside} />
           <StatusItem label="Outside" value={outside} />
           <StatusItem label="Scans" value={scans} />
-          <StatusItem label="Alerts" value={alerts} glow />
+          <StatusItem label="Alerts" value={alerts} glow={true} />
         </Stack>
       </Box>
     </motion.div>

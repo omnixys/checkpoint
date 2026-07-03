@@ -1,9 +1,5 @@
 "use client";
 
-import PhoneNumberField from "@/checkpoint/components/common/phoneNumber/PhoneNumberField";
-import type { PhoneNumberInput } from "@/checkpoint/generated/graphql";
-import { CallingCodeCountry } from "@/checkpoint/types/country.type";
-import { NormalizedPlusOne } from "@/checkpoint/types/event.type";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Box,
@@ -17,9 +13,13 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
+import PhoneNumberField from "@/checkpoint/components/common/phoneNumber/PhoneNumberField";
+import type { PhoneNumberInput } from "@/checkpoint/generated/graphql";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
+import type { NormalizedPlusOne } from "@/checkpoint/types/event.type";
 
-type Props = {
+interface Props {
   value: NormalizedPlusOne;
   index: number;
   countries: CallingCodeCountry[];
@@ -41,7 +41,7 @@ type Props = {
     value: PhoneNumberInput[K],
   ) => void;
   onRemovePhone: (index: number, phoneIndex: number) => void;
-};
+}
 
 export default function PlusOneField({
   value,
@@ -73,27 +73,27 @@ export default function PlusOneField({
           label="First name"
           value={value.firstName}
           onChange={(e) => onChange(index, "firstName", e.target.value)}
-          fullWidth
+          fullWidth={true}
         />
 
         <TextField
           label="Last name"
           value={value.lastName}
           onChange={(e) => onChange(index, "lastName", e.target.value)}
-          fullWidth
+          fullWidth={true}
         />
 
         <TextField
           label="Email (optional)"
           value={value.email ?? ""}
           onChange={(e) => onChange(index, "email", e.target.value || null)}
-          fullWidth
+          fullWidth={true}
         />
 
-        <FormControl required fullWidth>
+        <FormControl required={true} fullWidth={true}>
           <FormLabel>{t("plusOne.ageCategory")}</FormLabel>
           <RadioGroup
-            row
+            row={true}
             value={value.plusOneAgeCategory ?? ""}
             onChange={(event) =>
               onChange(
@@ -110,11 +110,7 @@ export default function PlusOneField({
             }}
           >
             <FormControlLabel value="OVER_SIX" control={<Radio />} label={t("plusOne.overSix")} />
-            <FormControlLabel
-              value="UNDER_SIX"
-              control={<Radio />}
-              label={t("plusOne.underSix")}
-            />
+            <FormControlLabel value="UNDER_SIX" control={<Radio />} label={t("plusOne.underSix")} />
           </RadioGroup>
         </FormControl>
 
@@ -122,11 +118,11 @@ export default function PlusOneField({
         <Stack spacing={2}>
           {value.phoneNumbers.map((p, phoneIndex) => (
             <PhoneNumberField
-              key={phoneIndex}
+              key={`${p.type}:${p.countryCode}:${p.number}:${p.label ?? ""}`}
               value={p}
               index={phoneIndex}
               countries={countries}
-              onChange={(i, field, val) => onUpdatePhone(index, phoneIndex, field, val)}
+              onChange={(_i, field, val) => onUpdatePhone(index, phoneIndex, field, val)}
               onRemove={() => onRemovePhone(index, phoneIndex)}
             />
           ))}

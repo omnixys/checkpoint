@@ -1,10 +1,10 @@
 "use client";
 
-import { env } from "@/checkpoint/lib/env";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import EventIcon from "@mui/icons-material/Event";
 import { Button, Card, Stack, Typography } from "@mui/material";
 import Link from "next/link";
+import { env } from "@/checkpoint/lib/env";
 
 export default function EmptyEventsCard() {
   return (

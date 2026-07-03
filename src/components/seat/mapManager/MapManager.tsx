@@ -1,13 +1,13 @@
 "use client";
 
-import SectionInfoDialog from "@/checkpoint/components/seat/dialogs/SectionInfoDialog";
-import TableInfoDialog from "@/checkpoint/components/seat/dialogs/TableInfoDialog";
-import MapSwitcher, { MapType } from "@/checkpoint/components/seat/mapManager/MapSwitcher";
-import SeatListView from "@/checkpoint/components/seat/mapManager/SeatListView";
-import SeatMapRegular from "@/checkpoint/components/seat/mapManager/SeatMapRegular";
-import { SeatListType } from "@/checkpoint/types/seat.type";
 import { Box, Stack, useTheme } from "@mui/material";
 import { useState } from "react";
+import SectionInfoDialog from "@/checkpoint/components/seat/dialogs/SectionInfoDialog";
+import TableInfoDialog from "@/checkpoint/components/seat/dialogs/TableInfoDialog";
+import MapSwitcher, { type MapType } from "@/checkpoint/components/seat/mapManager/MapSwitcher";
+import SeatListView from "@/checkpoint/components/seat/mapManager/SeatListView";
+import SeatMapRegular from "@/checkpoint/components/seat/mapManager/SeatMapRegular";
+import type { SeatListType } from "@/checkpoint/types/seat.type";
 
 export default function MapManager({
   seats,
@@ -32,7 +32,7 @@ export default function MapManager({
   getSeatHolderLabel: (SeatPayload: SeatListType) => string;
   refetch: () => void;
 }) {
-  const theme = useTheme();
+  const _theme = useTheme();
   const [mapType, setMapType] = useState<MapType>("default");
 
   const [sectionDialog, setSectionDialog] = useState<{
@@ -86,7 +86,7 @@ export default function MapManager({
 
       {sectionDialog && (
         <SectionInfoDialog
-          open
+          open={true}
           sectionName={sectionDialog.name}
           seats={sectionDialog.seats}
           onClose={() => setSectionDialog(null)}
@@ -96,7 +96,7 @@ export default function MapManager({
 
       {tableDialog && (
         <TableInfoDialog
-          open
+          open={true}
           tableName={tableDialog.name}
           seats={tableDialog.seats}
           onClose={() => setTableDialog(null)}

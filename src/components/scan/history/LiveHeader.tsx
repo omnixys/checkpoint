@@ -1,9 +1,9 @@
 "use client";
 
-import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { Box, Chip, Stack, Typography, useTheme } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
+import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 
 /* ---------------------------------------------------------------------
  * Animated Live Header for Scan History
@@ -27,7 +27,7 @@ export default function LiveHeader() {
         zIndex: 40,
         py: 2,
         px: { xs: 2, sm: 3 },
-        bgcolor: theme.palette.background.default + "CC",
+        bgcolor: `${theme.palette.background.default}CC`,
         backdropFilter: "blur(24px)",
         borderBottom: `1px solid ${theme.palette.divider}`,
       }}

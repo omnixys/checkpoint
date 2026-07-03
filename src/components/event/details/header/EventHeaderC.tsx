@@ -1,9 +1,9 @@
 "use client";
 
+import { alpha, Box, Chip, Stack, Typography, useTheme } from "@mui/material";
 import { useEventFormatting } from "@/checkpoint/hooks/events/useEventFormatting";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { alpha, Box, Chip, Stack, Typography, useTheme } from "@mui/material";
-import { EventHeaderProps } from "../EventActions";
+import type { EventHeaderProps } from "../EventActions";
 
 export default function EventHeaderC({ eventPageData: ev }: EventHeaderProps) {
   const t = useTypedTranslations("event");

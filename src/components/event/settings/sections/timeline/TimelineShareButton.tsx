@@ -1,15 +1,15 @@
 "use client";
 
 import { Button } from "@mui/material";
-import { TimelineItem } from "../TimelineSection";
-import { generateTimelineHtmlAdvanced, TimelineDesign } from "./TimelineRenderer";
 import html2pdf from "html2pdf.js";
+import type { TimelineItem } from "../TimelineSection";
+import { generateTimelineHtmlAdvanced, type TimelineDesign } from "./TimelineRenderer";
 
-type Props = {
+interface Props {
   items: TimelineItem[];
   design?: TimelineDesign;
   title?: string | undefined;
-};
+}
 
 export default function TimelineShareButton({ items, design = "clean", title }: Props) {
   const handleShare = async () => {
@@ -28,7 +28,7 @@ export default function TimelineShareButton({ items, design = "clean", title }: 
       });
 
       // 3. Native Share (Mobile)
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      if (navigator.canShare?.({ files: [file] })) {
         await navigator.share({
           title: title || "Event Timeline",
           text: "Check out this event",
@@ -46,9 +46,7 @@ export default function TimelineShareButton({ items, design = "clean", title }: 
       a.click();
 
       URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error("Share failed", err);
-    }
+    } catch (_err) {}
   };
 
   return (

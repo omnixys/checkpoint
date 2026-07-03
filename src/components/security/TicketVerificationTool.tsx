@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
 import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 /* -------------------------------------------------------------------
  * TicketVerificationTool
@@ -24,7 +24,9 @@ export default function TicketVerificationTool({
   }>(null);
 
   async function handleCheck() {
-    if (!input.trim()) return;
+    if (!input.trim()) {
+      return;
+    }
     const res = await onVerify(input.trim());
     setResult(res);
   }
@@ -47,7 +49,7 @@ export default function TicketVerificationTool({
         <TextField
           label="Ticket ID / QR / ShareCode"
           variant="outlined"
-          fullWidth
+          fullWidth={true}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           sx={{

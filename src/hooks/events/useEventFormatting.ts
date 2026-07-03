@@ -1,6 +1,6 @@
 "use client";
 
-import { ChipProps } from "@mui/material";
+import type { ChipProps } from "@mui/material";
 import { useMemo } from "react";
 
 /**
@@ -29,26 +29,31 @@ export function useEventFormatting(ev: any) {
   /**
    * Date formatting (centralized)
    */
-  const startFormatted = useMemo(() => {
-    return new Date(ev.settings.startsAt).toLocaleString("de-DE", {
-      dateStyle: "medium",
-      timeStyle: "short",
-    });
-  }, [ev.settings.startsAt]);
+  const startFormatted = useMemo(
+    () =>
+      new Date(ev.settings.startsAt).toLocaleString("de-DE", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      }),
+    [ev.settings.startsAt],
+  );
 
-  const endFormatted = useMemo(() => {
-    return new Date(ev.settings.endsAt).toLocaleString("de-DE", {
-      dateStyle: "medium",
-      timeStyle: "short",
-    });
-  }, [ev.settings.endsAt]);
+  const endFormatted = useMemo(
+    () =>
+      new Date(ev.settings.endsAt).toLocaleString("de-DE", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      }),
+    [ev.settings.endsAt],
+  );
 
   /**
    * Hero image fallback logic
    */
-  const heroImage = useMemo(() => {
-    return (ev as unknown as { imageUrl?: string }).imageUrl || "/event/event-default.png";
-  }, [ev]);
+  const heroImage = useMemo(
+    () => (ev as unknown as { imageUrl?: string }).imageUrl || "/event/event-default.png",
+    [ev],
+  );
 
   return {
     roleChipColor,

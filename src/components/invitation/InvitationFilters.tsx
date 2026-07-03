@@ -1,25 +1,26 @@
 "use client";
+
 // TODO optimieren mit InvitationFiltersMobile
 
-import React, { useMemo } from "react";
 import {
+  alpha,
   Box,
+  Chip,
   Stack,
   TextField,
-  Chip,
   ToggleButton,
   ToggleButtonGroup,
   Typography,
   useTheme,
-  alpha,
 } from "@mui/material";
-import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
+import { useMemo } from "react";
+import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
-type InvitationEventFilterOption = {
+interface InvitationEventFilterOption {
   id: string;
   label: string;
-};
+}
 
 type StatusType = "PENDING" | "APPROVED" | "REJECTED" | "DECLINED" | "ACCEPTED";
 
@@ -32,8 +33,8 @@ export default function InvitationFilters({ logic }: { logic: InvitationLogic })
 
   const subEvents = logic.subEvents?.filter((child) => logic.rootEventId !== child.id);
 
-  const eventOptions = useMemo<InvitationEventFilterOption[]>(() => {
-    return [
+  const eventOptions = useMemo<InvitationEventFilterOption[]>(
+    () => [
       {
         id: "__ALL__",
         label: tCommon("all"),
@@ -46,8 +47,9 @@ export default function InvitationFilters({ logic }: { logic: InvitationLogic })
         id: event.id,
         label: event.name,
       })) ?? []),
-    ];
-  }, [logic.subEvents, logic.rootEventId, logic.rootEventName]);
+    ],
+    [logic.rootEventId, logic.rootEventName, tInvitation, tCommon, subEvents?.map],
+  );
 
   return (
     <Box
@@ -94,7 +96,7 @@ export default function InvitationFilters({ logic }: { logic: InvitationLogic })
     >
       <Stack spacing={1}>
         <TextField
-          fullWidth
+          fullWidth={true}
           placeholder={tInvitation("searchPlaceholder")}
           value={logic.search}
           onChange={(e) => logic.setSearch(e.target.value)}
@@ -181,7 +183,7 @@ export default function InvitationFilters({ logic }: { logic: InvitationLogic })
             >
               <ToggleButtonGroup
                 value={logic.typeFilter ?? "ALL"}
-                exclusive
+                exclusive={true}
                 onChange={(_, value) => {
                   if (!value || value === "ALL") {
                     logic.setTypeFilter(null);

@@ -1,30 +1,29 @@
 "use client";
 
-import { alpha, Box, IconButton, Stack, Tooltip, Typography, useTheme } from "@mui/material";
-
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import ArrowCircleLeftIcon from "@mui/icons-material/ArrowCircleLeft";
-import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
 import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
+import { alpha, Box, IconButton, Stack, Tooltip, Typography, useTheme } from "@mui/material";
 
 import { motion } from "framer-motion";
-import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
-import RefreshArcButton from "@/checkpoint/components/RefreshArcButton";
-import UserCreationInbox from "@/checkpoint/components/invitation/UserCreationInbox";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import UserCreationInbox from "@/checkpoint/components/invitation/UserCreationInbox";
+import RefreshArcButton from "@/checkpoint/components/RefreshArcButton";
+import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { env } from "@/checkpoint/lib/env";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { useDevice } from "@/checkpoint/providers/DeviceProvider";
-import { env } from "@/checkpoint/lib/env";
 import { copyToClipboard } from "@/checkpoint/utils/invitation/link";
 
-type Props = {
+interface Props {
   collapsed: boolean;
   onToggle: () => void;
   logic: InvitationLogic;
-};
+}
 
 export function InvitationHeaderBar({ collapsed, onToggle, logic }: Props) {
   const t = useTypedTranslations("invitation");
@@ -37,7 +36,9 @@ export function InvitationHeaderBar({ collapsed, onToggle, logic }: Props) {
   const { isMobile } = useDevice();
 
   const copyInvitationLink = async () => {
-    if (!eventId) return;
+    if (!eventId) {
+      return;
+    }
 
     const url = new URL(`${env.CHECKPOINT_BASE_PATH}rsvp`, window.location.origin);
     url.searchParams.set("eventId", eventId);
@@ -70,7 +71,7 @@ export function InvitationHeaderBar({ collapsed, onToggle, logic }: Props) {
             }}
           >
             {/* BACK */}
-            <Link href={`/event/${id}`} passHref>
+            <Link href={`/event/${id}`} passHref={true}>
               <motion.div whileTap={{ scale: 0.9 }}>
                 <IconButton>
                   <ArrowCircleLeftIcon color="primary" />
@@ -170,14 +171,14 @@ export function InvitationHeaderBar({ collapsed, onToggle, logic }: Props) {
           }}
         >
           <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-            <Link href={`/event/${id}`} passHref>
+            <Link href={`/event/${id}`} passHref={true}>
               <Tooltip title={t("backToEvent")}>
                 <motion.div
                   transition={{ duration: 0.25, ease: "easeInOut" }}
                   whileTap={{ scale: 0.9 }}
                 >
                   <IconButton>
-                    <ArrowCircleLeftIcon fontSize="large" color={"primary"} />
+                    <ArrowCircleLeftIcon fontSize="large" color="primary" />
                   </IconButton>
                 </motion.div>
               </Tooltip>

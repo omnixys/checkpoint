@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Typography, TextField } from "@mui/material";
+import { Box, TextField, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 
 export function VisionOSInlineFix({
@@ -35,7 +35,7 @@ export function VisionOSInlineFix({
           <Typography sx={{ opacity: 0.6, fontSize: 13 }}>{key}</Typography>
           <TextField
             size="small"
-            fullWidth
+            fullWidth={true}
             value={row[key] ?? ""}
             onChange={(e) => onEdit({ ...row, [key]: e.target.value })}
             sx={{

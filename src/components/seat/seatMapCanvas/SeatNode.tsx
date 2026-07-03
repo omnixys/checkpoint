@@ -1,10 +1,10 @@
 "use client";
 
+import { Box, Chip, Popover, Typography, useTheme } from "@mui/material";
 import React from "react";
 import type { PresenceState } from "@/checkpoint/generated/schema";
-import { Box, Chip, Popover, Typography, useTheme  } from "@mui/material";
 
-type Props = {
+interface Props {
   seatId: string;
   seatNumber: number | null;
   x: number | null;
@@ -27,7 +27,7 @@ type Props = {
   isSelected?: boolean;
   onMouseDown?: (e: React.MouseEvent) => void;
   onClick?: (e: React.MouseEvent) => void;
-};
+}
 
 export default function SeatNode({
   seatId,
@@ -49,17 +49,23 @@ export default function SeatNode({
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const isFilterActive = highlighted !== undefined;
 
-  
+  const theme = useTheme();
 
-const theme = useTheme();
-
-const backgroundColor = React.useMemo(() => {
-  if (presence?.revoked) return theme.palette.warning.dark;
-  if (presence?.presenceState === "INSIDE") return theme.palette.info.main;
-  if (isOwnSeat) return theme.palette.primary.main;
-  if (isOccupied) return theme.palette.error.main;
-  return theme.palette.grey[900];
-}, [theme, presence, isOccupied, isOwnSeat]);
+  const backgroundColor = React.useMemo(() => {
+    if (presence?.revoked) {
+      return theme.palette.warning.dark;
+    }
+    if (presence?.presenceState === "INSIDE") {
+      return theme.palette.info.main;
+    }
+    if (isOwnSeat) {
+      return theme.palette.primary.main;
+    }
+    if (isOccupied) {
+      return theme.palette.error.main;
+    }
+    return theme.palette.grey[900];
+  }, [theme, presence, isOccupied, isOwnSeat]);
 
   const label = seatNumber?.toString() ?? "?";
 
@@ -72,14 +78,14 @@ const backgroundColor = React.useMemo(() => {
         : "frei";
 
   const presenceChipColor = presence?.revoked
-    ? "warning" as const
+    ? ("warning" as const)
     : presence?.presenceState === ("INSIDE" as PresenceState)
-      ? "info" as const
+      ? ("info" as const)
       : isOwnSeat
-        ? "primary" as const
+        ? ("primary" as const)
         : isOccupied
-          ? "error" as const
-          : "default" as const;
+          ? ("error" as const)
+          : ("default" as const);
 
   const handleClick = (e: React.MouseEvent) => {
     if (isEditing) {
@@ -106,7 +112,10 @@ const backgroundColor = React.useMemo(() => {
           height: 28,
           borderRadius: "50%",
           bgcolor: backgroundColor,
-          color: (t) => t.palette.getContrastText(t.palette.mode === "dark" ? backgroundColor : backgroundColor),
+          color: (t) =>
+            t.palette.getContrastText(
+              t.palette.mode === "dark" ? backgroundColor : backgroundColor,
+            ),
           border: "2px solid",
           borderColor: isSelected
             ? "primary.main"

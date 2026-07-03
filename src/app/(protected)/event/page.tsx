@@ -1,6 +1,6 @@
+import type { Metadata } from "next";
 import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
 import EventsPageClient from "./EventsPageClient";
-import { Metadata } from "next";
 
 export const metadata: Metadata = buildMetadata({
   title: "My Events",

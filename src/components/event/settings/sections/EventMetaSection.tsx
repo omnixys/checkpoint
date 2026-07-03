@@ -1,18 +1,5 @@
 "use client";
 
-import { centerStyle } from "@/checkpoint/app/(protected)/event/[id]/settings/EventSettingsClientPage";
-import OwnerTransferDialog from "@/checkpoint/components/event/settings/dialog/OwnerTransferDialog";
-import {
-  CreateEventInput,
-  GetSubEventNameListQuery,
-  UserRolePayload,
-} from "@/checkpoint/generated/graphql";
-import { useMutationHandler } from "@/checkpoint/hooks/core/useMutationHandler";
-import useSubEventListQuery from "@/checkpoint/hooks/events/useEventChildrenQuery";
-import useUserQuery from "@/checkpoint/hooks/user/useUserQuery";
-import { useAuth } from "@/checkpoint/providers/AuthProvider";
-import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
-import { EventMetaDTO, EventRoleType } from "@/checkpoint/types/event.type";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
@@ -30,8 +17,17 @@ import {
 import { useTheme } from "@mui/material/styles";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
+import { centerStyle } from "@/checkpoint/app/(protected)/event/[id]/settings/EventSettingsClientPage";
+import OwnerTransferDialog from "@/checkpoint/components/event/settings/dialog/OwnerTransferDialog";
+import type { CreateEventInput, GetSubEventNameListQuery } from "@/checkpoint/generated/graphql";
+import { useMutationHandler } from "@/checkpoint/hooks/core/useMutationHandler";
+import useSubEventListQuery from "@/checkpoint/hooks/events/useEventChildrenQuery";
+import useUserQuery from "@/checkpoint/hooks/user/useUserQuery";
+import { useAuth } from "@/checkpoint/providers/AuthProvider";
+import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
+import type { EventMetaDTO, EventRoleType } from "@/checkpoint/types/event.type";
 
-type Props = {
+interface Props {
   meta: EventMetaDTO;
   actions: {
     addChild: (payload: CreateEventInput) => Promise<any>;
@@ -39,7 +35,7 @@ type Props = {
   };
   roles: EventRoleType[];
   currentUserId?: string;
-};
+}
 
 /**
  * EventMetaSection
@@ -60,13 +56,11 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
   const [childName, setChildName] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const { execute, loading, error, success, reset } = useMutationHandler();
-  const { subEventNameList, subEventNameListError, subEventNameListLoading } = useSubEventListQuery(
-    {
-      eventId: meta.id,
-      loadChildrenSettings: true,
-    },
-  );
+  const { execute, error, success, reset } = useMutationHandler();
+  const { subEventNameList, subEventNameListLoading } = useSubEventListQuery({
+    eventId: meta.id,
+    loadChildrenSettings: true,
+  });
 
   const { userInfo, userInfoLoading } = useUserQuery({
     userId: meta.owner,
@@ -93,7 +87,9 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
    * - Empty objects are merged with defaults in hook
    */
   const handleAddChild = async () => {
-    if (!childName.trim()) return;
+    if (!childName.trim()) {
+      return;
+    }
 
     const payload: CreateEventInput = {
       parentId: meta.id,
@@ -136,7 +132,7 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
     }
   };
 
-  const ownerInfo = userInfo?.personalInfo?.firstName + " " + userInfo?.personalInfo?.lastName;
+  const ownerInfo = `${userInfo?.personalInfo?.firstName} ${userInfo?.personalInfo?.lastName}`;
 
   return (
     <>
@@ -194,7 +190,7 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
                 placeholder="Child event name"
                 value={childName}
                 onChange={(e) => setChildName(e.target.value)}
-                fullWidth
+                fullWidth={true}
                 sx={glassInputSx(theme)}
               />
 
@@ -259,10 +255,14 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
 function ChildRow({ child }: { child: GetSubEventNameListQuery["eventChildren"][number] }) {
   const theme = useTheme();
   const formatDateTime = (value?: string | null) => {
-    if (!value) return "n/a";
+    if (!value) {
+      return "n/a";
+    }
 
     const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return value;
+    if (Number.isNaN(date.getTime())) {
+      return value;
+    }
 
     return new Intl.DateTimeFormat("de-DE", {
       day: "2-digit",
@@ -327,7 +327,7 @@ function ChildRow({ child }: { child: GetSubEventNameListQuery["eventChildren"][
         </Box>
       </Stack>
 
-      <IconButton disabled>
+      <IconButton disabled={true}>
         <DeleteIcon />
       </IconButton>
     </Box>

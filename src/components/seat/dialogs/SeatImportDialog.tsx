@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import {
   Button,
   Dialog,
@@ -11,21 +10,22 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import React from "react";
 import SeatImportPreviewTable from "@/checkpoint/components/seat/SeatImportPreviewTable";
 
-type SeatImportRow = {
+interface SeatImportRow {
   section: string;
   table: string;
   number: string;
   note: string;
   [key: string]: string;
-};
+}
 
-type Props = {
+interface Props {
   open: boolean;
   onClose: () => void;
   onImport: (rows: SeatImportRow[]) => void;
-};
+}
 
 export default function SeatImportDialog({ open, onClose, onImport }: Props) {
   const theme = useTheme();
@@ -34,20 +34,22 @@ export default function SeatImportDialog({ open, onClose, onImport }: Props) {
 
   function handleFile(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      return;
+    }
 
     const reader = new FileReader();
 
     reader.onload = (loadEvent) => {
       const text = typeof loadEvent.target?.result === "string" ? loadEvent.target.result : "";
 
-      parseCSV(text);
+      parseCsv(text);
     };
 
     reader.readAsText(file);
   }
 
-  function parseCSV(text: string) {
+  function parseCsv(text: string) {
     const lines = text.split("\n").map((line) => line.trim());
     const header = lines[0]?.split(",").map((column) => column.trim());
 
@@ -72,7 +74,9 @@ export default function SeatImportDialog({ open, onClose, onImport }: Props) {
     for (let i = 1; i < lines.length; i++) {
       const currentLine = lines[i];
 
-      if (!currentLine) continue;
+      if (!currentLine) {
+        continue;
+      }
 
       const cols = currentLine.split(",").map((column) => column.trim());
       const row: SeatImportRow = {
@@ -98,20 +102,20 @@ export default function SeatImportDialog({ open, onClose, onImport }: Props) {
   }
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
+    <Dialog open={open} onClose={onClose} fullWidth={true} maxWidth="md">
       <DialogTitle>Seats importieren</DialogTitle>
 
       <DialogContent>
         <Stack spacing={2}>
           <Button variant="contained" component="label">
             CSV auswählen
-            <input hidden type="file" accept=".csv" onChange={handleFile} />
+            <input hidden={true} type="file" accept=".csv" onChange={handleFile} />
           </Button>
 
           {errors.length > 0 && (
             <Stack spacing={1} sx={{ p: 2 }}>
-              {errors.map((error, index) => (
-                <Typography key={index} sx={{ color: theme.palette.error.main }}>
+              {errors.map((error) => (
+                <Typography key={error} sx={{ color: theme.palette.error.main }}>
                   {error}
                 </Typography>
               ))}

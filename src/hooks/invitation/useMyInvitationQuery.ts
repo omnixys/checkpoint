@@ -1,15 +1,9 @@
-import {
-  EventPageDocument,
-  EventPageQuery,
-  EventPageQueryVariables,
-  MyInvitationsIdDocument,
-  MyInvitationsIdQuery,
-  MyInvitationsIdQueryVariables,
-  PlusOneInvitationsDocument,
-  PlusOneInvitationsQuery,
-  PlusOneInvitationsQueryVariables,
-} from "@/checkpoint/generated/graphql";
 import { useQuery } from "@apollo/client/react";
+import {
+  MyInvitationsIdDocument,
+  type MyInvitationsIdQuery,
+  type MyInvitationsIdQueryVariables,
+} from "@/checkpoint/generated/graphql";
 
 interface Props {
   loadMyInvitationIdList?: boolean | undefined;

@@ -1,8 +1,8 @@
 "use client";
 
-import { env } from "@/checkpoint/lib/env";
 import { Box, Button, Container, Divider, Paper, Stack, Typography } from "@mui/material";
 import Link from "next/link";
+import { env } from "@/checkpoint/lib/env";
 
 const CHECKPOINT_BASE_PATH = env.CHECKPOINT_BASE_PATH;
 
@@ -53,7 +53,7 @@ export default function LandingPage() {
                   component={Link}
                   href={`${CHECKPOINT_BASE_PATH}rsvp`}
                   size="large"
-                  fullWidth
+                  fullWidth={true}
                   variant="contained"
                 >
                   Einladung öffnen (RSVP)
@@ -62,7 +62,7 @@ export default function LandingPage() {
                   component={Link}
                   href={`${CHECKPOINT_BASE_PATH}me/my-qr`}
                   size="large"
-                  fullWidth
+                  fullWidth={true}
                   variant="outlined"
                 >
                   Mein QR‑Ticket
@@ -86,7 +86,7 @@ export default function LandingPage() {
                   component={Link}
                   href={`${CHECKPOINT_BASE_PATH}login`}
                   size="large"
-                  fullWidth
+                  fullWidth={true}
                   variant="contained"
                 >
                   Login (Admin / Security)
@@ -95,7 +95,7 @@ export default function LandingPage() {
             </Stack>
           </Paper>
 
-          <Divider flexItem />
+          <Divider flexItem={true} />
 
           <Stack
             spacing={1}

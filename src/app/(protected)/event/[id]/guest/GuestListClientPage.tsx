@@ -1,14 +1,5 @@
 "use client";
 
-import { Filter } from "@/checkpoint/components/guests/types";
-import RefreshArcButton from "@/checkpoint/components/RefreshArcButton";
-import { BackToEventDetailButton } from "@/checkpoint/components/utils/back-to-event-detail-button";
-import { VisionEmblaCarousel } from "@/checkpoint/components/vision/VisionCarousel";
-import { useSecurityGuests } from "@/checkpoint/hooks/user/useSecurityGuests";
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { env } from "@/checkpoint/lib/env";
-import { useAuth } from "@/checkpoint/providers/AuthProvider";
-import { useDevice } from "@/checkpoint/providers/DeviceProvider";
 import TuneIcon from "@mui/icons-material/Tune";
 import {
   alpha,
@@ -33,6 +24,15 @@ import { red } from "@mui/material/colors";
 import { motion } from "framer-motion";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import type { Filter } from "@/checkpoint/components/guests/types";
+import RefreshArcButton from "@/checkpoint/components/RefreshArcButton";
+import { BackToEventDetailButton } from "@/checkpoint/components/utils/back-to-event-detail-button";
+import { VisionEmblaCarousel } from "@/checkpoint/components/vision/VisionCarousel";
+import { useSecurityGuests } from "@/checkpoint/hooks/user/useSecurityGuests";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { env } from "@/checkpoint/lib/env";
+import { useAuth } from "@/checkpoint/providers/AuthProvider";
+import { useDevice } from "@/checkpoint/providers/DeviceProvider";
 
 /* ------------------------------------------------------------------ */
 /* Types */
@@ -54,7 +54,7 @@ export default function GuestListClientPage() {
   const eventId = id as string;
 
   const theme = useTheme();
-  const omni = theme.palette.omnixys;
+  const _omni = theme.palette.omnixys;
   const apple = theme.palette.apple;
 
   const [search, setSearch] = useState("");
@@ -65,22 +65,24 @@ export default function GuestListClientPage() {
   const [filterAnchor, setFilterAnchor] = useState<HTMLElement | null>(null);
 
   const { guests, reload } = useSecurityGuests(eventId);
-  const [axis, setAxis] = useState<"x" | "y">("x");
+  const [axis, _setAxis] = useState<"x" | "y">("x");
 
   /* ------------------------------------------------------------------ */
   /* Redirect Guard */
   /* ------------------------------------------------------------------ */
 
   useEffect(() => {
-    if (!isAuthenticated) router.push(env.CHECKPOINT_BASE_PATH);
+    if (!isAuthenticated) {
+      router.push(env.CHECKPOINT_BASE_PATH);
+    }
   }, [isAuthenticated, router]);
 
   /* ------------------------------------------------------------------ */
   /* Counters */
   /* ------------------------------------------------------------------ */
 
-  const counters = useMemo(() => {
-    return [
+  const counters = useMemo(
+    () => [
       { key: "total", label: t("guests.total"), value: guests.length },
       {
         key: "checked",
@@ -106,8 +108,9 @@ export default function GuestListClientPage() {
         value: guests.filter((g) => !g.checkedInAt).length,
         color: red[500],
       },
-    ];
-  }, [guests]);
+    ],
+    [guests, theme.palette.success.main, theme.palette.primary.main, t, apple.quaternaryLabel],
+  );
 
   /* ------------------------------------------------------------------ */
   /* Adaptive Filter Options */
@@ -126,38 +129,41 @@ export default function GuestListClientPage() {
       { key: "OUTSIDE", label: t("filter.outside"), visible: hasOutside },
       { key: "NOT_ARRIVED", label: t("filter.notArrived"), visible: hasNotArrived },
     ].filter((f) => f.visible);
-  }, [guests]);
+  }, [guests, t]);
 
   /* ------------------------------------------------------------------ */
   /* Filtering */
   /* ------------------------------------------------------------------ */
 
-  const guestsFiltered = useMemo(() => {
-    return guests.filter((g) => {
-      const matchesSearch =
-        g.name.toLowerCase().includes(search.toLowerCase()) ||
-        String(g.seat?.number ?? "").includes(search);
+  const guestsFiltered = useMemo(
+    () =>
+      guests.filter((g) => {
+        const matchesSearch =
+          g.name.toLowerCase().includes(search.toLowerCase()) ||
+          String(g.seat?.number ?? "").includes(search);
 
-      const matchesFilter =
-        filter === "ALL" ||
-        (filter === "CHECKED_IN" && g.checkedInAt) ||
-        (filter === "INSIDE" && g.presence === "INSIDE") ||
-        (filter === "OUTSIDE" && g.presence !== "INSIDE") ||
-        (filter === "NOT_ARRIVED" && !g.checkedInAt);
+        const matchesFilter =
+          filter === "ALL" ||
+          (filter === "CHECKED_IN" && g.checkedInAt) ||
+          (filter === "INSIDE" && g.presence === "INSIDE") ||
+          (filter === "OUTSIDE" && g.presence !== "INSIDE") ||
+          (filter === "NOT_ARRIVED" && !g.checkedInAt);
 
-      return matchesSearch && matchesFilter;
-    });
-  }, [search, filter, guests]);
+        return matchesSearch && matchesFilter;
+      }),
+    [search, filter, guests],
+  );
 
-  const counters2 = useMemo(() => {
-    return {
+  const counters2 = useMemo(
+    () => ({
       total: guestsFiltered.length,
       checkedIn: guestsFiltered.filter((g) => g.status === "CHECKED_IN").length,
       inside: guestsFiltered.filter((g) => g.presence === "INSIDE").length,
       outside: guestsFiltered.filter((g) => g.presence === "OUTSIDE").length,
       notArrived: guestsFiltered.filter((g) => g.status === "NOT_ARRIVED").length,
-    };
-  }, [guestsFiltered]);
+    }),
+    [guestsFiltered],
+  );
 
   /* ------------------------------------------------------------------ */
   /* Render */
@@ -176,7 +182,7 @@ export default function GuestListClientPage() {
             <VisionEmblaCarousel
               items={counters}
               slidesPerView={1}
-              autoplay
+              autoplay={true}
               delay={3000}
               axis={axis}
               renderItem={(item) => (
@@ -280,7 +286,7 @@ export default function GuestListClientPage() {
                   {t("guests.title")}
                 </Typography>
 
-                <Divider orientation="vertical" flexItem />
+                <Divider orientation="vertical" flexItem={true} />
 
                 <Chip
                   label={t("guests.totalWithCount", { count: counters2.total })}
@@ -293,7 +299,7 @@ export default function GuestListClientPage() {
                   })}
                   sx={{
                     fontWeight: 700,
-                    bgcolor: theme.palette.success.light + "22",
+                    bgcolor: `${theme.palette.success.light}22`,
                     color: theme.palette.success.main,
                   }}
                 />
@@ -304,7 +310,7 @@ export default function GuestListClientPage() {
                   })}
                   sx={{
                     fontWeight: 700,
-                    bgcolor: theme.palette.primary.light + "22",
+                    bgcolor: `${theme.palette.primary.light}22`,
                     color: theme.palette.primary.main,
                   }}
                 />
@@ -315,7 +321,7 @@ export default function GuestListClientPage() {
                   })}
                   sx={{
                     fontWeight: 700,
-                    bgcolor: apple.quaternaryLabel + "22",
+                    bgcolor: `${apple.quaternaryLabel}22`,
                     color: apple.quaternaryLabel,
                   }}
                 />
@@ -326,7 +332,7 @@ export default function GuestListClientPage() {
                   })}
                   sx={{
                     fontWeight: 700,
-                    bgcolor: red[500] + "22",
+                    bgcolor: `${red[500]}22`,
                     color: red[500],
                   }}
                 />
@@ -359,7 +365,7 @@ export default function GuestListClientPage() {
               placeholder={t("search.placeholder2")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              fullWidth
+              fullWidth={true}
             />
 
             <FormControl sx={{ minWidth: { xs: "100%", md: 220 } }}>
@@ -441,16 +447,16 @@ export default function GuestListClientPage() {
           <Stack
             direction="row"
             spacing={1}
-              sx={{
-                alignItems: "center",
-                minWidth: 0,
-              }}
-            >
+            sx={{
+              alignItems: "center",
+              minWidth: 0,
+            }}
+          >
             <TextField
               placeholder={t("search.placeholder2")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              fullWidth
+              fullWidth={true}
               size="small"
             />
 
@@ -559,8 +565,8 @@ export default function GuestListClientPage() {
                   label={guest.checkedInAt ? t("guests.checkedIn") : t("guests.notArrived")}
                   sx={{
                     bgcolor: guest.checkedInAt
-                      ? theme.palette.success.light + "22"
-                      : theme.palette.error.light + "22",
+                      ? `${theme.palette.success.light}22`
+                      : `${theme.palette.error.light}22`,
                     color: guest.checkedInAt
                       ? theme.palette.success.main
                       : theme.palette.error.main,

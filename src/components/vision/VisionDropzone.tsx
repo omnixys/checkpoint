@@ -1,14 +1,15 @@
 "use client";
 
-import React, { useRef } from "react";
+import DownloadIcon from "@mui/icons-material/Download";
 import { Box, Typography } from "@mui/material";
 import { motion, useMotionValue, useTransform } from "framer-motion";
-import DownloadIcon from "@mui/icons-material/Download";
+import type React from "react";
+import { useRef } from "react";
 
-type Props = {
+interface Props {
   file: File | null;
   onSelect: (file: File) => void;
-};
+}
 
 /* ---------------------------------------------------------------------
  * VisionOS Premium Drag & Drop Zone
@@ -107,7 +108,7 @@ export default function VisionDropzone({ file, onSelect }: Props) {
         <input
           ref={inputRef}
           type="file"
-          hidden
+          hidden={true}
           accept=".csv,.xlsx"
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             const selectedFile = event.target.files?.[0];

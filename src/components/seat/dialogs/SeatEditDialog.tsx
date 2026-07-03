@@ -1,13 +1,6 @@
 "use client";
 
 import {
-  AssignSeatInput,
-  InvitationPayload,
-  SeatPayload,
-  UserPayload,
-} from "@/checkpoint/generated/graphql";
-import { GuestType } from "@/checkpoint/types/event.type";
-import {
   Button,
   Dialog,
   DialogContent,
@@ -17,6 +10,12 @@ import {
   TextField,
 } from "@mui/material";
 import React from "react";
+import type {
+  AssignSeatInput,
+  InvitationPayload,
+  SeatPayload,
+} from "@/checkpoint/generated/graphql";
+import type { GuestType } from "@/checkpoint/types/event.type";
 
 export default function SeatEditDialog({
   open,
@@ -47,20 +46,11 @@ export default function SeatEditDialog({
   }, [seat]);
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={onClose} fullWidth={true} maxWidth="sm">
       <DialogTitle>Gast zuweisen</DialogTitle>
 
       <DialogContent>
-        {!seat ? (
-          <Stack
-            sx={{
-              alignItems: "center",
-              py: 4,
-            }}
-          >
-            Lade Sitzdaten…
-          </Stack>
-        ) : (
+        {seat ? (
           <Stack spacing={2} sx={{ mt: 1 }}>
             {/* FIXED INFO */}
             <TextField
@@ -68,12 +58,12 @@ export default function SeatEditDialog({
               value={`Section ${seat.section.name} • Tisch ${
                 seat.table?.name
               } • Sitz ${seat.number ?? "—"}`}
-              disabled
+              disabled={true}
             />
 
             {/* INVITATION SELECT */}
             <TextField
-              select
+              select={true}
               label="Einladung"
               value={safeInvitationId}
               onChange={(e) => {
@@ -91,7 +81,7 @@ export default function SeatEditDialog({
 
             {/* GUEST SELECT */}
             <TextField
-              select
+              select={true}
               label="Eigener Gast (User)"
               value={guestId}
               // disabled={disableGuest}
@@ -113,7 +103,7 @@ export default function SeatEditDialog({
               label="Notiz (optional)"
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              multiline
+              multiline={true}
               minRows={2}
             />
 
@@ -130,6 +120,15 @@ export default function SeatEditDialog({
             >
               Speichern
             </Button>
+          </Stack>
+        ) : (
+          <Stack
+            sx={{
+              alignItems: "center",
+              py: 4,
+            }}
+          >
+            Lade Sitzdaten…
           </Stack>
         )}
       </DialogContent>

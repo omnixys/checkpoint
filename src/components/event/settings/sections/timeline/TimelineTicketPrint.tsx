@@ -1,19 +1,21 @@
 "use client";
 
 import { Button } from "@mui/material";
-import { TimelineItem, renderTicketToHtml } from "./TimelineTicketRenderer";
+import { renderTicketToHtml, type TimelineItem } from "./TimelineTicketRenderer";
 
-type Props = {
+interface Props {
   items: TimelineItem[];
   title?: string;
-};
+}
 
 export default function TimelineTicketPrint({ items, title }: Props) {
   const handlePrint = async () => {
     const html = await renderTicketToHtml(items, title);
 
     const win = window.open("", "_blank");
-    if (!win) return;
+    if (!win) {
+      return;
+    }
 
     win.document.write(html);
     win.document.close();

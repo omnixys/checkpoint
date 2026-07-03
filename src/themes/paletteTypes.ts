@@ -1,4 +1,4 @@
-export type ColorScale = {
+export interface ColorScale {
   primary: string;
   secondary: string;
 
@@ -10,12 +10,12 @@ export type ColorScale = {
 
   error: string;
   success: string;
-};
+}
 
-export type ColorPreset = {
+export interface ColorPreset {
   light: ColorScale;
   dark: ColorScale;
-};
+}
 
 export type OmnixysColorScheme =
   | "original"
@@ -26,7 +26,7 @@ export type OmnixysColorScheme =
   | "brown"
   | "wedding";
 
-export type OmnixysExtendedPalette = {
+export interface OmnixysExtendedPalette {
   surface: {
     level1: string;
     level2: string;
@@ -36,13 +36,13 @@ export type OmnixysExtendedPalette = {
     subtle: string;
     strong: string;
   };
-};
+}
 
 /**
  * Extended visual tokens for advanced UI (shader, glow, gradients).
  * This avoids hardcoded colors inside components or shaders.
  */
-export type OmnixysVisualTokens = {
+export interface OmnixysVisualTokens {
   glow: {
     primary: string;
     secondary: string;
@@ -57,7 +57,7 @@ export type OmnixysVisualTokens = {
   shadow: {
     glow: string;
   };
-};
+}
 
 export type OmnixysPresetExtended = ColorPreset & {
   visual: {

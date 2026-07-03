@@ -1,13 +1,13 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
-  toRect,
+  findOverlappingSeats,
+  findOverlappingTables,
+  isSeatWithinTable,
   isWithin,
   rectsOverlap,
-  isSeatWithinTable,
-  validateTablesInSection,
+  toRect,
   validateSeatsInTable,
-  findOverlappingTables,
-  findOverlappingSeats,
+  validateTablesInSection,
 } from "./validation";
 
 describe("toRect", () => {
@@ -25,21 +25,35 @@ describe("toRect", () => {
 
 describe("isWithin", () => {
   it("returns true when inner is fully inside outer", () => {
-    expect(isWithin({ x: 10, y: 10, width: 80, height: 60 }, { x: 0, y: 0, width: 500, height: 400 })).toBe(true);
+    expect(
+      isWithin({ x: 10, y: 10, width: 80, height: 60 }, { x: 0, y: 0, width: 500, height: 400 }),
+    ).toBe(true);
   });
 
   it("returns false when inner exceeds right edge", () => {
-    expect(isWithin({ x: 450, y: 10, width: 80, height: 60 }, { x: 0, y: 0, width: 500, height: 400 })).toBe(false);
+    expect(
+      isWithin({ x: 450, y: 10, width: 80, height: 60 }, { x: 0, y: 0, width: 500, height: 400 }),
+    ).toBe(false);
   });
 });
 
 describe("rectsOverlap", () => {
   it("detects overlapping rects", () => {
-    expect(rectsOverlap({ x: 0, y: 0, width: 100, height: 100 }, { x: 50, y: 50, width: 100, height: 100 })).toBe(true);
+    expect(
+      rectsOverlap(
+        { x: 0, y: 0, width: 100, height: 100 },
+        { x: 50, y: 50, width: 100, height: 100 },
+      ),
+    ).toBe(true);
   });
 
   it("detects non-overlapping rects", () => {
-    expect(rectsOverlap({ x: 0, y: 0, width: 100, height: 100 }, { x: 200, y: 200, width: 100, height: 100 })).toBe(false);
+    expect(
+      rectsOverlap(
+        { x: 0, y: 0, width: 100, height: 100 },
+        { x: 200, y: 200, width: 100, height: 100 },
+      ),
+    ).toBe(false);
   });
 });
 
@@ -63,7 +77,10 @@ describe("validateTablesInSection", () => {
       { id: "t1", x: 300, y: 200, width: 120, height: 60 },
       { id: "t2", x: 600, y: 500, width: 120, height: 60 },
     ]);
-    expect(results).toEqual([{ tableId: "t1", outside: false }, { tableId: "t2", outside: true }]);
+    expect(results).toEqual([
+      { tableId: "t1", outside: false },
+      { tableId: "t2", outside: true },
+    ]);
   });
 });
 
@@ -73,7 +90,10 @@ describe("validateSeatsInTable", () => {
       { id: "st1", x: 10, y: 10 },
       { id: "st2", x: 200, y: 200 },
     ]);
-    expect(results).toEqual([{ seatId: "st1", outside: false }, { seatId: "st2", outside: true }]);
+    expect(results).toEqual([
+      { seatId: "st1", outside: false },
+      { seatId: "st2", outside: true },
+    ]);
   });
 });
 

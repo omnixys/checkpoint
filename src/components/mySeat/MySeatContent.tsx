@@ -1,13 +1,13 @@
 "use client";
 
+import EventSeatIcon from "@mui/icons-material/EventSeat";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import { Box, Card, CardContent, Stack, Typography } from "@mui/material";
+import type { JSX } from "react";
 import NoTicket from "@/checkpoint/components/utils/NoTicket";
 import useSeatQuery from "@/checkpoint/hooks/seat/useSeatQuery";
 import useMyTicketQuery from "@/checkpoint/hooks/ticket/useMyTicketQuery";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
-import EventSeatIcon from "@mui/icons-material/EventSeat";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import { Box, Card, CardContent, Stack, Typography } from "@mui/material";
-import { JSX } from "react";
 
 /**
  * Displays seat information for the current guest

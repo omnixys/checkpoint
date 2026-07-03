@@ -1,13 +1,13 @@
 "use client";
 
 import { Box, useTheme } from "@mui/material";
-import { BrowserMultiFormatReader, IScannerControls } from "@zxing/browser";
+import { BrowserMultiFormatReader, type IScannerControls } from "@zxing/browser";
 import { NotFoundException } from "@zxing/library";
 import { motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
-import ScanResultCard from "./ScanResultCard";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
-import { ScanResult } from "@/checkpoint/types/scan.type";
+import type { ScanResult } from "@/checkpoint/types/scan.type";
+import ScanResultCard from "./ScanResultCard";
 
 /* ---------------------------------------------------------------------
  * VisionOS Scanner Frame with ZXing WebRTC
@@ -57,8 +57,12 @@ export default function ScannerFrame() {
 
   const handleScan = useCallback(
     async (qr: string) => {
-      if (lockedRef.current) return;
-      if (!activeEventId) return;
+      if (lockedRef.current) {
+        return;
+      }
+      if (!activeEventId) {
+        return;
+      }
 
       lockedRef.current = true;
       setLocked(true);
@@ -81,12 +85,14 @@ export default function ScannerFrame() {
 
         const payload = (await response.json()) as ScanResult;
 
-        if (!mountedRef.current) return;
+        if (!mountedRef.current) {
+          return;
+        }
         setResult(payload);
-      } catch (error) {
-        console.error(error);
-
-        if (!mountedRef.current) return;
+      } catch (_error) {
+        if (!mountedRef.current) {
+          return;
+        }
 
         setResult({
           status: "ERROR",
@@ -95,14 +101,14 @@ export default function ScannerFrame() {
           valid: false,
         });
       } finally {
-        if (!mountedRef.current) return;
+        if (mountedRef.current) {
+          clearUnlockTimeout();
 
-        clearUnlockTimeout();
-
-        unlockTimeoutRef.current = window.setTimeout(() => {
-          lockedRef.current = false;
-          setLocked(false);
-        }, 1500);
+          unlockTimeoutRef.current = window.setTimeout(() => {
+            lockedRef.current = false;
+            setLocked(false);
+          }, 1500);
+        }
       }
     },
     [activeEventId, clearUnlockTimeout],
@@ -112,7 +118,9 @@ export default function ScannerFrame() {
     mountedRef.current = true;
 
     const startScanner = async () => {
-      if (!videoRef.current) return;
+      if (!videoRef.current) {
+        return;
+      }
 
       try {
         const reader = new BrowserMultiFormatReader();
@@ -122,8 +130,12 @@ export default function ScannerFrame() {
           undefined,
           videoRef.current,
           (decodeResult, error) => {
-            if (!mountedRef.current) return;
-            if (lockedRef.current) return;
+            if (!mountedRef.current) {
+              return;
+            }
+            if (lockedRef.current) {
+              return;
+            }
 
             if (decodeResult?.getText()) {
               void handleScan(decodeResult.getText());
@@ -131,16 +143,16 @@ export default function ScannerFrame() {
             }
 
             if (error && !(error instanceof NotFoundException)) {
-              console.error(error);
+              return;
             }
           },
         );
 
         controlsRef.current = controls;
-      } catch (error) {
-        console.error(error);
-
-        if (!mountedRef.current) return;
+      } catch (_error) {
+        if (!mountedRef.current) {
+          return;
+        }
 
         setResult({
           status: "ERROR",
@@ -175,9 +187,9 @@ export default function ScannerFrame() {
       >
         <video
           ref={videoRef}
-          muted
-          playsInline
-          autoPlay
+          muted={true}
+          playsInline={true}
+          autoPlay={true}
           style={{
             width: "80vw",
             maxWidth: 480,

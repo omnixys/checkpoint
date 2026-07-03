@@ -1,8 +1,8 @@
 "use client";
 
+import type { JSX } from "react";
 import ActiveEventGuard from "@/checkpoint/components/guard/ActiveEventGuard";
 import MySeatContent from "@/checkpoint/components/mySeat/MySeatContent";
-import { JSX } from "react";
 
 /**
  * Guest-facing page that shows the assigned seat

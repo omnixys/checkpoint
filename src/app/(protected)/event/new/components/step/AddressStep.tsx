@@ -1,16 +1,15 @@
 "use client";
 
+import LocationOnRoundedIcon from "@mui/icons-material/LocationOnRounded";
 import { Box, Stack, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-
-import LocationOnRoundedIcon from "@mui/icons-material/LocationOnRounded";
-
-import AddressForm, { FormState } from "@/checkpoint/components/event/settings/address/AddressForm";
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-
 import { useCreateEvent } from "@/checkpoint/app/(protected)/event/new/context/CreateEventContext";
+import AddressForm, {
+  type FormState,
+} from "@/checkpoint/components/event/settings/address/AddressForm";
 import { useEventAddressQuery } from "@/checkpoint/hooks/address/useAddressQuery";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 /**
  * -------------------------------------------------------------
@@ -41,16 +40,22 @@ export default function AddressStep() {
    * -------------------------------------------------------------
    */
   useEffect(() => {
-    if (!input) return;
+    if (!input) {
+      return;
+    }
 
     const text = input.formatted?.trim();
-    if (!text || text.length < 5) return;
+    if (!text || text.length < 5) {
+      return;
+    }
 
     let active = true;
 
     (async () => {
       const result = await resolveGeo(text);
-      if (!result || !active) return;
+      if (!result || !active) {
+        return;
+      }
 
       patch({
         address: {

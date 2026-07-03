@@ -1,4 +1,4 @@
-import { RealmRoleType } from "@/checkpoint/generated/graphql";
+import type { RealmRoleType } from "@/checkpoint/generated/graphql";
 
 export interface CurrentUser {
   id: string;

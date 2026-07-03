@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useRef, useState } from "react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
+import type React from "react";
+import { useRef, useState } from "react";
 
-type Props = {
+interface Props {
   children: React.ReactNode;
-  onReload: () => Promise<void | any>;
-};
+  onReload: () => Promise<undefined | any>;
+}
 
 export default function PullToRefresh({ children, onReload }: Props) {
   const y = useMotionValue(0);
@@ -22,7 +23,9 @@ export default function PullToRefresh({ children, onReload }: Props) {
    */
   const handlePointerDown = (e: React.PointerEvent) => {
     // Only left mouse button or touch
-    if (e.pointerType === "mouse" && e.button !== 0) return;
+    if (e.pointerType === "mouse" && e.button !== 0) {
+      return;
+    }
 
     startY.current = e.clientY;
     setDragging(true);
@@ -32,7 +35,9 @@ export default function PullToRefresh({ children, onReload }: Props) {
    * Pointer Move → ONLY when dragging
    */
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (!dragging || refreshing) return;
+    if (!dragging || refreshing) {
+      return;
+    }
 
     const diff = e.clientY - startY.current;
 
@@ -45,7 +50,9 @@ export default function PullToRefresh({ children, onReload }: Props) {
    * Pointer Up → release
    */
   const handlePointerUp = async () => {
-    if (!dragging) return;
+    if (!dragging) {
+      return;
+    }
 
     setDragging(false);
 
@@ -85,7 +92,7 @@ export default function PullToRefresh({ children, onReload }: Props) {
       >
         <motion.div
           animate={refreshing ? { rotate: 360 } : {}}
-          transition={{ repeat: Infinity, duration: 0.9, ease: "linear" }}
+          transition={{ repeat: Number.POSITIVE_INFINITY, duration: 0.9, ease: "linear" }}
           style={{ width: 22, height: 22 }}
         >
           <svg viewBox="0 0 24 24" fill="none">

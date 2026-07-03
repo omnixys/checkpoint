@@ -18,10 +18,10 @@ import DateProvider from "./DateProvider";
 import { DeviceProvider } from "./DeviceProvider";
 import ThemeModeProvider, { type ThemeProfile } from "./ThemeModeProvider";
 
-type ProviderProps = {
+interface ProviderProps {
   children: React.ReactNode;
   initialThemeProfile: ThemeProfile | null;
-};
+}
 
 export default function Provider({ children, initialThemeProfile }: ProviderProps) {
   const pathname = usePathname();

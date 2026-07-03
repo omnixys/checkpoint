@@ -1,11 +1,13 @@
-import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@/checkpoint/constants/cookie";
-import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@/checkpoint/constants/cookie";
 
 type Locale = (typeof SUPPORTED_LOCALES)[number];
 
 function detectLocale(header: string | null): Locale {
-  if (!header) return DEFAULT_LOCALE;
+  if (!header) {
+    return DEFAULT_LOCALE;
+  }
   const languages = header.split(",").map((l) => l.split(";")[0]?.trim().toLowerCase() ?? "");
 
   for (const lang of languages) {
@@ -40,16 +42,7 @@ export function proxy(req: NextRequest): NextResponse {
   if (!cookieLocale) {
     const header = req.headers.get("accept-language");
     const locale = detectLocale(header);
-    const pathLocale = pathname.split("/")[1];
-
-    console.log("-----------");
-    console.log("Path:", pathname);
-    console.log("URL locale:", pathLocale);
-    console.log("Cookie locale:", cookieLocale);
-    console.log("Accept-Language:", header);
-    console.log("-----------");
-
-    console.log("Detected locale:", locale);
+    const _pathLocale = pathname.split("/")[1];
 
     res.cookies.set("locale", locale, {
       path: "/",

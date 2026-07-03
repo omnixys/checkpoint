@@ -1,8 +1,8 @@
 "use client";
 
 import dayjs from "dayjs";
-import QRCode from "qrcode";
-import { TimelineItem } from "../TimelineSection";
+import QrCode from "qrcode";
+import type { TimelineItem } from "../TimelineSection";
 
 export type TimelineDesign =
   | "vip"
@@ -25,7 +25,7 @@ export async function generateTimelineHtmlAdvanced(
     (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
   );
 
-  const qr = qrValue ? await QRCode.toDataURL(qrValue) : null;
+  const qr = qrValue ? await QrCode.toDataURL(qrValue) : null;
 
   const rows = sorted
     .map(

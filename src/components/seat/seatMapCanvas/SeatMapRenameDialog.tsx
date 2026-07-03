@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import {
   Button,
   Dialog,
@@ -10,6 +9,7 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
+import React from "react";
 import type { SelectedItem } from "./SeatMapEditorToolbar";
 
 interface Props {
@@ -23,29 +23,44 @@ export default function SeatMapRenameDialog({ open, selectedItems, onClose, onRe
   const [names, setNames] = React.useState<Record<string, string>>({});
 
   React.useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      return;
+    }
     const initial: Record<string, string> = {};
     for (const item of selectedItems) {
-      if (item.type === "section") initial[item.id] = item.name;
-      else if (item.type === "table") initial[item.id] = item.name;
-      else initial[item.id] = item.label;
+      if (item.type === "section") {
+        initial[item.id] = item.name;
+      } else if (item.type === "table") {
+        initial[item.id] = item.name;
+      } else {
+        initial[item.id] = item.label;
+      }
     }
     setNames(initial);
   }, [open, selectedItems]);
 
   const handleSave = () => {
-    const updates = selectedItems
-      .filter((item) => {
-        const newName = names[item.id]?.trim();
-        if (!newName) return false;
-        const oldName = item.type === "section" ? item.name : item.type === "table" ? item.name : item.label;
-        return newName !== oldName;
-      })
-      .map((item) => ({
+    const updates: { id: string; type: SelectedItem["type"]; newName: string }[] = [];
+
+    for (const item of selectedItems) {
+      const newName = names[item.id]?.trim();
+      if (!newName) {
+        continue;
+      }
+
+      const oldName =
+        item.type === "section" ? item.name : item.type === "table" ? item.name : item.label;
+      if (newName === oldName) {
+        continue;
+      }
+
+      updates.push({
         id: item.id,
-        type: item.type as SelectedItem["type"],
-        newName: names[item.id]!.trim(),
-      }));
+        type: item.type,
+        newName,
+      });
+    }
+
     if (updates.length > 0) {
       onRename(updates);
     }
@@ -53,13 +68,17 @@ export default function SeatMapRenameDialog({ open, selectedItems, onClose, onRe
   };
 
   const label = (item: SelectedItem): string => {
-    if (item.type === "section") return item.name;
-    if (item.type === "table") return `Tisch ${item.name}`;
+    if (item.type === "section") {
+      return item.name;
+    }
+    if (item.type === "table") {
+      return `Tisch ${item.name}`;
+    }
     return `Sitz ${item.label}`;
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth={true}>
       <DialogTitle>
         {selectedItems.length === 1 ? "Umbenennen" : `${selectedItems.length} Elemente umbenennen`}
       </DialogTitle>
@@ -69,7 +88,7 @@ export default function SeatMapRenameDialog({ open, selectedItems, onClose, onRe
             <TextField
               key={item.id}
               label={label(item)}
-              fullWidth
+              fullWidth={true}
               value={names[item.id] ?? ""}
               onChange={(e) => setNames((prev) => ({ ...prev, [item.id]: e.target.value }))}
             />

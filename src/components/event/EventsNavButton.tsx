@@ -1,12 +1,10 @@
 "use client";
 
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { env } from "@/checkpoint/lib/env";
-import { useDevice } from "@/checkpoint/providers/DeviceProvider";
-import { alpha, AppBar, Box, Button, Stack, Typography, useTheme } from "@mui/material";
+import { alpha, Button, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 export default function EventsNavButton({
   href,
@@ -17,7 +15,7 @@ export default function EventsNavButton({
   label: string;
   disabled?: boolean;
 }) {
-  const t = useTypedTranslations("event");
+  const _t = useTypedTranslations("event");
 
   const theme = useTheme();
   const pathname = usePathname();

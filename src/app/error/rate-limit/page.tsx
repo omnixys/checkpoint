@@ -1,13 +1,13 @@
 "use client";
 
-import { Box, Button, Stack, Typography, useTheme, alpha } from "@mui/material";
-import { useRouter } from "next/navigation";
 import TimerIcon from "@mui/icons-material/Timer";
+import { alpha, Box, Button, Stack, Typography, useTheme } from "@mui/material";
+import { useRouter } from "next/navigation";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 export default function RateLimitPage() {
   const theme = useTheme();
-  const router = useRouter();
+  const _router = useRouter();
   const t = useTypedTranslations("error");
 
   return (

@@ -1,5 +1,4 @@
-import { NotificationChannel } from "../types/notification-channel.enum";
-import {
+import type {
   EmailMessage,
   EmailThread,
   InAppChat,
@@ -9,6 +8,7 @@ import {
   WhatsAppChat,
   WhatsAppMessage,
 } from "../types/notification.models";
+import { NotificationChannel } from "../types/notification-channel.enum";
 
 const whatsappChats: WhatsAppChat[] = [
   {
@@ -483,7 +483,9 @@ export function getNotificationMessages(
   channel: NotificationChannel,
   chatId: string | null,
 ): NotificationMessage[] {
-  if (!chatId) return [];
+  if (!chatId) {
+    return [];
+  }
 
   switch (channel) {
     case NotificationChannel.WHATSAPP:

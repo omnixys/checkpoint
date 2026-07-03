@@ -10,30 +10,29 @@ import type { OmnixysColorScheme } from "@/checkpoint/themes/paletteTypes";
 
 export type ThemeProfile = "wedding";
 
-type ThemeModeProviderProps = {
+interface ThemeModeProviderProps {
   children: React.ReactNode;
   initialThemeProfile: ThemeProfile | null;
-};
+}
 
 const WEDDING_PROFILE: ThemeProfile = "wedding";
 
 function clearThemeProfileCookie() {
   const domain = window.location.hostname.endsWith(".omnixys.com") ? "; domain=.omnixys.com" : "";
 
-  // biome-ignore lint/suspicious/noDocumentCookie: one-shot cross-application theme bridge
   document.cookie = `theme=; path=/; max-age=0; SameSite=Lax${domain}`;
 }
 
 // -------------------------------------------------------------
 // Context Types
 // -------------------------------------------------------------
-type ThemeModeContextValue = {
+interface ThemeModeContextValue {
   mode: PaletteMode;
   scheme: OmnixysColorScheme;
   setMode: (mode: PaletteMode) => void;
   setScheme: (scheme: OmnixysColorScheme) => void;
   toggle: () => void;
-};
+}
 
 // -------------------------------------------------------------
 // React Context

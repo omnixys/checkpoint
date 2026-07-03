@@ -16,13 +16,17 @@ export function serializeActiveEventCookieClear() {
 }
 
 export function writeActiveEventCookie(eventId: string) {
-  if (typeof document === "undefined") return;
+  if (typeof document === "undefined") {
+    return;
+  }
 
   document.cookie = serializeActiveEventCookie(eventId);
 }
 
 export function clearActiveEventCookie() {
-  if (typeof document === "undefined") return;
+  if (typeof document === "undefined") {
+    return;
+  }
 
   document.cookie = serializeActiveEventCookieClear();
 }

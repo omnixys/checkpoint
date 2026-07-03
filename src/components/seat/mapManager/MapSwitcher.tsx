@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, ToggleButtonGroup, ToggleButton, alpha, useTheme } from "@mui/material";
+import { alpha, Box, ToggleButton, ToggleButtonGroup, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
 
 export type MapType = "cinema" | "circular" | "hybrid" | "cluster" | "default" | "list";
@@ -29,7 +29,7 @@ export default function MapSwitcher({
       }}
     >
       <ToggleButtonGroup
-        exclusive
+        exclusive={true}
         value={value}
         onChange={(_, v) => v && onChange(v)}
         sx={{

@@ -1,33 +1,30 @@
+/** biome-ignore-all lint/suspicious/noEmptyBlockStatements: kp */
 "use client";
 
-import CreateTicketDialog from "@/checkpoint/components/ticket/dialog/CreateTicketDialog";
-import DeleteTicketDialog from "@/checkpoint/components/ticket/dialog/DeleteTicketDialog";
-import TicketHeader from "@/checkpoint/components/ticket/TicketHeader";
-import TicketList from "@/checkpoint/components/ticket/TicketList";
-import {
-  TicketsByEventQuery,
-  TicketsByEventQueryVariables,
-  TicketsByEventDocument,
-  RevokeTicketMutation,
-  RevokeTicketMutationVariables,
-  RevokeTicketDocument,
-  TicketPayload,
-} from "@/checkpoint/generated/graphql";
-import useTicketQuery from "@/checkpoint/hooks/ticket/useTicketQuery";
-import { useAuth } from "@/checkpoint/providers/AuthProvider";
-import { getLogger } from "@/checkpoint/utils/logger";
-import { useMutation, useQuery } from "@apollo/client/react";
+import { useMutation } from "@apollo/client/react";
 import { Box, CircularProgress, Dialog } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
+import CreateTicketDialog from "@/checkpoint/components/ticket/dialog/CreateTicketDialog";
+import DeleteTicketDialog from "@/checkpoint/components/ticket/dialog/DeleteTicketDialog";
+import TicketHeader from "@/checkpoint/components/ticket/TicketHeader";
+import TicketList from "@/checkpoint/components/ticket/TicketList";
+import {
+  RevokeTicketDocument,
+  type RevokeTicketMutation,
+  type RevokeTicketMutationVariables,
+} from "@/checkpoint/generated/graphql";
+import useTicketQuery from "@/checkpoint/hooks/ticket/useTicketQuery";
+import { useAuth } from "@/checkpoint/providers/AuthProvider";
+import { getLogger } from "@/checkpoint/utils/logger";
 
 export default function TicketClientPage() {
   const logger = getLogger("TicketPage");
 
-  const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  useRouter();
+  useAuth();
   const theme = useTheme();
   const params = useParams();
   const eventId = params.id as string;
@@ -37,7 +34,7 @@ export default function TicketClientPage() {
    * --------------------------------------------------------- */
   const [openCreate, setOpenCreate] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [openRotate, setOpenRotate] = useState(false);
+  const [_openRotate, _setOpenRotate] = useState(false);
 
   const { ticketPage, ticketPageLoading, ticketPageError } = useTicketQuery({
     eventId,
@@ -56,7 +53,9 @@ export default function TicketClientPage() {
    * --------------------------------------------------------- */
 
   const handleDelete = useCallback(async () => {
-    if (!deleteId) return;
+    if (!deleteId) {
+      return;
+    }
     await revokeTicket({ variables: { input: { ticketId: deleteId, reason: "Einfach SO" } } });
     setDeleteId(null);
   }, [revokeTicket, deleteId]);
@@ -117,12 +116,12 @@ export default function TicketClientPage() {
       />
 
       {/* ---------------- DIALOG: DELETE/REVOKE ---------------- */}
-      <Dialog open={!!deleteId} onClose={() => setDeleteId(null)} fullWidth maxWidth="xs">
+      <Dialog open={!!deleteId} onClose={() => setDeleteId(null)} fullWidth={true} maxWidth="xs">
         <DeleteTicketDialog onCancel={() => setDeleteId(null)} onConfirm={handleDelete} />
       </Dialog>
 
       {/* ---------------- DIALOG: CREATE ---------------- */}
-      <Dialog open={openCreate} onClose={() => setOpenCreate(false)} fullWidth maxWidth="sm">
+      <Dialog open={openCreate} onClose={() => setOpenCreate(false)} fullWidth={true} maxWidth="sm">
         <CreateTicketDialog onCancel={() => setOpenCreate(false)} onConfirm={() => {}} />
       </Dialog>
     </Box>

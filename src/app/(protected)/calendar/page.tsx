@@ -1,8 +1,8 @@
+import type { Metadata } from "next";
+import type { JSX } from "react";
 import MyCalendarContent from "@/checkpoint/components/calendar/CalendarRoot";
 import EventsNavBar from "@/checkpoint/components/event/EventsNavBar";
 import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
-import { Metadata } from "next";
-import { JSX } from "react";
 
 export const metadata: Metadata = buildMetadata({
   title: "Event Calendar",

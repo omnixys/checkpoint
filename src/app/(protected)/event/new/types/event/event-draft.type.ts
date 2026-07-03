@@ -1,6 +1,11 @@
-import { CreateEventInput, EventAddressInput, EventCategory } from "@/checkpoint/generated/graphql";
+import type {
+  CreateEventInput,
+  CreateSettingsInput,
+  EventAddressInput,
+  EventCategory,
+} from "@/checkpoint/generated/graphql";
 
-export type EventAddressDraft = {
+export interface EventAddressDraft {
   street: string | null;
   houseNumber: string | null;
   postalCode: string | null;
@@ -8,32 +13,14 @@ export type EventAddressDraft = {
   state: string | null;
   country: string;
   additionalInfo: string | null;
-};
-
-export interface CreateSettingsDraft {
-  allowReEntry: boolean;
-  rotateSeconds: number;
-  maxSeats: number;
-  allowPublicRsvp: boolean;
-  allowPublicPlusOne: boolean;
-  allowPublicRsvpWebsite: boolean;
-  invitedByOptions: string[];
-  publicRsvpWebsite: string | null;
-  isActive: boolean;
-  isPublic: boolean;
-  dressCode: string | null;
-  description: string | null;
-
-  logoUrl: string | null;
-  coverImageUrl: string | null;
-
-  // descriptionLong: string | null;
-  startsAt: string | null;
-  endsAt: string | null;
-  category: EventCategory;
 }
 
-export type ChildEventDraft = {
+export interface CreateSettingsDraft extends CreateSettingsInput {
+  logoUrl: string | null;
+  coverImageUrl: string | null;
+}
+
+export interface ChildEventDraft {
   id: string;
   name: string;
   description?: string;
@@ -42,9 +29,9 @@ export type ChildEventDraft = {
   maxSeats?: number;
   parentId?: string;
   category: EventCategory;
-};
+}
 
-export type CreateEventDraft = {
+export interface CreateEventDraft {
   name: string;
   startsAt?: string;
   endsAt?: string;
@@ -52,10 +39,12 @@ export type CreateEventDraft = {
   maxSeats?: number;
   settings: CreateSettingsDraft;
   children: ChildEventDraft[];
-};
+}
 
 export const mapAddress = (address?: EventAddressDraft): EventAddressInput | null => {
-  if (!address) return null;
+  if (!address) {
+    return null;
+  }
 
   return {
     street: address.street ?? null,
@@ -68,11 +57,9 @@ export const mapAddress = (address?: EventAddressDraft): EventAddressInput | nul
   };
 };
 
-export const mapSettings = (settings: CreateSettingsDraft): any /* ideally generated type */ => {
-  const { logoUrl, coverImageUrl, ...rest } = settings;
-  return {
-    ...rest,
-  };
+export const mapSettings = (settings: CreateSettingsDraft): CreateSettingsInput => {
+  const { logoUrl: _logoUrl, coverImageUrl: _coverImageUrl, ...input } = settings;
+  return input;
 };
 
 const mapChild = (
@@ -100,17 +87,14 @@ const mapChild = (
   };
 };
 
-export const mapEvent = (draft: CreateEventDraft): CreateEventInput => {
-  return {
-    parentId: null,
-    name: draft.name,
+export const mapEvent = (draft: CreateEventDraft): CreateEventInput => ({
+  parentId: null,
+  name: draft.name,
 
-    address: mapAddress(draft.address),
+  address: mapAddress(draft.address),
 
-    settings: mapSettings(draft.settings),
+  settings: mapSettings(draft.settings),
 
-    children:
-      draft.children?.map((child): CreateEventInput => mapChild(child, draft.settings)) ?? [],
-    tags: null,
-  };
-};
+  children: draft.children?.map((child): CreateEventInput => mapChild(child, draft.settings)) ?? [],
+  tags: null,
+});

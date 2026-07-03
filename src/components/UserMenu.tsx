@@ -1,5 +1,11 @@
 "use client";
 
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import BadgeIcon from "@mui/icons-material/Badge";
+import GroupsIcon from "@mui/icons-material/Groups";
+import LogoutIcon from "@mui/icons-material/Logout";
+import Person from "@mui/icons-material/Person";
+import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 import {
   Avatar,
   Divider,
@@ -11,24 +17,16 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import React, { JSX } from "react";
-
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import BadgeIcon from "@mui/icons-material/Badge";
-import GroupsIcon from "@mui/icons-material/Groups";
-import LogoutIcon from "@mui/icons-material/Logout";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import Person from "@mui/icons-material/Person";
-import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
-import { env } from "@/checkpoint/lib/env";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import React, { type JSX } from "react";
 import ColorBubbleSwitcher from "@/checkpoint/components/ColorBubbleSwitcher";
+import LanguageSwitcher from "@/checkpoint/components/LanguageSwitcher";
+import ThemeToggleButton from "@/checkpoint/components/ThemeToggleButton";
+import { env } from "@/checkpoint/lib/env";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { useDevice } from "@/checkpoint/providers/DeviceProvider";
-import ThemeToggleButton from "@/checkpoint/components/ThemeToggleButton";
-import LanguageSwitcher from "@/checkpoint/components/LanguageSwitcher";
-import Link from "next/link";
 
 /**
  * eventRoles:
@@ -51,8 +49,12 @@ export default function UserMenu(): JSX.Element | null {
 
   const eventRole: EventRole = activeEvent?.myRole ?? "GUEST";
 
-  if (currentUserLoading) return null;
-  if (!isAuthenticated || !currentUser) return null;
+  if (currentUserLoading) {
+    return null;
+  }
+  if (!isAuthenticated || !currentUser) {
+    return null;
+  }
 
   const displayName =
     [currentUser?.personalInfo?.firstName, currentUser?.personalInfo?.lastName]
@@ -120,14 +122,14 @@ export default function UserMenu(): JSX.Element | null {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
         {/* Header */}
-        <MenuItem disabled>
+        <MenuItem disabled={true}>
           <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
             {displayName}
           </Typography>
         </MenuItem>
 
         {device === "mobile" && (
-          <Stack direction={"row"}>
+          <Stack direction="row">
             <MenuItem>
               <ColorBubbleSwitcher />
             </MenuItem>
@@ -165,9 +167,7 @@ export default function UserMenu(): JSX.Element | null {
 
         {/* Plus-Ones → only for guests */}
         {eventRole === "GUEST" && (
-          <MenuItem
-            onClick={() => go(`${CHECKPOINT_BASE_PATH}me/my-plus-ones`)}
-          >
+          <MenuItem onClick={() => go(`${CHECKPOINT_BASE_PATH}me/my-plus-ones`)}>
             <ListItemIcon>
               <GroupsIcon fontSize="small" />
             </ListItemIcon>

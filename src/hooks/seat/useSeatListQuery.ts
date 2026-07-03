@@ -1,9 +1,9 @@
+import { useLazyQuery, useQuery } from "@apollo/client/react";
 import {
   SeatListDocument,
-  SeatListQuery,
-  SeatListQueryVariables,
+  type SeatListQuery,
+  type SeatListQueryVariables,
 } from "@/checkpoint/generated/graphql";
-import { useLazyQuery, useQuery } from "@apollo/client/react";
 
 interface Props {
   eventId?: string | undefined;

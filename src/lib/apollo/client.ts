@@ -1,11 +1,10 @@
 import { ApolloClient, split } from "@apollo/client";
 import { getMainDefinition } from "@apollo/client/utilities";
 import type { DefinitionNode, OperationDefinitionNode } from "graphql";
-
+import { getAccessTokenClient } from "@/checkpoint/lib/apollo/cookie.utils";
+import { apolloCache } from "./cache";
 import { createHttpLinkWithMiddleware } from "./http-link";
 import { createWsLinkWithAuth } from "./ws-link";
-import { apolloCache } from "./cache";
-import { getAccessTokenClient } from "@/checkpoint/lib/apollo/cookie.utils";
 
 /**
  * Detect subscription operations

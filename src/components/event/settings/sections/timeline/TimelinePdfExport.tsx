@@ -1,15 +1,15 @@
 "use client";
 
 import { Button } from "@mui/material";
-import { TimelineItem } from "../TimelineSection";
-import { generateTimelineHtmlAdvanced, TimelineDesign } from "./TimelineRenderer";
 import html2pdf from "html2pdf.js";
+import type { TimelineItem } from "../TimelineSection";
+import { generateTimelineHtmlAdvanced, type TimelineDesign } from "./TimelineRenderer";
 
-type Props = {
+interface Props {
   items: TimelineItem[];
   design?: TimelineDesign;
   title?: string | undefined;
-};
+}
 
 export default function TimelinePdfExport({ items, design = "clean", title }: Props) {
   const handlePdf = async () => {

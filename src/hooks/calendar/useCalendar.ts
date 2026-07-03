@@ -1,7 +1,7 @@
-import { GetMyEventCalendarDataQuery } from "@/checkpoint/generated/graphql";
+import { useMemo, useState } from "react";
+import type { GetMyEventCalendarDataQuery } from "@/checkpoint/generated/graphql";
 import { groupEventsByDay } from "@/checkpoint/utils/calendar/calendar.utils";
 import { addMonths, addYears } from "@/checkpoint/utils/date-utils";
-import { useMemo, useState } from "react";
 
 export type CalendarView = "list" | "grid";
 export type CalendarMode = "month" | "year";

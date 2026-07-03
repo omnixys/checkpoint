@@ -1,17 +1,17 @@
 "use client";
 
+import { Box, Typography } from "@mui/material";
 import EventDetailsAccordion from "@/checkpoint/components/event/details/EventDetailsAccordion";
 import EventLocationMap from "@/checkpoint/components/event/details/EventLocationMap";
 import EventTimeline from "@/checkpoint/components/event/details/EventTimeline";
 import EventDescriptionEditor from "@/checkpoint/components/event/EventDescriptionEditor";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { Box, Typography } from "@mui/material";
 
-type Props = {
+interface Props {
   ev: any;
   active: string;
   onDescriptionChange: (v: string) => void;
-};
+}
 
 export default function EventTabContent({ ev, active, onDescriptionChange }: Props) {
   const t = useTypedTranslations("event");

@@ -1,29 +1,29 @@
-import { JSX } from "react";
 import {
   AccountCircle as AccountCircleIcon,
   Badge as BadgeIcon,
-  Dashboard as DashboardIcon,
-  EventSeat as EventSeatIcon,
-  Home as HomeIcon,
-  QrCodeScanner as QrCodeScannerIcon,
-  Event as EventIcon,
-  MailOutlined as MailOutlineIcon,
-  Groups as GroupsIcon,
   ConfirmationNumberOutlined as ConfirmationNumberOutlinedIcon,
+  Dashboard as DashboardIcon,
+  Event as EventIcon,
+  EventSeat as EventSeatIcon,
+  Groups as GroupsIcon,
+  Home as HomeIcon,
+  MailOutlined as MailOutlineIcon,
   Notifications as NotificationsIcon,
+  QrCodeScanner as QrCodeScannerIcon,
 } from "@mui/icons-material";
+import type { JSX } from "react";
+import type { UserRoleType } from "@/checkpoint/generated/graphql";
 import { env } from "@/checkpoint/lib/env";
-import { UserRoleType } from "@/checkpoint/generated/graphql";
 
 const basePath = env.CHECKPOINT_BASE_PATH;
 
-export type NavItem = {
+export interface NavItem {
   label: string;
   icon: JSX.Element;
   path: string;
   tourId?: string;
   disabled?: boolean;
-};
+}
 
 type TFunction = (key: any) => string;
 
@@ -34,7 +34,7 @@ export function createNavigation(
 ): NavItem[] {
   const hasEvent = Boolean(activeEventId);
 
-  const NAV: Record<UserRoleType, NavItem[]> = {
+  const Nav: Record<UserRoleType, NavItem[]> = {
     ADMIN: [
       {
         label: t("sidebar.home"),
@@ -160,5 +160,5 @@ export function createNavigation(
     ],
   };
 
-  return NAV[role];
+  return Nav[role];
 }

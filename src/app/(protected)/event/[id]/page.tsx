@@ -1,14 +1,12 @@
-import { Suspense } from "react";
-import EventClientPage from "./EventClientPage";
-import { Skeleton } from "@mui/material";
-import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
-import { Metadata } from "next";
-import { createServerClient } from "@/checkpoint/lib/apollo/server-client";
+import type { Metadata } from "next";
 import {
-  GetEventNameQuery,
-  GetEventNameQueryVariables,
   GetEventNameDocument,
+  type GetEventNameQuery,
+  type GetEventNameQueryVariables,
 } from "@/checkpoint/generated/graphql";
+import { createServerClient } from "@/checkpoint/lib/apollo/server-client";
+import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
+import EventClientPage from "./EventClientPage";
 
 /**
  * -------------------------------------------------------------
@@ -86,7 +84,9 @@ export async function generateMetadata({
  * -------------------------------------------------------------
  */
 async function getEventMetadata(eventId: string) {
-  if (!eventId) return null;
+  if (!eventId) {
+    return null;
+  }
 
   const client = await createServerClient();
 
@@ -97,7 +97,9 @@ async function getEventMetadata(eventId: string) {
   });
 
   const event = res.data?.event;
-  if (!event) return null;
+  if (!event) {
+    return null;
+  }
 
   return {
     name: event.name,

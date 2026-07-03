@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Stack, Typography, useTheme, alpha } from "@mui/material";
+import { alpha, Box, Stack, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
 
 /**

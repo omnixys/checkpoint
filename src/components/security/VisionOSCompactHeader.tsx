@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
 import { Box, Stack, Typography } from "@mui/material";
-import { motion, AnimatePresence, useScroll } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import React from "react";
 
 export default function VisionOSCompactHeader({
   connectivity,

@@ -1,13 +1,13 @@
 "use client";
 
-export type MockChat = {
+export interface MockChat {
   id: string;
   chatId: string;
   name: string;
   lastMessage: string;
   avatar: string;
   unread: number;
-};
+}
 
 export function useMockChats(): { chats: MockChat[]; loading: boolean } {
   return {

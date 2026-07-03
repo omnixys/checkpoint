@@ -1,22 +1,20 @@
 "use client";
 
-import { UpdatePlusOneInput } from "@/checkpoint/app/(protected)/me/my-plus-ones/types/plusOne.types";
-import { CreatePlusOneInput } from "@/checkpoint/generated/graphql";
+import { useSnackbar } from "notistack";
+import { useCallback, useMemo } from "react";
+import type {
+  PlusOneItem,
+  UpdatePlusOneInput,
+} from "@/checkpoint/app/(protected)/me/my-plus-ones/types/plusOne.types";
+import type { CreatePlusOneInput } from "@/checkpoint/generated/graphql";
 import useInvitationMutation from "@/checkpoint/hooks/invitation/useInvitationMutation";
 import useInvitationQuery from "@/checkpoint/hooks/invitation/useInvitationQuery";
 import useMyInvitationQuery from "@/checkpoint/hooks/invitation/useMyInvitationQuery";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
-import { useSnackbar } from "notistack";
-import { useCallback, useMemo } from "react";
-import { RemoveAllPlusOnesMutation } from "../../../../../generated/graphql";
 
-type InvitationQueryVariables = {
-  invitationId: string;
-};
-
-type UsePlusOnesResult = {
-  plusOnes: any;
+interface UsePlusOnesResult {
+  plusOnes: PlusOneItem[] | undefined;
   remaining: number;
   loading: boolean;
   hasRootInvitation: boolean;
@@ -24,7 +22,7 @@ type UsePlusOnesResult = {
   updatePlusOne: (input: UpdatePlusOneInput) => Promise<void>;
   removePlusOne: (id: string) => Promise<void>;
   removeAllPlusOnes: () => Promise<void>;
-};
+}
 
 export const usePlusOnes = (): UsePlusOnesResult => {
   const { activeEvent } = useActiveEvent();
@@ -35,9 +33,7 @@ export const usePlusOnes = (): UsePlusOnesResult => {
   const { myInvitationIdMap } = useMyInvitationQuery({
     loadMyInvitationIdList: true,
   });
-  const getInvitationId = (eventId: string) => {
-    return myInvitationIdMap.get(eventId)?.id ?? null;
-  };
+  const getInvitationId = (eventId: string) => myInvitationIdMap.get(eventId)?.id ?? null;
   const invitationId = eventId ? getInvitationId(eventId) : null;
 
   const { plusOneInvitationList, plusOneInvitationListLoading } = useInvitationQuery({
@@ -65,8 +61,8 @@ export const usePlusOnes = (): UsePlusOnesResult => {
           countryCode: phone.countryCode,
           number: phone.number,
           type: phone.type,
-          label: phone.label ?? undefined,
-          isPrimary: phone.isPrimary,
+          label: phone.label ?? null,
+          isPrimary: phone.isPrimary ?? false,
         })) ?? [],
       // seat: entry..seat
       //   ? {
@@ -146,7 +142,7 @@ export const usePlusOnes = (): UsePlusOnesResult => {
   const removePlusOne = useCallback(
     async (id: string) => {
       try {
-        const kp = await removePlusOneMutation({
+        const _kp = await removePlusOneMutation({
           variables: {
             id,
           },

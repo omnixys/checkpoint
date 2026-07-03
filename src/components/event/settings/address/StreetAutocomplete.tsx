@@ -1,8 +1,8 @@
 "use client";
 
-import { useAddressAutocomplete } from "@/checkpoint/components/event/settings/address/useAddressAutocomplete";
 import { Autocomplete, CircularProgress, Stack, TextField, Typography } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
+import { useAddressAutocomplete } from "@/checkpoint/components/event/settings/address/useAddressAutocomplete";
 
 /**
  * -------------------------------------------------------------
@@ -14,7 +14,7 @@ import { useEffect, useMemo, useState } from "react";
  * The UI component keeps that shape explicit and lets the form
  * normalize null values at the boundary.
  */
-export type Suggestion = {
+export interface Suggestion {
   streetId: string | null;
   houseNumberId: string | null;
   cityId: string | null;
@@ -28,12 +28,12 @@ export type Suggestion = {
   lat: number | null;
   lon: number | null;
   confidence: number | null;
-};
+}
 
-type Props = {
+interface Props {
   value?: string | undefined;
   onChange?: (value: Suggestion | null) => void;
-};
+}
 
 /**
  * -------------------------------------------------------------

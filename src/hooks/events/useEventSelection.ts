@@ -44,9 +44,7 @@ export function useEventSelection({ rootEventId, children }: UseEventSelectionOp
   }, [childIds, isRootSelectable, selectedChildIds]);
 
   const isChildSelected = useCallback(
-    (childId: string): boolean => {
-      return selectedChildIds.includes(childId);
-    },
+    (childId: string): boolean => selectedChildIds.includes(childId),
     [selectedChildIds],
   );
 
@@ -87,9 +85,7 @@ export function useEventSelection({ rootEventId, children }: UseEventSelectionOp
    * Current backend contract does not yet expose selected event IDs in PublicRsvpInput.
    * This value is therefore prepared here for future integration.
    */
-  const selectedEventIds = useMemo(() => {
-    return [...selectedChildIds];
-  }, [selectedChildIds]);
+  const selectedEventIds = useMemo(() => [...selectedChildIds], [selectedChildIds]);
 
   /**
    * UI label helper:

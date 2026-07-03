@@ -1,12 +1,12 @@
 import { createNavigation } from "@/checkpoint/components/layout/navigation.config";
-import { UserRoleType } from "@/checkpoint/generated/graphql";
-import { TourStep } from "@/checkpoint/providers/TourProvider";
+import type { UserRoleType } from "@/checkpoint/generated/graphql";
+import type { TourStep } from "@/checkpoint/providers/TourProvider";
 
-type BuildTourParams = {
+interface BuildTourParams {
   role: UserRoleType;
   activeEvent?: any;
   t: (key: any) => string;
-};
+}
 
 function buildNavDescription(tourId: string, t: any): string {
   const map: Record<string, string> = {

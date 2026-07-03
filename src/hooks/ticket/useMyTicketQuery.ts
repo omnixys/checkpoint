@@ -1,12 +1,12 @@
+import { useQuery } from "@apollo/client/react";
 import {
   GetMyFullTicketListDocument,
-  GetMyFullTicketListQuery,
-  GetMyFullTicketListQueryVariables,
+  type GetMyFullTicketListQuery,
+  type GetMyFullTicketListQueryVariables,
   GetMyTicketListDocument,
-  GetMyTicketListQuery,
-  GetMyTicketListQueryVariables,
+  type GetMyTicketListQuery,
+  type GetMyTicketListQueryVariables,
 } from "@/checkpoint/generated/graphql";
-import { useQuery } from "@apollo/client/react";
 
 interface Props {
   eventId?: string | undefined;

@@ -1,28 +1,32 @@
 "use client";
 
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { Box, Chip, Stack, Typography, useTheme } from "@mui/material";
 import Image from "next/image";
-import { EventHeaderProps } from "../EventActions";
-import { CoverMediaType } from "@/checkpoint/types/event.type";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import type { CoverMediaType } from "@/checkpoint/types/event.type";
+import type { EventHeaderProps } from "../EventActions";
 
 export function getBestImage(media: CoverMediaType, targetWidth: number): string | null {
-  if (!media) return null;
+  if (!media) {
+    return null;
+  }
 
-  if (!media.variants?.length) return media.url;
+  if (media.variants?.length === 0) {
+    return media.url;
+  }
 
   const sorted = [...media.variants].sort((a, b) => a.width - b.width);
 
   const match = sorted.find((v) => v.width >= targetWidth);
 
-  const last = sorted[sorted.length - 1];
+  const last = sorted.at(-1);
 
   return match?.url ?? last?.url ?? media.url;
 }
 
 export default function EventHeaderB({ eventPageData }: EventHeaderProps) {
   const t = useTypedTranslations("event");
-  const tCommon = useTypedTranslations("common");
+  const _tCommon = useTypedTranslations("common");
 
   const theme = useTheme();
 
@@ -44,7 +48,7 @@ export default function EventHeaderB({ eventPageData }: EventHeaderProps) {
         height: { xs: 220, sm: 260, md: 300 },
       }}
     >
-      <Image src={hero} alt={eventPageData.name} fill style={{ objectFit: "cover" }} />
+      <Image src={hero} alt={eventPageData.name} fill={true} style={{ objectFit: "cover" }} />
 
       {/* Gradient Overlay */}
       <Box

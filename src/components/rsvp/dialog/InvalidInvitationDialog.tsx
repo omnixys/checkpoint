@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-import { Box, Stack, Typography, Button, useTheme, useMediaQuery } from "@mui/material";
+import { Button, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
@@ -16,7 +15,9 @@ export default function InvalidInvitationDialog({ open }: { open: boolean }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  if (!open) return null;
+  if (!open) {
+    return null;
+  }
 
   /** VisionOS floating bubble for desktop */
   const DesktopBubble = () => (
@@ -32,7 +33,7 @@ export default function InvalidInvitationDialog({ open }: { open: boolean }) {
         zIndex: 9999,
         backdropFilter: "blur(30px)",
         WebkitBackdropFilter: "blur(30px)",
-        background: theme.palette.background.paper + "CC", // glassy
+        background: `${theme.palette.background.paper}CC`, // glassy
         borderRadius: "24px",
         padding: "32px 40px",
         boxShadow: theme.shadows[6],
@@ -89,7 +90,7 @@ export default function InvalidInvitationDialog({ open }: { open: boolean }) {
         zIndex: 9999,
         backdropFilter: "blur(28px)",
         WebkitBackdropFilter: "blur(28px)",
-        background: theme.palette.background.paper + "CC",
+        background: `${theme.palette.background.paper}CC`,
         padding: "32px 24px",
         display: "flex",
         flexDirection: "column",
@@ -118,7 +119,7 @@ export default function InvalidInvitationDialog({ open }: { open: boolean }) {
         </Typography>
 
         <Button
-          fullWidth
+          fullWidth={true}
           variant="contained"
           onClick={() => (window.location.href = "/checkpoint/")}
           sx={{

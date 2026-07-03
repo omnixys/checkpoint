@@ -1,19 +1,18 @@
 "use client";
 
-import { Button, alpha, useTheme } from "@mui/material";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import { alpha, Button, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import React from "react";
 
-export type BackButtonBaseProps = {
+export interface BackButtonBaseProps {
   href: string;
   label: string;
   /**
    * Optional override for animation (for future extensibility)
    */
   disableAnimation?: boolean;
-};
+}
 
 /**
  * Core reusable Back Button component.
@@ -53,7 +52,9 @@ export function BackButtonBase({ href, label, disableAnimation = false }: BackBu
     </Button>
   );
 
-  if (disableAnimation) return content;
+  if (disableAnimation) {
+    return content;
+  }
 
   return (
     <motion.div

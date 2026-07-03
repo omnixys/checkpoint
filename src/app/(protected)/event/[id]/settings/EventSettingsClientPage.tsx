@@ -1,5 +1,7 @@
 "use client";
 
+import { Box, CircularProgress, Stack } from "@mui/material";
+import { useParams } from "next/navigation";
 import EventAddressSection from "@/checkpoint/components/event/settings/address/EventAddressSection";
 import EventSettingsLayout from "@/checkpoint/components/event/settings/EventSettingsLayout";
 import EventMetaSection from "@/checkpoint/components/event/settings/sections/EventMetaSection";
@@ -7,8 +9,6 @@ import EventSettingsSection from "@/checkpoint/components/event/settings/section
 import RolesSection from "@/checkpoint/components/event/settings/sections/RolesSection";
 import TimelineSection from "@/checkpoint/components/event/settings/sections/TimelineSection";
 import { useEventSettings } from "@/checkpoint/hooks/events/useEventSettings";
-import { Box, CircularProgress, Stack } from "@mui/material";
-import { useParams } from "next/navigation";
 
 export const centerStyle = {
   display: "flex",

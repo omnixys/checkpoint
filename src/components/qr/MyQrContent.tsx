@@ -28,12 +28,16 @@ export default function MyQrContent() {
   });
 
   const ticket = useMemo(() => {
-    if (!fullTicketEventIdMap || !activeEvent) return null;
+    if (!fullTicketEventIdMap || !activeEvent) {
+      return null;
+    }
 
     return fullTicketEventIdMap.get(activeEvent.id) ?? null;
   }, [fullTicketEventIdMap, activeEvent]);
 
-  if (!activeEvent) return null;
+  if (!activeEvent) {
+    return null;
+  }
 
   if (myFullTicketListLoading) {
     return (
@@ -90,7 +94,10 @@ export default function MyQrContent() {
         )}, ${alpha(theme.palette.background.default, 0)} 44%), ${theme.palette.background.default}`,
       }}
     >
-      <Stack spacing={3} sx={{ width: "100%", maxWidth: theme.spacing(108), mx: "auto", minWidth: 0 }}>
+      <Stack
+        spacing={3}
+        sx={{ width: "100%", maxWidth: theme.spacing(108), mx: "auto", minWidth: 0 }}
+      >
         <MotionBox
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}

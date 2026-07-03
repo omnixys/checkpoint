@@ -1,15 +1,15 @@
-import { CreateEventWizardStep } from "@/checkpoint/app/(protected)/event/new/types/event/event-wizard.type";
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import ChecklistRoundedIcon from "@mui/icons-material/ChecklistRounded";
 import {
+  alpha,
   Box,
   LinearProgress,
   MobileStepper,
   Stack,
   Typography,
-  alpha,
   useTheme,
 } from "@mui/material";
+import { CreateEventWizardStep } from "@/checkpoint/app/(protected)/event/new/types/event/event-wizard.type";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 interface CreateEventHeaderProps {
   activeStep: number;

@@ -26,15 +26,15 @@ type ScannerState = "IDLE" | "SCANNING" | "VERIFYING" | "RESULT";
 type Verdict = "success" | "error" | null;
 type FinalVerdict = Exclude<Verdict, null>;
 
-type Props = {
+interface Props {
   onDetect: (qrText: string) => Promise<boolean>;
   onRestart?: (() => void) | undefined;
-};
+}
 
-type LastScan = {
+interface LastScan {
   value: string;
   detectedAt: number;
-};
+}
 
 type TorchConstraintSet = MediaTrackConstraintSet & {
   torch?: boolean;
@@ -87,7 +87,9 @@ const SCAN_REGION_RATIO = 0.68;
 const MAX_SCAN_CANVAS_SIZE = 720;
 
 function isSafariBrowser() {
-  if (typeof navigator === "undefined") return false;
+  if (typeof navigator === "undefined") {
+    return false;
+  }
 
   return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 }
@@ -103,10 +105,14 @@ function canUseNativeBarcodeDetector() {
 
 async function createNativeQrDetector() {
   const BarcodeDetectorCtor = window.BarcodeDetector;
-  if (!BarcodeDetectorCtor) return null;
+  if (!BarcodeDetectorCtor) {
+    return null;
+  }
 
   const formats = await BarcodeDetectorCtor.getSupportedFormats();
-  if (!formats.includes("qr_code")) return null;
+  if (!formats.includes("qr_code")) {
+    return null;
+  }
 
   return new BarcodeDetectorCtor({ formats: ["qr_code"] });
 }
@@ -121,13 +127,17 @@ function isTorchAvailable(capabilities: MediaTrackCapabilities | undefined) {
 }
 
 function getAttachedStream(video: HTMLVideoElement | null) {
-  if (!video) return null;
+  if (!video) {
+    return null;
+  }
 
   return video.srcObject instanceof MediaStream ? video.srcObject : null;
 }
 
 function getLiveVideoTrack(stream: MediaStream | null) {
-  if (!stream) return null;
+  if (!stream) {
+    return null;
+  }
 
   const tracks = stream.getVideoTracks();
   return tracks.find((track) => track.readyState === "live") ?? tracks[0] ?? null;
@@ -144,7 +154,9 @@ function stopStream(stream: MediaStream | null) {
 }
 
 function drawScanRegion(video: HTMLVideoElement, canvas: HTMLCanvasElement) {
-  if (video.videoWidth === 0 || video.videoHeight === 0) return null;
+  if (video.videoWidth === 0 || video.videoHeight === 0) {
+    return null;
+  }
 
   const sourceSize = Math.floor(Math.min(video.videoWidth, video.videoHeight) * SCAN_REGION_RATIO);
   const sourceX = Math.floor((video.videoWidth - sourceSize) / 2);
@@ -152,7 +164,9 @@ function drawScanRegion(video: HTMLVideoElement, canvas: HTMLCanvasElement) {
   const targetSize = Math.min(sourceSize, MAX_SCAN_CANVAS_SIZE);
   const context = canvas.getContext("2d", { willReadFrequently: true });
 
-  if (!context) return null;
+  if (!context) {
+    return null;
+  }
 
   canvas.width = targetSize;
   canvas.height = targetSize;
@@ -162,10 +176,14 @@ function drawScanRegion(video: HTMLVideoElement, canvas: HTMLCanvasElement) {
 }
 
 function playScanTone(audioContextRef: RefObject<AudioContext | null>, verdict: FinalVerdict) {
-  if (typeof window === "undefined") return;
+  if (typeof window === "undefined") {
+    return;
+  }
 
   const AudioContextCtor = window.AudioContext ?? window.webkitAudioContext;
-  if (!AudioContextCtor) return;
+  if (!AudioContextCtor) {
+    return;
+  }
 
   try {
     const existingContext = audioContextRef.current;
@@ -202,7 +220,9 @@ function playScanTone(audioContextRef: RefObject<AudioContext | null>, verdict: 
 }
 
 function pulseDevice(verdict: FinalVerdict) {
-  if (typeof navigator === "undefined" || typeof navigator.vibrate !== "function") return;
+  if (typeof navigator === "undefined" || typeof navigator.vibrate !== "function") {
+    return;
+  }
 
   navigator.vibrate(verdict === "success" ? [18, 32, 18] : [46, 36, 46]);
 }
@@ -287,7 +307,9 @@ export default function WebCameraScanner({ onDetect, onRestart }: Props) {
     const supported = !isSafariBrowser() && isTorchAvailable(track?.getCapabilities?.());
 
     setTorchSupported(supported);
-    if (!supported) setTorchOn(false);
+    if (!supported) {
+      setTorchOn(false);
+    }
   }, []);
 
   const getDetectionSource = useCallback((video: HTMLVideoElement) => {
@@ -305,8 +327,12 @@ export default function WebCameraScanner({ onDetect, onRestart }: Props) {
   const handleDetected = useCallback(
     async (rawValue: string, sessionId: number) => {
       const qrText = rawValue.trim();
-      if (!qrText || !isCurrentSession(sessionId)) return;
-      if (!scanningRef.current || processingRef.current) return;
+      if (!qrText || !isCurrentSession(sessionId)) {
+        return;
+      }
+      if (!scanningRef.current || processingRef.current) {
+        return;
+      }
 
       const now = Date.now();
       const lastScan = lastScanRef.current;
@@ -328,14 +354,18 @@ export default function WebCameraScanner({ onDetect, onRestart }: Props) {
 
       try {
         const ok = await onDetectRef.current(qrText);
-        if (!activeRef.current) return;
+        if (!activeRef.current) {
+          return;
+        }
 
         const nextVerdict: FinalVerdict = ok ? "success" : "error";
         setVerdict(nextVerdict);
         playFeedback(nextVerdict);
         setScannerState("RESULT");
       } catch {
-        if (!activeRef.current) return;
+        if (!activeRef.current) {
+          return;
+        }
 
         setVerdict("error");
         playFeedback("error");
@@ -396,7 +426,9 @@ export default function WebCameraScanner({ onDetect, onRestart }: Props) {
   const startBarcodeDetectorScanner = useCallback(
     async (sessionId: number, detector: BarcodeDetector) => {
       const video = videoRef.current;
-      if (!video) throw new Error("Video element missing.");
+      if (!video) {
+        throw new Error("Video element missing.");
+      }
 
       const stream = await navigator.mediaDevices.getUserMedia(CAMERA_CONSTRAINTS);
       if (!isCurrentSession(sessionId)) {
@@ -429,14 +461,18 @@ export default function WebCameraScanner({ onDetect, onRestart }: Props) {
   const startZxingScanner = useCallback(
     async (sessionId: number) => {
       const video = videoRef.current;
-      if (!video) throw new Error("Video element missing.");
+      if (!video) {
+        throw new Error("Video element missing.");
+      }
 
       const reader = new BrowserQRCodeReader();
       const controls = await reader.decodeFromVideoDevice(
         undefined,
         video,
         (result, _error, callbackControls) => {
-          if (!isCurrentSession(sessionId)) return;
+          if (!isCurrentSession(sessionId)) {
+            return;
+          }
 
           controlsRef.current = controlsRef.current ?? callbackControls;
 
@@ -512,7 +548,9 @@ export default function WebCameraScanner({ onDetect, onRestart }: Props) {
         await startZxingScanner(sessionId);
       }
     } catch {
-      if (!activeRef.current || sessionIdRef.current !== sessionId) return;
+      if (!activeRef.current || sessionIdRef.current !== sessionId) {
+        return;
+      }
 
       stopScannerResources();
       processingRef.current = false;
@@ -549,7 +587,9 @@ export default function WebCameraScanner({ onDetect, onRestart }: Props) {
   }, [setScannerState, startScanner, stopScannerResources]);
 
   const toggleTorch = useCallback(async () => {
-    if (!torchSupported || stateRef.current !== "SCANNING" || processingRef.current) return;
+    if (!torchSupported || stateRef.current !== "SCANNING" || processingRef.current) {
+      return;
+    }
 
     const stream = streamRef.current ?? getAttachedStream(videoRef.current);
     const track = getLiveVideoTrack(stream);
@@ -574,7 +614,9 @@ export default function WebCameraScanner({ onDetect, onRestart }: Props) {
     }
 
     try {
-      if (!controlsRef.current?.switchTorch) throw new Error("Torch controls unavailable.");
+      if (!controlsRef.current?.switchTorch) {
+        throw new Error("Torch controls unavailable.");
+      }
 
       await controlsRef.current.switchTorch(nextTorchState);
       setTorchOn(nextTorchState);
@@ -983,11 +1025,7 @@ export default function WebCameraScanner({ onDetect, onRestart }: Props) {
             )}`,
           }}
         >
-              <Stack
-                direction="row"
-                spacing={1.25}
-                sx={{ alignItems: "center", minWidth: 0 }}
-              >
+          <Stack direction="row" spacing={1.25} sx={{ alignItems: "center", minWidth: 0 }}>
             <Box
               sx={{
                 width: theme.spacing(4),

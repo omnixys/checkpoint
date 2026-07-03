@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.2.0/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.13/schema.json",
 
   "vcs": {
     "enabled": true,
@@ -37,9 +37,49 @@
     "enabled": true,
     "rules": {
       "recommended": true,
-      "suspicious": "error",
-      "correctness": "error",
-      "style": "warn"
+
+      "suspicious": {
+        "noConsole": "off",
+        "noDocumentCookie": "off",
+        "noExplicitAny": "off",
+        "noEmptyBlockStatements": "off"
+      },
+
+      "correctness": {
+        "noUnusedVariables": "error",
+        "noUnusedFunctionParameters": "error",
+        "useHookAtTopLevel": "error",
+        "useExhaustiveDependencies": "error"
+      },
+
+      "style": {
+        "noDefaultExport": "off",
+        "noJsxLiterals": "off",
+        "noMagicNumbers": "off",
+        "useNamingConvention": "off",
+        "noNestedTernary": "off",
+        "useExportsLast": "off",
+        "useFilenamingConvention": "off",
+        "noNonNullAssertion": "off",
+        "noProcessEnv": "off",
+        "noEnum": "off",
+        "noSubstr": "off"
+      },
+
+      "complexity": {
+        "noBannedTypes": "off",
+        "noStaticOnlyClass": "off"
+      },
+
+      "performance": {
+        "noImgElement": "off"
+      },
+
+      "a11y": {
+        "noSvgWithoutTitle": "off",
+        "useButtonType": "off",
+        "useAltText": "off"
+      }
     },
 
     "domains": {

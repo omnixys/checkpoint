@@ -1,13 +1,13 @@
 "use client";
 
-import { PHONE_NUMBER_TYPES } from "@/checkpoint/constants/phone-number.constants";
-import { PhoneNumberInput } from "@/checkpoint/generated/graphql";
-import { CallingCodeCountry } from "@/checkpoint/types/country.type";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Box, IconButton, MenuItem, Stack, Switch, TextField, Typography } from "@mui/material";
 import Image from "next/image";
+import { PHONE_NUMBER_TYPES } from "@/checkpoint/constants/phone-number.constants";
+import type { PhoneNumberInput } from "@/checkpoint/generated/graphql";
+import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
 
-type Props = {
+interface Props {
   value: PhoneNumberInput;
   index: number;
   countries: CallingCodeCountry[];
@@ -19,7 +19,7 @@ type Props = {
   ) => void;
 
   onRemove: (index: number) => void;
-};
+}
 
 /**
  * PhoneNumberField
@@ -56,8 +56,8 @@ export default function PhoneNumberField({
         {/* TYPE + LABEL */}
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
           <TextField
-            select
-            fullWidth
+            select={true}
+            fullWidth={true}
             label="Type"
             value={value?.type}
             onChange={(e) => onChange(index, "type", e.target.value as PhoneNumberInput["type"])}
@@ -70,7 +70,7 @@ export default function PhoneNumberField({
           </TextField>
 
           <TextField
-            fullWidth
+            fullWidth={true}
             label="Label"
             value={value?.label ?? ""}
             onChange={(e) => onChange(index, "label", e.target.value)}
@@ -80,7 +80,7 @@ export default function PhoneNumberField({
         {/* COUNTRY + NUMBER */}
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
           <TextField
-            select
+            select={true}
             label="Country"
             value={value?.countryCode}
             onChange={(e) => onChange(index, "countryCode", e.target.value)}
@@ -103,7 +103,7 @@ export default function PhoneNumberField({
           </TextField>
 
           <TextField
-            fullWidth
+            fullWidth={true}
             label="Phone number"
             value={value?.number}
             onChange={(e) => onChange(index, "number", e.target.value)}

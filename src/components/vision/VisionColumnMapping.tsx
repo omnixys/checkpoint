@@ -4,6 +4,7 @@
 
 import {
   Box,
+  Button,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -11,16 +12,15 @@ import {
   Select,
   Stack,
   Typography,
-  Button,
 } from "@mui/material";
 
-type Props = {
+interface Props {
   open: boolean;
   headers: string[];
   mapping: Record<string, string>;
   onChange: (mapping: Record<string, string>) => void;
   onClose: () => void;
-};
+}
 
 const TARGET_FIELDS = ["firstName", "lastName", "phone", "email", "maxPlusOnes"];
 
@@ -33,7 +33,7 @@ export default function VisionColumnMapping({ open, headers, mapping, onChange, 
   }
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={onClose} fullWidth={true} maxWidth="sm">
       <DialogTitle>Spalten Mapping</DialogTitle>
 
       <DialogContent>
@@ -43,7 +43,7 @@ export default function VisionColumnMapping({ open, headers, mapping, onChange, 
               <Typography variant="caption">{h}</Typography>
 
               <Select
-                fullWidth
+                fullWidth={true}
                 value={mapping[h] || ""}
                 onChange={(e) => update(h, e.target.value)}
               >

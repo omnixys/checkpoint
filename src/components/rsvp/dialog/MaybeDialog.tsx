@@ -1,16 +1,14 @@
 "use client";
 
-import {
-  ReplyInvitationMutation,
-  ReplyInvitationMutationVariables,
-  ReplyInvitationDocument,
-  InvitationPayload,
-} from "@/checkpoint/generated/graphql";
-import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { useMutation } from "@apollo/client/react";
 import { Box, Button, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
+import {
+  ReplyInvitationDocument,
+  type ReplyInvitationMutation,
+  type ReplyInvitationMutationVariables,
+} from "@/checkpoint/generated/graphql";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 /**
  * MaybeDialog
@@ -57,7 +55,7 @@ export default function MaybeDialog({
         sx={{
           backdropFilter: "blur(26px)",
           WebkitBackdropFilter: "blur(26px)",
-          background: theme.palette.background.paper + "BB",
+          background: `${theme.palette.background.paper}BB`,
           borderRadius: "24px",
           p: isMobile ? 3 : 4,
           boxShadow: theme.shadows[3],

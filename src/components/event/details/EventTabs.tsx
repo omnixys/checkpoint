@@ -1,14 +1,13 @@
 "use client";
 
-import React from "react";
-import { Box, Stack, Typography, useTheme, alpha } from "@mui/material";
+import { alpha, Box, Stack, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
-type Tab = {
+interface Tab {
   key: string;
   tKey: any;
-};
+}
 
 const TABS: Tab[] = [
   // { key: "invitations", label: "Einladungen" },
@@ -21,10 +20,10 @@ const TABS: Tab[] = [
   { key: "location", tKey: "tabs.location" },
 ];
 
-type Props = {
+interface Props {
   active: string;
   onChange: (v: string) => void;
-};
+}
 
 export default function EventTabs({ active, onChange }: Props) {
   const theme = useTheme();

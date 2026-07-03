@@ -1,9 +1,9 @@
 // DialogTransition.tsx
 "use client";
 
-import React from "react";
 import Slide from "@mui/material/Slide";
-import { TransitionProps } from "@mui/material/transitions";
+import type { TransitionProps } from "@mui/material/transitions";
+import React from "react";
 
 const DialogTransition = React.forwardRef(function DialogTransition(
   props: TransitionProps & { children: React.ReactElement },

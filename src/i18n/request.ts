@@ -11,11 +11,15 @@ function isLocale(value: string | undefined): value is Locale {
 }
 
 function detectLocaleFromHeader(header: string | null): Locale {
-  if (!header) return DEFAULT_LOCALE;
+  if (!header) {
+    return DEFAULT_LOCALE;
+  }
 
   const lang = header.toLowerCase();
 
-  if (lang.startsWith("en")) return "en-US";
+  if (lang.startsWith("en")) {
+    return "en-US";
+  }
 
   return "de-DE";
 }

@@ -1,8 +1,8 @@
+import { Box, Skeleton } from "@mui/material";
+import type { Metadata } from "next";
+import { type JSX, Suspense } from "react";
 import ProfileClientPage from "@/checkpoint/app/(protected)/me/profile/ProfilePage";
 import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
-import { Box, Skeleton } from "@mui/material";
-import { Metadata } from "next";
-import { JSX, Suspense } from "react";
 
 export const metadata: Metadata = buildMetadata({
   title: "Profile Settings",

@@ -1,23 +1,23 @@
 "use client";
 
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { useDevice } from "@/checkpoint/providers/DeviceProvider";
 import { alpha, Box, Stack, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { useDevice } from "@/checkpoint/providers/DeviceProvider";
 
 type VariantType = "A" | "B" | "C" | "D";
 
-type Props = {
+interface Props {
   variant: VariantType;
   onChange: (v: VariantType) => void;
-};
+}
 
 /* --------------------------------------------------------
  * Vision Pro Style Floating Option
  * ------------------------------------------------------ */
 function VisionOption({
   label,
-  value,
+  value: _value,
   active,
   onClick,
 }: {
@@ -85,7 +85,7 @@ function VisionOption({
  * ------------------------------------------------------ */
 function DesktopOption({
   label,
-  value,
+  value: _value,
   active,
   onClick,
 }: {
@@ -138,7 +138,7 @@ export default function EventVariantToggle({ variant, onChange }: Props) {
   const { isMobile } = useDevice();
   const theme = useTheme();
 
-  const OPTIONS: { label: string; value: VariantType }[] = [
+  const Options: { label: string; value: VariantType }[] = [
     { label: t("variant.A"), value: "A" },
     { label: t("variant.B"), value: "B" },
     { label: t("variant.C"), value: "C" },
@@ -178,7 +178,7 @@ export default function EventVariantToggle({ variant, onChange }: Props) {
               `,
             }}
           >
-            {OPTIONS.map((o) => (
+            {Options.map((o) => (
               <VisionOption
                 key={o.value}
                 label={o.label}
@@ -202,7 +202,7 @@ export default function EventVariantToggle({ variant, onChange }: Props) {
             "&::-webkit-scrollbar": { display: "none" },
           }}
         >
-          {OPTIONS.map((o) => (
+          {Options.map((o) => (
             <DesktopOption
               key={o.value}
               label={o.label}

@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Box, Typography } from "@mui/material";
+import { motion } from "framer-motion";
 
 export function VisionOSProgress({ progress }: { progress: number }) {
   const radius = 55;

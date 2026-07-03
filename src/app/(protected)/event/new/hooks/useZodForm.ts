@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import { infer as zInfer, ZodTypeAny } from "zod";
+import { ZodError, type ZodTypeAny, type infer as zInfer } from "zod";
 
 /**
  * -------------------------------------------------------------
@@ -23,12 +23,12 @@ export type ValidationResult<T> =
       errors: ValidationErrors;
     };
 
-export type UseZodFormOptions<TSchema extends ZodTypeAny> = {
+export interface UseZodFormOptions<TSchema extends ZodTypeAny> {
   schema: TSchema;
   getValues: () => unknown;
-};
+}
 
-export type FieldProps = {
+export interface FieldProps {
   error: boolean;
   helperText: string;
   slotProps: {
@@ -36,9 +36,9 @@ export type FieldProps = {
       "data-field": string;
     };
   };
-};
+}
 
-export type UseZodFormReturn<TSchema extends ZodTypeAny> = {
+export interface UseZodFormReturn<TSchema extends ZodTypeAny> {
   errors: ValidationErrors;
   hasErrors: boolean;
 
@@ -48,7 +48,7 @@ export type UseZodFormReturn<TSchema extends ZodTypeAny> = {
   clearFieldError: (path: string) => void;
   clearErrors: () => void;
   getFieldProps: (path: string) => FieldProps;
-};
+}
 
 /**
  * -------------------------------------------------------------
@@ -63,14 +63,9 @@ function normalizePath(path: (string | number | symbol)[]): string {
 function mapZodErrors(error: unknown): ValidationErrors {
   const errors: ValidationErrors = {};
 
-  if (
-    typeof error === "object" &&
-    error !== null &&
-    "issues" in error &&
-    Array.isArray((error as any).issues)
-  ) {
-    for (const issue of (error as any).issues) {
-      const key = normalizePath(issue.path ?? []);
+  if (error instanceof ZodError) {
+    for (const issue of error.issues) {
+      const key = normalizePath(issue.path);
 
       if (key) {
         errors[key] = issue.message;

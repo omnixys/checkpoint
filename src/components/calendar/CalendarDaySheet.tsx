@@ -1,19 +1,21 @@
 "use client";
 
-import CalendarEventCard from "@/checkpoint/components/calendar/CalendarEventCard";
-import { GetMyEventCalendarDataQuery } from "@/checkpoint/generated/graphql";
-import { getEventsForDay } from "@/checkpoint/utils/calendar/calendar.utils";
 import { Box, Drawer, Typography } from "@mui/material";
+import CalendarEventCard from "@/checkpoint/components/calendar/CalendarEventCard";
+import type { GetMyEventCalendarDataQuery } from "@/checkpoint/generated/graphql";
+import { getEventsForDay } from "@/checkpoint/utils/calendar/calendar.utils";
 
-type Props = {
+interface Props {
   open: boolean;
   date: Date | null;
   events: GetMyEventCalendarDataQuery["myEvents"];
   onClose: () => void;
-};
+}
 
 export default function CalendarDaySheet({ open, date, events, onClose }: Props) {
-  if (!date) return null;
+  if (!date) {
+    return null;
+  }
 
   const dayEvents = getEventsForDay(events, date);
 

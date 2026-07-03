@@ -1,19 +1,17 @@
 "use client";
 
-import React from "react";
-import { Box, Stack, useTheme, alpha, Typography, Tooltip } from "@mui/material";
-
-import ViewListIcon from "@mui/icons-material/ViewList";
-import GridViewIcon from "@mui/icons-material/GridView";
-import ImageIcon from "@mui/icons-material/Image";
-import HorizontalRuleIcon from "@mui/icons-material/HorizontalRule";
 import BlurOnIcon from "@mui/icons-material/BlurOn";
-
+import GridViewIcon from "@mui/icons-material/GridView";
+import HorizontalRuleIcon from "@mui/icons-material/HorizontalRule";
+import ImageIcon from "@mui/icons-material/Image";
+import ViewListIcon from "@mui/icons-material/ViewList";
+import { alpha, Box, Stack, Tooltip, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
-import { EventVisualOverride, EventViweMode } from "@/checkpoint/types/event.type";
+import type React from "react";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import type { EventVisualOverride, EventViweMode } from "@/checkpoint/types/event.type";
 
-type Props = {
+interface Props {
   viewMode: EventViweMode;
   onViewModeChange: (v: EventViweMode) => void;
 
@@ -21,7 +19,7 @@ type Props = {
   onVisualOverrideChange: (v: EventVisualOverride) => void;
 
   disabled: boolean;
-};
+}
 
 /* --------------------------------------------------------
  * Segmented Button with Tooltip + Disabled
@@ -42,7 +40,12 @@ function SegmentedButton({
   const theme = useTheme();
 
   return (
-    <Tooltip title={disabled ? "" : tooltip} arrow enterDelay={300} disableInteractive>
+    <Tooltip
+      title={disabled ? "" : tooltip}
+      arrow={true}
+      enterDelay={300}
+      disableInteractive={true}
+    >
       <motion.div
         {...(!disabled && {
           whileTap: { scale: 0.94 },
@@ -51,7 +54,7 @@ function SegmentedButton({
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
       >
         <Box
-          onClick={!disabled ? onClick : undefined}
+          onClick={disabled ? undefined : onClick}
           role="button"
           aria-label={tooltip}
           sx={{

@@ -1,15 +1,12 @@
-import {
-  EventPageDocument,
-  EventPageQuery,
-  EventPageQueryVariables,
-  SecurityTicketPageDocument,
-  SecurityTicketPageQuery,
-  SecurityTicketPageQueryVariables,
-  TicketPageDocument,
-  TicketPageQuery,
-  TicketPageQueryVariables,
-} from "@/checkpoint/generated/graphql";
 import { useQuery } from "@apollo/client/react";
+import {
+  SecurityTicketPageDocument,
+  type SecurityTicketPageQuery,
+  type SecurityTicketPageQueryVariables,
+  TicketPageDocument,
+  type TicketPageQuery,
+  type TicketPageQueryVariables,
+} from "@/checkpoint/generated/graphql";
 
 interface Props {
   eventId: string;

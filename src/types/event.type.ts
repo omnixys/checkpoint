@@ -1,17 +1,15 @@
-import {
+import type {
   EventPageQuery,
   GetEventSettingsQuery,
   GetGuestListQuery,
   GetInvitationQuery,
-  PhoneNumberInput,
-  UserRoleType,
 } from "@/checkpoint/generated/graphql";
-import { Field, Safe, StripMeta } from "@/checkpoint/types/core/core.type";
+import type { Safe, StripMeta } from "@/checkpoint/types/core/core.type";
 
 export type EventsFilter = "all" | "upcoming" | "now" | "past";
-export type EventListHandle = {
+export interface EventListHandle {
   refresh: () => void;
-};
+}
 
 export type EventViweMode = "list" | "grid";
 export type EventVisualOverride = "auto" | "image" | "banner" | "none";

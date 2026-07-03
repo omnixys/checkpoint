@@ -1,12 +1,12 @@
 "use client";
 
-import React from "react";
-import { Box, Chip, IconButton, Stack, Tooltip } from "@mui/material";
 import { BugReport } from "@mui/icons-material";
+import { Box, Chip, IconButton, Stack, Tooltip } from "@mui/material";
+import React from "react";
 import type { SeatMapViewQuery } from "@/checkpoint/generated/graphql";
 import type { SelectedItem } from "./SeatMapEditorToolbar";
 
-type Props = {
+interface Props {
   sections: SeatMapViewQuery["seatLayout"];
   scale: number;
   translate: { x: number; y: number };
@@ -14,7 +14,7 @@ type Props = {
   selectedItems: SelectedItem[] | undefined;
   visible: boolean;
   onToggle: () => void;
-};
+}
 
 type Section = SeatMapViewQuery["seatLayout"][number];
 type Table = NonNullable<Section["tables"]>[number];
@@ -62,9 +62,15 @@ export default function SeatMapDebugOverlay({
   visible,
   onToggle,
 }: Props) {
-  const sectionHover = React.useMemo(() => findSectionAtPoint(sections, mouseCanvasPos.x, mouseCanvasPos.y), [sections, mouseCanvasPos]);
+  const sectionHover = React.useMemo(
+    () => findSectionAtPoint(sections, mouseCanvasPos.x, mouseCanvasPos.y),
+    [sections, mouseCanvasPos],
+  );
   const tableHover = React.useMemo(
-    () => (sectionHover ? findTableAtPoint(sectionHover.section, mouseCanvasPos.x, mouseCanvasPos.y) : null),
+    () =>
+      sectionHover
+        ? findTableAtPoint(sectionHover.section, mouseCanvasPos.x, mouseCanvasPos.y)
+        : null,
     [sectionHover, mouseCanvasPos],
   );
 
@@ -113,7 +119,12 @@ export default function SeatMapDebugOverlay({
     >
       {/* Header */}
       <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
-        <Chip label="DEBUG" size="small" color="warning" sx={{ height: 20, fontSize: 10, fontWeight: 700 }} />
+        <Chip
+          label="DEBUG"
+          size="small"
+          color="warning"
+          sx={{ height: 20, fontSize: 10, fontWeight: 700 }}
+        />
         <IconButton size="small" onClick={onToggle} sx={{ color: "limegreen", p: 0.3 }}>
           <BugReport fontSize="small" />
         </IconButton>
@@ -121,20 +132,26 @@ export default function SeatMapDebugOverlay({
 
       {/* Transform */}
       <Box>scale: {scale.toFixed(3)}</Box>
-      <Box>pan: ({translate.x.toFixed(1)}, {translate.y.toFixed(1)})</Box>
+      <Box>
+        pan: ({translate.x.toFixed(1)}, {translate.y.toFixed(1)})
+      </Box>
 
       {/* Mouse */}
       <Box sx={{ borderTop: "1px solid rgba(255,255,255,0.15)", pt: 0.5, mt: 0.5 }}>
         <Box sx={{ fontWeight: 700, color: "cyan", mb: 0.25 }}>MOUSE</Box>
-        <Box>canvas: ({mouseCanvasPos.x.toFixed(1)}, {mouseCanvasPos.y.toFixed(1)})</Box>
+        <Box>
+          canvas: ({mouseCanvasPos.x.toFixed(1)}, {mouseCanvasPos.y.toFixed(1)})
+        </Box>
         {sectionHover && (
           <Box>
-            section: ({sectionHover.relX.toFixed(1)}, {sectionHover.relY.toFixed(1)}) [{sectionHover.section.name}]
+            section: ({sectionHover.relX.toFixed(1)}, {sectionHover.relY.toFixed(1)}) [
+            {sectionHover.section.name}]
           </Box>
         )}
         {tableHover && (
           <Box>
-            table: ({tableHover.relX.toFixed(1)}, {tableHover.relY.toFixed(1)}) [{tableHover.table.name}]
+            table: ({tableHover.relX.toFixed(1)}, {tableHover.relY.toFixed(1)}) [
+            {tableHover.table.name}]
           </Box>
         )}
       </Box>
@@ -156,7 +173,8 @@ export default function SeatMapDebugOverlay({
           <Box sx={{ fontWeight: 700, color: "cyan", mb: 0.25 }}>SELECTED</Box>
           {selectedItems.map((item) => (
             <Box key={`${item.type}-${item.id}`} sx={{ ml: 0.5 }}>
-              [{item.type}] {item.id.slice(0, 8)}… {"name" in item ? item.name : "label" in item ? item.label : ""}
+              [{item.type}] {item.id.slice(0, 8)}…{" "}
+              {"name" in item ? item.name : "label" in item ? item.label : ""}
             </Box>
           ))}
         </Box>

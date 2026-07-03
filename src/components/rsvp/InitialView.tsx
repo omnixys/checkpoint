@@ -1,12 +1,11 @@
 "use client";
 
-import React from "react";
-import { Box, Stack, Typography, Button, useTheme, useMediaQuery } from "@mui/material";
+import { Box, Button, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
 import ParallaxBanner from "@/checkpoint/components/ParallaxBanner";
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { GetInvitationQuery } from "@/checkpoint/generated/graphql";
+import type { GetInvitationQuery } from "@/checkpoint/generated/graphql";
 import useEventQuery from "@/checkpoint/hooks/events/useEventQuery";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 /**
  * InitialView
@@ -62,7 +61,7 @@ export default function InitialView({
           sx={{
             backdropFilter: "blur(28px)",
             WebkitBackdropFilter: "blur(28px)",
-            background: theme.palette.background.paper + "BB",
+            background: `${theme.palette.background.paper}BB`,
             borderRadius: "24px",
             boxShadow: theme.shadows[4],
             px: { xs: 2.5, sm: 4 },

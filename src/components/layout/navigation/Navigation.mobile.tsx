@@ -1,12 +1,11 @@
 "use client";
 
-import React, { JSX, useEffect } from "react";
-
-import { MobileNavCarousel } from "./MobileNavCarousel";
-import { createNavigation } from "../navigation.config";
+import type { JSX } from "react";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { createNavigation } from "../navigation.config";
+import { MobileNavCarousel } from "./MobileNavCarousel";
 
 export default function NavigationMobile(): JSX.Element {
   const t = useTypedTranslations("layout");

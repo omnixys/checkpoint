@@ -1,23 +1,20 @@
-import {
-  EventDocument,
-  EventPageDocument,
-  EventPageQuery,
-  EventPageQueryVariables,
-  EventQuery,
-  EventQueryVariables,
-  GetActiveEventDocument,
-  GetActiveEventQuery,
-  GetActiveEventQueryVariables,
-  GetEventMetaDocument,
-  GetEventMetaQuery,
-  GetEventMetaQueryVariables,
-  GetEventSettingsDocument,
-  GetEventSettingsQuery,
-  GetEventSettingsQueryVariables,
-  MyEventsDocument,
-  MyEventsQuery,
-} from "@/checkpoint/generated/graphql";
 import { useQuery } from "@apollo/client/react";
+import {
+  EventPageDocument,
+  type EventPageQuery,
+  type EventPageQueryVariables,
+  GetActiveEventDocument,
+  type GetActiveEventQuery,
+  type GetActiveEventQueryVariables,
+  GetEventMetaDocument,
+  type GetEventMetaQuery,
+  type GetEventMetaQueryVariables,
+  GetEventSettingsDocument,
+  type GetEventSettingsQuery,
+  type GetEventSettingsQueryVariables,
+  MyEventsDocument,
+  type MyEventsQuery,
+} from "@/checkpoint/generated/graphql";
 
 interface Props {
   eventId?: string | undefined;

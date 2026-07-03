@@ -2,8 +2,8 @@
 
 import { Box, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
-import HistoryItemCard, { HistoryEntry } from "./HistoryItemCard";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
+import HistoryItemCard, { type HistoryEntry } from "./HistoryItemCard";
 
 /* ---------------------------------------------------------------------
  * WebSocket Feed
@@ -27,8 +27,11 @@ export default function HistoryFeed() {
   return (
     <Box sx={{ px: { xs: 2, sm: 3 }, py: 2 }}>
       <Stack spacing={2}>
-        {entries.map((entry, idx) => (
-          <HistoryItemCard key={idx} entry={entry} />
+        {entries.map((entry) => (
+          <HistoryItemCard
+            key={`${entry.ticketId}:${entry.timestamp}:${entry.gate}`}
+            entry={entry}
+          />
         ))}
       </Stack>
     </Box>

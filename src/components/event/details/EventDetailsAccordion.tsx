@@ -1,29 +1,30 @@
 "use client";
 
+import CheckroomIcon from "@mui/icons-material/Checkroom";
+import DescriptionIcon from "@mui/icons-material/Description";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { alpha, Box, Stack, Typography, useTheme } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
-
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import CheckroomIcon from "@mui/icons-material/Checkroom";
-import DescriptionIcon from "@mui/icons-material/Description";
 
-type Props = {
+interface Props {
   ev: any;
-};
+}
 
-type SectionProps = {
+interface SectionProps {
   icon: React.ReactNode;
   title: string;
   value: string | null | undefined;
-};
+}
 
 function AccordionSection({ icon, title, value }: SectionProps) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
-  if (!value) return null;
+  if (!value) {
+    return null;
+  }
 
   return (
     <Box

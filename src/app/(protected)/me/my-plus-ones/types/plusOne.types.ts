@@ -1,20 +1,20 @@
 export type PlusOnePhoneNumberType = "WHATSAPP" | "MOBILE" | "PRIVATE" | "WORK" | "HOME" | "OTHER";
 export type PlusOneAgeCategory = "OVER_SIX" | "UNDER_SIX";
 
-export type PlusOnePhoneNumberInput = {
+export interface PlusOnePhoneNumberInput {
   countryCode: string;
   number: string;
   type: PlusOnePhoneNumberType;
-  label: string;
+  label: string | null;
   isPrimary: boolean;
-};
+}
 
-export type PlusOneSeat = {
+export interface PlusOneSeat {
   id: string;
   label?: string | null;
-};
+}
 
-export type PlusOneItem = {
+export interface PlusOneItem {
   id: string;
   firstName: string;
   lastName: string;
@@ -24,21 +24,21 @@ export type PlusOneItem = {
   plusOneAgeCategory?: PlusOneAgeCategory | null;
   status?: string | null;
   seat?: PlusOneSeat | null;
-};
+}
 
-export type CreatePlusOneInput = {
+export interface CreatePlusOneInput {
   firstName: string;
   lastName: string;
   email?: string;
   plusOneAgeCategory: PlusOneAgeCategory;
   phoneNumbers: PlusOnePhoneNumberInput[];
-};
+}
 
-export type UpdatePlusOneInput = {
+export interface UpdatePlusOneInput {
   id: string;
   firstName: string;
   lastName: string;
   email?: string | null;
   plusOneAgeCategory: PlusOneAgeCategory;
   phoneNumbers: PlusOnePhoneNumberInput[];
-};
+}

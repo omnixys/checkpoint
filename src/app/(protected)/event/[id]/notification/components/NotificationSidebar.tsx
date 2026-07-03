@@ -1,36 +1,36 @@
 "use client";
 
+import AlternateEmailRoundedIcon from "@mui/icons-material/AlternateEmailRounded";
+import AttachFileRoundedIcon from "@mui/icons-material/AttachFileRounded";
+import ForumRoundedIcon from "@mui/icons-material/ForumRounded";
+import VerifiedRoundedIcon from "@mui/icons-material/VerifiedRounded";
 import {
   Avatar,
+  alpha,
   Badge,
   Box,
   Chip,
   Divider,
   Stack,
   Typography,
-  alpha,
   useTheme,
 } from "@mui/material";
 import { motion } from "framer-motion";
-import AttachFileRoundedIcon from "@mui/icons-material/AttachFileRounded";
-import AlternateEmailRoundedIcon from "@mui/icons-material/AlternateEmailRounded";
-import ForumRoundedIcon from "@mui/icons-material/ForumRounded";
-import VerifiedRoundedIcon from "@mui/icons-material/VerifiedRounded";
-import { NotificationChannel } from "../types/notification-channel.enum";
-import {
+import { useNotificationItems } from "@/checkpoint/app/(protected)/event/[id]/notification/hooks/useNotificationMocks";
+import { getNotificationTone, getPriorityColor, getStatusColor } from "../themes/notificationTheme";
+import type {
   EmailThread,
   InAppChat,
   NotificationListItem,
   WhatsAppChat,
 } from "../types/notification.models";
-import { useNotificationItems } from "@/checkpoint/app/(protected)/event/[id]/notification/hooks/useNotificationMocks";
-import { getNotificationTone, getPriorityColor, getStatusColor } from "../themes/notificationTheme";
+import { NotificationChannel } from "../types/notification-channel.enum";
 
-type Props = {
+interface Props {
   channel: NotificationChannel;
   selectedChatId: string | null;
   onSelect: (chatId: string) => void;
-};
+}
 
 const MotionBox = motion.create(Box);
 
@@ -47,25 +47,39 @@ function isEmail(item: NotificationListItem): item is EmailThread {
 }
 
 function getTitle(item: NotificationListItem): string {
-  if (isWhatsApp(item)) return item.contactName;
-  if (isInApp(item)) return item.userName;
+  if (isWhatsApp(item)) {
+    return item.contactName;
+  }
+  if (isInApp(item)) {
+    return item.userName;
+  }
   return item.subject;
 }
 
 function getSubtitle(item: NotificationListItem): string {
-  if (isWhatsApp(item)) return item.phoneNumber;
-  if (isInApp(item)) return item.handle;
+  if (isWhatsApp(item)) {
+    return item.phoneNumber;
+  }
+  if (isInApp(item)) {
+    return item.handle;
+  }
   return `${item.fromName} · ${item.fromEmail}`;
 }
 
 function getPreview(item: NotificationListItem): string {
-  if (isWhatsApp(item)) return item.lastMessage;
-  if (isInApp(item)) return item.preview;
+  if (isWhatsApp(item)) {
+    return item.lastMessage;
+  }
+  if (isInApp(item)) {
+    return item.preview;
+  }
   return item.preview;
 }
 
 function getTime(item: NotificationListItem): string {
-  if (isWhatsApp(item)) return item.lastMessageAt;
+  if (isWhatsApp(item)) {
+    return item.lastMessageAt;
+  }
   return item.updatedAt;
 }
 
@@ -195,7 +209,7 @@ export function NotificationSidebar({ channel, selectedChatId, onSelect }: Props
                     >
                       <Box sx={{ minWidth: 0 }}>
                         <Typography
-                          noWrap
+                          noWrap={true}
                           sx={{
                             color: theme.palette.text.primary,
                             fontWeight: 700,
@@ -206,7 +220,7 @@ export function NotificationSidebar({ channel, selectedChatId, onSelect }: Props
                         </Typography>
 
                         <Typography
-                          noWrap
+                          noWrap={true}
                           variant="caption"
                           sx={{
                             color: alpha(theme.palette.text.primary, 0.5),

@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 
@@ -14,7 +13,9 @@ export default function SecurityAlertsRow({
 }: {
   alerts: { id: string; message: string; severity: "warn" | "critical" }[];
 }) {
-  if (!alerts.length) return null;
+  if (alerts.length === 0) {
+    return null;
+  }
 
   return (
     <Box sx={{ overflowX: "auto", py: 1 }}>

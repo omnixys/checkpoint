@@ -56,7 +56,7 @@ function ToolButton({ label, onClick }: { label: string; onClick: () => void }) 
   return (
     <motion.div whileTap={{ scale: 0.97 }}>
       <Button
-        fullWidth
+        fullWidth={true}
         variant="contained"
         onClick={onClick}
         sx={{

@@ -1,31 +1,31 @@
 "use client";
 
-import { MediaType } from "@/checkpoint/generated/graphql";
-import { env } from "@/checkpoint/lib/env";
 import { useCallback, useState } from "react";
+import type { MediaType } from "@/checkpoint/generated/graphql";
+import { env } from "@/checkpoint/lib/env";
 
-type UploadResult2 = {
+interface UploadResult2 {
   id: string;
   url: string;
-};
+}
 
-type UploadResult = {
+interface UploadResult {
   url: string;
   key: string;
-};
+}
 
-type PresignedResponse = {
+interface PresignedResponse {
   key: string;
   uploadUrl: string;
   fileUrl: string;
-};
+}
 
 const eventApi = env.EVENT_API;
 
 export function useUploadMedia() {
   const [loading, setLoading] = useState(false);
 
-  const upload2 = useCallback(async (eventId: string, file: File): Promise<UploadResult2> => {
+  const _upload2 = useCallback(async (eventId: string, file: File): Promise<UploadResult2> => {
     setLoading(true);
 
     try {

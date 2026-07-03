@@ -1,16 +1,18 @@
-import type { ApolloCache, Reference } from "@apollo/client";
+import type { Reference } from "@apollo/client";
 
 /**
  * Inserts entity into list without duplicates.
  */
 export function addToList(
-  existing: readonly Reference[] = [],
+  existing: readonly Reference[],
   incoming: Reference,
   readField: (fieldName: string, ref: Reference) => unknown,
 ): Reference[] {
   const exists = existing.some((ref) => readField("id", ref) === readField("id", incoming));
 
-  if (exists) return [...existing];
+  if (exists) {
+    return [...existing];
+  }
 
   return [incoming, ...existing];
 }
@@ -19,7 +21,7 @@ export function addToList(
  * Replaces entity in list.
  */
 export function replaceInList(
-  existing: readonly Reference[] = [],
+  existing: readonly Reference[],
   incoming: Reference,
   readField: (fieldName: string, ref: Reference) => unknown,
 ): Reference[] {
@@ -32,7 +34,7 @@ export function replaceInList(
  * Removes entity from list.
  */
 export function removeFromList(
-  existing: readonly Reference[] = [],
+  existing: readonly Reference[],
   id: string,
   readField: (fieldName: string, ref: Reference) => unknown,
 ): Reference[] {

@@ -1,11 +1,8 @@
 "use client";
 
 import { Box } from "@mui/material";
-import React from "react";
+import type React from "react";
 import NavigationTablet from "./navigation/Navigation.tablet";
-import ColorBubbleSwitcher from "@/checkpoint/components/ColorBubbleSwitcher";
-import ThemeToggleButton from "@/checkpoint/components/ThemeToggleButton";
-import UserMenu from "@/checkpoint/components/UserMenu";
 
 export default function AppShellTablet({ children }: { children: React.ReactNode }) {
   return (

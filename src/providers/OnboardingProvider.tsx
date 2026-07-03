@@ -1,24 +1,26 @@
 "use client";
 
+import { createContext, useContext, useEffect, useState } from "react";
 import OnboardingModal from "@/checkpoint/components/onboarding/OnboardingModal";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { useTour } from "@/checkpoint/providers/TourProvider";
 import { buildTour } from "@/checkpoint/utils/layout/build-tour.util";
-import { createContext, useContext, useEffect, useState } from "react";
 
 const ONBOARDING_KEY = "checkpoint.onboardingDone";
 
-type ContextType = {
+interface ContextType {
   open: () => void;
   close: () => void;
-};
+}
 
 const OnboardingContext = createContext<ContextType | null>(null);
 
 export function useOnboarding() {
   const ctx = useContext(OnboardingContext);
-  if (!ctx) throw new Error("useOnboarding must be used within provider");
+  if (!ctx) {
+    throw new Error("useOnboarding must be used within provider");
+  }
   return ctx;
 }
 
@@ -32,7 +34,9 @@ export default function OnboardingProvider({ children }: { children: React.React
 
   useEffect(() => {
     const done = localStorage.getItem(ONBOARDING_KEY);
-    if (!done) setOpen(true);
+    if (!done) {
+      setOpen(true);
+    }
   }, []);
 
   const close = () => {

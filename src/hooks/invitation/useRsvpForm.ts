@@ -1,26 +1,25 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import { useMutation } from "@apollo/client/react";
+import { useMemo, useState } from "react";
 import {
-  GetInvitationQuery,
-  InvitationPayload,
-  PhoneNumberPayload,
-  PublicPlusOneInput,
+  type GetInvitationQuery,
+  type InvitationPayload,
+  type PublicPlusOneInput,
   ReplyInvitationDocument,
-  ReplyInvitationMutation,
-  ReplyInvitationMutationVariables,
+  type ReplyInvitationMutation,
+  type ReplyInvitationMutationVariables,
 } from "@/checkpoint/generated/graphql";
-import { NormalizedPlusOne } from "@/checkpoint/types/event.type";
+import type { NormalizedPlusOne } from "@/checkpoint/types/event.type";
 
-type RsvpFormState = {
+interface RsvpFormState {
   firstName: string;
   lastName: string;
   email: string;
   guestNote: string;
   phoneNumbers: PhoneNumberInput[];
   plusOnes: NormalizedPlusOne[];
-};
+}
 
 function createEmptyPhone(): PhoneNumberInput {
   return {
@@ -196,7 +195,9 @@ export function useRsvpForm(invitation: GetInvitationQuery["invitation"]) {
       const nextPlusOnes = [...prev.plusOnes];
       const current = nextPlusOnes[index];
 
-      if (!current) return prev;
+      if (!current) {
+        return prev;
+      }
 
       nextPlusOnes[index] = {
         ...current,
@@ -291,13 +292,8 @@ export function useRsvpForm(invitation: GetInvitationQuery["invitation"]) {
     }
 
     const cleanedPlusOnes = state.plusOnes
-      .filter(
-        (plusOne): plusOne is CompleteNormalizedPlusOne =>
-          Boolean(
-            plusOne.firstName.trim() &&
-              plusOne.lastName.trim() &&
-              plusOne.plusOneAgeCategory,
-          ),
+      .filter((plusOne): plusOne is CompleteNormalizedPlusOne =>
+        Boolean(plusOne.firstName.trim() && plusOne.lastName.trim() && plusOne.plusOneAgeCategory),
       )
       .map(toGraphQlPlusOne);
     const cleanedPhoneNumbers = normalizePhoneNumbers(state.phoneNumbers).filter(

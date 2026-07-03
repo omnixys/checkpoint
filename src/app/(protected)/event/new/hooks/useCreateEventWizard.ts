@@ -1,14 +1,14 @@
 "use client";
 
-import { CreateEventWizardStep } from "@/checkpoint/app/(protected)/event/new/types/event/event-wizard.type";
 import { useCallback, useMemo, useState } from "react";
+import { CreateEventWizardStep } from "@/checkpoint/app/(protected)/event/new/types/event/event-wizard.type";
 
 /**
  * -------------------------------------------------------------
  * Public API
  * -------------------------------------------------------------
  */
-export type UseCreateEventWizardProps = {
+export interface UseCreateEventWizardProps {
   activeStep: CreateEventWizardStep;
 
   nextStep: () => void;
@@ -16,7 +16,7 @@ export type UseCreateEventWizardProps = {
   goTo: (step: CreateEventWizardStep) => void;
 
   progress: number;
-};
+}
 
 /**
  * -------------------------------------------------------------
@@ -49,9 +49,9 @@ export function useCreateEventWizard(): UseCreateEventWizardProps {
    * Progress
    */
   const progress = useMemo(() => {
-    const TOTAL = CreateEventWizardStep.SUMMARY + 1;
-    const CURRENT = Math.min(activeStep + 1, TOTAL);
-    return Math.round((CURRENT / TOTAL) * 100);
+    const Total = CreateEventWizardStep.SUMMARY + 1;
+    const Current = Math.min(activeStep + 1, Total);
+    return Math.round((Current / Total) * 100);
   }, [activeStep]);
 
   return {

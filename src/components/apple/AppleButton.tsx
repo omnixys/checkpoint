@@ -1,6 +1,6 @@
-import React from "react";
-import Button, { ButtonProps } from "@mui/material/Button";
+import Button, { type ButtonProps } from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
+import type React from "react";
 
 export type AppleButtonVariant =
   | "accent"

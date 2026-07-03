@@ -1,20 +1,11 @@
+import type { ApolloCache } from "@apollo/client";
+import { useMutation, type useQuery } from "@apollo/client/react";
 import {
-  MeDocument,
-  MePageDocument,
-  MePageQuery,
-  MePageQueryVariables,
   UpdateMyProfileDocument,
-  UpdateMyProfileInput,
-  UpdateMyProfileMutation,
-  UpdateMyProfileMutationVariables,
+  type UpdateMyProfileInput,
+  type UpdateMyProfileMutation,
+  type UpdateMyProfileMutationVariables,
 } from "@/checkpoint/generated/graphql";
-import { ApolloCache } from "@apollo/client";
-import { useMutation, useQuery } from "@apollo/client/react";
-import router from "next/router";
-
-interface Props {
-  loadMePage?: boolean | undefined;
-}
 
 interface Payload {
   updateProfilePayload: UpdateMyProfileMutation["updateMyProfile"] | undefined;

@@ -1,15 +1,15 @@
-import {
-  GetEventTreeQuery,
-  GetEventTreeQueryVariables,
-  GetEventTreeDocument,
-  GetFullEventTreeInfoDocument,
-  GetFullEventTreeInfoQuery,
-  GetFullEventTreeInfoQueryVariables,
-  GetPublicEventTreeDocument,
-  GetPublicEventTreeQuery,
-  GetPublicEventTreeQueryVariables,
-} from "@/checkpoint/generated/graphql";
 import { useQuery } from "@apollo/client/react";
+import {
+  GetEventTreeDocument,
+  type GetEventTreeQuery,
+  type GetEventTreeQueryVariables,
+  GetFullEventTreeInfoDocument,
+  type GetFullEventTreeInfoQuery,
+  type GetFullEventTreeInfoQueryVariables,
+  GetPublicEventTreeDocument,
+  type GetPublicEventTreeQuery,
+  type GetPublicEventTreeQueryVariables,
+} from "@/checkpoint/generated/graphql";
 
 interface Props {
   eventId?: string | undefined;

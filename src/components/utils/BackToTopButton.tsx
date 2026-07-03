@@ -1,9 +1,8 @@
 "use client";
 
-import React from "react";
-import { useTheme, Box } from "@mui/material";
-import { motion } from "framer-motion";
 import KeyboardArrowUpRoundedIcon from "@mui/icons-material/KeyboardArrowUpRounded";
+import { Box, useTheme } from "@mui/material";
+import { motion } from "framer-motion";
 
 /* ----------------------------------------------------------------------------
  * VisionOS Floating Back-to-Top FAB
@@ -62,7 +61,7 @@ export default function BackToTopButton({ visible }: { visible: boolean }) {
 
             // VisionOS glass bubble
             backdropFilter: "blur(14px)",
-            backgroundColor: theme.palette.background.paper + "CC",
+            backgroundColor: `${theme.palette.background.paper}CC`,
             boxShadow: theme.shadows[6],
           }}
         >

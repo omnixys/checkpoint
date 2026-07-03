@@ -5,7 +5,7 @@
  * -------------------------------------------------------------
  */
 
-export type AppMetadata = {
+export interface AppMetadata {
   title: string;
   description: string;
 
@@ -38,4 +38,4 @@ export type AppMetadata = {
     image?: string;
   };
   disableOpenGraph?: boolean;
-};
+}

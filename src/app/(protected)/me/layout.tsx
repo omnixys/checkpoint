@@ -1,7 +1,7 @@
-import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
 import { Box, Stack } from "@mui/material";
-import { Metadata } from "next";
-import { ReactNode } from "react";
+import type { Metadata } from "next";
+import type { ReactNode } from "react";
+import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
 
 export const metadata: Metadata = buildMetadata({
   title: "My Account",

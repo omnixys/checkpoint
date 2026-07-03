@@ -7,11 +7,11 @@ import {
   type ScanTokenMutationVariables,
 } from "@/checkpoint/generated/graphql";
 
-type QrPayload = {
+interface QrPayload {
   token: string;
   signature: string;
   deviceId: string;
-};
+}
 
 function parseQrPayload(qr: string): QrPayload | null {
   try {

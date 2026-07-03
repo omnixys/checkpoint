@@ -7,20 +7,20 @@ import type { ReactNode } from "react";
 const CINEMATIC_EASE = [0.16, 1, 0.3, 1] as const;
 const WEDDING_MONOGRAM = "C · R";
 
-type CinematicRsvpLayoutProps = {
+interface CinematicRsvpLayoutProps {
   children: ReactNode;
   controls: ReactNode;
   eventName: string;
   heroDescription: string;
   heroEyebrow: string;
-};
+}
 
-type RsvpChapterProps = {
+interface RsvpChapterProps {
   children: ReactNode;
   description: string;
   index: string;
   title: string;
-};
+}
 
 export function CinematicRsvpLayout({
   children,
@@ -98,9 +98,7 @@ export function CinematicRsvpLayout({
               }}
             >
               {WEDDING_MONOGRAM}
-              <Typography component="span">
-                #CALEBGETSRICH #HAPPELYEVERGYAMFI
-              </Typography>
+              <Typography component="span">#CALEBGETSRICH #HAPPELYEVERGYAMFI</Typography>
             </Typography>
 
             <Typography

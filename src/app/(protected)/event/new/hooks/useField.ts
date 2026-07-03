@@ -7,16 +7,28 @@ import { useCreateEvent } from "../context/CreateEventContext";
  * Deep setter
  * -------------------------------------------------------------
  */
-function setDeep(obj: any, path: string, value: any) {
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function setDeep(obj: Record<string, unknown>, path: string, value: unknown) {
   const keys = path.split(".");
   const last = keys.pop()!;
 
-  const target = keys.reduce((acc, key) => {
-    if (!acc[key]) acc[key] = {};
-    return acc[key];
-  }, obj);
+  let target = obj;
+  for (const key of keys) {
+    const next = target[key];
+    if (!isRecord(next)) {
+      target[key] = {};
+    }
+    target = target[key] as Record<string, unknown>;
+  }
 
   target[last] = value;
+}
+
+function hasTargetValue(value: unknown): value is { target: { value: unknown } } {
+  return isRecord(value) && isRecord(value.target) && Object.hasOwn(value.target, "value");
 }
 
 /**
@@ -34,7 +46,9 @@ function normalizeValue(value: unknown): unknown {
 
   if (typeof value === "string") {
     // empty stays empty (important for UX)
-    if (value.trim() === "") return "";
+    if (value.trim() === "") {
+      return "";
+    }
 
     // detect numeric string
     const parsed = Number(value);
@@ -62,17 +76,19 @@ export function useField(path: string) {
    * Value Resolver
    * -------------------------------------------------------------
    */
-  const value = path.split(".").reduce((acc: any, key) => acc?.[key], draft);
+  const value = path
+    .split(".")
+    .reduce<unknown>((acc, key) => (isRecord(acc) ? acc[key] : undefined), draft);
 
   /**
    * -------------------------------------------------------------
    * Setter
    * -------------------------------------------------------------
    */
-  const setValue = (val: any) => {
+  const setValue = (val: unknown) => {
     const next = structuredClone(draft);
 
-    setDeep(next, path, val);
+    setDeep(next as unknown as Record<string, unknown>, path, val);
 
     patch(next); // ✅ FULL PATCH
   };
@@ -95,8 +111,8 @@ export function useField(path: string) {
     error: field.error,
     helperText: field.helperText,
 
-    onChange: (e: any) => {
-      const val = e?.target ? e.target.value : e;
+    onChange: (e: unknown) => {
+      const val = hasTargetValue(e) ? e.target.value : e;
       const normalized = normalizeValue(val);
       setValue(normalized);
     },

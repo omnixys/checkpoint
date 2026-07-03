@@ -1,7 +1,7 @@
-import ScannerClientPage from "@/checkpoint/app/(protected)/scan/ScannerClientPage";
-import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
 import { Skeleton } from "@mui/material";
 import { Suspense } from "react";
+import ScannerClientPage from "@/checkpoint/app/(protected)/scan/ScannerClientPage";
+import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
 
 export const metadata = buildMetadata({
   title: "QR Scanner",

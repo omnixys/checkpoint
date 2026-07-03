@@ -1,30 +1,11 @@
+import { useMutation } from "@apollo/client/react";
 import {
-  AddPlusOneDocument,
-  AddPlusOneMutation,
-  AddPlusOneMutationVariables,
   CreateInvitationFromRsvpDocument,
-  CreateInvitationFromRsvpMutation,
-  CreateInvitationFromRsvpMutationVariables,
-  CreatePlusOneInput,
-  PublicRsvpInput,
-  RemoveAllPlusOnesDocument,
-  RemoveAllPlusOnesMutation,
-  RemoveAllPlusOnesMutationVariables,
-  RemovePlusOneDocument,
-  RemovePlusOneMutation,
-  RemovePlusOneMutationVariables,
-  Scalars,
-  UpdatePlusOneDocument,
-  UpdatePlusOneInput,
-  UpdatePlusOneMutation,
-  UpdatePlusOneMutationVariables,
+  type CreateInvitationFromRsvpMutation,
+  type CreateInvitationFromRsvpMutationVariables,
 } from "@/checkpoint/generated/graphql";
-import { ApolloCache } from "@apollo/client";
-import { useMutation, useQuery } from "@apollo/client/react";
 
-interface Props {}
-
-export default function usePublicRsvpMutation({}: Props) {
+export default function usePublicRsvpMutation() {
   const [createPublicInvitation, publicRsvpMutationResult] = useMutation<
     CreateInvitationFromRsvpMutation,
     CreateInvitationFromRsvpMutationVariables

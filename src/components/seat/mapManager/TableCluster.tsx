@@ -1,12 +1,11 @@
 "use client";
 
-import { SeatPayload } from "@/checkpoint/generated/graphql";
-import { SeatListType } from "@/checkpoint/types/seat.type";
-import { computeChairPositions, seatLabel } from "@/checkpoint/utils/seat/seating";
 import SeatIcon from "@mui/icons-material/EventSeat";
 import { Avatar, Box, Card, CardContent, CardHeader, Tooltip, Typography } from "@mui/material";
+import type { SeatListType } from "@/checkpoint/types/seat.type";
+import { seatLabel, useChairPositions } from "@/checkpoint/utils/seat/seating";
 
-type Props = {
+interface Props {
   sectionName: string;
   tableName: string;
   seats: SeatListType[];
@@ -15,12 +14,12 @@ type Props = {
   onSeatClick?: (seat: SeatListType) => void;
   onTableClick?: (tableName: string, seats: SeatListType[]) => void;
   getSeatHolderLabel: (seat: SeatListType) => string;
-};
+}
 
-type ChairPosition = {
+interface ChairPosition {
   left: number;
   top: number;
-};
+}
 
 export default function TableCluster({
   sectionName,
@@ -39,8 +38,8 @@ export default function TableCluster({
   const tableDiameterMd = 160;
   const chairSize = 36;
 
-  const chairsMobile = computeChairPositions(seats.length, containerSize, tableDiameter);
-  const chairsMd = computeChairPositions(seats.length, containerSizeMd, tableDiameterMd);
+  const chairsMobile = useChairPositions(seats.length, containerSize, tableDiameter);
+  const chairsMd = useChairPositions(seats.length, containerSizeMd, tableDiameterMd);
 
   const fullName = (seat: SeatListType) => getSeatHolderLabel(seat);
 
@@ -170,7 +169,7 @@ export default function TableCluster({
               );
 
               return (
-                <Tooltip key={seat.id} arrow placement="top" title={tooltipContent}>
+                <Tooltip key={seat.id} arrow={true} placement="top" title={tooltipContent}>
                   <Avatar
                     onClick={() => onSeatClick?.(seat)}
                     sx={{

@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useMemo } from "react";
 import { useParams } from "next/navigation";
-import { BackButtonBase } from "./back-button-base";
+import { useMemo } from "react";
 import { env } from "@/checkpoint/lib/env";
+import { BackButtonBase } from "./back-button-base";
 
-export type BackToEventDetailButtonProps = {
+export interface BackToEventDetailButtonProps {
   label?: string;
-};
+}
 
 /**
  * Domain wrapper for event detail navigation.

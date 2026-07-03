@@ -1,24 +1,24 @@
 "use client";
 
+import { EditOutlined, MapOutlined } from "@mui/icons-material";
+import { alpha, Box, Button, Stack } from "@mui/material";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect } from "react";
-import SeatDetailDrawer from "@/checkpoint/components/seat/drawer/SeatDetailDrawer";
 import CollapsingSeatHeader from "@/checkpoint/components/seat/CollapsingSeatHeader";
+import SeatEditDialog from "@/checkpoint/components/seat/dialogs/SeatEditDialog";
+import SeatImportDialog from "@/checkpoint/components/seat/dialogs/SeatImportDialog";
+import SeatDetailDrawer from "@/checkpoint/components/seat/drawer/SeatDetailDrawer";
 import MapManager from "@/checkpoint/components/seat/mapManager/MapManager";
 import SeatFilters from "@/checkpoint/components/seat/SeatFilters";
 import SeatImportButton from "@/checkpoint/components/seat/SeatImportButton";
 import { useSeatDetailDrawer } from "@/checkpoint/components/seat/useSeatDetailDrawer";
 import { BackToEventDetailButton } from "@/checkpoint/components/utils/back-to-event-detail-button";
+import type { InvitationPayload, SeatPayload } from "@/checkpoint/generated/graphql";
 import { useSeats } from "@/checkpoint/hooks/seat/useSeats";
+import { env } from "@/checkpoint/lib/env";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { getLogger } from "@/checkpoint/utils/logger";
-import { EditOutlined, MapOutlined } from "@mui/icons-material";
-import { alpha, Box, Button, Stack } from "@mui/material";
-import { useParams, useRouter } from "next/navigation";
-import SeatEditDialog from "@/checkpoint/components/seat/dialogs/SeatEditDialog";
-import SeatImportDialog from "@/checkpoint/components/seat/dialogs/SeatImportDialog";
-import { env } from "@/checkpoint/lib/env";
-import { InvitationPayload, SeatPayload } from "@/checkpoint/generated/graphql";
 
 export default function SeatsClientPage() {
   const { isAuthenticated } = useAuth();
@@ -52,15 +52,15 @@ export default function SeatsClientPage() {
 
   const [importOpen, setImportOpen] = React.useState(false);
 
-useEffect(() => {
-  if (!isAuthenticated) {
-    router.replace(env.CHECKPOINT_BASE_PATH);
-  }
-}, [isAuthenticated, router]);
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.replace(env.CHECKPOINT_BASE_PATH);
+    }
+  }, [isAuthenticated, router]);
 
-if (!isAuthenticated) {
-  return null;
-}
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <Stack spacing={3} sx={{ px: { xs: 1.5, md: 3 }, py: 2, minWidth: 0 }}>

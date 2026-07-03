@@ -1,16 +1,19 @@
 "use client";
 
-import React from "react";
-import { Table, TableRow, TableCell, TableHead, TableBody, Paper } from "@mui/material";
+import { Paper, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 
 export default function SeatImportPreviewTable({ rows }: { rows: any[] }) {
-  if (rows.length === 0) return null;
+  if (rows.length === 0) {
+    return null;
+  }
 
   const headers = Object.keys(rows[0]);
+  const rowKey = (row: Record<string, unknown>) =>
+    headers.map((header) => String(row[header] ?? "")).join("|");
 
   return (
     <Paper sx={{ maxHeight: 400, overflow: "auto" }}>
-      <Table stickyHeader>
+      <Table stickyHeader={true}>
         <TableHead>
           <TableRow>
             {headers.map((h) => (
@@ -22,8 +25,8 @@ export default function SeatImportPreviewTable({ rows }: { rows: any[] }) {
         </TableHead>
 
         <TableBody>
-          {rows.map((r, i) => (
-            <TableRow key={i}>
+          {rows.map((r) => (
+            <TableRow key={rowKey(r)}>
               {headers.map((h) => (
                 <TableCell key={h}>{r[h]}</TableCell>
               ))}

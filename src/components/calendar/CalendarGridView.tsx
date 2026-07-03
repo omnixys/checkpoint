@@ -1,17 +1,17 @@
 "use client";
 
-import { GetMyEventCalendarDataQuery } from "@/checkpoint/generated/graphql";
-import { getEventsForDay } from "@/checkpoint/utils/calendar/calendar.utils";
 import { Box, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import type { GetMyEventCalendarDataQuery } from "@/checkpoint/generated/graphql";
+import { getEventsForDay } from "@/checkpoint/utils/calendar/calendar.utils";
 
-type Props = {
+interface Props {
   date: Date;
   mode: "month" | "year";
   events: GetMyEventCalendarDataQuery["myEvents"];
   onSelectDay: (date: Date) => void;
   onSelectMonth: (month: number) => void;
-};
+}
 
 export default function CalendarGridView({
   date,
@@ -50,7 +50,7 @@ export default function CalendarGridView({
 
           return (
             <Box
-              key={m}
+              key={monthDate.toISOString()}
               onClick={() => onSelectMonth(m)}
               sx={{
                 p: 2,

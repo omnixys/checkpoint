@@ -1,6 +1,6 @@
-import { ColorScale, OmnixysExtendedPalette } from "@/checkpoint/themes/paletteTypes";
-import { PaletteMode } from "@mui/material";
+import type { PaletteMode } from "@mui/material";
 import { alpha } from "@mui/material/styles";
+import type { ColorScale, OmnixysExtendedPalette } from "@/checkpoint/themes/paletteTypes";
 
 export function buildExtendedPalette(mode: PaletteMode, omni: ColorScale): OmnixysExtendedPalette {
   const isDark = mode === "dark";

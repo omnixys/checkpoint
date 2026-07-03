@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import { useMotionValue } from "framer-motion";
+import { useEffect } from "react";
 
 /**
  * Provides tilt values based on device orientation or mouse.
@@ -13,7 +13,9 @@ export function useParallax(maxTilt = 18) {
   useEffect(() => {
     function handleOrientation(e: DeviceOrientationEvent) {
       const { beta, gamma } = e;
-      if (beta == null || gamma == null) return;
+      if (beta == null || gamma == null) {
+        return;
+      }
 
       const x = (gamma / 45) * maxTilt;
       const y = (beta / 45) * maxTilt;
@@ -38,7 +40,7 @@ export function useParallax(maxTilt = 18) {
       window.removeEventListener("deviceorientation", handleOrientation);
       window.removeEventListener("mousemove", handleMouse);
     };
-  }, []);
+  }, [tiltY.set, tiltX.set, maxTilt]);
 
   return { tiltX, tiltY };
 }

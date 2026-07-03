@@ -1,8 +1,7 @@
 "use client";
 
-import { SeatPayload } from "@/checkpoint/generated/graphql";
-import { SeatListType } from "@/checkpoint/types/seat.type";
 import React from "react";
+import type { SeatListType } from "@/checkpoint/types/seat.type";
 
 /**
  * Drawer controller for seat details and seat assignment.

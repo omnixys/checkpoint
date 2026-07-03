@@ -1,8 +1,8 @@
 "use client";
 
-import { Dialog, Box, Typography, Button } from "@mui/material";
-import { motion } from "framer-motion";
+import { Box, Button, Dialog, Typography } from "@mui/material";
 import confetti from "canvas-confetti";
+import { motion } from "framer-motion";
 
 export function VisionOSSuccessSheet({
   open,
@@ -23,7 +23,7 @@ export function VisionOSSuccessSheet({
   }
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth={true}>
       <motion.div
         initial={{ opacity: 0, y: 35 }}
         animate={{

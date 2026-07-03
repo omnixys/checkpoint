@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export function useParallax(maxTilt: number = 10) {
+export function useParallax(maxTilt = 10) {
   const [tiltX, setTiltX] = useState(0);
   const [tiltY, setTiltY] = useState(0);
 

@@ -1,5 +1,4 @@
-import { CurrentUserQuery } from "@/checkpoint/generated/graphql";
-import { CurrentUser } from "@/checkpoint/lib/auth/auth.types";
+import type { CurrentUserQuery } from "@/checkpoint/generated/graphql";
 
 /**
  * Internal auth context used ONLY for Apollo header injection.

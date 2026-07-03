@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import SaveIcon from "@mui/icons-material/Save";
 import {
@@ -17,16 +16,17 @@ import {
   useTheme,
 } from "@mui/material";
 import dayjs from "dayjs";
+import { useEffect, useState } from "react";
 
-import {
+import type {
   EventCategory,
   GetEventSettingsQuery,
   InvitationApprovalMode,
 } from "@/checkpoint/generated/graphql";
 
 import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
+import type { Safe } from "@/checkpoint/types/core/core.type";
 import { mapSettingsPatchToInput } from "@/checkpoint/utils/event/settings.mapper";
-import { Safe } from "@/checkpoint/types/core/core.type";
 
 const EVENT_CATEGORIES: EventCategory[] = [
   "GENERAL",
@@ -46,12 +46,12 @@ const APPROVAL_MODES: InvitationApprovalMode[] = [
 
 type SettingsType = Safe<Safe<GetEventSettingsQuery["event"]>["settings"]>;
 
-type Props = {
+interface Props {
   settings: SettingsType;
   actions: {
     updateSettings: (patch: any) => Promise<any>;
   };
-};
+}
 
 function normalizeSettings(settings: SettingsType) {
   const fullSettings = settings;
@@ -217,7 +217,7 @@ export default function EventSettingsSection({ settings, actions }: Props) {
           </Stack>
 
           <TextField
-            select
+            select={true}
             label="Category"
             value={local.category ?? "GENERAL"}
             onChange={(e) => update("category", e.target.value as EventCategory)}
@@ -271,8 +271,8 @@ export default function EventSettingsSection({ settings, actions }: Props) {
 
           <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
             <TextField
-              select
-              fullWidth
+              select={true}
+              fullWidth={true}
               label="Approval Mode"
               value={local.approvalMode ?? "MANUAL"}
               onChange={(e) => update("approvalMode", e.target.value as InvitationApprovalMode)}
@@ -285,7 +285,7 @@ export default function EventSettingsSection({ settings, actions }: Props) {
               ))}
             </TextField>
             <TextField
-              fullWidth
+              fullWidth={true}
               label="Max Plus Ones"
               type="number"
               value={local.maxPlusOnes ?? 0}
@@ -306,7 +306,7 @@ export default function EventSettingsSection({ settings, actions }: Props) {
               sx={{ minWidth: 180 }}
             />
             <TextField
-              fullWidth
+              fullWidth={true}
               label="RSVP Deadline"
               type="datetime-local"
               value={datetimeValue(local.rsvpDeadline)}
@@ -334,7 +334,7 @@ export default function EventSettingsSection({ settings, actions }: Props) {
               sx={{ minWidth: 180 }}
             />
             <TextField
-              fullWidth
+              fullWidth={true}
               disabled={!local.allowPublicRsvpWebsite}
               label="Public RSVP Website"
               value={local.publicRsvpWebsite ?? ""}
@@ -357,7 +357,7 @@ export default function EventSettingsSection({ settings, actions }: Props) {
 
             <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
               <TextField
-                fullWidth
+                fullWidth={true}
                 label="Add source option"
                 value={optionInput}
                 onChange={(event) => setOptionInput(event.target.value)}
@@ -389,7 +389,7 @@ export default function EventSettingsSection({ settings, actions }: Props) {
             </Stack>
 
             {(local.invitedByOptions ?? []).length > 0 && (
-              <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }} useFlexGap>
+              <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }} useFlexGap={true}>
                 {(local.invitedByOptions ?? []).map((option) => (
                   <Chip
                     key={option}
@@ -411,7 +411,7 @@ export default function EventSettingsSection({ settings, actions }: Props) {
           </Typography>
           <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
             <TextField
-              fullWidth
+              fullWidth={true}
               label="Rotate Seconds"
               type="number"
               value={local.rotateSeconds}
@@ -419,7 +419,7 @@ export default function EventSettingsSection({ settings, actions }: Props) {
               sx={inputSx}
             />
             <TextField
-              fullWidth
+              fullWidth={true}
               label="Max Seats"
               type="number"
               value={local.maxSeats}
@@ -466,7 +466,7 @@ export default function EventSettingsSection({ settings, actions }: Props) {
           </Typography>
           <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
             <TextField
-              fullWidth
+              fullWidth={true}
               label="Starts At"
               type="datetime-local"
               value={datetimeValue(local.startsAt)}
@@ -474,7 +474,7 @@ export default function EventSettingsSection({ settings, actions }: Props) {
               sx={inputSx}
             />
             <TextField
-              fullWidth
+              fullWidth={true}
               label="Ends At"
               type="datetime-local"
               value={datetimeValue(local.endsAt)}
@@ -483,7 +483,7 @@ export default function EventSettingsSection({ settings, actions }: Props) {
             />
           </Stack>
           <TextField
-            fullWidth
+            fullWidth={true}
             label="Ticket Release At"
             type="datetime-local"
             value={datetimeValue(local.ticketReleaseAt as string | null | undefined)}
@@ -513,7 +513,7 @@ export default function EventSettingsSection({ settings, actions }: Props) {
           <TextField
             label="Description"
             minRows={4}
-            multiline
+            multiline={true}
             value={local.description ?? ""}
             onChange={(e) => update("description", e.target.value)}
             sx={inputSx}

@@ -1,18 +1,9 @@
-import {
-  EventPageDocument,
-  EventPageQuery,
-  EventPageQueryVariables,
-  GetGlobalEventInvitationListDocument,
-  GetGlobalEventInvitationListQuery,
-  GetGlobalEventInvitationListQueryVariables,
-  MyInvitationsIdDocument,
-  MyInvitationsIdQuery,
-  MyInvitationsIdQueryVariables,
-  PlusOneInvitationsDocument,
-  PlusOneInvitationsQuery,
-  PlusOneInvitationsQueryVariables,
-} from "@/checkpoint/generated/graphql";
 import { useQuery } from "@apollo/client/react";
+import {
+  GetGlobalEventInvitationListDocument,
+  type GetGlobalEventInvitationListQuery,
+  type GetGlobalEventInvitationListQueryVariables,
+} from "@/checkpoint/generated/graphql";
 
 interface Props {
   eventIds?: string[] | undefined;

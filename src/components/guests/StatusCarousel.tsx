@@ -1,17 +1,17 @@
 "use client";
 
-import { Box, Chip, Stack, Typography, useTheme } from "@mui/material";
+import { Box, Typography, useTheme } from "@mui/material";
 
-type Props = {
+interface Props {
   total: number;
   checkedIn: number;
   inside: number;
   outside: number;
-};
+}
 
 export function StatusCarousel({ total, checkedIn, inside, outside }: Props) {
   const theme = useTheme();
-  const omni = theme.palette.omnixys;
+  const _omni = theme.palette.omnixys;
   const apple = theme.palette.apple;
 
   const items = [

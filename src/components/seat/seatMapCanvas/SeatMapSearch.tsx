@@ -1,15 +1,14 @@
 "use client";
 
-import type { PresenceState } from "@/checkpoint/generated/schema";
-import { alpha, Chip, MenuItem, Select, Stack, TextField, useTheme } from "@mui/material";
 import type { SelectChangeEvent } from "@mui/material";
+import { alpha, Chip, MenuItem, Select, Stack, TextField, useTheme } from "@mui/material";
 
 export type PresenceFilter = "all" | "free" | "occupied" | "INSIDE" | "revoked";
 
-export type SeatMapFilters = {
+export interface SeatMapFilters {
   search: string;
   presence: PresenceFilter;
-};
+}
 
 interface Props {
   filters: SeatMapFilters;
@@ -41,7 +40,7 @@ export default function SeatMapSearch({ filters, onChange, resultCount }: Props)
       <TextField
         label="Sitz / Gast / Section / Tisch"
         size="small"
-        fullWidth
+        fullWidth={true}
         value={filters.search}
         onChange={(e) => onChange({ ...filters, search: e.target.value })}
         sx={{ minWidth: 200 }}

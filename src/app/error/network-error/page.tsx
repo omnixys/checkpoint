@@ -1,9 +1,9 @@
 "use client";
 
-import { Box, Button, Stack, Typography, useTheme, alpha } from "@mui/material";
-import { motion } from "framer-motion";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import WifiOffIcon from "@mui/icons-material/WifiOff";
+import { alpha, Box, Button, Stack, Typography, useTheme } from "@mui/material";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
@@ -95,7 +95,7 @@ export default function NetworkErrorPage() {
           <Stack spacing={1.5}>
             <Button
               variant="contained"
-              fullWidth
+              fullWidth={true}
               startIcon={<RefreshIcon />}
               onClick={handleRetry}
               sx={{ height: 48 }}
@@ -105,7 +105,7 @@ export default function NetworkErrorPage() {
 
             <Button
               variant="outlined"
-              fullWidth
+              fullWidth={true}
               onClick={() => router.push(env.CHECKPOINT_BASE_PATH)}
               sx={{ height: 48 }}
             >

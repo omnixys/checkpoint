@@ -1,14 +1,14 @@
 "use client";
 
-import { forwardRef } from "react";
 import { motion } from "framer-motion";
+import { forwardRef } from "react";
 
-type MotionDialogTransitionProps = {
+interface MotionDialogTransitionProps {
   children?: React.ReactNode;
   in?: boolean;
   onEnter?: () => void;
   onExited?: () => void;
-};
+}
 
 /**
  * Framer Motion transition adapter for MUI Dialog.

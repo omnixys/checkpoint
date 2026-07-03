@@ -2,21 +2,21 @@
 
 import { Box, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { motion } from "framer-motion";
-import { useTourAnchor } from "@/checkpoint/hooks/core/useTourAnchor";
-import { useRouter, usePathname } from "next/navigation";
-import { NavItem } from "../navigation.config";
-import { UserRoleType } from "@/checkpoint/generated/graphql";
-import { useTour } from "@/checkpoint/providers/TourProvider";
+import { usePathname, useRouter } from "next/navigation";
 import {
   getRoleColor,
   isActiveNavItem,
 } from "@/checkpoint/components/layout/navigation/navigation.util";
+import type { UserRoleType } from "@/checkpoint/generated/graphql";
+import { useTourAnchor } from "@/checkpoint/hooks/core/useTourAnchor";
+import { useTour } from "@/checkpoint/providers/TourProvider";
+import type { NavItem } from "../navigation.config";
 
-type Props = {
+interface Props {
   item: NavItem;
   items: NavItem[];
   role: UserRoleType;
-};
+}
 
 export default function NavigationItem({ item, items, role }: Props) {
   const router = useRouter();
@@ -71,7 +71,7 @@ export default function NavigationItem({ item, items, role }: Props) {
                 scale: [1, 1.06, 1],
                 opacity: [0.6, 1, 0.6],
               }}
-              transition={{ repeat: Infinity, duration: 1.4 }}
+              transition={{ repeat: Number.POSITIVE_INFINITY, duration: 1.4 }}
               style={{
                 position: "absolute",
                 inset: -4,
@@ -82,7 +82,7 @@ export default function NavigationItem({ item, items, role }: Props) {
 
             <motion.div
               animate={{ y: [0, -6, 0] }}
-              transition={{ repeat: Infinity, duration: 1 }}
+              transition={{ repeat: Number.POSITIVE_INFINITY, duration: 1 }}
               style={{
                 position: "absolute",
                 right: -18,

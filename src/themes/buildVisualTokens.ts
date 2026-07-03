@@ -1,5 +1,5 @@
 import { omnixysPresets } from "@/checkpoint/themes/colors/omnixysPresets";
-import { OmnixysColorScheme } from "./paletteTypes";
+import type { OmnixysColorScheme } from "./paletteTypes";
 
 export type RGB = readonly [number, number, number];
 
@@ -12,7 +12,7 @@ function hexToRgb(hex: string): RGB {
     throw new Error(`Invalid hex color: ${hex}`);
   }
 
-  const nums = parts.map((x) => parseInt(x, 16));
+  const nums = parts.map((x) => Number.parseInt(x, 16));
 
   const [r, g, b] = nums;
 
@@ -42,9 +42,7 @@ export function buildVisualTokens(mode: "light" | "dark", scheme: OmnixysColorSc
   const isDark = mode === "dark";
 
   const schemeMap = Object.fromEntries(
-    Object.entries(omnixysPresets).map(([key, preset]) => {
-      return [key, hexToRgb(preset.light.primary)];
-    }),
+    Object.entries(omnixysPresets).map(([key, preset]) => [key, hexToRgb(preset.light.primary)]),
   ) as Record<OmnixysColorScheme, RGB>;
 
   const base = schemeMap[scheme];
@@ -71,7 +69,7 @@ export function buildVisualTokens(mode: "light" | "dark", scheme: OmnixysColorSc
     },
 
     logo: {
-      src: `/logo/omnixys-original.png`,
+      src: "/logo/omnixys-original.png",
     },
   };
 }

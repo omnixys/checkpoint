@@ -1,6 +1,6 @@
-import React from "react";
 import { Paper } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import type React from "react";
 
 interface AppleCardProps {
   children: React.ReactNode;
@@ -15,6 +15,6 @@ const GlassCard = styled(Paper)(({ theme }) => ({
   backdropFilter: "blur(20px)",
 }));
 
-export const AppleCard: React.FC<AppleCardProps> = ({ children }) => {
-  return <GlassCard>{children}</GlassCard>;
-};
+export const AppleCard: React.FC<AppleCardProps> = ({ children }) => (
+  <GlassCard>{children}</GlassCard>
+);

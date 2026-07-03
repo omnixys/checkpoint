@@ -56,7 +56,9 @@ export default function InvitationImportDialog({ logic }: { logic: InvitationLog
    * HANDLE FILE → UPLOAD + PREVIEW
    * --------------------------------------------------------------------- */
   async function handleFile(f: File | null) {
-    if (!f) return;
+    if (!f) {
+      return;
+    }
 
     setFile(f);
     setErrors([]);
@@ -106,7 +108,7 @@ export default function InvitationImportDialog({ logic }: { logic: InvitationLog
       /**
        * ---------------- Backend Validation ----------------
        */
-      if (preview.errors?.length) {
+      if ((preview.errors?.length ?? 0) > 0) {
         setErrors(preview.errors);
       }
     } catch (error: unknown) {
@@ -125,7 +127,9 @@ export default function InvitationImportDialog({ logic }: { logic: InvitationLog
    * SUBMIT (IMPORT)
    * --------------------------------------------------------------------- */
   async function submit() {
-    if (!file) return;
+    if (!file) {
+      return;
+    }
 
     setErrors([]);
 

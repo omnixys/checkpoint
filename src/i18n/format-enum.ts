@@ -8,7 +8,9 @@ export function formatEnum<T extends (key: any, values?: any) => string>(
   enumName: string,
   value: string | number | null | undefined,
 ): string {
-  if (!value) return "—";
+  if (!value) {
+    return "—";
+  }
 
   const key = `${enumName}.${value}` as Parameters<T>[0];
 

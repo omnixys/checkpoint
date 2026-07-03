@@ -1,16 +1,16 @@
 "use client";
 
-import React from "react";
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
+import React from "react";
 
 type Props =
   | {
@@ -41,7 +41,7 @@ export default function SectionOrTableRenameDialog(props: Props) {
   }, [props]);
 
   return (
-    <Dialog open={props.open} onClose={props.onClose} fullWidth maxWidth="sm">
+    <Dialog open={props.open} onClose={props.onClose} fullWidth={true} maxWidth="sm">
       <DialogTitle>
         {props.mode === "SECTION" ? "Section umbenennen" : "Tisch umbenennen"}
       </DialogTitle>
@@ -55,13 +55,13 @@ export default function SectionOrTableRenameDialog(props: Props) {
           </Typography>
 
           {props.mode === "TABLE" && (
-            <TextField label="Aktueller Tisch" value={props.tableName} disabled />
+            <TextField label="Aktueller Tisch" value={props.tableName} disabled={true} />
           )}
 
           <TextField
             label="Neuer Name"
             value={value}
-            autoFocus
+            autoFocus={true}
             onChange={(e) => setValue(e.target.value)}
           />
         </Stack>

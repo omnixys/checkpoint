@@ -3,9 +3,9 @@
 import { Box, Typography } from "@mui/material";
 import { useMockMessages } from "../hooks/useMockMessages";
 
-type Props = {
+interface Props {
   chatId: string | null;
-};
+}
 
 export function LuxuryChatWindow({ chatId }: Props) {
   const { messages } = useMockMessages(chatId);

@@ -1,14 +1,14 @@
 "use client";
 
 import { Stack, Typography } from "@mui/material";
-import { TimelineItem, TimelineTicketRenderer } from "./TimelineTicketRenderer";
-import { TimelineDesign } from "@/checkpoint/components/event/settings/sections/timeline/TimelineRenderer";
+import type { TimelineDesign } from "@/checkpoint/components/event/settings/sections/timeline/TimelineRenderer";
+import { type TimelineItem, TimelineTicketRenderer } from "./TimelineTicketRenderer";
 
-type Props = {
+interface Props {
   items: TimelineItem[];
   title?: string;
   design?: TimelineDesign;
-};
+}
 
 export default function TimelineTicketPreview({ items, title, design }: Props) {
   return (

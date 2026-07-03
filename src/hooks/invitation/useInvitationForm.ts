@@ -1,19 +1,19 @@
 "use client";
 
-import { InvitationCreateInput, PhoneNumberInput } from "@/checkpoint/generated/graphql";
-import { usePhoneNumbers } from "@/checkpoint/hooks/common/usePhoneNumbers";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import type { InvitationCreateInput, PhoneNumberInput } from "@/checkpoint/generated/graphql";
+import { usePhoneNumbers } from "@/checkpoint/hooks/common/usePhoneNumbers";
 
-export type InvitationFormValues = {
+export interface InvitationFormValues {
   firstName: string;
   lastName: string;
   email: string;
   maxInvitees: number;
   invitedByInvitationId: string;
   eventId: string;
-};
+}
 
-export type UseInvitationFormOptions = {
+export interface UseInvitationFormOptions {
   /**
    * Event id is required for create payload generation.
    */
@@ -41,9 +41,9 @@ export type UseInvitationFormOptions = {
    * This improves UX for create dialogs.
    */
   autoCreateFirstPhone?: boolean;
-};
+}
 
-export type UseInvitationFormReturn = {
+export interface UseInvitationFormReturn {
   values: InvitationFormValues;
 
   setField: <K extends keyof InvitationFormValues>(
@@ -70,7 +70,7 @@ export type UseInvitationFormReturn = {
    * Final GraphQL-ready payload.
    */
   buildCreateInput: () => InvitationCreateInput;
-};
+}
 
 const DEFAULT_VALUES: InvitationFormValues = {
   firstName: "",
@@ -222,11 +222,11 @@ export function useInvitationForm({
       eventId: values.eventId,
       firstName: values.firstName.trim(),
       lastName: values.lastName.trim(),
-      email: trimmedEmail !== "" ? trimmedEmail : null,
+      email: trimmedEmail === "" ? null : trimmedEmail,
       maxInvitees: values.maxInvitees < 0 ? 0 : values.maxInvitees,
       phoneNumbers: sanitizedPhoneNumbers.length > 0 ? sanitizedPhoneNumbers : null,
       invitedByInvitationId:
-        trimmedInvitedByInvitationId !== "" ? trimmedInvitedByInvitationId : null,
+        trimmedInvitedByInvitationId === "" ? null : trimmedInvitedByInvitationId,
       phoneNumber: null,
     };
   }, [values, sanitizedPhoneNumbers]);

@@ -1,14 +1,13 @@
 "use client";
 
 import { Box, useTheme } from "@mui/material";
-import { motion, AnimatePresence } from "framer-motion";
-import { InvitationHeaderBar } from "./InvitationHeaderBar";
-import { useHeaderCollapse } from "@/checkpoint/components/invitation/useHeaderCollapse";
+import { AnimatePresence, motion } from "framer-motion";
 import InvitationFilters from "@/checkpoint/components/invitation/InvitationFilters";
-import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
-import { omnixysPresets } from "../../themes/colors/omnixysPresets";
-import { useDevice } from "@/checkpoint/providers/DeviceProvider";
 import InvitationFiltersMobile from "@/checkpoint/components/invitation/InvitationFiltersMobile";
+import { useHeaderCollapse } from "@/checkpoint/components/invitation/useHeaderCollapse";
+import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
+import { useDevice } from "@/checkpoint/providers/DeviceProvider";
+import { InvitationHeaderBar } from "./InvitationHeaderBar";
 
 /**
  * Smart Header
@@ -29,7 +28,7 @@ export interface InvitationHeaderProp {
 /* ---------------------------------------------------------------------------
  * Header Factory (scroll reactive)
  * ------------------------------------------------------------------------- */
-export default function InvitationHeader({ logic, scroll }: InvitationHeaderProp) {
+export default function InvitationHeader({ logic }: InvitationHeaderProp) {
   const { isMobile } = useDevice();
   const theme = useTheme();
   const { collapsed, setCollapsed } = useHeaderCollapse();

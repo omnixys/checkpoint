@@ -1,12 +1,11 @@
 "use client";
 
-import React from "react";
 import { BackButtonBase } from "./back-button-base";
 
-export type BackToListButtonProps = {
+export interface BackToListButtonProps {
   backTo: string;
   label?: string;
-};
+}
 
 /**
  * Domain wrapper for "Back to List".

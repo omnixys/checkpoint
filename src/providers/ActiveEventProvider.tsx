@@ -1,9 +1,9 @@
 "use client";
 
-import {
-  EventFullFragment,
+import type React from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import type {
   GetActiveEventQuery,
-  GetEventMetaQuery,
   MyEventsQuery,
   UserRoleType,
 } from "@/checkpoint/generated/graphql";
@@ -14,7 +14,6 @@ import {
   writeActiveEventCookie,
 } from "@/checkpoint/providers/active-event-cookie";
 import { getLogger } from "@/checkpoint/utils/logger";
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 /* ---------------------------------------------------------------------
  * Context Type
@@ -56,7 +55,9 @@ export function ActiveEventProvider({ children }: { children: React.ReactNode })
    * Restore from localStorage (client only)
    * ------------------------------------------------- */
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined") {
+      return;
+    }
 
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
@@ -67,8 +68,8 @@ export function ActiveEventProvider({ children }: { children: React.ReactNode })
 
   const { myEventList, activeEvent, myEventListLoading, activeEventLoading } = useEventQuery({
     eventId: activeEventId,
-    loadActiveEvent: !activeEventId ? false : true,
-    loadMyEventList: !activeEventId ? true : false,
+    loadActiveEvent: !!activeEventId,
+    loadMyEventList: !activeEventId,
     isAuthenticated,
   });
 
@@ -116,11 +117,15 @@ export function ActiveEventProvider({ children }: { children: React.ReactNode })
    * Auto-select if exactly 1 event
    * ------------------------------------------------- */
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) {
+      return;
+    }
 
     if (myEventList?.length === 1 && !activeEventId) {
       const event = myEventList[0];
-      if (!event) return;
+      if (!event) {
+        return;
+      }
 
       selectEvent(event.id);
     }

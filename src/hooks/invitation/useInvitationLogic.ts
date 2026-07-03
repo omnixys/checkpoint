@@ -2,7 +2,8 @@
 
 // TODO kein any
 
-import {
+import { useMemo, useState } from "react";
+import type {
   GetGlobalEventInvitationListQuery,
   InvitationPayload,
 } from "@/checkpoint/generated/graphql";
@@ -13,7 +14,6 @@ import useSeatListQuery from "@/checkpoint/hooks/seat/useSeatListQuery";
 import { env } from "@/checkpoint/lib/env";
 import { getLogger } from "@/checkpoint/utils/logger";
 import { mapPhoneNumbersToInput } from "@/checkpoint/utils/mapPhoneNumbersToInput";
-import { useMemo, useState } from "react";
 
 /* ---------------------------------------------------------------------------
  * Types
@@ -98,7 +98,7 @@ export function useInvitationLogic(eventId: string) {
   const [key, setKey] = useState<string | null>(null);
   const [uploadType, setUploadType] = useState<"csv" | "xlsx">("csv");
 
-  const [importLoading, setImportLoading] = useState(false);
+  const [importLoading, _setImportLoading] = useState(false);
   const [importProgress, setImportProgress] = useState(0);
   const [preview, setPreview] = useState<PreviewResponse | null>(null);
 
@@ -152,7 +152,7 @@ export function useInvitationLogic(eventId: string) {
       seen.add(option.id);
       return true;
     });
-  }, [eventId, rootEvent, subEvents]);
+  }, [rootEvent, subEvents]);
 
   const rootEventId = rootEvent?.id ?? eventId;
   const rootEventName = rootEvent?.name ?? "Hauptevent";
@@ -162,7 +162,9 @@ export function useInvitationLogic(eventId: string) {
       [rootEventId]: rootEventName,
     };
 
-    if (!subEvents) return map;
+    if (!subEvents) {
+      return map;
+    }
 
     for (const child of subEvents) {
       map[child.id] = child.name;
@@ -174,7 +176,9 @@ export function useInvitationLogic(eventId: string) {
   const invitationById = useMemo(() => {
     const map = new Map<string, GetGlobalEventInvitationListQuery["getFullByEventIds"][number]>();
 
-    if (!globalEventInvitationList) return map;
+    if (!globalEventInvitationList) {
+      return map;
+    }
 
     for (const invitation of globalEventInvitationList) {
       map.set(invitation.id, invitation);
@@ -184,11 +188,12 @@ export function useInvitationLogic(eventId: string) {
   }, [globalEventInvitationList]);
 
   const bulkApproveInvitationList = useMemo(() => {
-    if (!bulkApproveIds?.length) {
+    const effectiveIds = bulkApproveIds ?? [];
+    if (effectiveIds.length === 0) {
       return [];
     }
 
-    return bulkApproveIds
+    return effectiveIds
       .map((id) => invitationById.get(id))
       .filter((invitation): invitation is NonNullable<typeof invitation> => Boolean(invitation));
   }, [bulkApproveIds, invitationById]);
@@ -199,7 +204,9 @@ export function useInvitationLogic(eventId: string) {
   const filteredInvitations = useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase();
 
-    if (!globalEventInvitationList) return [];
+    if (!globalEventInvitationList) {
+      return [];
+    }
 
     return globalEventInvitationList.filter((invitation) => {
       if (eventFilter && invitation.eventId !== eventFilter) {
@@ -315,15 +322,14 @@ export function useInvitationLogic(eventId: string) {
     try {
       logger.debug("Sending bulk invitations", { ids });
       setSendingBulk(true);
-      const selectedInvitations = globalEventInvitationList?.filter((invitation) =>
-        ids.includes(invitation.id),
-      );
+      const selectedInvitations =
+        globalEventInvitationList?.filter((invitation) => ids.includes(invitation.id)) ?? [];
 
-      if (selectedInvitations?.length === 0) {
+      if (selectedInvitations.length === 0) {
         throw new Error("No invitations selected");
       }
 
-      const guests = selectedInvitations?.map((invitation) => {
+      const guests = selectedInvitations.map((invitation) => {
         const eventNameResolved = eventNameById[invitation.eventId] ?? rootEventName;
 
         const rsvpUrl = `${window.location.origin}/rsvp/${invitation.id}`;
@@ -341,8 +347,6 @@ export function useInvitationLogic(eventId: string) {
           rsvpUrl,
         };
       });
-
-      if (!guests) return;
 
       await sendBulkInvitationsMutation({
         variables: {

@@ -1,9 +1,9 @@
-export type CallingCodeCountry = {
+export interface CallingCodeCountry {
   iso2: string;
   name: string;
   flagSvg?: string | null;
   callingCode?: string | null;
-};
+}
 
 // const res = await client.query<
 //   GetAllCallingCodesQuery,

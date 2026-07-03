@@ -1,5 +1,8 @@
 "use client";
 
+import AddIcon from "@mui/icons-material/Add";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import SearchIcon from "@mui/icons-material/Search";
 import {
   alpha,
   Button,
@@ -12,17 +15,13 @@ import {
   useTheme,
 } from "@mui/material";
 
-import AddIcon from "@mui/icons-material/Add";
-import RefreshIcon from "@mui/icons-material/Refresh";
-import SearchIcon from "@mui/icons-material/Search";
-
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useAuth } from "@/checkpoint/providers/AuthProvider";
-import { EventsFilter } from "@/checkpoint/types/event.type";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { useAuth } from "@/checkpoint/providers/AuthProvider";
+import type { EventsFilter } from "@/checkpoint/types/event.type";
 
-type Props = {
+interface Props {
   search: string;
   onSearchChange: (v: string) => void;
 
@@ -34,7 +33,7 @@ type Props = {
 
   onRefresh: () => void;
   onCreateHref: string;
-};
+}
 
 export default function EventsHeader({
   search,
@@ -81,7 +80,7 @@ export default function EventsHeader({
           style={{ flex: 1 }}
         >
           <TextField
-            fullWidth
+            fullWidth={true}
             placeholder={tEvent("header.search")}
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
@@ -120,7 +119,7 @@ export default function EventsHeader({
             transition={{ delay: 0.05 }}
           >
             <TextField
-              select
+              select={true}
               size="small"
               value={filter}
               onChange={(e) => onFilterChange(e.target.value as EventsFilter)}

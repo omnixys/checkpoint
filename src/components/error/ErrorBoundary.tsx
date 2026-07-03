@@ -36,7 +36,9 @@ export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, E
   private readonly reset = () => this.setState({ error: null });
 
   override render(): React.ReactNode {
-    if (!this.state.error) return this.props.children;
+    if (!this.state.error) {
+      return this.props.children;
+    }
     return (
       <RetryComponent
         open={true}

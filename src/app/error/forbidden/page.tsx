@@ -1,8 +1,8 @@
 "use client";
 
-import { Box, Button, Stack, Typography, useTheme, alpha } from "@mui/material";
-import { useRouter } from "next/navigation";
 import BlockIcon from "@mui/icons-material/Block";
+import { alpha, Box, Button, Stack, Typography, useTheme } from "@mui/material";
+import { useRouter } from "next/navigation";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
 

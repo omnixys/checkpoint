@@ -52,7 +52,9 @@ export default function ColorBubbleSwitcher() {
   // Desktop Hover
   // -------------------------------------------------------------
   const handleHover = (e: React.MouseEvent<HTMLElement>) => {
-    if (isTouch) return; // no hover on touch devices
+    if (isTouch) {
+      return; // no hover on touch devices
+    }
     showPicker(e.currentTarget);
   };
 
@@ -67,7 +69,9 @@ export default function ColorBubbleSwitcher() {
   // Long Press (iOS style)
   // -------------------------------------------------------------
   const handleTouchStart = (e: React.TouchEvent<HTMLElement>) => {
-    if (!isTouch) return;
+    if (!isTouch) {
+      return;
+    }
 
     longPressTimer.current = setTimeout(() => {
       showPicker(e.currentTarget);
@@ -75,7 +79,9 @@ export default function ColorBubbleSwitcher() {
   };
 
   const handleTouchEnd = () => {
-    if (longPressTimer.current) clearTimeout(longPressTimer.current);
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+    }
   };
 
   // -------------------------------------------------------------

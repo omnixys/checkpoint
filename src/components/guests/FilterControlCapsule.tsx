@@ -1,6 +1,5 @@
 "use client";
 
-import { Filter } from "@/checkpoint/components/guests/types";
 import TuneIcon from "@mui/icons-material/Tune";
 import {
   Box,
@@ -15,15 +14,16 @@ import {
   useTheme,
 } from "@mui/material";
 import { useState } from "react";
+import type { Filter } from "@/checkpoint/components/guests/types";
 
-type Props = {
+interface Props {
   filter: Filter;
   setFilter: (f: Filter) => void;
   highContrast: boolean;
   setHighContrast: (v: boolean) => void;
   largeText: boolean;
   setLargeText: (v: boolean) => void;
-};
+}
 
 export function FilterControlCapsule({
   filter,

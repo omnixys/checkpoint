@@ -1,41 +1,41 @@
 "use client";
 
-import { useState } from "react";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
-  Stack,
-  Typography,
+  Alert,
   Box,
-  IconButton,
-  MenuItem,
-  Select,
-  TextField,
   Button,
   Chip,
   CircularProgress,
+  IconButton,
+  MenuItem,
+  Select,
   Snackbar,
-  Alert,
+  Stack,
+  TextField,
+  Typography,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { useTheme } from "@mui/material/styles";
-import { motion, AnimatePresence } from "framer-motion";
-import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
-import { useAuth } from "@/checkpoint/providers/AuthProvider";
-import { UserRoleType } from "@/checkpoint/generated/graphql";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
+import type { UserRoleType } from "@/checkpoint/generated/graphql";
 import { useMutationHandler } from "@/checkpoint/hooks/core/useMutationHandler";
-import { EventRoleType } from "@/checkpoint/types/event.type";
 import useGuestQuery from "@/checkpoint/hooks/user/useGuestQuery";
+import { useAuth } from "@/checkpoint/providers/AuthProvider";
+import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
+import type { EventRoleType } from "@/checkpoint/types/event.type";
 
 /**
  * Props
  */
-type Props = {
+interface Props {
   roles: EventRoleType[];
   meta: { owner: string };
   actions: {
     assignRole: (role: EventRoleType) => Promise<any>;
     removeRole: (role: EventRoleType) => Promise<any>;
   };
-};
+}
 
 /**
  * RolesSection
@@ -70,7 +70,9 @@ export default function RolesSection({ roles, meta, actions }: Props) {
    * Add role
    */
   const handleAdd = async () => {
-    if (!newUserId.trim()) return;
+    if (!newUserId.trim()) {
+      return;
+    }
 
     await execute(() =>
       actions.assignRole({
@@ -94,7 +96,7 @@ export default function RolesSection({ roles, meta, actions }: Props) {
             placeholder="User ID"
             value={newUserId}
             onChange={(e) => setNewUserId(e.target.value)}
-            fullWidth
+            fullWidth={true}
             sx={glassInputSx(theme)}
           />
 
@@ -128,7 +130,6 @@ export default function RolesSection({ roles, meta, actions }: Props) {
                   name={securityGuestMap.get(role.userId)}
                   role={role}
                   currentUserId={currentUser?.id}
-                  ownerId={meta.owner}
                   isOwner={meta.owner === role.userId}
                   canEdit={isOwner || (isAdmin && role.role !== "ADMIN")}
                   canDelete={
@@ -172,7 +173,6 @@ export default function RolesSection({ roles, meta, actions }: Props) {
 function RoleRow({
   role,
   currentUserId,
-  ownerId,
   isOwner,
   canEdit,
   canDelete,
@@ -184,7 +184,6 @@ function RoleRow({
   name?: string | undefined;
   role: EventRoleType;
   currentUserId?: string | undefined;
-  ownerId: string;
   isOwner: boolean;
   canEdit: boolean;
   canDelete: boolean;
@@ -243,10 +242,7 @@ function RoleRow({
 
       {loading && <CircularProgress size={16} />}
 
-      <IconButton
-        disabled={!canDelete}
-        onClick={() => execute(() => actions.removeRole(role))}
-      >
+      <IconButton disabled={!canDelete} onClick={() => execute(() => actions.removeRole(role))}>
         <DeleteIcon />
       </IconButton>
     </Box>

@@ -1,26 +1,24 @@
 "use client";
 
+import { useLazyQuery, useMutation } from "@apollo/client/react";
+import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import { Box, Button, Chip, Divider, Drawer, Stack, Tooltip, Typography } from "@mui/material";
-
+import { useEffect, useState } from "react";
 import {
   AssignSeatDocument,
-  AssignSeatMutation,
-  AssignSeatMutationVariables,
+  type AssignSeatMutation,
+  type AssignSeatMutationVariables,
   GetSeatByGuestAndEventDocument,
-  GetSeatByGuestAndEventQuery,
-  GetSeatByGuestAndEventQueryVariables,
-  InvitationPayload,
+  type GetSeatByGuestAndEventQuery,
+  type GetSeatByGuestAndEventQueryVariables,
   SeatsDocument,
-  SeatsQuery,
-  SeatsQueryVariables,
+  type SeatsQuery,
+  type SeatsQueryVariables,
 } from "@/checkpoint/generated/graphql";
-import { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
+import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { useEffect, useState } from "react";
-import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
 import { copyToClipboard, rsvpLinkForInvitationId } from "@/checkpoint/utils/invitation/link";
-import { useMutation, useLazyQuery } from "@apollo/client/react";
-import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 
 export default function InvitationDetailMobileDialog({ logic }: { logic: InvitationLogic }) {
   const inv = logic.activeInvitation;
@@ -33,22 +31,23 @@ export default function InvitationDetailMobileDialog({ logic }: { logic: Invitat
   const [approveSeatId, setApproveSeatId] = useState<string>();
   const [seatQuery, setSeatQuery] = useState("");
 
-  const [assignSeat] = useMutation<AssignSeatMutation, AssignSeatMutationVariables>(
+  const [_assignSeat] = useMutation<AssignSeatMutation, AssignSeatMutationVariables>(
     AssignSeatDocument,
   );
 
-  const [loadSeats, { data: seatsData, loading: seatsLoading }] = useLazyQuery<
-    SeatsQuery,
-    SeatsQueryVariables
-  >(SeatsDocument);
+  const [loadSeats, { data: seatsData }] = useLazyQuery<SeatsQuery, SeatsQueryVariables>(
+    SeatsDocument,
+  );
 
-  const [loadGuestSeat, { data: seatData, loading: seatLoading }] = useLazyQuery<
+  const [loadGuestSeat, { data: seatData }] = useLazyQuery<
     GetSeatByGuestAndEventQuery,
     GetSeatByGuestAndEventQueryVariables
   >(GetSeatByGuestAndEventDocument);
 
   useEffect(() => {
-    if (!inv) return;
+    if (!inv) {
+      return;
+    }
 
     loadSeats({ variables: { id: inv.eventId } });
 
@@ -62,9 +61,11 @@ export default function InvitationDetailMobileDialog({ logic }: { logic: Invitat
         },
       });
     }
-  }, [inv]);
+  }, [inv, loadSeats, loadGuestSeat]);
 
-  if (!inv) return null;
+  if (!inv) {
+    return null;
+  }
 
   const currentSeat = seatData?.getSeatByGuestAndEvent ?? null;
 
@@ -127,7 +128,9 @@ export default function InvitationDetailMobileDialog({ logic }: { logic: Invitat
   const openWhatsapp = (text: string, phone?: string | null) => {
     const params = new URLSearchParams();
     params.set("text", text);
-    if (phone) params.set("phone", phone.replace(/\D/g, ""));
+    if (phone) {
+      params.set("phone", phone.replace(/\D/g, ""));
+    }
 
     const url = `https://api.whatsapp.com/send?${params.toString()}`;
     window.open(url, "_blank", "noopener,noreferrer");
@@ -136,7 +139,7 @@ export default function InvitationDetailMobileDialog({ logic }: { logic: Invitat
   return (
     <Drawer
       anchor="bottom"
-      open
+      open={true}
       onClose={logic.closeInvitation}
       slotProps={{
         paper: {
@@ -192,11 +195,7 @@ export default function InvitationDetailMobileDialog({ logic }: { logic: Invitat
           <Box sx={{ overflowY: "auto" }}>
             {Object.entries(seatsBySection).map(([section, seats]) => (
               <Box key={section} sx={{ mb: 2 }}>
-                <Stack
-                  direction="row"
-                  spacing={1}
-                  sx={{ mb: 1, alignItems: "center" }}
-                >
+                <Stack direction="row" spacing={1} sx={{ mb: 1, alignItems: "center" }}>
                   <Divider sx={{ flex: 1 }} />
                   <Typography variant="caption" sx={{ opacity: 0.6, letterSpacing: 1 }}>
                     {section.toUpperCase()}
@@ -248,7 +247,7 @@ export default function InvitationDetailMobileDialog({ logic }: { logic: Invitat
           </Box>
 
           <Button
-            fullWidth
+            fullWidth={true}
             variant="contained"
             disabled={!approveSeatId}
             onClick={() => approveInvitation(true, approveSeatId)}
@@ -270,18 +269,14 @@ export default function InvitationDetailMobileDialog({ logic }: { logic: Invitat
 
           {/* PRIMARY ACTIONS */}
           <Stack spacing={1}>
-            <Button
-              autoFocus
-              variant="contained"
-              onClick={() => approveInvitation(true)}
-            >
+            <Button autoFocus={true} variant="contained" onClick={() => approveInvitation(true)}>
               {tInvitation("approve")}
             </Button>
 
             <Button
               variant="contained"
               color="success"
-              disabled={!freeSeats.length}
+              disabled={freeSeats.length === 0}
               onClick={() => {
                 setApproveSeatId(preselectedSeatId);
                 setApproveSeatOpen(true);
@@ -290,11 +285,7 @@ export default function InvitationDetailMobileDialog({ logic }: { logic: Invitat
               {tInvitation("approveAndSeat")}
             </Button>
 
-            <Button
-              variant="outlined"
-              color="warning"
-              onClick={() => approveInvitation(false)}
-            >
+            <Button variant="outlined" color="warning" onClick={() => approveInvitation(false)}>
               {tInvitation("decline")}
             </Button>
           </Stack>
