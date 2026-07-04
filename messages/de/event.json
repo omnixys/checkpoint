@@ -61,7 +61,9 @@
 
   "tabs": {
     "timeline": "Timeline",
+    "details": "Details",
     "settings": "Details",
+    "map": "Karte",
     "location": "Karte",
     "notImplemented": "Inhalt für den Tab \"{tab}\" ist noch nicht implementiert."
   },
@@ -79,6 +81,24 @@
   "details": {
     "dresscode": "Dresscode",
     "description": "Beschreibung",
+    "schedule": "Zeitplan",
+    "rsvp": "RSVP",
+    "capacity": "Kapazität",
+    "category": "Kategorie",
+    "visibility": "Sichtbarkeit",
+    "enabled": "aktiv",
+    "disabled": "inaktiv",
+    "startsAt": "Beginn",
+    "endsAt": "Ende",
+    "rsvpDeadline": "RSVP-Frist",
+    "ticketReleaseAt": "Ticketfreigabe",
+    "maxSeatsValue": "{count} Sitzplätze",
+    "maxPlusOnesValue": "Bis zu {count} Begleitungen",
+    "approvalMode": "Freigabe: {value}",
+    "guestSeatSelection": "Sitzplatzauswahl für Gäste: {value}",
+    "publicRsvp": "Öffentliches RSVP: {value}",
+    "publicPlusOne": "Öffentliche Begleitung: {value}",
+    "publicWebsite": "RSVP-Website: {value}",
     "maxSeats": "Max {count}",
     "reEntryOn": "Re-Entry an",
     "reEntryOff": "Re-Entry aus"
@@ -134,6 +154,23 @@
     "inside": "Drinnen",
     "outside": "Draußen",
     "notArrived": "Nicht da"
+  },
+
+  "seatColors": {
+    "title": "Sitzfarben",
+    "subtitle": "Farbgruppen definieren, die Gästen basierend auf ihrer RSVP-Quelle zugeordnet werden.",
+    "addGroup": "Gruppe hinzufügen",
+    "editGroup": "Gruppe bearbeiten",
+    "saveColors": "Sitzfarben speichern",
+    "noGroups": "Noch keine Farbgruppen definiert. Standardgruppen werden automatisch erstellt, wenn invitedByOptions gesetzt ist.",
+    "name": "Name",
+    "matchType": "Match-Typ",
+    "values": "Invited-by Auswahl",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "orphaned": "verwaist"
   },
 
   "ui": {

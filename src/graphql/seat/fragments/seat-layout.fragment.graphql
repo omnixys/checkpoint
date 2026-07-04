@@ -31,6 +31,16 @@ fragment SeatLayoutSection on SectionPayload {
       meta
       sectionId
       tableId
+      colorGroup {
+        id
+        name
+        style {
+          background
+          foreground
+          border
+          legendIcon
+        }
+      }
     }
   }
 
@@ -44,5 +54,15 @@ fragment SeatLayoutSection on SectionPayload {
     meta
     sectionId
     tableId
+    colorGroup {
+      id
+      name
+      style {
+        background
+        foreground
+        border
+        legendIcon
+      }
+    }
   }
 }

@@ -3,8 +3,10 @@
 import { useMutation } from "@apollo/client/react";
 import { useMemo, useState } from "react";
 import {
+  RsvpChoice,
   type GetInvitationQuery,
   type InvitationPayload,
+  PhoneNumberType,
   type PublicPlusOneInput,
   ReplyInvitationDocument,
   type ReplyInvitationMutation,
@@ -23,7 +25,7 @@ interface RsvpFormState {
 
 function createEmptyPhone(): PhoneNumberInput {
   return {
-    type: "MOBILE",
+    type: PhoneNumberType.MOBILE,
     number: "",
     countryCode: "+49",
     isPrimary: false,
@@ -37,6 +39,8 @@ function createEmptyPlusOne(): NormalizedPlusOne {
     lastName: "",
     email: "",
     plusOneAgeCategory: null,
+    guestNote: null,
+    selectedInvitedBy: [],
     phoneNumbers: [],
   };
 }
@@ -67,6 +71,8 @@ function normalizePlusOne(
     lastName: input.lastName ?? "",
     email: input.email ?? null,
     plusOneAgeCategory: input.plusOneAgeCategory ?? null,
+    guestNote: input.guestNote ?? null,
+    selectedInvitedBy: input.selectedInvitedBy ?? [],
     phoneNumbers: normalizePhoneNumbers(input.phoneNumbers),
   };
 }
@@ -77,8 +83,9 @@ function toGraphQlPlusOne(input: CompleteNormalizedPlusOne): PublicPlusOneInput 
     lastName: input.lastName.trim(),
     email: input?.email?.trim() || null,
     plusOneAgeCategory: input.plusOneAgeCategory,
+    guestNote: input.guestNote?.trim() || null,
     phoneNumbers: input.phoneNumbers.length > 0 ? input.phoneNumbers : null,
-  };
+  } as PublicPlusOneInput;
 }
 
 /**
@@ -306,7 +313,7 @@ export function useRsvpForm(invitation: GetInvitationQuery["invitation"]) {
       variables: {
         input: {
           invitationId: invitation.id,
-          choice: "YES",
+          choice: RsvpChoice.YES,
           replyInput: {
             firstName: state.firstName.trim(),
             lastName: state.lastName.trim(),
@@ -314,6 +321,7 @@ export function useRsvpForm(invitation: GetInvitationQuery["invitation"]) {
             guestNote: state.guestNote.trim() || null,
             phoneNumbers: cleanedPhoneNumbers,
             plusOnes: cleanedPlusOnes.length > 0 ? cleanedPlusOnes : null,
+            selectedInvitedBy: null,
           },
         },
       },

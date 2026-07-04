@@ -302,6 +302,10 @@ export default function RsvpClient({
       nextValidationMessages.push(t("validation.eventRequired"));
     }
 
+    if (invitedByOptions.length > 0 && selectedInvitedBy.length === 0) {
+      nextValidationMessages.push(t("validation.invitedByRequired"));
+    }
+
     setValidationMessages(nextValidationMessages);
 
     if (nextValidationMessages.length > 0) {

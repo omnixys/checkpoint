@@ -18,9 +18,9 @@ import {
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
-import type {
+import {
   EventCategory,
-  GetEventSettingsQuery,
+  type GetEventSettingsQuery,
   InvitationApprovalMode,
 } from "@/checkpoint/generated/graphql";
 
@@ -29,19 +29,19 @@ import type { Safe } from "@/checkpoint/types/core/core.type";
 import { mapSettingsPatchToInput } from "@/checkpoint/utils/event/settings.mapper";
 
 const EVENT_CATEGORIES: EventCategory[] = [
-  "GENERAL",
-  "KONFERENZ",
-  "MUSIK",
-  "SOCIAL",
-  "SPORTS",
-  "WORKSHOP",
+  EventCategory.GENERAL,
+  EventCategory.KONFERENZ,
+  EventCategory.MUSIK,
+  EventCategory.SOCIAL,
+  EventCategory.SPORTS,
+  EventCategory.WORKSHOP,
 ];
 
 const APPROVAL_MODES: InvitationApprovalMode[] = [
-  "MANUAL",
-  "AUTO",
-  "AUTO_INVITE_ONLY",
-  "AUTO_PUBLIC_ONLY",
+  InvitationApprovalMode.MANUAL,
+  InvitationApprovalMode.AUTO,
+  InvitationApprovalMode.AUTO_INVITE_ONLY,
+  InvitationApprovalMode.AUTO_PUBLIC_ONLY,
 ];
 
 type SettingsType = Safe<Safe<GetEventSettingsQuery["event"]>["settings"]>;
@@ -64,9 +64,9 @@ function normalizeSettings(settings: SettingsType) {
     allowPlusOneUpdate: fullSettings.allowPlusOneUpdate ?? false,
     publicRsvpWebsite: fullSettings.publicRsvpWebsite ?? "",
     isPublic: fullSettings.isPublic ?? false,
-    category: fullSettings.category ?? "GENERAL",
+    category: fullSettings.category ?? EventCategory.GENERAL,
 
-    approvalMode: fullSettings.approvalMode ?? "MANUAL",
+    approvalMode: fullSettings.approvalMode ?? InvitationApprovalMode.MANUAL,
     maxPlusOnes: fullSettings.maxPlusOnes ?? 0,
     requireApprovalForPlusOnes: fullSettings.requireApprovalForPlusOnes ?? true,
     rsvpDeadline: fullSettings.rsvpDeadline ?? null,
@@ -219,7 +219,7 @@ export default function EventSettingsSection({ settings, actions }: Props) {
           <TextField
             select={true}
             label="Category"
-            value={local.category ?? "GENERAL"}
+            value={local.category ?? EventCategory.GENERAL}
             onChange={(e) => update("category", e.target.value as EventCategory)}
             sx={inputSx}
           >
@@ -274,7 +274,7 @@ export default function EventSettingsSection({ settings, actions }: Props) {
               select={true}
               fullWidth={true}
               label="Approval Mode"
-              value={local.approvalMode ?? "MANUAL"}
+              value={local.approvalMode ?? InvitationApprovalMode.MANUAL}
               onChange={(e) => update("approvalMode", e.target.value as InvitationApprovalMode)}
               sx={inputSx}
             >

@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Button, Stack, TextField, Typography, useTheme } from "@mui/material";
+import { Box, Button, Chip, Stack, TextField, Typography, useTheme } from "@mui/material";
 import { useMemo, useState } from "react";
 
 import PhoneNumberDialog from "@/checkpoint/components/common/phoneNumber/PhoneNumberDialog";
@@ -106,6 +106,19 @@ export default function AcceptForm({ invitation, countries, onAccepted }: Accept
           helperText={emailError}
           onChange={(e) => form.update("email", e.target.value)}
         />
+
+        {invitation.selectedInvitedBy.length > 0 && (
+          <Stack spacing={1}>
+            <Typography variant="subtitle2" color="text.secondary">
+              {t("public.invitedByTitle")}
+            </Typography>
+            <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
+              {invitation.selectedInvitedBy.map((option) => (
+                <Chip key={option} label={option} variant="outlined" size="small" />
+              ))}
+            </Stack>
+          </Stack>
+        )}
 
         <PhoneNumberListAccordion
           values={form.state.phoneNumbers}

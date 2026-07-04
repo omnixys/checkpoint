@@ -17,7 +17,7 @@ function getClientEnv(key: string, fallback: string): string {
   const value =
     key === "NEXT_PUBLIC_BACKEND_SERVER_URL"
       ? process.env.NEXT_PUBLIC_BACKEND_SERVER_URL
-      : key === "NEXT_PUBLIC_BACKEND_WS_URL"
+      : key === "NEXT_PUBLIC_GRAPHQL_WS_URL"
         ? process.env.NEXT_PUBLIC_GRAPHQL_WS_URL
         : key === "NEXT_PUBLIC_CHECKPOINT_BASE_PATH"
           ? process.env.NEXT_PUBLIC_CHECKPOINT_BASE_PATH
@@ -46,10 +46,10 @@ function getClientEnv(key: string, fallback: string): string {
 export const env = {
   BACKEND_SERVER_URL: getClientEnv(
     "NEXT_PUBLIC_BACKEND_SERVER_URL",
-    "https://api.omnixys.com/graphql",
+    "http://localhost:8000/graphql",
   ),
 
-  BACKEND_WS_URL: getClientEnv("NEXT_PUBLIC_GRAPHQL_WS_URL", "https://api.omnixys.com/ws"),
+  BACKEND_WS_URL: getClientEnv("NEXT_PUBLIC_GRAPHQL_WS_URL", "http://localhost:8000/ws"),
 
   CHECKPOINT_BASE_PATH: getClientEnv("NEXT_PUBLIC_CHECKPOINT_BASE_PATH", "/"),
 
@@ -70,4 +70,5 @@ export const env = {
  * Debug output (runtime safe)
  */
 if (process.env.NODE_ENV !== "production") {
+  console.log(env);
 }

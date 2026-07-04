@@ -6,6 +6,7 @@ import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { useTour } from "@/checkpoint/providers/TourProvider";
 import { buildTour } from "@/checkpoint/utils/layout/build-tour.util";
+import { UserRoleType } from "@/checkpoint/generated/graphql";
 
 const ONBOARDING_KEY = "checkpoint.onboardingDone";
 
@@ -30,7 +31,7 @@ export default function OnboardingProvider({ children }: { children: React.React
   const { activeEvent } = useActiveEvent();
   const t = useTypedTranslations("onboarding");
 
-  const role = activeEvent?.myRole ?? "GUEST";
+  const role = activeEvent?.myRole ?? UserRoleType.GUEST;
 
   useEffect(() => {
     const done = localStorage.getItem(ONBOARDING_KEY);

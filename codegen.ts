@@ -7,11 +7,8 @@ import {
   type DocumentNode,
   type IntrospectionQuery,
 } from "graphql";
-
 const schemaEndpoint =
-  process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT ??
-  process.env.NEXT_PUBLIC_BACKEND_SERVER_URL ??
-  "https://api.omnixys.com/graphql";
+  process.env.NEXT_PUBLIC_BACKEND_SERVER_URL ?? "http://localhost:8000/graphql"
 
 const generatedTypeConfig = {
   /**
@@ -20,9 +17,13 @@ const generatedTypeConfig = {
   avoidOptionals: true,
 
   /**
-   * Use string unions instead of enums for better DX and no runtime cost.
+   * Generate runtime enums so UI and service integration code do not rely on
+   * string literals for GraphQL enum values.
    */
-  enumsAsTypes: true,
+  enumsAsTypes: false,
+  namingConvention: {
+    enumValues: "keep",
+  },
 
   /**
    * Explicit null handling instead of undefined.
@@ -202,7 +203,7 @@ const config: CodegenConfig = {
       plugins: [
         {
           add: {
-            content: 'export type * from "./schema";',
+            content: 'export * from "./schema";',
           },
         },
         {

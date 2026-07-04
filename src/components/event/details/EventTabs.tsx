@@ -2,32 +2,40 @@
 
 import { alpha, Box, Stack, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
+import { useEffect, useMemo } from "react";
+import { EventVisibleTab } from "@/checkpoint/generated/graphql";
+import type { EventTabKey } from "@/checkpoint/hooks/events/useEventTabs";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
-interface Tab {
-  key: string;
+interface TabDefinition {
+  key: EventTabKey;
+  visibleTab: EventVisibleTab;
   tKey: any;
 }
 
-const TABS: Tab[] = [
-  // { key: "invitations", label: "Einladungen" },
-  // { key: "tickets", label: "Tickets" },
-  // { key: "logs", label: "Logs" },
-  // { key: "security", label: "Security" },
-
-  { key: "timeline", tKey: "tabs.timeline" },
-  { key: "settings", tKey: "tabs.settings" },
-  { key: "location", tKey: "tabs.location" },
+const TABS: TabDefinition[] = [
+  { key: "timeline", visibleTab: EventVisibleTab.TIMELINE, tKey: "tabs.timeline" },
+  { key: "details", visibleTab: EventVisibleTab.DETAILS, tKey: "tabs.details" },
+  { key: "map", visibleTab: EventVisibleTab.MAP, tKey: "tabs.map" },
 ];
 
 interface Props {
-  active: string;
-  onChange: (v: string) => void;
+  active: EventTabKey;
+  onChange: (v: EventTabKey) => void;
+  visibleTabs?: readonly EventVisibleTab[] | null;
 }
 
-export default function EventTabs({ active, onChange }: Props) {
+export default function EventTabs({ active, onChange, visibleTabs }: Props) {
   const theme = useTheme();
   const t = useTypedTranslations("event");
+  const visibleTabSet = useMemo(() => new Set(visibleTabs?.length ? visibleTabs : TABS.map((tab) => tab.visibleTab)), [visibleTabs]);
+  const tabs = useMemo(() => TABS.filter((tab) => visibleTabSet.has(tab.visibleTab)), [visibleTabSet]);
+
+  useEffect(() => {
+    if (tabs.length > 0 && !tabs.some((tab) => tab.key === active)) {
+      onChange(tabs[0]!.key);
+    }
+  }, [active, onChange, tabs]);
 
   return (
     <Box
@@ -47,7 +55,7 @@ export default function EventTabs({ active, onChange }: Props) {
       }}
     >
       <Stack direction="row" spacing={1.5} sx={{ minWidth: "max-content" }}>
-        {TABS.map((tab) => {
+        {tabs.map((tab) => {
           const selected = active === tab.key;
 
           return (

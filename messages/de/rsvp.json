@@ -20,7 +20,9 @@
     "contactRequired": "Bitte gib mindestens eine E-Mail-Adresse oder Telefonnummer an.",
     "eventRequired": "Bitte wähle mindestens ein Event aus, an dem du teilnehmen möchtest.",
     "eventEndTimeMissing": "Dem ausgewählten Event fehlt eine Endzeit.",
-    "multiEventNotSupported": "Mehrfachauswahl von Teil-Events wird aktuell noch nicht unterstützt."
+    "multiEventNotSupported": "Mehrfachauswahl von Teil-Events wird aktuell noch nicht unterstützt.",
+    "plusOneAgeRequired": "Bitte wähle eine Alterskategorie für jede Begleitperson aus.",
+    "invitedByRequired": "Bitte wähle mindestens eine Option aus."
   },
 
   "success": {
@@ -129,6 +131,11 @@
     "companionsDescription": "Füge eingeladene Begleitpersonen hinzu und vervollständige ihre Angaben.",
     "confirmTitle": "Wir zählen die Tage",
     "confirmDescription": "Prüfe deine Angaben und sende deine Rückmeldung an Caleb & Rachel.",
-    "preparing": "Eure Einladung wird vorbereitet"
+    "preparing": "Eure Einladung wird vorbereitet",
+    "invitedByTitle": "Wie hast du von diesem Event erfahren?",
+    "invitedByDescription": "Wähle alle zutreffenden Optionen aus.",
+    "guestNoteTitle": "Gibt es etwas, das das Event-Team wissen sollte?",
+    "guestNoteDescription": "Optionale Notizen zu deiner Rückmeldung oder Begleitpersonen.",
+    "guestNoteLabel": "Notiz (optional)"
   }
 }

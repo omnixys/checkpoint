@@ -2,6 +2,9 @@
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Box,
   Button,
   FormControl,
@@ -12,12 +15,15 @@ import {
   RadioGroup,
   Stack,
   TextField,
+  Typography,
 } from "@mui/material";
 import PhoneNumberField from "@/checkpoint/components/common/phoneNumber/PhoneNumberField";
 import type { PhoneNumberInput } from "@/checkpoint/generated/graphql";
+import { PhoneNumberType } from "@/checkpoint/generated/graphql";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
 import type { NormalizedPlusOne } from "@/checkpoint/types/event.type";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 interface Props {
   value: NormalizedPlusOne;
@@ -114,6 +120,23 @@ export default function PlusOneField({
           </RadioGroup>
         </FormControl>
 
+        {/* 📝 Guest Note */}
+        <Accordion>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography>{t("plusOne.guestNote")}</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <TextField
+              value={value.guestNote ?? ""}
+              onChange={(e) => onChange(index, "guestNote", e.target.value || null)}
+              fullWidth={true}
+              multiline
+              minRows={2}
+              placeholder={t("plusOne.guestNote")}
+            />
+          </AccordionDetails>
+        </Accordion>
+
         {/* 📞 Nested Phones */}
         <Stack spacing={2}>
           {value.phoneNumbers.map((p, phoneIndex) => (
@@ -131,7 +154,7 @@ export default function PlusOneField({
             variant="outlined"
             onClick={() =>
               onAddPhone(index, {
-                type: "WHATSAPP",
+                type: PhoneNumberType.WHATSAPP,
                 number: "",
                 label: "",
                 countryCode: "+49",

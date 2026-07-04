@@ -8,6 +8,7 @@
     "lint": "biome check",
     "format": "biome format --write",
     "codegen": "graphql-codegen",
+    "seed": "pnpm --dir ../../scripts seed",
     "test": "vitest run",
     "test:unit": "vitest run src/errors src/lib/apollo",
     "test:components": "vitest run src/components/error src/hooks/error",

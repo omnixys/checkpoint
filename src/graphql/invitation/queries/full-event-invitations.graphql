@@ -27,5 +27,7 @@ query GetGlobalEventInvitationList($eventIds: [ID!]!) {
     invitedByInvitationId
     rsvpChoice
     plusOneAgeCategory
+    selectedInvitedBy
+    guestNote
   }
 }

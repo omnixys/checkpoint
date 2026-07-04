@@ -37,6 +37,8 @@ query GetInvitation($invitationId: ID!) {
       firstName
       email
       plusOneAgeCategory
+      guestNote
+      selectedInvitedBy
       phoneNumbers {
         countryCode
         number

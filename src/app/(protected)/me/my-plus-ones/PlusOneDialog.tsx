@@ -25,11 +25,10 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import type {
-  PlusOneAgeCategory,
   PlusOneItem,
-  PlusOnePhoneNumberType,
   UpdatePlusOneInput,
 } from "@/checkpoint/app/(protected)/me/my-plus-ones/types/plusOne.types";
+import { PhoneNumberType, PlusOneAgeCategory } from "@/checkpoint/generated/graphql";
 import type { CreatePlusOneInput } from "@/checkpoint/generated/graphql";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
@@ -45,13 +44,13 @@ interface Props {
   onUpdate: (input: UpdatePlusOneInput) => Promise<void>;
 }
 
-const phoneTypeOptions: PlusOnePhoneNumberType[] = [
-  "WHATSAPP",
-  "MOBILE",
-  "PRIVATE",
-  "WORK",
-  "HOME",
-  "OTHER",
+const phoneTypeOptions: PhoneNumberType[] = [
+  PhoneNumberType.WHATSAPP,
+  PhoneNumberType.MOBILE,
+  PhoneNumberType.PRIVATE,
+  PhoneNumberType.WORK,
+  PhoneNumberType.HOME,
+  PhoneNumberType.OTHER,
 ];
 
 const MotionBox = motion.create(Box);
@@ -75,9 +74,9 @@ export default function PlusOneDialog({
   const [email, setEmail] = useState("");
   const [countryCode, setCountryCode] = useState("+49");
   const [number, setNumber] = useState("");
-  const [phoneType, setPhoneType] = useState<PlusOnePhoneNumberType>("WHATSAPP");
+  const [phoneType, setPhoneType] = useState<PhoneNumberType>(PhoneNumberType.WHATSAPP);
   const [label, setLabel] = useState("");
-  const [plusOneAgeCategory, setPlusOneAgeCategory] = useState<PlusOneAgeCategory | "">("");
+  const [plusOneAgeCategory, setPlusOneAgeCategory] = useState<PlusOneAgeCategory | null>(null);
 
   useEffect(() => {
     if (!open) {
@@ -87,7 +86,7 @@ export default function PlusOneDialog({
     setFirstName(initialValue?.firstName ?? "");
     setLastName(initialValue?.lastName ?? "");
     setEmail(initialValue?.email ?? "");
-    setPlusOneAgeCategory(initialValue?.plusOneAgeCategory ?? "");
+    setPlusOneAgeCategory(initialValue?.plusOneAgeCategory ?? null);
 
     const primaryPhone =
       initialValue?.phoneNumbers?.find((phone) => phone.isPrimary) ??
@@ -95,7 +94,7 @@ export default function PlusOneDialog({
 
     setCountryCode(primaryPhone?.countryCode ?? "+49");
     setNumber(primaryPhone?.number ?? "");
-    setPhoneType(primaryPhone?.type ?? "WHATSAPP");
+    setPhoneType(primaryPhone?.type ?? PhoneNumberType.WHATSAPP);
     setLabel(primaryPhone?.label ?? "");
   }, [initialValue, open]);
 
@@ -113,7 +112,7 @@ export default function PlusOneDialog({
     Array<{
       countryCode: string;
       number: string;
-      type: PlusOnePhoneNumberType;
+      type: PhoneNumberType;
       label: string | null;
       isPrimary: boolean;
     }>
@@ -134,7 +133,7 @@ export default function PlusOneDialog({
   }, [countryCode, label, number, phoneType]);
 
   const isValid =
-    firstName.trim().length > 0 && lastName.trim().length > 0 && plusOneAgeCategory !== "";
+    firstName.trim().length > 0 && lastName.trim().length > 0 && plusOneAgeCategory !== null;
 
   const handleSubmit = async (): Promise<void> => {
     if (!isValid) {
@@ -337,7 +336,7 @@ export default function PlusOneDialog({
                         label={tInvitation("plusOnes.fields.phoneType")}
                         value={phoneType}
                         onChange={(event) =>
-                          setPhoneType(event.target.value as PlusOnePhoneNumberType)
+                          setPhoneType(event.target.value as PhoneNumberType)
                         }
                         fullWidth={true}
                         sx={glassInputSx(theme)}

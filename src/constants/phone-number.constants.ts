@@ -1,5 +1,6 @@
 // src/checkpoint/constants/phone-number.constants.ts
 
+import { PhoneNumberType } from "@/checkpoint/generated/graphql";
 import type { PhoneNumberInput } from "@/checkpoint/generated/graphql";
 
 /**
@@ -11,13 +12,13 @@ import type { PhoneNumberInput } from "@/checkpoint/generated/graphql";
  * - If backend enum changes, TypeScript will fail here immediately
  */
 export const PHONE_NUMBER_TYPES: PhoneNumberInput["type"][] = [
-  "MOBILE",
-  "HOME",
-  "WORK",
-  "WHATSAPP",
+  PhoneNumberType.MOBILE,
+  PhoneNumberType.HOME,
+  PhoneNumberType.WORK,
+  PhoneNumberType.WHATSAPP,
 ];
 
 /**
  * Default phone type used across the application.
  */
-export const DEFAULT_PHONE_TYPE: PhoneNumberInput["type"] = "WHATSAPP";
+export const DEFAULT_PHONE_TYPE: PhoneNumberInput["type"] = PhoneNumberType.WHATSAPP;

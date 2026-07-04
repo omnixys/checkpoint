@@ -114,7 +114,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
         ? tCommon("plusOne.underSix")
         : null;
   const hasRsvpDetails =
-    selectedInvitedBy.length > 0 || Boolean(inv.guestNote?.trim()) || Boolean(plusOneAgeLabel);
+    selectedInvitedBy.length > 0 || Boolean(plusOneAgeLabel) || Boolean(inv.guestNote?.trim());
 
   const approveInvitation = async (approved: boolean, seatId?: string) => {
     await logic.approveInvitationMutation({
@@ -210,6 +210,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                 </Button>
               </Stack>
             </Box>
+
 
             {hasRsvpDetails && (
               <>

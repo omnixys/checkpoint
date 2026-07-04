@@ -6,6 +6,7 @@ import type {
   ChildEventDraft,
   CreateEventDraft,
 } from "@/checkpoint/app/(protected)/event/new/types/event/event-draft.type";
+import { EventCategory, EventVisibleTab, InvitationApprovalMode } from "@/checkpoint/generated/graphql";
 import type { MediaType } from "@/checkpoint/generated/graphql";
 import { useZodForm } from "../hooks/useZodForm";
 import { createEventWizardSchema } from "../validation/createEvent.schema";
@@ -71,7 +72,7 @@ const initialState: State = {
       allowPlusOneUpdate: false,
       allowGuestSeatSelection: false,
       allowSeatOverbooking: false,
-      approvalMode: "AUTO",
+      approvalMode: InvitationApprovalMode.AUTO,
       maxPlusOnes: 1,
       requireApprovalForPlusOnes: false,
       rsvpDeadline: null,
@@ -85,10 +86,12 @@ const initialState: State = {
       // descriptionLong: '',
       startsAt: null,
       endsAt: null,
-      category: "GENERAL",
+      category: EventCategory.GENERAL,
 
       logoUrl: "",
       coverImageUrl: "",
+      seatColorGroups: null,
+      visibleTabs: [EventVisibleTab.TIMELINE, EventVisibleTab.DETAILS, EventVisibleTab.MAP],
     },
     children: [],
   },
@@ -134,7 +137,7 @@ function reducer(state: State, action: Action): State {
             {
               id: crypto.randomUUID(),
               name: "",
-              category: "GENERAL",
+              category: EventCategory.GENERAL,
             },
           ],
         },

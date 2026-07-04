@@ -52,6 +52,21 @@ query GetFullEventTreeInfo($eventId: ID!) {
       settings {
         endsAt
         invitedByOptions
+        seatColorGroups {
+          id
+          name
+          matchType
+          invitedByValues
+          priority
+          order
+          isOrphaned
+          style {
+            background
+            foreground
+            border
+            legendIcon
+          }
+        }
       }
     }
     subEvents {
@@ -60,6 +75,21 @@ query GetFullEventTreeInfo($eventId: ID!) {
       settings {
         endsAt
         invitedByOptions
+        seatColorGroups {
+          id
+          name
+          matchType
+          invitedByValues
+          priority
+          order
+          isOrphaned
+          style {
+            background
+            foreground
+            border
+            legendIcon
+          }
+        }
       }
     }
   }

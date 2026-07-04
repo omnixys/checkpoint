@@ -4,7 +4,16 @@ import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
-import { alpha, IconButton, Paper, Stack, Tooltip, Typography, useTheme } from "@mui/material";
+import {
+  alpha,
+  Chip,
+  IconButton,
+  Paper,
+  Stack,
+  Tooltip,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { useState } from "react";
 import type { InvitationPayload } from "@/checkpoint/generated/graphql";
 import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
@@ -55,14 +64,30 @@ export default function InvitationCardView({ logic }: { logic: InvitationLogic }
                   alignItems: { xs: "flex-start", sm: "center" },
                 }}
               >
-                <Typography
-                  sx={{
-                    fontWeight: 600,
-                    overflowWrap: "anywhere",
-                  }}
-                >
-                  {inv.firstName} {inv.lastName}
-                </Typography>
+                <Stack spacing={0.5}>
+                  <Typography
+                    sx={{
+                      fontWeight: 600,
+                      overflowWrap: "anywhere",
+                    }}
+                  >
+                    {inv.firstName} {inv.lastName}
+                  </Typography>
+
+                  {(inv.selectedInvitedBy?.length ?? 0) > 0 && (
+                    <Stack direction="row" spacing={0.5} sx={{ flexWrap: "wrap" }}>
+                      {inv.selectedInvitedBy.map((item) => (
+                        <Chip
+                          key={item}
+                          label={item}
+                          size="small"
+                          variant="outlined"
+                          sx={{ height: 20, fontSize: 11 }}
+                        />
+                      ))}
+                    </Stack>
+                  )}
+                </Stack>
 
                 <InvitationStatusChip status={inv.status} rsvp={inv.rsvpChoice ?? undefined} />
               </Stack>

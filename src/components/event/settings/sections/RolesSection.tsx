@@ -18,7 +18,7 @@ import {
 import { useTheme } from "@mui/material/styles";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import type { UserRoleType } from "@/checkpoint/generated/graphql";
+import { UserRoleType } from "@/checkpoint/generated/graphql";
 import { useMutationHandler } from "@/checkpoint/hooks/core/useMutationHandler";
 import useGuestQuery from "@/checkpoint/hooks/user/useGuestQuery";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
@@ -52,7 +52,7 @@ export default function RolesSection({ roles, meta, actions }: Props) {
   const { execute, loading, error, success, reset } = useMutationHandler();
 
   const [newUserId, setNewUserId] = useState("");
-  const [newRole, setNewRole] = useState<UserRoleType>("GUEST");
+  const [newRole, setNewRole] = useState<UserRoleType>(UserRoleType.GUEST);
 
   const { securityGuestMap } = useGuestQuery({
     guestIdList: roles.map((role) => role.userId),
@@ -64,7 +64,7 @@ export default function RolesSection({ roles, meta, actions }: Props) {
    */
   const isOwner = currentUser?.id === meta.owner;
   const currentUserRole = roles.find((r) => r.userId === currentUser?.id)?.role;
-  const isAdmin = currentUserRole === "ADMIN";
+  const isAdmin = currentUserRole === UserRoleType.ADMIN;
 
   /**
    * Add role
@@ -82,7 +82,7 @@ export default function RolesSection({ roles, meta, actions }: Props) {
     );
 
     setNewUserId("");
-    setNewRole("GUEST");
+    setNewRole(UserRoleType.GUEST);
   };
 
   return (
@@ -105,9 +105,9 @@ export default function RolesSection({ roles, meta, actions }: Props) {
             onChange={(e) => setNewRole(e.target.value as UserRoleType)}
             sx={{ minWidth: 140 }}
           >
-            <MenuItem value="ADMIN">Admin</MenuItem>
-            <MenuItem value="SECURITY">Security</MenuItem>
-            <MenuItem value="GUEST">Guest</MenuItem>
+            <MenuItem value={UserRoleType.ADMIN}>Admin</MenuItem>
+            <MenuItem value={UserRoleType.SECURITY}>Security</MenuItem>
+            <MenuItem value={UserRoleType.GUEST}>Guest</MenuItem>
           </Select>
 
           <Button variant="contained" onClick={handleAdd} disabled={loading}>
@@ -131,9 +131,10 @@ export default function RolesSection({ roles, meta, actions }: Props) {
                   role={role}
                   currentUserId={currentUser?.id}
                   isOwner={meta.owner === role.userId}
-                  canEdit={isOwner || (isAdmin && role.role !== "ADMIN")}
+                  canEdit={isOwner || (isAdmin && role.role !== UserRoleType.ADMIN)}
                   canDelete={
-                    role.userId !== meta.owner && (isOwner || (isAdmin && role.role !== "ADMIN"))
+                    role.userId !== meta.owner &&
+                    (isOwner || (isAdmin && role.role !== UserRoleType.ADMIN))
                   }
                   actions={actions}
                   execute={execute}
@@ -229,9 +230,9 @@ function RoleRow({
         }
         sx={{ minWidth: 140 }}
       >
-        <MenuItem value="ADMIN">Admin</MenuItem>
-        <MenuItem value="SECURITY">Security</MenuItem>
-        <MenuItem value="GUEST">Guest</MenuItem>
+        <MenuItem value={UserRoleType.ADMIN}>Admin</MenuItem>
+        <MenuItem value={UserRoleType.SECURITY}>Security</MenuItem>
+        <MenuItem value={UserRoleType.GUEST}>Guest</MenuItem>
       </Select>
 
       {isOwner && (

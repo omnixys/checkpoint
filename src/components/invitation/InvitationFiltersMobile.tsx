@@ -126,6 +126,34 @@ export default function InvitationFiltersMobile({ logic }: { logic: InvitationLo
             </Stack>
           </Box>
 
+          {/* SELECTED INVITED BY */}
+          {logic.selectedInvitedByOptions.length > 0 && (
+            <Box>
+              <Typography variant="caption">{tInvitation("detail.selectedInvitedBy")}</Typography>
+
+              <Stack direction="row" sx={{ flexWrap: "wrap", mt: 1, gap: 1 }}>
+                <Chip
+                  label={tCommon("all")}
+                  color={logic.selectedInvitedByFilter === null ? "primary" : "default"}
+                  onClick={() => logic.setSelectedInvitedByFilter(null)}
+                />
+
+                {logic.selectedInvitedByOptions.map((option) => {
+                  const active = logic.selectedInvitedByFilter === option;
+
+                  return (
+                    <Chip
+                      key={option}
+                      label={option}
+                      color={active ? "primary" : "default"}
+                      onClick={() => logic.setSelectedInvitedByFilter(active ? null : option)}
+                    />
+                  );
+                })}
+              </Stack>
+            </Box>
+          )}
+
           {/* TYPE */}
           <Box>
             <Typography variant="caption">{tInvitation("type")}</Typography>

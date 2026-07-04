@@ -21,7 +21,8 @@
     "plusOneAgeRequired": "Please select an age category for each companion.",
     "eventRequired": "Please select at least one event you want to attend.",
     "eventEndTimeMissing": "The selected event is missing an end time.",
-    "multiEventNotSupported": "Selecting multiple sub-events is currently not supported."
+    "multiEventNotSupported": "Selecting multiple sub-events is currently not supported.",
+    "invitedByRequired": "Please select at least one option."
   },
 
   "success": {

@@ -166,6 +166,49 @@ export default function InvitationFilters({ logic }: { logic: InvitationLogic })
             </Box>
           </Box>
 
+          {logic.selectedInvitedByOptions.length > 0 && (
+            <Box sx={{ minWidth: 0 }}>
+              <Typography variant="caption" sx={{ opacity: 0.7 }}>
+                {tInvitation("detail.selectedInvitedBy")}
+              </Typography>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: 1.2,
+                  overflowX: "auto",
+                  py: 0.5,
+                  mt: 0.5,
+                  scrollbarWidth: "none",
+                  "&::-webkit-scrollbar": { display: "none" },
+                }}
+              >
+                <Chip
+                  label={tCommon("all")}
+                  onClick={() => logic.setSelectedInvitedByFilter(null)}
+                  variant={logic.selectedInvitedByFilter === null ? "filled" : "outlined"}
+                  color={logic.selectedInvitedByFilter === null ? "primary" : "default"}
+                  sx={{ borderRadius: "12px", whiteSpace: "nowrap", px: 1.8, fontWeight: 500 }}
+                />
+
+                {logic.selectedInvitedByOptions.map((option) => {
+                  const active = logic.selectedInvitedByFilter === option;
+
+                  return (
+                    <Chip
+                      key={option}
+                      label={option}
+                      onClick={() => logic.setSelectedInvitedByFilter(active ? null : option)}
+                      variant={active ? "filled" : "outlined"}
+                      color={active ? "primary" : "default"}
+                      sx={{ borderRadius: "12px", whiteSpace: "nowrap", px: 1.8, fontWeight: 500 }}
+                    />
+                  );
+                })}
+              </Box>
+            </Box>
+          )}
+
           <Box sx={{ minWidth: 0 }}>
             <Typography variant="caption" sx={{ opacity: 0.7 }}>
               {tInvitation("type")}

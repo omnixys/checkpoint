@@ -8,6 +8,7 @@ import {
   type ReplyInvitationMutation,
   type ReplyInvitationMutationVariables,
 } from "@/checkpoint/generated/graphql";
+import { RsvpChoice } from "@/checkpoint/generated/graphql";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 /**
@@ -46,7 +47,7 @@ export default function DeclineDialog({
       variables: {
         input: {
           invitationId: invitation.id,
-          choice: "NO",
+          choice: RsvpChoice.NO,
           replyInput: null,
         },
       },

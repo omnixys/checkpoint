@@ -100,7 +100,7 @@ export default function InvitationDetailMobileDialog({ logic }: { logic: Invitat
         ? tCommon("plusOne.underSix")
         : null;
   const hasRsvpDetails =
-    selectedInvitedBy.length > 0 || Boolean(inv.guestNote?.trim()) || Boolean(plusOneAgeLabel);
+    selectedInvitedBy.length > 0 || Boolean(plusOneAgeLabel) || Boolean(inv.guestNote?.trim());
 
   const approveInvitation = async (approved: boolean, seatId?: string) => {
     await logic.approveInvitationMutation({
@@ -289,6 +289,19 @@ export default function InvitationDetailMobileDialog({ logic }: { logic: Invitat
               {tInvitation("decline")}
             </Button>
           </Stack>
+
+          {inv.guestNote?.trim() && (
+            <>
+              <Divider />
+
+              <Stack spacing={1.25}>
+                <Typography variant="subtitle2">{tInvitation("detail.guestNote")}</Typography>
+                <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
+                  {inv.guestNote.trim()}
+                </Typography>
+              </Stack>
+            </>
+          )}
 
           {hasRsvpDetails && (
             <>

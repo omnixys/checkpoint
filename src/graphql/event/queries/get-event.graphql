@@ -29,6 +29,23 @@ query EventPage($eventId: ID!) {
     settings {
       startsAt
       endsAt
+      dressCode
+      description
+      category
+      approvalMode
+      allowPublicRsvp
+      allowPublicPlusOne
+      allowGuestSeatSelection
+      allowPublicRsvpWebsite
+      allowPlusOneUpdate
+      maxPlusOnes
+      requireApprovalForPlusOnes
+      rsvpDeadline
+      ticketReleaseAt
+      isPublic
+      publicRsvpWebsite
+      visibleTabs
+      invitedByOptions
     }
   }
 }
@@ -61,6 +78,7 @@ query GetActiveEvent($eventId: ID!) {
       startsAt
       endsAt
       invitedByOptions
+      visibleTabs
     }
   }
 }
@@ -115,11 +133,27 @@ query GetEventSettings($eventId: ID!) {
       allowSeatOverbooking
       isPublic
       publicRsvpWebsite
+      visibleTabs
       invitedByOptions
       category
       createdAt
       updatedAt
       ticketReleaseAt
+      seatColorGroups {
+        id
+        name
+        matchType
+        invitedByValues
+        priority
+        order
+        isOrphaned
+        style {
+          background
+          foreground
+          border
+          legendIcon
+        }
+      }
     }
   }
 }

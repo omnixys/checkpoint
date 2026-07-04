@@ -5,6 +5,9 @@ fragment InvitationPlusOne on InvitationPayload {
   email
   plusOneAgeCategory
 
+  guestNote
+  selectedInvitedBy
+
   status
   guestProfileId
 

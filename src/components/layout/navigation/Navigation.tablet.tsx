@@ -24,6 +24,7 @@ import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { createNavigation } from "../navigation.config";
 import { getRoleColor, isActiveNavItem } from "./navigation.util";
+import { UserRoleType } from "@/checkpoint/generated/graphql";
 
 export default function NavigationTablet(): JSX.Element {
   const theme = useTheme();
@@ -34,7 +35,7 @@ export default function NavigationTablet(): JSX.Element {
   const router = useRouter();
   const pathname = usePathname();
   const { activeEvent } = useActiveEvent();
-  const role = activeEvent?.myRole ?? "GUEST";
+  const role = activeEvent?.myRole ?? UserRoleType.GUEST;
 
   const items = createNavigation(role, t, activeEvent?.id);
 

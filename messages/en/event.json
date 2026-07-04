@@ -61,7 +61,9 @@
 
   "tabs": {
     "timeline": "Timeline",
+    "details": "Details",
     "settings": "Details",
+    "map": "Map",
     "location": "Map",
     "notImplemented": "Content for tab \"{tab}\" is not implemented yet."
   },
@@ -79,6 +81,24 @@
   "details": {
     "dresscode": "Dresscode",
     "description": "Description",
+    "schedule": "Schedule",
+    "rsvp": "RSVP",
+    "capacity": "Capacity",
+    "category": "Category",
+    "visibility": "Visibility",
+    "enabled": "enabled",
+    "disabled": "disabled",
+    "startsAt": "Starts",
+    "endsAt": "Ends",
+    "rsvpDeadline": "RSVP deadline",
+    "ticketReleaseAt": "Ticket release",
+    "maxSeatsValue": "{count} seats",
+    "maxPlusOnesValue": "Up to {count} companions",
+    "approvalMode": "Approval: {value}",
+    "guestSeatSelection": "Guest seat selection: {value}",
+    "publicRsvp": "Public RSVP: {value}",
+    "publicPlusOne": "Public plus-one: {value}",
+    "publicWebsite": "RSVP website: {value}",
     "maxSeats": "Max {count}",
     "reEntryOn": "Re-entry enabled",
     "reEntryOff": "Re-entry disabled"
@@ -134,6 +154,23 @@
     "inside": "Inside",
     "outside": "Outside",
     "notArrived": "Not arrived"
+  },
+
+  "seatColors": {
+    "title": "Seat Colors",
+    "subtitle": "Define color groups that are matched to guests based on their RSVP source.",
+    "addGroup": "Add Group",
+    "editGroup": "Edit Group",
+    "saveColors": "Save Seat Colors",
+    "noGroups": "No color groups defined yet. Default groups will be created automatically when you save with invitedByOptions set.",
+    "name": "Name",
+    "matchType": "Match Type",
+    "values": "Invited-by selection",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "orphaned": "orphaned"
   },
 
   "ui": {

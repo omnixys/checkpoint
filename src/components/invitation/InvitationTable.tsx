@@ -6,6 +6,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   Box,
   Checkbox,
+  Chip,
   IconButton,
   Stack,
   Table,
@@ -202,6 +203,20 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
                       >
                         {parent.firstName ?? "-"} {parent.lastName ?? ""}
                       </Typography>
+
+                      {(parent.selectedInvitedBy?.length ?? 0) > 0 && (
+                        <Stack direction="row" spacing={0.5} sx={{ flexWrap: "wrap" }}>
+                          {parent.selectedInvitedBy.map((item) => (
+                            <Chip
+                              key={item}
+                              label={item}
+                              size="small"
+                              variant="outlined"
+                              sx={{ height: 20, fontSize: 11 }}
+                            />
+                          ))}
+                        </Stack>
+                      )}
                     </Stack>
                   </TableCell>
 

@@ -1,5 +1,7 @@
-export type PlusOnePhoneNumberType = "WHATSAPP" | "MOBILE" | "PRIVATE" | "WORK" | "HOME" | "OTHER";
-export type PlusOneAgeCategory = "OVER_SIX" | "UNDER_SIX";
+import type { PhoneNumberType, PlusOneAgeCategory as PlusOneAgeCategoryGenerated } from "@/checkpoint/generated/graphql";
+
+export type PlusOnePhoneNumberType = PhoneNumberType;
+export type PlusOneAgeCategory = PlusOneAgeCategoryGenerated;
 
 export interface PlusOnePhoneNumberInput {
   countryCode: string;

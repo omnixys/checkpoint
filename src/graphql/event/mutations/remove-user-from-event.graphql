@@ -1,3 +1,7 @@
+# import EventFull from "../fragments/event.fragment.graphql"
+
 mutation RemoveUserFromEvent($input: RemoveUserFromEventInput!) {
-  removeUserFromEvent(input: $input)
+  removeUserFromEvent(input: $input) {
+    ...EventFull
+  }
 }

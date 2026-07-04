@@ -24,7 +24,8 @@
     "ageCategory": "Age category",
     "overSix": "Over 6",
     "underSix": "Under 6",
-    "ageMissing": "Age category missing"
+    "ageMissing": "Age category missing",
+    "guestNote": "Note (optional)"
   },
 
   "language": {

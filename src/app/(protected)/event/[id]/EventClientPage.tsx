@@ -60,7 +60,11 @@ export default function EventPage() {
         <EventHeaderFactory ev={eventPage} variant={variant} />
 
         {/* Tabs */}
-        <EventTabs active={activeTab} onChange={changeTab} />
+        <EventTabs
+          active={activeTab}
+          onChange={changeTab}
+          visibleTabs={eventPage.settings?.visibleTabs ?? null}
+        />
 
         {/* Content */}
         <EventTabContent

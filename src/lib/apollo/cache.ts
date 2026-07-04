@@ -1,134 +1,163 @@
 import { InMemoryCache, type TypePolicies } from "@apollo/client";
 
-/**
- * Centralized Apollo cache configuration.
- *
- * Goals:
- * - Prevent duplicate entities
- * - Avoid unsafe array merges
- * - Ensure deterministic UI state
- * - Support real-time updates (Kafka + Subscriptions)
- */
 const typePolicies: TypePolicies = {
-  /**
-   * ROOT QUERY CONFIGURATION
-   */
   Query: {
     fields: {
-      TicketPayload: {
-        keyArgs: ["id"],
-      },
-
-      any: {
-        keyArgs: ["id"],
-      },
-
-      InvitationPayload: {
-        keyArgs: ["id"],
-      },
-
-      SeatPayload: {
-        keyArgs: ["id"],
-      },
-
-      UserPayload: {
-        keyArgs: ["id"],
-      },
-
-      /**
-       * Seat layout (must be consistent)
-       */
       seatLayout: {
         keyArgs: ["eventId"],
         merge: false,
       },
 
-      /**
-       * Current user's tickets
-       *
-       * CRITICAL:
-       * - Must NOT merge (device-bound, security-sensitive)
-       * - Always replace with fresh data
-       */
       getMyTickets: {
         keyArgs: false,
         merge: false,
       },
 
-      /**
-       * Tickets by event
-       */
       ticketsByEvent: {
         keyArgs: ["eventId"],
         merge: false,
       },
 
-      /**
-       * Single ticket
-       */
       ticketById: {
         keyArgs: ["id"],
       },
 
-      /**
-       * Events (user-specific)
-       */
       myEvents: {
         keyArgs: false,
         merge: false,
       },
 
-      /**
-       * Event tree (hierarchical)
-       */
       eventTree: {
         keyArgs: ["id"],
         merge: false,
       },
 
-      /**
-       * Invitations for event
-       */
       eventInvitations: {
         keyArgs: ["eventId"],
         merge: false,
       },
 
-      /**
-       * Users list
-       */
       users: {
         keyArgs: false,
         merge: false,
       },
+
+      event: {
+        keyArgs: ["id"],
+        merge(existing, incoming, { mergeObjects }) {
+          return mergeObjects(existing, incoming);
+        },
+      },
     },
   },
 
-  /**
-   * ENTITY CONFIGURATION
-   */
-  Ticket: {
+  EventPayload: {
     keyFields: ["id"],
-
     fields: {
-      /**
-       * Prevent Apollo from merging partial ticket updates incorrectly.
-       */
-      currentState: {
+      userRoles: {
+        merge: false,
+      },
+      timeline: {
+        merge: false,
+      },
+      settings: {
+        merge: true,
+      },
+    },
+  },
+
+  SettingsPayload: {
+    keyFields: ["id"],
+    fields: {
+      seatColorGroups: {
         merge: false,
       },
     },
   },
 
-  Event: {
+  SeatColorGroupPayload: {
     keyFields: ["id"],
+  },
+
+  SeatColorGroupStyle: {
+    keyFields: false,
+  },
+
+  EventTimelinePayload: {
+    keyFields: ["id"],
+  },
+
+  UserRolePayload: {
+    keyFields: false,
+  },
+
+  MediaPayload: {
+    keyFields: false,
+    fields: {
+      variants: {
+        merge: false,
+      },
+    },
+  },
+
+  MediaVariantPayload: {
+    keyFields: false,
+  },
+
+  InvitationPayload: {
+    keyFields: ["id"],
+    fields: {
+      phoneNumbers: {
+        merge: false,
+      },
+      plusOnes: {
+        merge: false,
+      },
+    },
   },
 
   Invitation: {
     keyFields: ["id"],
   },
 
+  SeatPayload: {
+    keyFields: ["id"],
+  },
+
+  SectionPayload: {
+    keyFields: ["id"],
+    fields: {
+      tables: {
+        merge: false,
+      },
+      seats: {
+        merge: false,
+      },
+    },
+  },
+
+  TablePayload: {
+    keyFields: ["id"],
+    fields: {
+      seats: {
+        merge: false,
+      },
+    },
+  },
+
+  TicketPayload: {
+    keyFields: ["id"],
+  },
+
+  PhoneNumberPayload: {
+    keyFields: false,
+  },
+
   Seat: {
+    keyFields: ["id"],
+  },
+
+  UserPayload: {
     keyFields: ["id"],
   },
 
@@ -137,9 +166,6 @@ const typePolicies: TypePolicies = {
   },
 };
 
-/**
- * Create Apollo cache instance
- */
 export const apolloCache = new InMemoryCache({
   typePolicies,
 });

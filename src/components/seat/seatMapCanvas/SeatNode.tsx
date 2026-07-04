@@ -4,6 +4,13 @@ import { Box, Chip, Popover, Typography, useTheme } from "@mui/material";
 import React from "react";
 import type { PresenceState } from "@/checkpoint/generated/schema";
 
+interface ColorGroupStyle {
+  background: string;
+  foreground: string;
+  border: string;
+  legendIcon: string;
+}
+
 interface Props {
   seatId: string;
   seatNumber: number | null;
@@ -21,6 +28,7 @@ interface Props {
   isOwnSeat?: boolean | undefined;
   highlighted?: boolean | undefined;
   role?: string | undefined;
+  colorGroup?: { id: string; name: string; style: ColorGroupStyle } | null | undefined;
 
   // Editor props
   isEditing?: boolean;
@@ -41,6 +49,7 @@ export default function SeatNode({
   isOwnSeat,
   highlighted,
   role,
+  colorGroup,
   isEditing = false,
   isSelected = false,
   onMouseDown,
@@ -51,21 +60,48 @@ export default function SeatNode({
 
   const theme = useTheme();
 
-  const backgroundColor = React.useMemo(() => {
+  const seatColors = React.useMemo(() => {
+    if (colorGroup && !isOwnSeat) {
+      return {
+        bgcolor: colorGroup.style.background,
+        color: colorGroup.style.foreground,
+        borderColor: colorGroup.style.border,
+      };
+    }
     if (presence?.revoked) {
-      return theme.palette.warning.dark;
+      return {
+        bgcolor: theme.palette.warning.dark,
+        color: theme.palette.getContrastText(theme.palette.warning.dark),
+        borderColor: theme.palette.warning.dark,
+      };
     }
     if (presence?.presenceState === "INSIDE") {
-      return theme.palette.info.main;
+      return {
+        bgcolor: theme.palette.info.main,
+        color: theme.palette.getContrastText(theme.palette.info.main),
+        borderColor: theme.palette.info.main,
+      };
     }
     if (isOwnSeat) {
-      return theme.palette.primary.main;
+      return {
+        bgcolor: theme.palette.primary.main,
+        color: theme.palette.getContrastText(theme.palette.primary.main),
+        borderColor: theme.palette.primary.main,
+      };
     }
     if (isOccupied) {
-      return theme.palette.error.main;
+      return {
+        bgcolor: theme.palette.error.main,
+        color: theme.palette.getContrastText(theme.palette.error.main),
+        borderColor: theme.palette.error.main,
+      };
     }
-    return theme.palette.grey[900];
-  }, [theme, presence, isOccupied, isOwnSeat]);
+    return {
+      bgcolor: theme.palette.grey[900],
+      color: theme.palette.getContrastText(theme.palette.grey[900]),
+      borderColor: "background.paper",
+    };
+  }, [theme, presence, isOccupied, isOwnSeat, colorGroup]);
 
   const label = seatNumber?.toString() ?? "?";
 
@@ -111,19 +147,16 @@ export default function SeatNode({
           width: 28,
           height: 28,
           borderRadius: "50%",
-          bgcolor: backgroundColor,
-          color: (t) =>
-            t.palette.getContrastText(
-              t.palette.mode === "dark" ? backgroundColor : backgroundColor,
-            ),
+          bgcolor: seatColors.bgcolor,
+          color: seatColors.color,
           border: "2px solid",
           borderColor: isSelected
             ? "primary.main"
-            : isOwnSeat
+            : !colorGroup && isOwnSeat
               ? "primary.main"
               : isFilterActive && !highlighted
                 ? "transparent"
-                : "background.paper",
+                : seatColors.borderColor,
           boxShadow: isOwnSeat
             ? (t) => `0 0 0 2px ${t.palette.primary.main}`
             : isFilterActive && !highlighted

@@ -1,9 +1,10 @@
 import { defineConfig, devices } from "@playwright/test";
 import "dotenv/config";
+import { env } from "@/checkpoint/lib/env";
 
-const EVENT_ID = process.env.NEXT_PUBLIC_EVENT_ID ?? "cbe6b0be-8469-4fe2-a3bf-49eef3e01787";
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_SERVER_URL ?? "https://api.omnixys.com/graphql";
+const EVENT_ID = env.EVENT_ID;
+const BASE_URL = env.APP_URL;
+const BACKEND_URL = env.BACKEND_SERVER_URL;
 
 export default defineConfig({
   testDir: "./e2e",

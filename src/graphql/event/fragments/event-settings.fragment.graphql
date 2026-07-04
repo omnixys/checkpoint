@@ -21,8 +21,24 @@ fragment EventSettings on SettingsPayload {
   allowSeatOverbooking
   isPublic
   publicRsvpWebsite
+  visibleTabs
   category
   ticketReleaseAt
   createdAt
   updatedAt
+  seatColorGroups {
+    id
+    name
+    matchType
+    invitedByValues
+    priority
+    order
+    isOrphaned
+    style {
+      background
+      foreground
+      border
+      legendIcon
+    }
+  }
 }

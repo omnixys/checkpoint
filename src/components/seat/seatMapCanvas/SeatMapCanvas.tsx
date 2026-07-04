@@ -569,6 +569,7 @@ export default function SeatMapCanvas({
         isOwnSeat={ownSeatIds?.has(seat.id) ?? false}
         isEditing={isEditing}
         isSelected={seatSelected}
+        colorGroup={(seat as { colorGroup?: { id: string; name: string; style: { background: string; foreground: string; border: string; legendIcon: string } } | null }).colorGroup}
         onMouseDown={(e) => {
           if (isEditing) {
             e.stopPropagation();

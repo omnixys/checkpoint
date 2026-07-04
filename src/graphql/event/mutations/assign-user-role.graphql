@@ -1,3 +1,7 @@
+# import EventFull from "../fragments/event.fragment.graphql"
+
 mutation AssignUserRoleToEvent($input: AssignUserRoleInput!) {
-  assignUserToEvent(input: $input)
+  assignUserToEvent(input: $input) {
+    ...EventFull
+  }
 }

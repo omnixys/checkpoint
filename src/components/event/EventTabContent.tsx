@@ -20,9 +20,11 @@ export default function EventTabContent({ ev, active, onDescriptionChange }: Pro
     case "timeline":
       return <EventTimeline items={ev.timeline} />;
 
+    case "details":
     case "settings":
       return <EventDetailsAccordion ev={ev} />;
 
+    case "map":
     case "location":
       return <EventLocationMap eventId={ev.id} />;
 

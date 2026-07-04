@@ -10,6 +10,7 @@ import EventSelector from "@/checkpoint/components/Selectors/EventSelector";
 import ThemeToggleButton from "@/checkpoint/components/ThemeToggleButton";
 import UserMenu from "@/checkpoint/components/UserMenu";
 import { useTourAnchor } from "@/checkpoint/hooks/core/useTourAnchor";
+import { UserRoleType } from "@/checkpoint/generated/graphql";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
@@ -30,7 +31,7 @@ export default function NavigationDesktop(): JSX.Element {
   const userMenuRef = useTourAnchor("ui.userMenu");
   const languageRef = useTourAnchor("ui.language");
 
-  const role = activeEvent?.myRole ?? "GUEST";
+  const role = activeEvent?.myRole ?? UserRoleType.GUEST;
   const items = createNavigation(role, t, activeEvent?.id);
 
   return (

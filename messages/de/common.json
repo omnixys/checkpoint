@@ -20,7 +20,12 @@
     "title": "Begleitpersonen ({count})",
     "add": "+ Begleitperson hinzufügen",
     "guest": "Gast",
-    "noEmail": "Keine E-Mail"
+    "noEmail": "Keine E-Mail",
+    "ageCategory": "Alterskategorie",
+    "overSix": "Über 6",
+    "underSix": "Unter 6",
+    "ageMissing": "Alterskategorie fehlt",
+    "guestNote": "Notiz (optional)"
   },
   
   "language": {

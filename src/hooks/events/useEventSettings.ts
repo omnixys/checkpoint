@@ -8,15 +8,20 @@ import {
   CreateEventDocument,
   type CreateEventInput,
   type CreateSettingsInput,
+  EventCategory,
+  EventVisibleTab,
   type EventAddressInput,
   type EventTimelinePayload,
+  GetEventSettingsDocument,
+  InvitationApprovalMode,
   RemoveTimeLinesDocument,
   RemoveUserFromEventDocument,
   TransferEventOwnershipDocument,
   UpdateEventDocument,
+  type UpdateEventInput,
   type UpdateSettingsInput,
   UpdateTimeLinesDocument,
-  type UserRoleType,
+  UserRoleType,
 } from "@/checkpoint/generated/graphql";
 import useEventQuery from "@/checkpoint/hooks/events/useEventQuery";
 
@@ -67,15 +72,17 @@ const DEFAULT_SETTINGS: CreateSettingsInput = {
   isPublic: true,
   publicRsvpWebsite: "",
   invitedByOptions: [],
-  category: "GENERAL",
+  category: EventCategory.GENERAL,
   allowPlusOneUpdate: false,
   maxPlusOnes: 1,
   requireApprovalForPlusOnes: false,
   rsvpDeadline: null,
-  approvalMode: "AUTO",
+  approvalMode: InvitationApprovalMode.AUTO,
   allowGuestSeatSelection: false,
   allowSeatOverbooking: false,
   ticketReleaseAt: null,
+  visibleTabs: [EventVisibleTab.TIMELINE, EventVisibleTab.DETAILS, EventVisibleTab.MAP],
+  seatColorGroups: null,
 };
 
 /**
@@ -87,10 +94,7 @@ export function useEventSettings(eventId: string) {
     loadEventSettings: true,
   });
 
-  const staffRoles = useMemo(
-    () => (eventSettings?.userRoles ?? []).filter((role) => role.role !== "GUEST"),
-    [eventSettings],
-  );
+  const eventRoles = useMemo(() => eventSettings?.userRoles ?? [], [eventSettings]);
 
   useEffect(() => {
     if (eventSettingsError) {
@@ -127,11 +131,8 @@ export function useEventSettings(eventId: string) {
         variables: {
           input: {
             eventId,
-            name: null,
-            parentId: null,
             settings: normalized,
-            tags: null,
-          },
+          } as UpdateEventInput,
         },
 
         // optimisticResponse: {
@@ -210,6 +211,8 @@ export function useEventSettings(eventId: string) {
             eventRole: role.role,
           },
         },
+        refetchQueries: [{ query: GetEventSettingsDocument, variables: { eventId } }],
+        awaitRefetchQueries: true,
       }),
 
     /**
@@ -224,6 +227,8 @@ export function useEventSettings(eventId: string) {
             eventRole: role.role,
           },
         },
+        refetchQueries: [{ query: GetEventSettingsDocument, variables: { eventId } }],
+        awaitRefetchQueries: true,
       }),
 
     /**
@@ -360,9 +365,9 @@ export function useEventSettings(eventId: string) {
       },
       settings: eventSettings.settings,
       timeline: eventSettings.timeline,
-      roles: staffRoles,
+      roles: eventRoles,
     };
-  }, [eventSettings, staffRoles]);
+  }, [eventSettings, eventRoles]);
 
   return {
     loading: eventSettingsLoading,

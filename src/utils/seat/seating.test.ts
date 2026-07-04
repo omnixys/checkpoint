@@ -77,7 +77,7 @@ describe("computeCircularPositions", () => {
     const mobileRadius = (220 - 104) / 2 + 9;
     expect(desktop[0]?.top).toBeCloseTo(center - desktopRadius, 0);
     expect(mobile[0]?.top).toBeCloseTo(center - mobileRadius, 0);
-    expect(Math.abs(mobile[0]?.top)).toBeGreaterThan(Math.abs(desktop[0]?.top));
+    expect(Math.abs(mobile[0]!.top)).toBeGreaterThan(Math.abs(desktop[0]!.top));
   });
 
   it("single seat is centered at top", () => {

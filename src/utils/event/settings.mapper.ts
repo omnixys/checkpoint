@@ -13,6 +13,7 @@
 
 import type {
   EventCategory,
+  EventVisibleTab,
   SettingsPayload,
   UpdateSettingsInput,
 } from "@/checkpoint/generated/graphql";
@@ -31,6 +32,8 @@ type FullSettingsPatch = Partial<SettingsPayload> & {
   approvalMode?: SettingsPayload["approvalMode"];
   publicRsvpWebsite?: string | null;
   invitedByOptions?: string[];
+  seatColorGroups?: SettingsPayload["seatColorGroups"];
+  visibleTabs?: EventVisibleTab[];
   isPublic?: boolean;
   category?: EventCategory;
 };
@@ -71,6 +74,8 @@ export function mapSettingsToUpdateInput(
     ticketReleaseAt: payload.ticketReleaseAt ?? null,
     publicRsvpWebsite: payload.publicRsvpWebsite ?? null,
     invitedByOptions: payload.invitedByOptions ?? null,
+    visibleTabs: payload.visibleTabs ?? null,
+    seatColorGroups: payload.seatColorGroups ?? null,
     isPublic: payload.isPublic ?? null,
     category: payload.category ?? null,
   };

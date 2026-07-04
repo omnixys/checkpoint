@@ -1,8 +1,12 @@
 "use client";
 
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import CheckroomIcon from "@mui/icons-material/Checkroom";
 import DescriptionIcon from "@mui/icons-material/Description";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import GroupsIcon from "@mui/icons-material/Groups";
+import PublicIcon from "@mui/icons-material/Public";
+import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
 import { alpha, Box, Stack, Typography, useTheme } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
@@ -15,7 +19,7 @@ interface Props {
 interface SectionProps {
   icon: React.ReactNode;
   title: string;
-  value: string | null | undefined;
+  value: React.ReactNode;
 }
 
 function AccordionSection({ icon, title, value }: SectionProps) {
@@ -90,8 +94,24 @@ function AccordionSection({ icon, title, value }: SectionProps) {
   );
 }
 
+const formatDateTime = (value: string | null | undefined) => {
+  if (!value) {
+    return null;
+  }
+
+  return new Intl.DateTimeFormat(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(value));
+};
+
+const joinLines = (rows: Array<string | null | undefined>) => rows.filter(Boolean).join("\n");
+
 export default function EventDetailsAccordion({ ev }: Props) {
   const t = useTypedTranslations("event");
+  const settings = ev.settings;
+  const enabled = t("details.enabled");
+  const disabled = t("details.disabled");
 
   return (
     <Stack spacing={2}>
@@ -103,13 +123,63 @@ export default function EventDetailsAccordion({ ev }: Props) {
       <AccordionSection
         icon={<CheckroomIcon />}
         title={t("details.dresscode")}
-        value={ev.settings.dressCode}
+        value={settings.dressCode}
       />
 
       <AccordionSection
         icon={<DescriptionIcon />}
         title={t("details.description")}
-        value={ev.settings.description}
+        value={settings.description}
+      />
+
+      <AccordionSection
+        icon={<CalendarMonthIcon />}
+        title={t("details.schedule")}
+        value={joinLines([
+          `${t("details.startsAt")}: ${formatDateTime(settings.startsAt)}`,
+          `${t("details.endsAt")}: ${formatDateTime(settings.endsAt)}`,
+          settings.rsvpDeadline
+            ? `${t("details.rsvpDeadline")}: ${formatDateTime(settings.rsvpDeadline)}`
+            : null,
+          settings.ticketReleaseAt
+            ? `${t("details.ticketReleaseAt")}: ${formatDateTime(settings.ticketReleaseAt)}`
+            : null,
+        ])}
+      />
+
+      <AccordionSection
+        icon={<GroupsIcon />}
+        title={t("details.capacity")}
+        value={joinLines([
+          t("details.maxSeatsValue", { count: settings.maxSeats }),
+          t("details.maxPlusOnesValue", { count: settings.maxPlusOnes }),
+          t("details.guestSeatSelection", {
+            value: settings.allowGuestSeatSelection ? enabled : disabled,
+          }),
+        ])}
+      />
+
+      <AccordionSection
+        icon={<SettingsSuggestIcon />}
+        title={t("details.rsvp")}
+        value={joinLines([
+          t("details.approvalMode", { value: settings.approvalMode }),
+          t("details.publicRsvp", { value: settings.allowPublicRsvp ? enabled : disabled }),
+          t("details.publicPlusOne", {
+            value: settings.allowPublicPlusOne ? enabled : disabled,
+          }),
+        ])}
+      />
+
+      <AccordionSection
+        icon={<PublicIcon />}
+        title={t("details.visibility")}
+        value={joinLines([
+          `${t("details.category")}: ${settings.category}`,
+          settings.publicRsvpWebsite
+            ? t("details.publicWebsite", { value: settings.publicRsvpWebsite })
+            : null,
+        ])}
       />
     </Stack>
   );

@@ -9,7 +9,8 @@ import { motion } from "framer-motion";
 
 import { useCreateEvent } from "@/checkpoint/app/(protected)/event/new/context/CreateEventContext";
 import { useField } from "@/checkpoint/app/(protected)/event/new/hooks/useField";
-import type { MediaType } from "@/checkpoint/generated/graphql";
+import { MediaType } from "@/checkpoint/generated/graphql";
+import type { MediaType as MediaTypeT } from "@/checkpoint/generated/graphql";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 /**
@@ -176,7 +177,7 @@ export default function ExperienceStep() {
                   onChange={(e) =>
                     handleFile(
                       e.target.files?.[0],
-                      "COVER",
+                      "COVER" as MediaTypeT,
                       //coverImageUrl.onChange,
                     )
                   }
@@ -214,7 +215,7 @@ export default function ExperienceStep() {
                   onChange={(e) =>
                     handleFile(
                       e.target.files?.[0],
-                      "LOGO",
+                      "LOGO" as MediaTypeT,
                       //logoUrl.onChange
                     )
                   }

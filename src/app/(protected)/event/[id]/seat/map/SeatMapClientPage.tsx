@@ -12,10 +12,12 @@ import SeatMapEditorToolbar, {
   type SelectedItem,
 } from "@/checkpoint/components/seat/seatMapCanvas/SeatMapEditorToolbar";
 import SeatMapRenameDialog from "@/checkpoint/components/seat/seatMapCanvas/SeatMapRenameDialog";
+import SeatColorLegend from "@/checkpoint/components/seat/seatMapCanvas/SeatColorLegend";
 import SeatMapSearch, {
   type SeatMapFilters,
 } from "@/checkpoint/components/seat/seatMapCanvas/SeatMapSearch";
 import { BackToEventDetailButton } from "@/checkpoint/components/utils/back-to-event-detail-button";
+import useEventTreeQuery from "@/checkpoint/hooks/events/useEventTreeQuery";
 import {
   AutoGenerateSeatMapDocument,
   CloneSectionDocument,
@@ -32,6 +34,8 @@ import {
   RenameSectionDocument,
   RenameTableDocument,
   SeatMapViewDocument,
+  SectionShape,
+  TableShape,
   type SeatMapViewQuery,
   UndoLayoutDocument,
 } from "@/checkpoint/generated/graphql";
@@ -69,6 +73,16 @@ export default function SeatMapClientPage() {
   const eventId = id as string;
   const { activeRole } = useActiveEvent();
   const router = useRouter();
+
+  const { fullEventTree } = useEventTreeQuery({
+    eventId,
+    loadFullEventTreeInfo: true,
+  });
+
+  const seatColorGroups = React.useMemo(
+    () => fullEventTree?.rootEvent?.settings?.seatColorGroups ?? [],
+    [fullEventTree],
+  );
 
   const { seatList } = useSeatListQuery({
     eventId,
@@ -213,7 +227,7 @@ export default function SeatMapClientPage() {
     try {
       await createSection({
         variables: {
-          input: { eventId, name, x: 50, y: 50, capacity: null, meta: null, order: null },
+          input: { eventId, name, x: 50, y: 50, capacity: null, height: null, width: null, meta: null, order: null },
         },
       });
       await refetchMap();
@@ -314,8 +328,8 @@ export default function SeatMapClientPage() {
     sectionName: string;
     seatCount: number;
     tableCount: number;
-    tableShape: "ROUND" | "RECTANGLE" | "OVAL" | "ROW";
-    sectionLayout: "RECTANGLE" | "CIRCLE" | "POLYGON";
+    tableShape: TableShape;
+    sectionLayout: SectionShape;
     spacing: number;
   }) => {
     try {
@@ -404,6 +418,7 @@ export default function SeatMapClientPage() {
             <Chip size="small" label="frei" sx={{ bgcolor: "grey.900", color: "grey.100" }} />
             <Chip size="small" label="belegt" color="error" />
             <Chip size="small" label="eingecheckt" color="info" />
+            <SeatColorLegend colorGroups={seatColorGroups} />
           </Stack>
         </Box>
 

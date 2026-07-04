@@ -62,6 +62,10 @@
     "whatsappInvitation": "WhatsApp Einladung senden",
     "copyRsvpLink": "RSVP-Link kopieren",
     "copied": "Kopiert!",
+    "rsvpDetails": "RSVP-Details",
+    "selectedInvitedBy": "Gehört zu",
+    "guestNote": "Gästebemerkung",
+    "plusOneAgeCategory": "Alter der Begleitperson",
     "administration": "Verwaltung",
     "delete": "Löschen",
     "loadingSeats": "Lade Sitzplätze…",
@@ -76,6 +80,8 @@
 
   "bulk": {
     "approve": "Alle genehmigen ({count})",
+    "approve_one": "1 Einladung genehmigen",
+    "approve_other": "{count} Einladungen genehmigen",
     "send": "Einladungen verschicken",
     "clear": "Auswahl löschen"
   },

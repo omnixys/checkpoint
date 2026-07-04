@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+import { PhoneNumberType } from "@/checkpoint/generated/graphql";
 import type { PhoneNumberInput, PublicPlusOneInput } from "@/checkpoint/generated/graphql";
 import type { NormalizedPlusOne } from "@/checkpoint/types/event.type";
 
@@ -34,6 +35,8 @@ export function usePlusOnes() {
         lastName: "",
         email: null,
         plusOneAgeCategory: null,
+        guestNote: null,
+        selectedInvitedBy: [],
         phoneNumbers: [],
       },
     ]);
@@ -62,7 +65,7 @@ export function usePlusOnes() {
               phoneNumbers: [
                 ...p.phoneNumbers,
                 {
-                  type: "WHATSAPP",
+                  type: PhoneNumberType.WHATSAPP,
                   number: "",
                   label: "",
                   countryCode: "+49",
@@ -138,13 +141,17 @@ export function usePlusOnes() {
    */
   const toGraphQl = useCallback(
     (): PublicPlusOneInput[] =>
-      valid.map((p) => ({
-        firstName: p.firstName.trim(),
-        lastName: p.lastName.trim(),
-        email: p.email?.trim() || null,
-        plusOneAgeCategory: p.plusOneAgeCategory,
-        phoneNumbers: p.phoneNumbers.length > 0 ? p.phoneNumbers : null,
-      })),
+      valid.map(
+        (p) =>
+          ({
+            firstName: p.firstName.trim(),
+            lastName: p.lastName.trim(),
+            email: p.email?.trim() || null,
+            plusOneAgeCategory: p.plusOneAgeCategory,
+            guestNote: p.guestNote?.trim() || null,
+            phoneNumbers: p.phoneNumbers.length > 0 ? p.phoneNumbers : null,
+          }) as PublicPlusOneInput,
+      ),
     [valid],
   );
 

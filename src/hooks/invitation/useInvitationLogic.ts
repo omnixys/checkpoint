@@ -60,6 +60,7 @@ export function useInvitationLogic(eventId: string) {
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [typeFilter, setTypeFilter] = useState<string | null>(null);
   const [eventFilter, setEventFilter] = useState<string | null>(null);
+  const [selectedInvitedByFilter, setSelectedInvitedByFilter] = useState<string | null>(null);
 
   /* -----------------------------------------------------------------------
    * UI State
@@ -173,6 +174,10 @@ export function useInvitationLogic(eventId: string) {
     return map;
   }, [subEvents, rootEventId, rootEventName]);
 
+  const selectedInvitedByOptions = useMemo(() => {
+    return [...(fullEventTree?.rootEvent?.settings?.invitedByOptions ?? [])].sort();
+  }, [fullEventTree?.rootEvent?.settings?.invitedByOptions]);
+
   const invitationById = useMemo(() => {
     const map = new Map<string, GetGlobalEventInvitationListQuery["getFullByEventIds"][number]>();
 
@@ -221,6 +226,13 @@ export function useInvitationLogic(eventId: string) {
         return false;
       }
 
+      if (selectedInvitedByFilter) {
+        const invSelected = invitation.selectedInvitedBy ?? [];
+        if (!invSelected.includes(selectedInvitedByFilter)) {
+          return false;
+        }
+      }
+
       if (normalizedSearch) {
         const fullName = `${invitation.firstName ?? ""} ${invitation.lastName ?? ""}`.toLowerCase();
 
@@ -236,7 +248,14 @@ export function useInvitationLogic(eventId: string) {
 
       return true;
     });
-  }, [eventFilter, globalEventInvitationList, search, statusFilter, typeFilter]);
+  }, [
+    eventFilter,
+    globalEventInvitationList,
+    search,
+    statusFilter,
+    typeFilter,
+    selectedInvitedByFilter,
+  ]);
 
   /* -----------------------------------------------------------------------
    * Internal Seat Loader
@@ -671,6 +690,8 @@ export function useInvitationLogic(eventId: string) {
     setTypeFilter,
     eventFilter,
     setEventFilter,
+    selectedInvitedByFilter,
+    setSelectedInvitedByFilter,
 
     /* event */
     rootEventId,
@@ -678,6 +699,7 @@ export function useInvitationLogic(eventId: string) {
     subEvents,
     allEventOptions,
     eventNameById,
+    selectedInvitedByOptions,
 
     /* selection */
     selected,
