@@ -4,6 +4,7 @@ query GetEventTree($eventId: ID!) {
       id
       name
       settings {
+        id
         endsAt
         invitedByOptions
       }
@@ -14,6 +15,7 @@ query GetEventTree($eventId: ID!) {
       parentId
       depth
       settings {
+        id
         endsAt
         invitedByOptions
       }
@@ -27,6 +29,7 @@ query GetPublicEventTree($eventId: ID!) {
       id
       name
       settings {
+        id
         endsAt
         invitedByOptions
       }
@@ -37,6 +40,7 @@ query GetPublicEventTree($eventId: ID!) {
       parentId
       depth
       settings {
+        id
         endsAt
         invitedByOptions
       }
@@ -50,6 +54,7 @@ query GetFullEventTreeInfo($eventId: ID!) {
       id
       name
       settings {
+        id
         endsAt
         invitedByOptions
         seatColorGroups {
@@ -73,6 +78,7 @@ query GetFullEventTreeInfo($eventId: ID!) {
       id
       name
       settings {
+        id
         endsAt
         invitedByOptions
         seatColorGroups {

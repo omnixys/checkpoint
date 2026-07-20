@@ -17,7 +17,11 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
-import { useNotificationItems, useNotificationMessages } from "../hooks/useNotificationMocks";
+import {
+  useNotificationItems,
+  useNotificationMessages,
+  useSendMessage,
+} from "../hooks/useNotificationMocks";
 import {
   getEventTypeColor,
   getNotificationTone,
@@ -39,6 +43,7 @@ import { NotificationChannel } from "../types/notification-channel.enum";
 interface Props {
   channel: NotificationChannel;
   chatId: string | null;
+  eventId: string;
 }
 
 const MotionBox = motion.create(Box);
@@ -551,7 +556,13 @@ function EmailTimeline({ messages }: { messages: EmailMessage[] }) {
   );
 }
 
-function ConversationInput({ channel }: { channel: NotificationChannel }) {
+function ConversationInput({
+  channel,
+  onSend,
+}: {
+  channel: NotificationChannel;
+  onSend?: (body: string) => void;
+}) {
   const theme = useTheme();
   const tone = getNotificationTone(theme, channel);
   const [value, setValue] = useState("");
@@ -578,6 +589,13 @@ function ConversationInput({ channel }: { channel: NotificationChannel }) {
       : channel === NotificationChannel.IN_APP
         ? "Add workflow note or status update..."
         : "Type a WhatsApp message...";
+
+  function handleSend() {
+    if (value.trim() && onSend) {
+      onSend(value.trim());
+      setValue("");
+    }
+  }
 
   return (
     <Box
@@ -608,6 +626,7 @@ function ConversationInput({ channel }: { channel: NotificationChannel }) {
         <Button
           variant="contained"
           startIcon={buttonIcon}
+          onClick={handleSend}
           sx={{
             minWidth: { xs: "100%", sm: channel === NotificationChannel.IN_APP ? 170 : 160 },
             borderRadius: channel === NotificationChannel.EMAIL ? 3 : 999,
@@ -627,17 +646,24 @@ function ConversationInput({ channel }: { channel: NotificationChannel }) {
   );
 }
 
-export function NotificationConversationPanel({ channel, chatId }: Props) {
+export function NotificationConversationPanel({ channel, chatId, eventId }: Props) {
   const theme = useTheme();
   const tone = getNotificationTone(theme, channel);
 
-  const { items } = useNotificationItems(channel);
+  const { items } = useNotificationItems(channel, eventId);
   const { messages } = useNotificationMessages(channel, chatId);
+  const sendMessage = useSendMessage();
 
   const selectedItem = useMemo(
     () => items.find((item) => item.chatId === chatId) ?? null,
     [items, chatId],
   );
+
+  async function handleSend(body: string) {
+    if (chatId) {
+      await sendMessage(chatId, body);
+    }
+  }
 
   if (!selectedItem) {
     return <EmptyState channel={channel} />;
@@ -689,7 +715,7 @@ export function NotificationConversationPanel({ channel, chatId }: Props) {
         ) : null}
       </Box>
 
-      <ConversationInput channel={channel} />
+      <ConversationInput channel={channel} onSend={handleSend} />
     </Box>
   );
 }

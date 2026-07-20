@@ -3,7 +3,8 @@
 import { EditOutlined, MapOutlined } from "@mui/icons-material";
 import { alpha, Box, Button, Stack } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import React from "react";
+import RouteGuard from "@/checkpoint/components/guard/RouteGuard";
 import CollapsingSeatHeader from "@/checkpoint/components/seat/CollapsingSeatHeader";
 import SeatEditDialog from "@/checkpoint/components/seat/dialogs/SeatEditDialog";
 import SeatImportDialog from "@/checkpoint/components/seat/dialogs/SeatImportDialog";
@@ -16,16 +17,16 @@ import { BackToEventDetailButton } from "@/checkpoint/components/utils/back-to-e
 import type { InvitationPayload, SeatPayload } from "@/checkpoint/generated/graphql";
 import { useSeats } from "@/checkpoint/hooks/seat/useSeats";
 import { env } from "@/checkpoint/lib/env";
+import { EventPermissionKey } from "@/checkpoint/lib/rbac/event-permissions";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
-import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { getLogger } from "@/checkpoint/utils/logger";
 
 export default function SeatsClientPage() {
-  const { isAuthenticated } = useAuth();
   const { id } = useParams();
   const logger = getLogger("SeatsPage");
   const eventId = id as string;
-  const { activeRole } = useActiveEvent();
+  const { activeRole, can } = useActiveEvent();
+  const canManageSeats = can(EventPermissionKey.ManageSeats);
 
   const {
     seats,
@@ -52,17 +53,8 @@ export default function SeatsClientPage() {
 
   const [importOpen, setImportOpen] = React.useState(false);
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.replace(env.CHECKPOINT_BASE_PATH);
-    }
-  }, [isAuthenticated, router]);
-
-  if (!isAuthenticated) {
-    return null;
-  }
-
   return (
+    <RouteGuard featureId="seats">
     <Stack spacing={3} sx={{ px: { xs: 1.5, md: 3 }, py: 2, minWidth: 0 }}>
       <Box
         sx={{
@@ -85,7 +77,7 @@ export default function SeatsClientPage() {
         >
           <BackToEventDetailButton />
 
-          {activeRole === "ADMIN" && (
+          {canManageSeats && (
             <Button
               size="small"
               variant="outlined"
@@ -113,7 +105,7 @@ export default function SeatsClientPage() {
         <SeatFilters filter={filter} onChange={setFilter} />
       </Box>
 
-      {activeRole === "ADMIN" && <SeatImportButton onOpen={() => setImportOpen(true)} />}
+      {canManageSeats && <SeatImportButton onOpen={() => setImportOpen(true)} />}
 
       <MapManager
         seats={seats}
@@ -165,5 +157,6 @@ export default function SeatsClientPage() {
         }}
       />
     </Stack>
+    </RouteGuard>
   );
 }

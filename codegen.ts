@@ -185,7 +185,7 @@ const config: CodegenConfig = {
    * This enforces a clean architecture where:
    * - Queries, mutations, subscriptions are decoupled from UI
    */
-  documents: ["src/**/*.graphql"],
+  documents: ["src/**/*.graphql", "!src/**/subscriptions/**"],
 
   generates: {
     /**

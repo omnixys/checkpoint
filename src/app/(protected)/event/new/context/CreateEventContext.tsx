@@ -6,7 +6,11 @@ import type {
   ChildEventDraft,
   CreateEventDraft,
 } from "@/checkpoint/app/(protected)/event/new/types/event/event-draft.type";
-import { EventCategory, EventVisibleTab, InvitationApprovalMode } from "@/checkpoint/generated/graphql";
+import {
+  EventCategory,
+  EventVisibleTab,
+  InvitationApprovalMode,
+} from "@/checkpoint/generated/graphql";
 import type { MediaType } from "@/checkpoint/generated/graphql";
 import { useZodForm } from "../hooks/useZodForm";
 import { createEventWizardSchema } from "../validation/createEvent.schema";
@@ -76,6 +80,7 @@ const initialState: State = {
       maxPlusOnes: 1,
       requireApprovalForPlusOnes: false,
       rsvpDeadline: null,
+      scheduleTicketRelease: false,
       ticketReleaseAt: null,
       invitedByOptions: [],
       isActive: true,

@@ -29,7 +29,8 @@
     "role": {
       "ADMIN": "Admin",
       "SECURITY": "Security",
-      "GUEST": "Gast"
+      "GUEST": "Gast",
+      "SUPPORT": "Support"
     }
   },
 

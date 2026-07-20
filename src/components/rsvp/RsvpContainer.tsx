@@ -12,6 +12,7 @@ import InvitationAlreadyDeclinedDialog from "@/checkpoint/components/rsvp/dialog
 import MaybeDialog from "@/checkpoint/components/rsvp/dialog/MaybeDialog";
 import FinalScreens from "@/checkpoint/components/rsvp/FinalScreens";
 import InitialView from "@/checkpoint/components/rsvp/InitialView";
+import RsvpSupportChat from "@/checkpoint/components/support/chat/RsvpSupportChat";
 import useInvitationQuery from "@/checkpoint/hooks/invitation/useInvitationQuery";
 import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
 import { getLogger } from "@/checkpoint/utils/logger";
@@ -159,6 +160,11 @@ export default function RsvpContainer({
    */
   return (
     <Box sx={{ px: { xs: 1.5, sm: 2 }, py: { xs: 3, sm: 4 }, maxWidth: 800, mx: "auto" }}>
+      <RsvpSupportChat
+        eventId={invitation.eventId}
+        guestName={`${invitation.firstName ?? ""} ${invitation.lastName ?? ""}`.trim()}
+        invitationId={invitation.id}
+      />
       {screen === "initial" && (
         <InitialView
           invitation={invitation}

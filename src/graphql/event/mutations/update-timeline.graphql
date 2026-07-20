@@ -1,5 +1,6 @@
 mutation UpdateTimeLines($eventId: ID!, $input: [UpdateTimelineInput!]!) {
   updateTimeLines(eventId: $eventId, input: $input) {
+    id
     timeline {
       ...EventTimeline
     }

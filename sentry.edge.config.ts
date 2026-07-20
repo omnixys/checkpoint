@@ -16,6 +16,13 @@ Sentry.init({
     process.env.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE,
     process.env.NODE_ENV === "production" ? 0.1 : 1.0,
   ),
+
+    integrations: [
+    // send console.log, console.warn, and console.error calls as logs to Sentry
+    Sentry.consoleLoggingIntegration({ levels: ["log", "warn", "error"] }),
+  ],
+  // Enable logs to be sent to Sentry
+  enableLogs: true,
 });
 
 // Use metrics in both server and client code

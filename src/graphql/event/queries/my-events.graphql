@@ -5,6 +5,7 @@ query MyEvents {
     id
     name
     settings {
+      id
       startsAt
       endsAt
     }
@@ -16,6 +17,7 @@ query GetMyEventCalendarData {
     id
     name
     settings {
+      id
       startsAt
     }
   }

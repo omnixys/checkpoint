@@ -8,6 +8,7 @@ query User($id: ID!) {
 
 query GetUserName($id: ID!) {
   getUserList(userIds: [$id]) {
+    id
     personalInfo {
       firstName
       lastName

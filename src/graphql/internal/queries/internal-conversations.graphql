@@ -1,0 +1,14 @@
+query InternalConversations($eventId: String!) {
+  internalConversations(eventId: $eventId) {
+    id
+    eventId
+    title
+    description
+    type
+    createdBy
+    isActive
+    createdAt
+    updatedAt
+    archivedAt
+  }
+}

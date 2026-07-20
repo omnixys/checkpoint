@@ -1,0 +1,15 @@
+query MySupportConversations {
+  mySupportConversations {
+    id
+    eventId
+    invitationId
+    guestName
+    status
+    priority
+    channel
+    lastMessageAt
+    lastMessagePreview
+    createdAt
+    updatedAt
+  }
+}

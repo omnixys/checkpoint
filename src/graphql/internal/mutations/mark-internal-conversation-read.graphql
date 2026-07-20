@@ -1,0 +1,8 @@
+mutation MarkInternalConversationRead($conversationId: String!) {
+  markInternalConversationRead(conversationId: $conversationId) {
+    id
+    conversationId
+    userId
+    lastReadAt
+  }
+}

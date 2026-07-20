@@ -1,0 +1,15 @@
+subscription SupportMessageReceived($conversationId: String!) {
+  supportMessageReceived(conversationId: $conversationId) {
+    id
+    conversationId
+    direction
+    channel
+    fromUserId
+    fromGuest
+    body
+    mediaUrl
+    mimeType
+    status
+    createdAt
+  }
+}

@@ -1,0 +1,20 @@
+query EventStaff($eventId: ID!) {
+  eventStaff(eventId: $eventId) {
+    userId
+    username
+    roles
+    permissions
+    personalInfo {
+      firstName
+      lastName
+      email
+    }
+    phoneNumbers {
+      number
+      type
+      label
+      isPrimary
+    }
+    email
+  }
+}

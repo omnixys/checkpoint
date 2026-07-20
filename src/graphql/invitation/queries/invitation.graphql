@@ -52,6 +52,7 @@ query GetInvitation($invitationId: ID!) {
 
 query PlusOneInvitations($invitationId: ID!) {
   invitation(id: $invitationId) {
+    id
     plusOnes {
       id
       firstName

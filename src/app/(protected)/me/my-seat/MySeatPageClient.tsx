@@ -2,6 +2,7 @@
 
 import type { JSX } from "react";
 import ActiveEventGuard from "@/checkpoint/components/guard/ActiveEventGuard";
+import RouteGuard from "@/checkpoint/components/guard/RouteGuard";
 import MySeatContent from "@/checkpoint/components/mySeat/MySeatContent";
 
 /**
@@ -13,7 +14,9 @@ import MySeatContent from "@/checkpoint/components/mySeat/MySeatContent";
 export default function MySeatClientPage(): JSX.Element {
   return (
     <ActiveEventGuard>
-      <MySeatContent />
+      <RouteGuard featureId="my-seat">
+        <MySeatContent />
+      </RouteGuard>
     </ActiveEventGuard>
   );
 }

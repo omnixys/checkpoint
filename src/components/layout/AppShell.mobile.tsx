@@ -3,6 +3,7 @@
 import { Box } from "@mui/material";
 import { useState } from "react";
 import { AppleNavBar } from "@/checkpoint/components/apple/AppleNavBar";
+import AppShellSupportChat from "@/checkpoint/components/support/chat/AppShellSupportChat";
 import EventSelectorActionSheet from "@/checkpoint/components/Selectors/EventSelectorActionSheet";
 import EventSelectorMobileButton from "@/checkpoint/components/Selectors/EventSelectorMobileButton";
 import UserMenu from "@/checkpoint/components/UserMenu";
@@ -73,6 +74,7 @@ export default function AppShellMobile({ children }: { children: React.ReactNode
         <NavigationMobile />
       </Box>
 
+      <AppShellSupportChat />
       <EventSelectorActionSheet open={open} onClose={() => setOpen(false)} />
     </Box>
   );

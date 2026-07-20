@@ -13,7 +13,7 @@ import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 
 export default function EventSelector(): JSX.Element {
-  const { myEventList, activeEventId, selectEvent } = useActiveEvent();
+  const { myEventList, activeEventId, selectEvent, loading } = useActiveEvent();
   const { isAuthenticated } = useAuth();
 
   const handleChange = async (e: SelectChangeEvent<string>) => {
@@ -28,6 +28,17 @@ export default function EventSelector(): JSX.Element {
       </Typography>
     );
   }
+
+  if (loading) {
+    return (
+      <Typography variant="body2" sx={{ opacity: 0.6, px: 2, py: 1, userSelect: "none" }}>
+        Lädt...
+      </Typography>
+    );
+  }
+
+   console.log("myEventList: ")
+  console.log(myEventList)
 
   if (!myEventList || myEventList.length === 0) {
     return (

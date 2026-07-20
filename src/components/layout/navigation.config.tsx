@@ -1,6 +1,7 @@
 import {
   AccountCircle as AccountCircleIcon,
   Badge as BadgeIcon,
+  Chat as ChatIcon,
   ConfirmationNumberOutlined as ConfirmationNumberOutlinedIcon,
   Dashboard as DashboardIcon,
   Event as EventIcon,
@@ -14,6 +15,12 @@ import {
 import type { JSX } from "react";
 import type { UserRoleType } from "@/checkpoint/generated/graphql";
 import { env } from "@/checkpoint/lib/env";
+import {
+  EventPermissionKey,
+  hasEveryPermission,
+  permissionsForLegacyRole,
+  type EventPermissionKey as EventPermissionKeyType,
+} from "@/checkpoint/lib/rbac/event-permissions";
 
 const basePath = env.CHECKPOINT_BASE_PATH;
 
@@ -23,6 +30,7 @@ export interface NavItem {
   path: string;
   tourId?: string;
   disabled?: boolean;
+  requiredPermissions?: EventPermissionKeyType[];
 }
 
 type TFunction = (key: any) => string;
@@ -31,11 +39,11 @@ export function createNavigation(
   role: UserRoleType,
   t: TFunction,
   activeEventId?: string,
+  permissions: readonly string[] = permissionsForLegacyRole(role),
 ): NavItem[] {
   const hasEvent = Boolean(activeEventId);
 
-  const Nav: Record<UserRoleType, NavItem[]> = {
-    ADMIN: [
+  const allItems: NavItem[] = [
       {
         label: t("sidebar.home"),
         icon: <DashboardIcon />,
@@ -48,12 +56,22 @@ export function createNavigation(
         path: `${basePath}event/${activeEventId}/notification`,
         disabled: !hasEvent,
         tourId: "sidebar.notifications",
+        requiredPermissions: [EventPermissionKey.ViewNotifications],
+      },
+      {
+        label: t("sidebar.support"),
+        icon: <ChatIcon />,
+        path: `${basePath}event/${activeEventId}/support`,
+        disabled: !hasEvent,
+        tourId: "sidebar.support",
+        requiredPermissions: [EventPermissionKey.ViewSupport],
       },
       {
         label: t("sidebar.scanner"),
         icon: <QrCodeScannerIcon />,
         path: `${basePath}scan`,
         tourId: "sidebar.scanner",
+        requiredPermissions: [EventPermissionKey.ScanTickets],
       },
       {
         label: t("sidebar.activeEvent"),
@@ -61,6 +79,7 @@ export function createNavigation(
         path: `${basePath}event/${activeEventId}`,
         disabled: !hasEvent,
         tourId: "sidebar.event",
+        requiredPermissions: [EventPermissionKey.ViewEvent],
       },
       {
         label: t("sidebar.invitations"),
@@ -68,6 +87,7 @@ export function createNavigation(
         path: `${basePath}event/${activeEventId}/invitation`,
         disabled: !hasEvent,
         tourId: "sidebar.invitations",
+        requiredPermissions: [EventPermissionKey.ViewInvitations],
       },
       {
         label: t("sidebar.seats"),
@@ -75,6 +95,7 @@ export function createNavigation(
         path: `${basePath}event/${activeEventId}/seat`,
         disabled: !hasEvent,
         tourId: "sidebar.seats",
+        requiredPermissions: [EventPermissionKey.ViewSeats],
       },
       {
         label: t("sidebar.guests"),
@@ -82,6 +103,7 @@ export function createNavigation(
         path: `${basePath}event/${activeEventId}/guest`,
         disabled: !hasEvent,
         tourId: "sidebar.guests",
+        requiredPermissions: [EventPermissionKey.ViewGuests],
       },
       {
         label: t("sidebar.tickets"),
@@ -89,6 +111,7 @@ export function createNavigation(
         path: `${basePath}event/${activeEventId}/ticket`,
         disabled: !hasEvent,
         tourId: "sidebar.tickets",
+        requiredPermissions: [EventPermissionKey.ViewTickets],
       },
       {
         label: t("sidebar.profile"),
@@ -96,37 +119,6 @@ export function createNavigation(
         path: `${basePath}me`,
         tourId: "sidebar.profile",
       },
-    ],
-
-    SECURITY: [
-      {
-        label: t("sidebar.home"),
-        icon: <DashboardIcon />,
-        path: `${basePath}`,
-        tourId: "sidebar.home",
-      },
-      {
-        label: t("sidebar.scanner"),
-        icon: <QrCodeScannerIcon />,
-        path: `${basePath}scan`,
-        tourId: "sidebar.scanner",
-      },
-      {
-        label: t("sidebar.guests"),
-        icon: <GroupsIcon />,
-        path: `${basePath}event/${activeEventId}/guest`,
-        disabled: !hasEvent,
-        tourId: "sidebar.guests",
-      },
-      {
-        label: t("sidebar.profile"),
-        icon: <AccountCircleIcon />,
-        path: `${basePath}me`,
-        tourId: "sidebar.profile",
-      },
-    ],
-
-    GUEST: [
       {
         label: t("sidebar.home"),
         icon: <HomeIcon />,
@@ -138,18 +130,21 @@ export function createNavigation(
         icon: <BadgeIcon />,
         path: `${basePath}me/my-qr`,
         tourId: "sidebar.myTicket",
+        requiredPermissions: [EventPermissionKey.ViewSelfTicket],
       },
       {
         label: t("sidebar.mySeat"),
         icon: <EventSeatIcon />,
         path: `${basePath}me/my-seat`,
         tourId: "sidebar.mySeat",
+        requiredPermissions: [EventPermissionKey.ViewSelfSeat],
       },
       {
         label: t("sidebar.plusOnes"),
         icon: <GroupsIcon />,
         path: `${basePath}me/my-plus-ones`,
         tourId: "sidebar.plusOnes",
+        requiredPermissions: [EventPermissionKey.ManageSelfPlusOnes],
       },
       {
         label: t("sidebar.profile"),
@@ -157,8 +152,14 @@ export function createNavigation(
         path: `${basePath}me`,
         tourId: "sidebar.profile",
       },
-    ],
-  };
+  ];
 
-  return Nav[role];
+  const seen = new Set<string>();
+  return allItems.filter((item) => {
+    if (seen.has(item.path)) {
+      return false;
+    }
+    seen.add(item.path);
+    return hasEveryPermission(permissions, item.requiredPermissions);
+  });
 }

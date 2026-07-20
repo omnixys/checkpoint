@@ -1,0 +1,16 @@
+mutation CreateQuickReply(
+  $key: String!
+  $body: String!
+  $channel: String
+  $tags: [String!]
+) {
+  createQuickReply(key: $key, body: $body, channel: $channel, tags: $tags) {
+    id
+    key
+    body
+    channel
+    tags
+    createdAt
+    updatedAt
+  }
+}

@@ -1,6 +1,8 @@
 "use client";
 
+import { ExpandMore as ExpandMoreIcon } from "@mui/icons-material";
 import {
+  alpha,
   Box,
   Divider,
   List,
@@ -13,31 +15,53 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
-import { type JSX, useState } from "react";
+import { type JSX, useCallback, useEffect, useState } from "react";
 import ColorBubbleSwitcher from "@/checkpoint/components/ColorBubbleSwitcher";
 import LanguageSwitcher from "@/checkpoint/components/LanguageSwitcher";
 import EventSelector from "@/checkpoint/components/Selectors/EventSelector";
 import ThemeToggleButton from "@/checkpoint/components/ThemeToggleButton";
 import UserMenu from "@/checkpoint/components/UserMenu";
-import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { NAVIGATION_GROUPS } from "@/checkpoint/lib/experience/groups";
+import { buildGroupedNavigation } from "@/checkpoint/lib/experience/navigation-builder";
+import { resolveExperience } from "@/checkpoint/lib/experience/resolver";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
-import { createNavigation } from "../navigation.config";
 import { getRoleColor, isActiveNavItem } from "./navigation.util";
-import { UserRoleType } from "@/checkpoint/generated/graphql";
 
 export default function NavigationTablet(): JSX.Element {
   const theme = useTheme();
-  const t = useTypedTranslations("layout");
 
-  const [collapsed, _setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("checkpoint.sidebar-collapsed");
+    if (stored === "true") {
+      setCollapsed(true);
+    }
+  }, []);
+
+  const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    for (const group of Object.values(NAVIGATION_GROUPS)) {
+      initial[group.id] = !group.defaultExpanded;
+    }
+    return initial;
+  });
+  const toggleGroup = useCallback((groupId: string) => {
+    setCollapsedGroups((prev) => ({ ...prev, [groupId]: !prev[groupId] }));
+  }, []);
+
   const { isAuthenticated } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-  const { activeEvent } = useActiveEvent();
-  const role = activeEvent?.myRole ?? UserRoleType.GUEST;
+  const { activeEvent, myRoles, myPermissions, activeRole } = useActiveEvent();
 
-  const items = createNavigation(role, t, activeEvent?.id);
+  const roleIds = myRoles.map((r) => r.key);
+  const experience = resolveExperience(roleIds, myPermissions, "tablet");
+  const groups = buildGroupedNavigation(experience, activeEvent?.id);
+  const flatItems = groups.flatMap((g) => g.items);
+  const itemPaths = flatItems.map((item) => item.path);
+  const activeColor = activeRole ? getRoleColor(activeRole) : theme.palette.primary.main;
 
   return (
     <Box
@@ -92,115 +116,139 @@ export default function NavigationTablet(): JSX.Element {
 
             <Divider sx={{ my: 2 }} />
 
-            <List sx={{ flexGrow: 1 }}>
-              {items.map((item) => (
-                <ListItemButton
-                  title={collapsed ? item.label : undefined}
-                  key={item.path}
-                  disabled={item.disabled}
-                  selected={isActiveNavItem(
-                    pathname,
-                    item.path,
-                    items.map((i) => i.path),
-                  )}
-                  onClick={() => router.push(item.path)}
-                  sx={{
-                    position: "relative",
-                    borderRadius: 2,
-                    pl: 2.5,
+            <Box sx={{ flexGrow: 1 }}>
+              {groups.map((group) => {
+                const groupDef = NAVIGATION_GROUPS[group.groupId];
+                const isCollapsed = collapsedGroups[group.groupId] ?? false;
+                const canCollapse = groupDef?.collapsible ?? false;
 
-                    "&::before": {
-                      content: '""',
-                      position: "absolute",
-                      left: 6,
-                      top: "50%",
-                      // transform: "translateY(-50%)",
-                      width: 4,
-                      height: "60%",
-                      borderRadius: 999,
-                      backgroundColor: isActiveNavItem(
-                        pathname,
-                        item.path,
-                        items.map((i) => i.path),
-                      )
-                        ? "primary.main"
-                        : "transparent",
-                      // transition:
-                      //   "background-color 0.25s ease, height 0.25s ease",
+                return (
+                  <Box key={group.groupId} sx={{ mb: group.groupLabel ? 0.5 : 0 }}>
+                    {group.groupLabel && (
+                      <Stack
+                        direction="row"
+                        onClick={() => canCollapse && toggleGroup(group.groupId)}
+                        sx={{
+                          px: 1.5,
+                          py: 0.5,
+                          alignItems: "center",
+                          cursor: canCollapse ? "pointer" : "default",
+                          "&:hover": canCollapse ? { opacity: 0.7 } : undefined,
+                        }}
+                      >
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            textTransform: "uppercase",
+                            letterSpacing: "0.08em",
+                            fontWeight: 600,
+                            color: "text.secondary",
+                            flexGrow: 1,
+                          }}
+                        >
+                          {group.groupLabel}
+                        </Typography>
+                        {canCollapse && (
+                          <ExpandMoreIcon
+                            sx={{
+                              fontSize: 16,
+                              color: "text.disabled",
+                              transform: isCollapsed ? "rotate(-90deg)" : "rotate(0deg)",
+                              transition: "transform 0.2s ease",
+                            }}
+                          />
+                        )}
+                      </Stack>
+                    )}
+                    {!isCollapsed && (
+                      <List disablePadding>
+                        {group.items.map((item) => {
+                          const active = isActiveNavItem(pathname, item.path, itemPaths);
 
-                      transition: "transform 260ms cubic-bezier(.4,0,.2,1)",
-                      transformOrigin: "center",
-                      transform: isActiveNavItem(
-                        pathname,
-                        item.path,
-                        items.map((i) => i.path),
-                      )
-                        ? "translateY(-50%) scaleY(1)"
-                        : "translateY(-50%) scaleY(0)",
-                    },
+                          return (
+                            <ListItemButton
+                              title={collapsed ? item.label : undefined}
+                              key={item.path}
+                              disabled={item.disabled}
+                              selected={active}
+                              onClick={() => router.push(item.path)}
+                              sx={{
+                                position: "relative",
+                                borderRadius: 2,
+                                pl: 2.5,
+                                transition: "background-color 0.2s ease, box-shadow 0.2s ease, border 0.2s ease",
 
-                    "&.Mui-selected": {
-                      backgroundColor: "rgba(255,255,255,0.08)",
-                    },
+                                "&::before": {
+                                  content: '""',
+                                  position: "absolute",
+                                  left: 6,
+                                  top: "50%",
+                                  width: 4,
+                                  height: "60%",
+                                  borderRadius: 999,
+                                  backgroundColor: active ? activeColor : "transparent",
+                                  transition: "transform 260ms cubic-bezier(.4,0,.2,1)",
+                                  transformOrigin: "center",
+                                  transform: active
+                                    ? "translateY(-50%) scaleY(1)"
+                                    : "translateY(-50%) scaleY(0)",
+                                },
 
-                    "&:hover": {
-                      "@media (hover: hover)": {
-                        backgroundColor: "rgba(255,255,255,0.06)",
-                        boxShadow: "0 0 0 1px rgba(255,255,255,0.15)",
-                      },
-                    },
-                  }}
-                >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 36,
-                      color: isActiveNavItem(
-                        pathname,
-                        item.path,
-                        items.map((i) => i.path),
-                      )
-                        ? getRoleColor(role)
-                        : "text.secondary",
-                      transition: "color 0.25s ease",
-                    }}
-                  >
-                    <motion.div
-                      key={
-                        isActiveNavItem(
-                          pathname,
-                          item.path,
-                          items.map((i) => i.path),
-                        )
-                          ? "active"
-                          : "inactive"
-                      }
-                      initial={{ scale: 1 }}
-                      animate={
-                        isActiveNavItem(
-                          pathname,
-                          item.path,
-                          items.map((i) => i.path),
-                        )
-                          ? { scale: [1, 1.15, 1] }
-                          : { scale: 1 }
-                      }
-                      transition={{ duration: 0.35, ease: "easeOut" }}
-                    >
-                      {item.icon}
-                    </motion.div>
-                  </ListItemIcon>
+                                "&.Mui-selected": {
+                                  backgroundColor: alpha(activeColor, 0.08),
+                                  backdropFilter: "blur(12px)",
+                                  border: `1px solid ${alpha(activeColor, 0.15)}`,
+                                },
 
-                  <ListItemText
-                    primary={item.label}
-                    sx={{
-                      opacity: collapsed ? 0 : 1,
-                      transition: "opacity 0.2s ease",
-                      whiteSpace: "nowrap",
-                    }}
-                  />
-                </ListItemButton>
-              ))}
-            </List>
+                                "&.Mui-selected:hover": {
+                                  backgroundColor: alpha(activeColor, 0.14),
+                                },
+
+                                "&:hover": {
+                                  "@media (hover: hover)": {
+                                    backgroundColor: alpha(activeColor, 0.06),
+                                  },
+                                },
+                              }}
+                            >
+                              <ListItemIcon
+                                sx={{
+                                  minWidth: 36,
+                                  color: active ? activeColor : "text.secondary",
+                                  transition: "color 0.25s ease",
+                                }}
+                              >
+                                <motion.div
+                                  key={active ? "active" : "inactive"}
+                                  initial={{ scale: 1 }}
+                                  animate={active ? { scale: [1, 1.15, 1] } : { scale: 1 }}
+                                  transition={{ duration: 0.35, ease: "easeOut" }}
+                                >
+                                  {item.icon}
+                                </motion.div>
+                              </ListItemIcon>
+
+                              <ListItemText
+                                primary={item.label}
+                                sx={{
+                                  opacity: collapsed ? 0 : 1,
+                                  transition: "opacity 0.2s ease",
+                                  whiteSpace: "nowrap",
+                                  "& .MuiListItemText-primary": {
+                                    color: active ? activeColor : "text.primary",
+                                    fontWeight: active ? 700 : 400,
+                                  },
+                                }}
+                              />
+                            </ListItemButton>
+                          );
+                        })}
+                      </List>
+                    )}
+                  </Box>
+                );
+              })}
+            </Box>
           </>
         )}
 

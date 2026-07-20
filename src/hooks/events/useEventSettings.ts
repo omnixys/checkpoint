@@ -8,10 +8,10 @@ import {
   CreateEventDocument,
   type CreateEventInput,
   type CreateSettingsInput,
-  EventCategory,
-  EventVisibleTab,
   type EventAddressInput,
+  EventCategory,
   type EventTimelinePayload,
+  EventVisibleTab,
   GetEventSettingsDocument,
   InvitationApprovalMode,
   RemoveTimeLinesDocument,
@@ -21,7 +21,7 @@ import {
   type UpdateEventInput,
   type UpdateSettingsInput,
   UpdateTimeLinesDocument,
-  UserRoleType,
+  type UserRoleType,
 } from "@/checkpoint/generated/graphql";
 import useEventQuery from "@/checkpoint/hooks/events/useEventQuery";
 
@@ -80,6 +80,7 @@ const DEFAULT_SETTINGS: CreateSettingsInput = {
   approvalMode: InvitationApprovalMode.AUTO,
   allowGuestSeatSelection: false,
   allowSeatOverbooking: false,
+  scheduleTicketRelease: false,
   ticketReleaseAt: null,
   visibleTabs: [EventVisibleTab.TIMELINE, EventVisibleTab.DETAILS, EventVisibleTab.MAP],
   seatColorGroups: null,
@@ -276,6 +277,7 @@ export function useEventSettings(eventId: string) {
           __typename: "Mutation",
           updateTimeLines: {
             __typename: "EventPayload",
+            id: eventId,
             timeline,
           },
         },

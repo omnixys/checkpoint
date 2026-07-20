@@ -1,0 +1,15 @@
+query UnreadCountsByEvent($eventId: String!) {
+  unreadCountsByEvent(eventId: $eventId) {
+    id
+    eventId
+    guestUserId
+    guestName
+    channel
+    unreadCount
+    lastMessageAt
+    lastMessagePreview
+    status
+    assignedTo
+    updatedAt
+  }
+}

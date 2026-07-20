@@ -4,21 +4,51 @@
 
 import type { UserRoleType } from "@/checkpoint/generated/graphql";
 
+interface NormalizedNavPath {
+  original: string;
+  normalized: string;
+}
+
+export function normalizeNavPath(path: string): string {
+  const pathWithoutQuery = path.split(/[?#]/)[0]?.trim() ?? "";
+  const absolutePath = pathWithoutQuery.startsWith("/") ? pathWithoutQuery : `/${pathWithoutQuery}`;
+  const collapsedPath = absolutePath.replace(/\/{2,}/g, "/");
+
+  if (collapsedPath === "") {
+    return "/";
+  }
+
+  if (collapsedPath.length > 1 && collapsedPath.endsWith("/")) {
+    return collapsedPath.slice(0, -1);
+  }
+
+  return collapsedPath;
+}
+
+function isPathMatch(pathname: string, itemPath: string): boolean {
+  if (itemPath === "/") {
+    return pathname === "/";
+  }
+
+  return pathname === itemPath || pathname.startsWith(`${itemPath}/`);
+}
+
 /**
  * Determines the single active navigation path using
  * a "longest match wins" strategy.
  */
 export function getActiveNavPath(pathname: string, itemPaths: string[]): string | undefined {
-  const normalizedPathname = pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
+  const normalizedPathname = normalizeNavPath(pathname);
+  const normalizedItemPaths: NormalizedNavPath[] = itemPaths.map((path) => ({
+    original: path,
+    normalized: normalizeNavPath(path),
+  }));
 
-  const matches = itemPaths
-    .filter((path) => {
-      const fullPath = `/${path}`;
-      return normalizedPathname === fullPath || normalizedPathname.startsWith(`${fullPath}/`);
-    })
-    .sort((a, b) => b.length - a.length);
+  const matches = normalizedItemPaths
+    .filter((path) => isPathMatch(normalizedPathname, path.normalized))
+    .sort((a, b) => b.normalized.length - a.normalized.length);
 
-  return matches[0];
+  return matches[0]?.original;
 }
 
 /**
@@ -36,10 +66,6 @@ export function isActiveNavItem(
 /* Role-based UI Styling */
 /* ------------------------------------------------------------------ */
 
-/**
- * Returns the primary accent color for a given event role.
- * Used for active icons, pills, highlights.
- */
 export function getRoleColor(role: UserRoleType): string {
   switch (role) {
     case "ADMIN":

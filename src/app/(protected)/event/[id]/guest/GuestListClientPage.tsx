@@ -22,16 +22,15 @@ import {
 } from "@mui/material";
 import { red } from "@mui/material/colors";
 import { motion } from "framer-motion";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useParams } from "next/navigation";
+import { useMemo, useState } from "react";
 import type { Filter } from "@/checkpoint/components/guests/types";
 import RefreshArcButton from "@/checkpoint/components/RefreshArcButton";
 import { BackToEventDetailButton } from "@/checkpoint/components/utils/back-to-event-detail-button";
 import { VisionEmblaCarousel } from "@/checkpoint/components/vision/VisionCarousel";
 import { useSecurityGuests } from "@/checkpoint/hooks/user/useSecurityGuests";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { env } from "@/checkpoint/lib/env";
-import { useAuth } from "@/checkpoint/providers/AuthProvider";
+import RouteGuard from "@/checkpoint/components/guard/RouteGuard";
 import { useDevice } from "@/checkpoint/providers/DeviceProvider";
 
 /* ------------------------------------------------------------------ */
@@ -47,8 +46,6 @@ export default function GuestListClientPage() {
 
   const { isMobile, isTablet, isDesktop } = useDevice();
 
-  const { isAuthenticated } = useAuth();
-  const router = useRouter();
   const { id } = useParams();
 
   const eventId = id as string;
@@ -66,16 +63,6 @@ export default function GuestListClientPage() {
 
   const { guests, reload } = useSecurityGuests(eventId);
   const [axis, _setAxis] = useState<"x" | "y">("x");
-
-  /* ------------------------------------------------------------------ */
-  /* Redirect Guard */
-  /* ------------------------------------------------------------------ */
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push(env.CHECKPOINT_BASE_PATH);
-    }
-  }, [isAuthenticated, router]);
 
   /* ------------------------------------------------------------------ */
   /* Counters */
@@ -170,6 +157,7 @@ export default function GuestListClientPage() {
   /* ------------------------------------------------------------------ */
 
   return (
+    <RouteGuard featureId="guests">
     <Container maxWidth={isMobile ? false : "lg"} disableGutters={isMobile}>
       <Stack spacing={3} sx={{ px: isMobile ? 1.5 : 0, minWidth: 0 }}>
         <BackToEventDetailButton />
@@ -630,5 +618,6 @@ export default function GuestListClientPage() {
         </Popover>
       </Stack>
     </Container>
+    </RouteGuard>
   );
 }

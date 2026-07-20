@@ -1,0 +1,25 @@
+mutation CreateSupportConversation(
+  $eventId: String!
+  $guestName: String!
+  $firstMessage: String!
+  $channel: ConversationChannel!
+  $invitationId: String
+) {
+  createSupportConversation(
+    eventId: $eventId
+    guestName: $guestName
+    firstMessage: $firstMessage
+    channel: $channel
+    invitationId: $invitationId
+  ) {
+    id
+    eventId
+    invitationId
+    guestName
+    status
+    priority
+    channel
+    createdAt
+    updatedAt
+  }
+}

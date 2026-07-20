@@ -1,5 +1,6 @@
 mutation RemoveTimeLines($eventId: ID!, $input: [RemoveTimelineInput!]!) {
   removeTimeLines(eventId: $eventId, input: $input) {
+    id
     timeline {
       ...EventTimeline
     }

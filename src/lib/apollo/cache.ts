@@ -1,6 +1,6 @@
 import { InMemoryCache, type TypePolicies } from "@apollo/client";
 
-const typePolicies: TypePolicies = {
+export const typePolicies: TypePolicies = {
   Query: {
     fields: {
       seatLayout: {
@@ -32,8 +32,18 @@ const typePolicies: TypePolicies = {
         merge: false,
       },
 
-      eventInvitations: {
+      eventInvitation: {
         keyArgs: ["eventId"],
+        merge: false,
+      },
+
+      eventRoles: {
+        keyArgs: ["eventId", "includeArchived"],
+        merge: false,
+      },
+
+      eventPermissions: {
+        keyArgs: false,
         merge: false,
       },
 
@@ -55,6 +65,12 @@ const typePolicies: TypePolicies = {
     keyFields: ["id"],
     fields: {
       userRoles: {
+        merge: false,
+      },
+      roleDefinitions: {
+        merge: false,
+      },
+      myAccess: {
         merge: false,
       },
       timeline: {
@@ -88,6 +104,18 @@ const typePolicies: TypePolicies = {
   },
 
   UserRolePayload: {
+    keyFields: false,
+  },
+
+  EventRoleDefinitionPayload: {
+    keyFields: ["id"],
+  },
+
+  EventPermissionPayload: {
+    keyFields: ["key"],
+  },
+
+  EventAccessPayload: {
     keyFields: false,
   },
 
@@ -163,6 +191,39 @@ const typePolicies: TypePolicies = {
 
   User: {
     keyFields: ["id"],
+  },
+
+  // ── Communication / Support ───────────────────────
+
+  SupportConversation: {
+    keyFields: ["id"],
+    fields: {
+      messages: {
+        merge: false,
+      },
+    },
+  },
+
+  SupportMessage: {
+    keyFields: ["id"],
+  },
+
+  QuickReply: {
+    keyFields: ["id"],
+  },
+
+  // ── Internal Communication ────────────────────────
+
+  InternalConversation: {
+    keyFields: ["id"],
+  },
+
+  InternalMessage: {
+    keyFields: ["id"],
+  },
+
+  InternalParticipant: {
+    keyFields: false,
   },
 };
 

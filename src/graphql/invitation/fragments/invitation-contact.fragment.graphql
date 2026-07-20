@@ -1,4 +1,5 @@
 fragment InvitationContact on InvitationPayload {
+  id
   phoneNumbers {
     ...PhoneNumber
   }

@@ -5,7 +5,22 @@ import { getLogger } from "@/checkpoint/utils/logger";
 
 const logger = getLogger("ApolloError");
 
+function isAbortError(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false;
+  if (error instanceof Error && error.name === "AbortError") return true;
+  if (typeof (error as any).name === "string" && (error as any).name === "AbortError") return true;
+  return false;
+}
+
 export function handleApolloError(error: unknown, operationName?: string): void {
+  if (isAbortError(error)) {
+    logger.warn("GraphQL operation aborted", {
+      operationName,
+      message: error instanceof Error ? error.message : String(error),
+    });
+    return;
+  }
+
   const auth = getAuthContext();
   const appError = notificationService.capture(error, {
     source: "apollo",

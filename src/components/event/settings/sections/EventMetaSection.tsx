@@ -20,7 +20,11 @@ import { useState } from "react";
 import { centerStyle } from "@/checkpoint/app/(protected)/event/[id]/settings/EventSettingsClientPage";
 import OwnerTransferDialog from "@/checkpoint/components/event/settings/dialog/OwnerTransferDialog";
 import type { CreateEventInput, GetSubEventNameListQuery } from "@/checkpoint/generated/graphql";
-import { EventCategory, EventVisibleTab, InvitationApprovalMode } from "@/checkpoint/generated/graphql";
+import {
+  EventCategory,
+  EventVisibleTab,
+  InvitationApprovalMode,
+} from "@/checkpoint/generated/graphql";
 import { useMutationHandler } from "@/checkpoint/hooks/core/useMutationHandler";
 import useSubEventListQuery from "@/checkpoint/hooks/events/useEventChildrenQuery";
 import useUserQuery from "@/checkpoint/hooks/user/useUserQuery";
@@ -118,8 +122,9 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
         allowSeatOverbooking: false,
         approvalMode: InvitationApprovalMode.AUTO,
         maxPlusOnes: 1,
-        requireApprovalForPlusOnes: true,
+        requireApprovalForPlusOnes: false,
         rsvpDeadline: new Date(Date.now() + 1000 * 60 * 60 * 5).toISOString(),
+        scheduleTicketRelease: false,
         ticketReleaseAt: null,
         seatColorGroups: null,
         visibleTabs: [EventVisibleTab.TIMELINE, EventVisibleTab.DETAILS, EventVisibleTab.MAP],

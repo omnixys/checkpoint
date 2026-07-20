@@ -68,12 +68,14 @@ function normalizeSettings(settings: SettingsType) {
 
     approvalMode: fullSettings.approvalMode ?? InvitationApprovalMode.MANUAL,
     maxPlusOnes: fullSettings.maxPlusOnes ?? 0,
-    requireApprovalForPlusOnes: fullSettings.requireApprovalForPlusOnes ?? true,
+    requireApprovalForPlusOnes: fullSettings.requireApprovalForPlusOnes ?? false,
     rsvpDeadline: fullSettings.rsvpDeadline ?? null,
 
     allowGuestSeatSelection: fullSettings.allowGuestSeatSelection ?? false,
     allowSeatOverbooking: fullSettings.allowSeatOverbooking ?? false,
     invitedByOptions: fullSettings.invitedByOptions ?? [],
+    scheduleTicketRelease:
+      fullSettings.scheduleTicketRelease ?? Boolean(fullSettings.ticketReleaseAt),
     ticketReleaseAt: fullSettings.ticketReleaseAt ?? null,
   };
 }
@@ -98,6 +100,7 @@ export default function EventSettingsSection({ settings, actions }: Props) {
   const [local, setLocal] = useState<SettingsType>(() => normalizeSettings(settings));
   const [dirty, setDirty] = useState(false);
   const [optionInput, setOptionInput] = useState("");
+  const automaticallyApprovePlusOnes = local.requireApprovalForPlusOnes === false;
 
   useEffect(() => {
     setLocal(normalizeSettings(settings));
@@ -125,7 +128,11 @@ export default function EventSettingsSection({ settings, actions }: Props) {
       maxPlusOnes: local.maxPlusOnes,
       requireApprovalForPlusOnes: local.requireApprovalForPlusOnes,
       rsvpDeadline: local.rsvpDeadline ? new Date(local.rsvpDeadline) : null,
-      ticketReleaseAt: local.ticketReleaseAt ? new Date(local.ticketReleaseAt) : null,
+      scheduleTicketRelease: local.scheduleTicketRelease,
+      ticketReleaseAt:
+        local.scheduleTicketRelease && local.ticketReleaseAt
+          ? new Date(local.ticketReleaseAt)
+          : null,
       allowGuestSeatSelection: local.allowGuestSeatSelection,
       allowSeatOverbooking: local.allowSeatOverbooking,
       invitedByOptions: normalizeOptionList(local.invitedByOptions ?? []),
@@ -146,6 +153,15 @@ export default function EventSettingsSection({ settings, actions }: Props) {
       "invitedByOptions",
       (local.invitedByOptions ?? []).filter((option) => option !== value),
     );
+  };
+
+  const updateTicketReleaseScheduling = (enabled: boolean) => {
+    setLocal((prev) => ({
+      ...prev,
+      scheduleTicketRelease: enabled,
+      ticketReleaseAt: enabled ? prev.ticketReleaseAt : null,
+    }));
+    setDirty(true);
   };
 
   const panelSx = {
@@ -298,8 +314,8 @@ export default function EventSettingsSection({ settings, actions }: Props) {
             <FormControlLabel
               control={
                 <Switch
-                  checked={Boolean(local.requireApprovalForPlusOnes)}
-                  onChange={(e) => update("requireApprovalForPlusOnes", e.target.checked)}
+                  checked={automaticallyApprovePlusOnes}
+                  onChange={(e) => update("requireApprovalForPlusOnes", !e.target.checked)}
                 />
               }
               label="Automatically Approve Plus Ones"
@@ -482,20 +498,41 @@ export default function EventSettingsSection({ settings, actions }: Props) {
               sx={inputSx}
             />
           </Stack>
-          <TextField
-            fullWidth={true}
-            label="Ticket Release At"
-            type="datetime-local"
-            value={datetimeValue(local.ticketReleaseAt as string | null | undefined)}
-            onChange={(e) =>
-              update(
-                "ticketReleaseAt" as keyof SettingsType,
-                e.target.value ? new Date(e.target.value).toISOString() : null,
-              )
-            }
-            helperText="If set, ticket/QR generation is delayed until this time instead of happening immediately on approval."
-            sx={inputSx}
-          />
+          <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={Boolean(local.scheduleTicketRelease)}
+                  onChange={(e) => updateTicketReleaseScheduling(e.target.checked)}
+                />
+              }
+              label="Schedule Ticket Release"
+              sx={{ minWidth: 220 }}
+            />
+            <TextField
+              disabled={!local.scheduleTicketRelease}
+              fullWidth={true}
+              label="Ticket Release At"
+              type="datetime-local"
+              value={
+                local.scheduleTicketRelease
+                  ? datetimeValue(local.ticketReleaseAt as string | null | undefined)
+                  : ""
+              }
+              onChange={(e) =>
+                update(
+                  "ticketReleaseAt" as keyof SettingsType,
+                  e.target.value ? new Date(e.target.value).toISOString() : null,
+                )
+              }
+              helperText={
+                local.scheduleTicketRelease
+                  ? "Confirmation is held until this date/time."
+                  : "Confirmation is sent immediately on approval."
+              }
+              sx={inputSx}
+            />
+          </Stack>
         </Stack>
       </Box>
 

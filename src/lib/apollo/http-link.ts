@@ -53,18 +53,20 @@ export function createHttpLinkWithMiddleware(getToken: () => string | null): Apo
   const loggingLink = new ApolloLink((operation, forward) => {
     const start = Date.now();
 
-    logger.debug("[HTTP] →", {
+   console.log("[HTTP] →", {
       operation: operation.operationName,
       requestId: operation.getContext().omnixys?.requestId,
+      variables: operation.variables
     });
 
     return new Observable((observer) => {
       const sub = forward(operation).subscribe({
         next: (result) => {
-          logger.debug("[HTTP] ←", {
+         console.log("[HTTP] ←", {
             operation: operation.operationName,
             durationMs: Date.now() - start,
             requestId: operation.getContext().omnixys?.requestId,
+            value: result,
           });
 
           observer.next(result);

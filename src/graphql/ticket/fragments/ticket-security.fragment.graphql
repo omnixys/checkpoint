@@ -1,4 +1,5 @@
 fragment TicketSecurity on TicketPayload {
+  id
   deviceId
   devicePublicKey
   deviceActivationAt

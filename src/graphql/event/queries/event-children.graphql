@@ -9,6 +9,7 @@ query GetSubEventNameList($eventId: ID!) {
     id
     name
     settings {
+      id
       startsAt
       endsAt
     }

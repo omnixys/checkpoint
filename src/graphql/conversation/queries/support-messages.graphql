@@ -1,0 +1,15 @@
+query SupportMessages($conversationId: String!, $limit: Float) {
+  supportMessages(conversationId: $conversationId, limit: $limit) {
+    id
+    conversationId
+    direction
+    channel
+    fromUserId
+    fromGuest
+    body
+    mediaUrl
+    mimeType
+    status
+    createdAt
+  }
+}

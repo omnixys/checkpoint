@@ -5,8 +5,9 @@ import { useMutation } from "@apollo/client/react";
 import { Box, CircularProgress, Dialog } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { motion } from "framer-motion";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useCallback, useState } from "react";
+import RouteGuard from "@/checkpoint/components/guard/RouteGuard";
 import CreateTicketDialog from "@/checkpoint/components/ticket/dialog/CreateTicketDialog";
 import DeleteTicketDialog from "@/checkpoint/components/ticket/dialog/DeleteTicketDialog";
 import TicketHeader from "@/checkpoint/components/ticket/TicketHeader";
@@ -17,14 +18,11 @@ import {
   type RevokeTicketMutationVariables,
 } from "@/checkpoint/generated/graphql";
 import useTicketQuery from "@/checkpoint/hooks/ticket/useTicketQuery";
-import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { getLogger } from "@/checkpoint/utils/logger";
 
 export default function TicketClientPage() {
   const logger = getLogger("TicketPage");
 
-  useRouter();
-  useAuth();
   const theme = useTheme();
   const params = useParams();
   const eventId = params.id as string;
@@ -90,6 +88,7 @@ export default function TicketClientPage() {
    * RENDER
    * --------------------------------------------------------- */
   return (
+    <RouteGuard featureId="tickets">
     <Box
       component={motion.div}
       initial={{ opacity: 0 }}
@@ -125,5 +124,6 @@ export default function TicketClientPage() {
         <CreateTicketDialog onCancel={() => setOpenCreate(false)} onConfirm={() => {}} />
       </Dialog>
     </Box>
+    </RouteGuard>
   );
 }

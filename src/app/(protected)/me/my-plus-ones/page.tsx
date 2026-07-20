@@ -24,6 +24,7 @@ import type {
   UpdatePlusOneInput,
 } from "@/checkpoint/app/(protected)/me/my-plus-ones/types/plusOne.types";
 import type { CreatePlusOneInput } from "@/checkpoint/generated/graphql";
+import RouteGuard from "@/checkpoint/components/guard/RouteGuard";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 const MotionBox = motion.create(Box);
@@ -77,6 +78,7 @@ export default function MyPlusOnesPage() {
   };
 
   return (
+    <RouteGuard featureId="my-plus-ones">
     <MotionBox
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
@@ -363,5 +365,6 @@ export default function MyPlusOnesPage() {
         onUpdate={handleUpdate}
       />
     </MotionBox>
+    </RouteGuard>
   );
 }

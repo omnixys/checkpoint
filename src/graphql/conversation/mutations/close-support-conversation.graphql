@@ -1,0 +1,8 @@
+mutation CloseSupportConversation($conversationId: String!) {
+  closeSupportConversation(conversationId: $conversationId) {
+    id
+    status
+    updatedAt
+    closedAt
+  }
+}

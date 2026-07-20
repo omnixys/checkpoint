@@ -1,5 +1,6 @@
 "use client";
 
+import AppShellSupportChat from "@/checkpoint/components/support/chat/AppShellSupportChat";
 import { Box } from "@mui/material";
 import type React from "react";
 import NavigationDesktop from "./navigation/Navigation.desktop";
@@ -40,6 +41,7 @@ export default function AppShellDesktop({ children }: { children: React.ReactNod
       >
         {children}
       </Box>
+      <AppShellSupportChat />
     </Box>
   );
 }

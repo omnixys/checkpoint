@@ -1,5 +1,7 @@
 "use client";
 
+import { gql } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import type React from "react";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type {
@@ -8,6 +10,11 @@ import type {
   UserRoleType,
 } from "@/checkpoint/generated/graphql";
 import useEventQuery from "@/checkpoint/hooks/events/useEventQuery";
+import {
+  type EventPermissionKey,
+  permissionsForLegacyRole,
+  uniquePermissions,
+} from "@/checkpoint/lib/rbac/event-permissions";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import {
   clearActiveEventCookie,
@@ -23,6 +30,16 @@ interface ActiveEventContextValue {
   activeEvent?: GetActiveEventQuery["event"] | undefined;
   activeEventId?: string | undefined;
   activeRole?: UserRoleType | undefined;
+  myRoles: Array<{
+    id: string;
+    key: string;
+    name: string;
+    color?: string | null;
+    icon?: string | null;
+    systemKey?: string | null;
+  }>;
+  myPermissions: EventPermissionKey[];
+  can: (permission: EventPermissionKey) => boolean;
   loading: boolean;
 
   selectEvent: (eventId: string) => void;
@@ -38,6 +55,38 @@ const ActiveEventContext = createContext<ActiveEventContextValue | undefined>(un
  * Storage
  * ------------------------------------------------------------------- */
 const STORAGE_KEY = "checkpoint.activeEventId";
+
+const MY_EVENT_ACCESS_QUERY = gql`
+  query MyEventAccess($eventId: ID!) {
+    myEventAccess(eventId: $eventId) {
+      eventId
+      userId
+      permissions
+      roles {
+        id
+        key
+        name
+        color
+        icon
+        systemKey
+      }
+    }
+  }
+`;
+
+type EventWithAccess = NonNullable<GetActiveEventQuery["event"]> & {
+  myAccess?: {
+    roles?: ActiveEventContextValue["myRoles"] | null;
+    permissions?: string[] | null;
+  } | null;
+};
+
+interface MyEventAccessQueryData {
+  myEventAccess: {
+    roles: ActiveEventContextValue["myRoles"];
+    permissions: string[];
+  };
+}
 
 /* ---------------------------------------------------------------------
  * Provider
@@ -69,9 +118,16 @@ export function ActiveEventProvider({ children }: { children: React.ReactNode })
   const { myEventList, activeEvent, myEventListLoading, activeEventLoading } = useEventQuery({
     eventId: activeEventId,
     loadActiveEvent: !!activeEventId,
-    loadMyEventList: !activeEventId,
+    loadMyEventList: true,
     isAuthenticated,
   });
+  const { data: accessData, loading: activeAccessLoading } = useQuery<MyEventAccessQueryData>(
+    MY_EVENT_ACCESS_QUERY,
+    {
+      variables: { eventId: activeEventId ?? "" },
+      skip: !activeEventId || !isAuthenticated,
+    },
+  );
 
   /* -------------------------------------------------
    * Select event
@@ -135,11 +191,29 @@ export function ActiveEventProvider({ children }: { children: React.ReactNode })
    * Derived role
    * ------------------------------------------------- */
   const activeRole = activeEvent?.myRole ?? undefined;
+  const activeEventWithAccess = activeEvent as EventWithAccess | undefined;
+  const myRoles = useMemo(
+    () => accessData?.myEventAccess.roles ?? activeEventWithAccess?.myAccess?.roles ?? [],
+    [accessData, activeEventWithAccess],
+  );
+  const myPermissions = useMemo(
+    () =>
+      uniquePermissions(
+        accessData?.myEventAccess.permissions ??
+          activeEventWithAccess?.myAccess?.permissions ??
+          permissionsForLegacyRole(activeRole),
+      ),
+    [accessData, activeEventWithAccess, activeRole],
+  );
+  const can = useCallback(
+    (permission: EventPermissionKey) => myPermissions.includes(permission),
+    [myPermissions],
+  );
 
   /* -------------------------------------------------
    * Loading
    * ------------------------------------------------- */
-  const loading = myEventListLoading || activeEventLoading;
+  const loading = myEventListLoading || activeEventLoading || activeAccessLoading;
 
   /* -------------------------------------------------
    * Context value
@@ -150,11 +224,25 @@ export function ActiveEventProvider({ children }: { children: React.ReactNode })
       activeEvent,
       activeEventId,
       activeRole,
+      myRoles,
+      myPermissions,
+      can,
       loading,
       selectEvent,
       clearEvent,
     }),
-    [myEventList, activeEvent, activeEventId, activeRole, loading, selectEvent, clearEvent],
+    [
+      myEventList,
+      activeEvent,
+      activeEventId,
+      activeRole,
+      myRoles,
+      myPermissions,
+      can,
+      loading,
+      selectEvent,
+      clearEvent,
+    ],
   );
 
   return <ActiveEventContext.Provider value={value}>{children}</ActiveEventContext.Provider>;

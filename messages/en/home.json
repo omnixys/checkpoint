@@ -5,7 +5,8 @@
   },
   "auth": {
     "login": "Login",
-    "redeem": "Redeem invitation"
+    "redeem": "Redeem invitation",
+    "selectEventFirst": "Please select an event first"
   },
   "header": {
     "welcome": "Welcome, {name}",

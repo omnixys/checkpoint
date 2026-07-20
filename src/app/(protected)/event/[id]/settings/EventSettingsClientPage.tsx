@@ -2,6 +2,7 @@
 
 import { Box, CircularProgress, Stack } from "@mui/material";
 import { useParams } from "next/navigation";
+import RouteGuard from "@/checkpoint/components/guard/RouteGuard";
 import EventAddressSection from "@/checkpoint/components/event/settings/address/EventAddressSection";
 import EventSettingsLayout from "@/checkpoint/components/event/settings/EventSettingsLayout";
 import EventMetaSection from "@/checkpoint/components/event/settings/sections/EventMetaSection";
@@ -54,6 +55,7 @@ export default function EventSettingsClientPage() {
   }
 
   return (
+    <RouteGuard featureId="settings">
     <Stack spacing={2}>
       <EventSettingsLayout
         sections={{
@@ -62,7 +64,9 @@ export default function EventSettingsClientPage() {
           timeline: (
             <TimelineSection eventName={meta.name} timeline={timeline ?? []} actions={actions} />
           ),
-          roles: <RolesSection roles={roles} meta={{ owner: meta?.owner }} actions={actions} />,
+          roles: (
+            <RolesSection roles={roles} meta={{ id: meta.id, owner: meta.owner }} />
+          ),
           tabs: <EventTabsVisibilitySection settings={settings} actions={actions} />,
           seatColors: (
             <SeatColorGroupSection
@@ -77,5 +81,6 @@ export default function EventSettingsClientPage() {
         }}
       />
     </Stack>
+    </RouteGuard>
   );
 }

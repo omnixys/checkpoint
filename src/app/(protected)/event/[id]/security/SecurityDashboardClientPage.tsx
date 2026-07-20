@@ -2,8 +2,8 @@
 
 import { Box, Grid, Stack } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { useRouter } from "next/navigation";
 import React, { type JSX } from "react";
+import RouteGuard from "@/checkpoint/components/guard/RouteGuard";
 import { mockAlerts } from "@/checkpoint/components/security/mock/mockAlerts";
 import { mockConnectivity } from "@/checkpoint/components/security/mock/mockConnectivity";
 import { mockEntries, mockExits } from "@/checkpoint/components/security/mock/mockEntries";
@@ -21,8 +21,6 @@ import RightPanel from "@/checkpoint/components/security/panels/RightPanel";
 import SecurityTabs from "@/checkpoint/components/security/SecurityTabs";
 import VisionOsStickyHeader from "@/checkpoint/components/security/VisionOSStickyHeader";
 import { BackToEventDetailButton } from "@/checkpoint/components/utils/back-to-event-detail-button";
-import { env } from "@/checkpoint/lib/env";
-import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { useDevice } from "@/checkpoint/providers/DeviceProvider";
 
 /* ------------------------------------------------------------------
@@ -36,14 +34,8 @@ export default function SecurityDashboardClientPage(): JSX.Element {
   const { isTablet, isMobile, isDesktop } = useDevice();
   const [tab, setTab] = React.useState("overview");
 
-  const router = useRouter();
-  const { isAuthenticated } = useAuth();
-
-  if (!isAuthenticated) {
-    router.push(env.CHECKPOINT_BASE_PATH);
-  }
-
   return (
+    <RouteGuard featureId="security">
     <Box sx={{ p: isMobile ? 1.5 : 3, minWidth: 0 }}>
       <Stack spacing={3}>
         {/* Back Button */}
@@ -135,5 +127,6 @@ export default function SecurityDashboardClientPage(): JSX.Element {
         )}
       </Stack>
     </Box>
+    </RouteGuard>
   );
 }

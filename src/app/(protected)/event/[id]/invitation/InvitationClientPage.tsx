@@ -3,6 +3,7 @@
 import { Box, useMediaQuery, useTheme } from "@mui/material";
 import { useParams } from "next/navigation";
 import { useRef } from "react";
+import RouteGuard from "@/checkpoint/components/guard/RouteGuard";
 import InvitationBulkApproveDialog from "@/checkpoint/components/invitation/dialogs/InvitationBulkApproveDialog";
 import InvitationBulkSendDialog from "@/checkpoint/components/invitation/dialogs/InvitationBulkSendDialog";
 import InvitationCreateDialog from "@/checkpoint/components/invitation/dialogs/InvitationCreateDialog";
@@ -39,6 +40,7 @@ export default function InvitationClientPage({ countries }: { countries: Calling
   const { visible } = useScrollTopButton();
 
   return (
+    <RouteGuard featureId="invitations">
     <Box
       ref={scrollRef}
       sx={{
@@ -74,5 +76,6 @@ export default function InvitationClientPage({ countries }: { countries: Calling
         <InvitationDetailDialog logic={logic} />
       )}
     </Box>
+    </RouteGuard>
   );
 }

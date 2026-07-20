@@ -3,11 +3,13 @@
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import EventIcon from "@mui/icons-material/Event";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
-import { Box, Button, Card, CardActionArea, Stack, Typography, useTheme } from "@mui/material";
+import { Box, Button, Card, CardActionArea, Stack, Tooltip, Typography, useTheme } from "@mui/material";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import type { JSX } from "react";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
+import { EventPermissionKey } from "@/checkpoint/lib/rbac/event-permissions";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 
@@ -17,10 +19,18 @@ const EVENT_ID = env.EVENT_ID;
 export default function HomePage(): JSX.Element {
   const theme = useTheme();
   const { isAuthenticated, currentUser } = useAuth();
-  const { activeEvent } = useActiveEvent();
+  const { activeEvent, can } = useActiveEvent();
   const t = useTypedTranslations("home");
 
-  const role = activeEvent?.myRole ?? "GUEST";
+  const [rsvpUrl, setRsvpUrl] = useState("#");
+  const [hasEventId, setHasEventId] = useState(false);
+
+  useEffect(() => {
+    if (EVENT_ID) {
+      setRsvpUrl(`${basePath}rsvp?eventId=${EVENT_ID}`);
+      setHasEventId(true);
+    }
+  }, []);
 
   /* ------------------------------------------------------------------
    * NOT AUTHENTICATED
@@ -59,11 +69,15 @@ export default function HomePage(): JSX.Element {
             </Button>
           </Link>
 
-          <Link href={`${basePath}rsvp?eventId=${EVENT_ID}`}>
-            <Button size="large" variant="text" fullWidth={true}>
-              {t("auth.redeem")}
-            </Button>
-          </Link>
+          <Tooltip title={!hasEventId ? t("auth.selectEventFirst") : ""}>
+            <span>
+              <Link href={rsvpUrl}>
+                <Button size="large" variant="text" fullWidth={true} disabled={!hasEventId}>
+                  {t("auth.redeem")}
+                </Button>
+              </Link>
+            </span>
+          </Tooltip>
         </Stack>
       </Stack>
     );
@@ -80,19 +94,19 @@ export default function HomePage(): JSX.Element {
   };
 
   const secondaryAction =
-    role === "GUEST"
+    can(EventPermissionKey.ScanTickets)
+      ? {
+          label: t("actions.scan"),
+          href: `${basePath}scan`,
+          icon: <QrCodeScannerIcon />,
+        }
+      : can(EventPermissionKey.ViewSelfTicket)
       ? {
           label: t("actions.tickets"),
           href: `${basePath}me/my-qr`,
           icon: <ConfirmationNumberIcon />,
         }
-      : role === "SECURITY"
-        ? {
-            label: t("actions.scan"),
-            href: `${basePath}scan`,
-            icon: <QrCodeScannerIcon />,
-          }
-        : null;
+      : null;
 
   return (
     <Box sx={{ px: 3, py: 4, maxWidth: 860, mx: "auto" }}>

@@ -69,6 +69,6 @@ export const env = {
 /**
  * Debug output (runtime safe)
  */
-if (process.env.NODE_ENV !== "production") {
-  console.log(env);
-}
+// if (process.env.NODE_ENV !== "production") {
+//   console.log(env);
+// }

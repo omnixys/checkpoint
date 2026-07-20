@@ -11,6 +11,17 @@ describe("global Apollo error link", () => {
     expect(createAppErrorLink()).toBeInstanceOf(ErrorLink);
   });
 
+  it("skips AbortError without capturing", () => {
+    const listener = vi.fn();
+    const unsubscribe = notificationService.subscribe(listener);
+    const abortError = new DOMException("The operation was aborted", "AbortError");
+
+    handleApolloError(abortError, "InternalConversations");
+
+    expect(listener).not.toHaveBeenCalled();
+    unsubscribe();
+  });
+
   it("dispatches canonical global actions with GraphQL diagnostics", () => {
     const listener = vi.fn();
     const unsubscribe = notificationService.subscribe(listener);

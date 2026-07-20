@@ -1,0 +1,11 @@
+query InternalMessages($conversationId: String!, $limit: Float) {
+  internalMessages(conversationId: $conversationId, limit: $limit) {
+    id
+    conversationId
+    senderId
+    body
+    priority
+    createdAt
+    editedAt
+  }
+}

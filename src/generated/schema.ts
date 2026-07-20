@@ -114,6 +114,17 @@ export type ApproveInvitationInput = {
   seatId: InputMaybe<Scalars['ID']['input']>;
 };
 
+export type ArchiveEventRoleInput = {
+  eventId: Scalars['ID']['input'];
+  roleId: Scalars['ID']['input'];
+};
+
+export type AssignEventRoleInput = {
+  eventId: Scalars['ID']['input'];
+  roleId: Scalars['ID']['input'];
+  userId: Scalars['ID']['input'];
+};
+
 export type AssignSeatInput = {
   guestId: InputMaybe<Scalars['ID']['input']>;
   invitationId: InputMaybe<Scalars['String']['input']>;
@@ -274,6 +285,30 @@ export type Continent = {
   subregion: Array<Subregion>;
 };
 
+export enum ConversationChannel {
+  EMAIL = 'EMAIL',
+  FACEBOOK_MESSENGER = 'FACEBOOK_MESSENGER',
+  PUSH_CHAT = 'PUSH_CHAT',
+  SIGNAL = 'SIGNAL',
+  SMS = 'SMS',
+  TELEGRAM = 'TELEGRAM',
+  WEBCHAT = 'WEBCHAT',
+  WHATSAPP = 'WHATSAPP'
+}
+
+export enum ConversationPriority {
+  HIGH = 'HIGH',
+  LOW = 'LOW',
+  NORMAL = 'NORMAL',
+  URGENT = 'URGENT'
+}
+
+export enum ConversationStatus {
+  ASSIGNED = 'ASSIGNED',
+  CLOSED = 'CLOSED',
+  OPEN = 'OPEN'
+}
+
 /**
  * =====================================================
  * COUNTRY
@@ -333,6 +368,15 @@ export type CreateEventInput = {
   parentId: InputMaybe<Scalars['ID']['input']>;
   settings: CreateSettingsInput;
   tags: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+export type CreateEventRoleInput = {
+  color: InputMaybe<Scalars['String']['input']>;
+  description: InputMaybe<Scalars['String']['input']>;
+  eventId: Scalars['ID']['input'];
+  icon: InputMaybe<Scalars['String']['input']>;
+  key: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
 };
 
 export type CreateMediaDto = {
@@ -418,6 +462,7 @@ export type CreateSettingsInput = {
   requireApprovalForPlusOnes: Scalars['Boolean']['input'];
   rotateSeconds: Scalars['Int']['input'];
   rsvpDeadline: InputMaybe<Scalars['DateTime']['input']>;
+  scheduleTicketRelease: Scalars['Boolean']['input'];
   seatColorGroups: InputMaybe<Array<SeatColorGroupInput>>;
   startsAt: InputMaybe<Scalars['DateTime']['input']>;
   ticketReleaseAt: InputMaybe<Scalars['DateTime']['input']>;
@@ -522,6 +567,11 @@ export type CustomerPayload = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type DeleteEventRoleInput = {
+  eventId: Scalars['ID']['input'];
+  roleId: Scalars['ID']['input'];
+};
+
 export type DuplicateTableInput = {
   offsetX: Scalars['Float']['input'];
   offsetY: Scalars['Float']['input'];
@@ -548,6 +598,14 @@ export type EmployeePayload = {
   role: Maybe<Scalars['String']['output']>;
   salary: Maybe<Scalars['Float']['output']>;
   updatedAt: Scalars['DateTime']['output'];
+};
+
+export type EventAccessPayload = {
+  __typename: 'EventAccessPayload';
+  eventId: Scalars['ID']['output'];
+  permissions: Array<Scalars['String']['output']>;
+  roles: Array<EventRoleDefinitionPayload>;
+  userId: Scalars['ID']['output'];
 };
 
 export type EventAddress = {
@@ -607,16 +665,69 @@ export type EventPayload = {
   logoMedia: Maybe<MediaPayload>;
   logoMediaId: Maybe<Scalars['ID']['output']>;
   media: Array<MediaPayload>;
+  myAccess: Maybe<EventAccessPayload>;
   myRole: Maybe<UserRoleType>;
   name: Scalars['String']['output'];
   owner: Scalars['String']['output'];
   parentId: Maybe<Scalars['String']['output']>;
   path: Maybe<Scalars['String']['output']>;
+  roleDefinitions: Array<EventRoleDefinitionPayload>;
   settings: Maybe<SettingsPayload>;
   tags: Array<Scalars['String']['output']>;
   timeline: Array<EventTimelinePayload>;
   updatedAt: Maybe<Scalars['DateTime']['output']>;
   userRoles: Array<UserRolePayload>;
+};
+
+export type EventPermissionPayload = {
+  __typename: 'EventPermissionPayload';
+  category: Scalars['String']['output'];
+  description: Scalars['String']['output'];
+  key: Scalars['String']['output'];
+  label: Scalars['String']['output'];
+  premiumFeatureKey: Maybe<Scalars['String']['output']>;
+};
+
+export type EventRoleDefinitionPayload = {
+  __typename: 'EventRoleDefinitionPayload';
+  archivedAt: Maybe<Scalars['DateTime']['output']>;
+  assignedUserCount: Scalars['Int']['output'];
+  color: Maybe<Scalars['String']['output']>;
+  description: Maybe<Scalars['String']['output']>;
+  eventId: Scalars['ID']['output'];
+  icon: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  key: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  permissions: Array<Scalars['String']['output']>;
+  system: Scalars['Boolean']['output'];
+  systemKey: Maybe<Scalars['String']['output']>;
+};
+
+export type EventStaffPayload = {
+  __typename: 'EventStaffPayload';
+  email: Maybe<Scalars['String']['output']>;
+  permissions: Array<Scalars['String']['output']>;
+  personalInfo: Maybe<EventStaffPersonalInfo>;
+  phoneNumbers: Maybe<Array<EventStaffPhoneNumber>>;
+  roles: Array<Scalars['String']['output']>;
+  userId: Scalars['ID']['output'];
+  username: Maybe<Scalars['String']['output']>;
+};
+
+export type EventStaffPersonalInfo = {
+  __typename: 'EventStaffPersonalInfo';
+  email: Maybe<Scalars['String']['output']>;
+  firstName: Maybe<Scalars['String']['output']>;
+  lastName: Maybe<Scalars['String']['output']>;
+};
+
+export type EventStaffPhoneNumber = {
+  __typename: 'EventStaffPhoneNumber';
+  isPrimary: Maybe<Scalars['Boolean']['output']>;
+  label: Maybe<Scalars['String']['output']>;
+  number: Scalars['String']['output'];
+  type: Maybe<Scalars['String']['output']>;
 };
 
 export type EventTimelinePayload = {
@@ -773,6 +884,55 @@ export enum InterestType {
   TECHNOLOGY_AND_INNOVATION = 'TECHNOLOGY_AND_INNOVATION',
   TRAVEL = 'TRAVEL'
 }
+
+export type InternalConversation = {
+  __typename: 'InternalConversation';
+  archivedAt: Maybe<Scalars['DateTime']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  createdBy: Scalars['String']['output'];
+  description: Maybe<Scalars['String']['output']>;
+  eventId: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  isActive: Scalars['Boolean']['output'];
+  roleId: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+  type: InternalConversationType;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export enum InternalConversationType {
+  BROADCAST = 'BROADCAST',
+  DIRECT = 'DIRECT',
+  ROLE_CHANNEL = 'ROLE_CHANNEL'
+}
+
+export type InternalMessage = {
+  __typename: 'InternalMessage';
+  body: Scalars['String']['output'];
+  conversationId: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  editedAt: Maybe<Scalars['DateTime']['output']>;
+  id: Scalars['ID']['output'];
+  priority: InternalMessagePriority;
+  senderId: Scalars['String']['output'];
+};
+
+export enum InternalMessagePriority {
+  HIGH = 'HIGH',
+  LOW = 'LOW',
+  NORMAL = 'NORMAL',
+  URGENT = 'URGENT'
+}
+
+export type InternalParticipant = {
+  __typename: 'InternalParticipant';
+  conversationId: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  joinedAt: Scalars['DateTime']['output'];
+  lastReadAt: Maybe<Scalars['DateTime']['output']>;
+  leftAt: Maybe<Scalars['DateTime']['output']>;
+  userId: Scalars['String']['output'];
+};
 
 export enum InvitationApprovalMode {
   AUTO = 'AUTO',
@@ -1025,10 +1185,14 @@ export type Mutation = {
   adminSignUp: TokenPayload;
   adminUpdateUser: Scalars['Boolean']['output'];
   approveInvitation: InvitationPayload;
+  archiveEventRole: EventRoleDefinitionPayload;
+  archiveInternalConversation: InternalConversation;
   archiveNotification: NotificationPayload;
   assignChat: Chat;
+  assignEventRole: EventAccessPayload;
   assignRealmRole: Scalars['Boolean']['output'];
   assignSeat: SeatPayload;
+  assignSupportConversation: SupportConversation;
   assignUserToEvent: EventPayload;
   autoGenerateLayout: Scalars['Boolean']['output'];
   autoGenerateSeatMap: Scalars['Boolean']['output'];
@@ -1040,18 +1204,23 @@ export type Mutation = {
   claimChat: Chat;
   claimWhatsappChat: Chat;
   cloneSection: SectionPayload;
+  closeSupportConversation: SupportConversation;
   completePasswordReset: Scalars['Boolean']['output'];
   confirmTotp: Scalars['Boolean']['output'];
   createEvent: EventPayload;
   createEventAddress: EventAddressPayload;
+  createEventRole: EventRoleDefinitionPayload;
+  createInternalConversation: InternalConversation;
   createInvitation: InvitationPayload;
   createInvitationFromRsvp: InvitationPayload;
   createMedia: Scalars['String']['output'];
   createNotification: NotificationPayload;
   createPlusOnesInvitation: InvitationPayload;
+  createQuickReply: QuickReply;
   createSeat: SeatPayload;
   createSection: SectionPayload;
   createSignupVerification: Scalars['Boolean']['output'];
+  createSupportConversation: SupportConversation;
   createTable: TablePayload;
   createTemplate: TemplatePayload;
   createUserAddress: UserAddress;
@@ -1059,8 +1228,10 @@ export type Mutation = {
   deactivateEvent: Scalars['Boolean']['output'];
   deleteEvent: Scalars['Boolean']['output'];
   deleteEventAddressByEventId: Scalars['Boolean']['output'];
+  deleteEventRole: Scalars['Boolean']['output'];
   deleteKcUser: Scalars['Boolean']['output'];
   deleteNotification: Scalars['Boolean']['output'];
+  deleteQuickReply: Scalars['Boolean']['output'];
   deleteSeat: Scalars['Boolean']['output'];
   deleteSection: Scalars['Boolean']['output'];
   deleteTable: Scalars['Boolean']['output'];
@@ -1080,6 +1251,8 @@ export type Mutation = {
   importInvitations: ImportInvitationsResult;
   loginTotp: TokenPayload;
   logout: SuccessPayload;
+  markConversationAsRead: SupportConversation;
+  markInternalConversationRead: InternalParticipant;
   markNotificationAsRead: NotificationPayload;
   markNotificationAsUnread: NotificationPayload;
   moveSeat: SeatPayload;
@@ -1090,6 +1263,7 @@ export type Mutation = {
   regenerateBackupCodes: Array<Scalars['String']['output']>;
   removeAllPlusOnesByInvitationId: Array<InvitationPayload>;
   removeContact: Scalars['Boolean']['output'];
+  removeEventRole: EventAccessPayload;
   removeInvitation: SuccessPayload;
   removePhoneNumbers: Scalars['Boolean']['output'];
   removePlusOneInvitation: InvitationPayload;
@@ -1099,6 +1273,7 @@ export type Mutation = {
   renameSection: RenamePayload;
   renameTable: RenamePayload;
   renameWebAuthnCredential: Scalars['Boolean']['output'];
+  reopenSupportConversation: SupportConversation;
   replyInvitation: InvitationPayload;
   requestPasswordReset: Scalars['Boolean']['output'];
   /** Revoke a ticket (security or admin) */
@@ -1108,10 +1283,13 @@ export type Mutation = {
   scanToken: ScanPayload;
   sendEmail: Scalars['Boolean']['output'];
   sendInAppMessage: Scalars['Boolean']['output'];
+  sendInternalMessage: InternalMessage;
   sendInvitations: Scalars['Boolean']['output'];
   sendMagicLink: Scalars['Boolean']['output'];
+  sendSupportMessage: SupportMessage;
   sendWhatsappMessage: Message;
   sendWhatsappMessage2: Message;
+  setEventRolePermissions: EventRoleDefinitionPayload;
   setMfaPreference: Scalars['Boolean']['output'];
   setTimelines: EventPayload;
   transferEventOwnership: Scalars['Boolean']['output'];
@@ -1120,11 +1298,14 @@ export type Mutation = {
   undoLayout: Scalars['Boolean']['output'];
   updateEvent: EventPayload;
   updateEventAddress: EventAddressPayload;
+  updateEventRole: EventRoleDefinitionPayload;
   updateMe: UserPayload;
   updateMyProfile: SuccessPayload;
   updatePlusOnesInvitation: InvitationPayload;
+  updateQuickReply: QuickReply;
   updateSeat: SeatPayload;
   updateSection: SectionPayload;
+  updateSupportConversation: SupportConversation;
   updateTable: TablePayload;
   updateTemplate: TemplatePayload;
   updateTimeLines: EventPayload;
@@ -1194,6 +1375,16 @@ export type MutationApproveInvitationArgs = {
 };
 
 
+export type MutationArchiveEventRoleArgs = {
+  input: ArchiveEventRoleInput;
+};
+
+
+export type MutationArchiveInternalConversationArgs = {
+  id: Scalars['String']['input'];
+};
+
+
 export type MutationArchiveNotificationArgs = {
   id: Scalars['String']['input'];
 };
@@ -1205,6 +1396,11 @@ export type MutationAssignChatArgs = {
 };
 
 
+export type MutationAssignEventRoleArgs = {
+  input: AssignEventRoleInput;
+};
+
+
 export type MutationAssignRealmRoleArgs = {
   id: Scalars['ID']['input'];
   roleName: RealmRoleType;
@@ -1213,6 +1409,12 @@ export type MutationAssignRealmRoleArgs = {
 
 export type MutationAssignSeatArgs = {
   input: AssignSeatInput;
+};
+
+
+export type MutationAssignSupportConversationArgs = {
+  conversationId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 
@@ -1271,6 +1473,11 @@ export type MutationCloneSectionArgs = {
 };
 
 
+export type MutationCloseSupportConversationArgs = {
+  conversationId: Scalars['String']['input'];
+};
+
+
 export type MutationCompletePasswordResetArgs = {
   input: CompleteResetInputGql;
 };
@@ -1288,6 +1495,20 @@ export type MutationCreateEventArgs = {
 
 export type MutationCreateEventAddressArgs = {
   input: CreateEventAddressInput;
+};
+
+
+export type MutationCreateEventRoleArgs = {
+  input: CreateEventRoleInput;
+};
+
+
+export type MutationCreateInternalConversationArgs = {
+  description: InputMaybe<Scalars['String']['input']>;
+  eventId: Scalars['String']['input'];
+  participantIds: InputMaybe<Array<Scalars['String']['input']>>;
+  title: Scalars['String']['input'];
+  type: InternalConversationType;
 };
 
 
@@ -1316,6 +1537,14 @@ export type MutationCreatePlusOnesInvitationArgs = {
 };
 
 
+export type MutationCreateQuickReplyArgs = {
+  body: Scalars['String']['input'];
+  channel: InputMaybe<Scalars['String']['input']>;
+  key: Scalars['String']['input'];
+  tags: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+
 export type MutationCreateSeatArgs = {
   input: CreateSeatInput;
 };
@@ -1328,6 +1557,17 @@ export type MutationCreateSectionArgs = {
 
 export type MutationCreateSignupVerificationArgs = {
   createUserInput: CreateUserInput;
+};
+
+
+export type MutationCreateSupportConversationArgs = {
+  channel: ConversationChannel;
+  eventId: Scalars['String']['input'];
+  firstMessage: Scalars['String']['input'];
+  guestContact: InputMaybe<Scalars['String']['input']>;
+  guestName: Scalars['String']['input'];
+  invitationId: InputMaybe<Scalars['String']['input']>;
+  subject: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -1366,12 +1606,22 @@ export type MutationDeleteEventAddressByEventIdArgs = {
 };
 
 
+export type MutationDeleteEventRoleArgs = {
+  input: DeleteEventRoleInput;
+};
+
+
 export type MutationDeleteKcUserArgs = {
   id: Scalars['ID']['input'];
 };
 
 
 export type MutationDeleteNotificationArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteQuickReplyArgs = {
   id: Scalars['String']['input'];
 };
 
@@ -1431,6 +1681,16 @@ export type MutationLoginTotpArgs = {
 };
 
 
+export type MutationMarkConversationAsReadArgs = {
+  conversationId: Scalars['String']['input'];
+};
+
+
+export type MutationMarkInternalConversationReadArgs = {
+  conversationId: Scalars['String']['input'];
+};
+
+
 export type MutationMarkNotificationAsReadArgs = {
   id: Scalars['String']['input'];
 };
@@ -1468,6 +1728,11 @@ export type MutationRemoveAllPlusOnesByInvitationIdArgs = {
 
 export type MutationRemoveContactArgs = {
   contactId: Scalars['ID']['input'];
+};
+
+
+export type MutationRemoveEventRoleArgs = {
+  input: RemoveEventRoleInput;
 };
 
 
@@ -1519,6 +1784,11 @@ export type MutationRenameWebAuthnCredentialArgs = {
 };
 
 
+export type MutationReopenSupportConversationArgs = {
+  conversationId: Scalars['String']['input'];
+};
+
+
 export type MutationReplyInvitationArgs = {
   input: RsvpInput;
 };
@@ -1559,6 +1829,13 @@ export type MutationSendInAppMessageArgs = {
 };
 
 
+export type MutationSendInternalMessageArgs = {
+  body: Scalars['String']['input'];
+  conversationId: Scalars['String']['input'];
+  priority: InputMaybe<InternalMessagePriority>;
+};
+
+
 export type MutationSendInvitationsArgs = {
   input: SendInvitationsInput;
 };
@@ -1569,6 +1846,13 @@ export type MutationSendMagicLinkArgs = {
 };
 
 
+export type MutationSendSupportMessageArgs = {
+  body: InputMaybe<Scalars['String']['input']>;
+  conversationId: Scalars['String']['input'];
+  mediaUrl: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type MutationSendWhatsappMessageArgs = {
   input: SendWhatsappMessageInput;
 };
@@ -1576,6 +1860,11 @@ export type MutationSendWhatsappMessageArgs = {
 
 export type MutationSendWhatsappMessage2Args = {
   input: SendWhatsappMessageInput2;
+};
+
+
+export type MutationSetEventRolePermissionsArgs = {
+  input: SetEventRolePermissionsInput;
 };
 
 
@@ -1619,6 +1908,11 @@ export type MutationUpdateEventAddressArgs = {
 };
 
 
+export type MutationUpdateEventRoleArgs = {
+  input: UpdateEventRoleInput;
+};
+
+
 export type MutationUpdateMeArgs = {
   input: UpdateMeInput;
 };
@@ -1634,6 +1928,15 @@ export type MutationUpdatePlusOnesInvitationArgs = {
 };
 
 
+export type MutationUpdateQuickReplyArgs = {
+  body: InputMaybe<Scalars['String']['input']>;
+  channel: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  key: InputMaybe<Scalars['String']['input']>;
+  tags: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+
 export type MutationUpdateSeatArgs = {
   input: UpdateSeatInput;
 };
@@ -1641,6 +1944,13 @@ export type MutationUpdateSeatArgs = {
 
 export type MutationUpdateSectionArgs = {
   input: UpdateSectionInput;
+};
+
+
+export type MutationUpdateSupportConversationArgs = {
+  id: Scalars['String']['input'];
+  priority: InputMaybe<ConversationPriority>;
+  subject: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -1893,11 +2203,15 @@ export type Query = {
   checkEmail: Scalars['Boolean']['output'];
   checkUsername: Scalars['Boolean']['output'];
   event: Maybe<EventPayload>;
+  eventAccess: EventAccessPayload;
   eventAddressById: Maybe<EventAddress>;
   eventChildren: Array<EventPayload>;
   eventGuests: Array<Scalars['String']['output']>;
   eventInvitation: Array<InvitationPayload>;
+  eventPermissions: Array<EventPermissionPayload>;
+  eventRoles: Array<EventRoleDefinitionPayload>;
   eventRsvp: Maybe<EventPayload>;
+  eventStaff: Array<EventStaffPayload>;
   eventTables: Array<TablePayload>;
   eventTree: EventTreePayload;
   geocodeAddress: Maybe<GeocodeResultPayload>;
@@ -1935,6 +2249,9 @@ export type Query = {
   getWhatsappChats: Array<Chat>;
   getWhatsappMessages: Array<Message>;
   getWhatsappState: Scalars['String']['output'];
+  internalConversation: InternalConversation;
+  internalConversations: Array<InternalConversation>;
+  internalMessages: Array<InternalMessage>;
   invitation: InvitationPayload;
   invitations: Array<InvitationPayload>;
   kc_users: Array<KcUser>;
@@ -1947,13 +2264,17 @@ export type Query = {
   meByToken: KcUser;
   mediaUrl: Scalars['String']['output'];
   mediaVariantUrl: Scalars['String']['output'];
+  myEventAccess: EventAccessPayload;
   myEvents: Array<EventPayload>;
   myInvitations: Array<InvitationPayload>;
   myNotifications: Array<NotificationPayload>;
+  mySupportConversations: Array<SupportConversation>;
   notification: NotificationPayload;
   notifications: Array<NotificationPayload>;
   pnpm: UserPayload;
   publicEventTree: EventTreePayload;
+  quickReplies: Array<QuickReply>;
+  quickReply: QuickReply;
   /** Load all security scan logs of a ticket */
   scanLogsByTicket: Array<ScanLogPayload>;
   seat: Maybe<SeatPayload>;
@@ -1965,6 +2286,13 @@ export type Query = {
   seatsByTable: Array<SeatPayload>;
   section: Maybe<SectionPayload>;
   sections: Array<SectionPayload>;
+  supportAssignedToMe: Array<SupportConversation>;
+  supportConversation: SupportConversation;
+  supportConversationCount: Scalars['Float']['output'];
+  supportConversationsByEvent: Array<SupportConversation>;
+  supportMessages: Array<SupportMessage>;
+  supportQueue: Array<SupportConversation>;
+  supportUnassigned: Array<SupportConversation>;
   table: Array<TablePayload>;
   tablesBySection: Array<TablePayload>;
   templates: Array<TemplatePayload>;
@@ -1977,6 +2305,7 @@ export type Query = {
   ticketsByEvent: Array<TicketPayload>;
   /** Find tickets linked to a specific guestProfileId */
   ticketsByGuest: Array<TicketPayload>;
+  unreadCountsByEvent: Array<SupportConversation>;
   userAddressById: Maybe<UserAddress>;
   userAddresses: Array<UserAddress>;
   userById: UserPayload;
@@ -2019,6 +2348,12 @@ export type QueryEventArgs = {
 };
 
 
+export type QueryEventAccessArgs = {
+  eventId: Scalars['ID']['input'];
+  userId: InputMaybe<Scalars['ID']['input']>;
+};
+
+
 export type QueryEventAddressByIdArgs = {
   id: Scalars['ID']['input'];
 };
@@ -2039,8 +2374,19 @@ export type QueryEventInvitationArgs = {
 };
 
 
+export type QueryEventRolesArgs = {
+  eventId: Scalars['ID']['input'];
+  includeArchived: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
 export type QueryEventRsvpArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QueryEventStaffArgs = {
+  eventId: Scalars['ID']['input'];
 };
 
 
@@ -2173,6 +2519,22 @@ export type QueryGetWhatsappMessagesArgs = {
 };
 
 
+export type QueryInternalConversationArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type QueryInternalConversationsArgs = {
+  eventId: Scalars['String']['input'];
+};
+
+
+export type QueryInternalMessagesArgs = {
+  conversationId: Scalars['String']['input'];
+  limit: InputMaybe<Scalars['Float']['input']>;
+};
+
+
 export type QueryInvitationArgs = {
   id: Scalars['ID']['input'];
 };
@@ -2206,6 +2568,11 @@ export type QueryMediaVariantUrlArgs = {
 };
 
 
+export type QueryMyEventAccessArgs = {
+  eventId: Scalars['ID']['input'];
+};
+
+
 export type QueryMyNotificationsArgs = {
   limit: InputMaybe<Scalars['Int']['input']>;
 };
@@ -2229,6 +2596,11 @@ export type QueryPnpmArgs = {
 
 export type QueryPublicEventTreeArgs = {
   eventId: Scalars['ID']['input'];
+};
+
+
+export type QueryQuickReplyArgs = {
+  id: Scalars['String']['input'];
 };
 
 
@@ -2282,6 +2654,43 @@ export type QuerySectionsArgs = {
 };
 
 
+export type QuerySupportAssignedToMeArgs = {
+  eventId: Scalars['String']['input'];
+};
+
+
+export type QuerySupportConversationArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type QuerySupportConversationCountArgs = {
+  eventId: Scalars['String']['input'];
+  status: InputMaybe<ConversationStatus>;
+};
+
+
+export type QuerySupportConversationsByEventArgs = {
+  eventId: Scalars['String']['input'];
+};
+
+
+export type QuerySupportMessagesArgs = {
+  conversationId: Scalars['String']['input'];
+  limit: InputMaybe<Scalars['Float']['input']>;
+};
+
+
+export type QuerySupportQueueArgs = {
+  eventId: Scalars['String']['input'];
+};
+
+
+export type QuerySupportUnassignedArgs = {
+  eventId: Scalars['String']['input'];
+};
+
+
 export type QueryTableArgs = {
   sectionId: Scalars['ID']['input'];
 };
@@ -2318,6 +2727,11 @@ export type QueryTicketsByGuestArgs = {
 };
 
 
+export type QueryUnreadCountsByEventArgs = {
+  eventId: Scalars['String']['input'];
+};
+
+
 export type QueryUserAddressByIdArgs = {
   id: Scalars['ID']['input'];
 };
@@ -2335,6 +2749,17 @@ export type QueryUserByIdArgs = {
 
 export type QueryValidateAddressArgs = {
   input: AddressValidationInput;
+};
+
+export type QuickReply = {
+  __typename: 'QuickReply';
+  body: Scalars['String']['output'];
+  channel: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  key: Scalars['String']['output'];
+  tags: Array<Scalars['String']['output']>;
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 /** RSVP input for an invitation. A YES response may include optional contact information. */
@@ -2369,6 +2794,12 @@ export enum RelationshipType {
   RELATIVE = 'RELATIVE',
   SIBLING = 'SIBLING'
 }
+
+export type RemoveEventRoleInput = {
+  eventId: Scalars['ID']['input'];
+  roleId: Scalars['ID']['input'];
+  userId: Scalars['ID']['input'];
+};
 
 export type RemoveTimelineInput = {
   id: Scalars['ID']['input'];
@@ -2677,6 +3108,12 @@ export type SendWhatsappMessageInput2 = {
   message: Scalars['String']['input'];
 };
 
+export type SetEventRolePermissionsInput = {
+  eventId: Scalars['ID']['input'];
+  permissionKeys: Array<Scalars['String']['input']>;
+  roleId: Scalars['ID']['input'];
+};
+
 export type SetTimelineInput = {
   eventId: Scalars['ID']['input'];
   timelines: Array<TimelineUpsertInput>;
@@ -2707,6 +3144,7 @@ export type SettingsPayload = {
   requireApprovalForPlusOnes: Scalars['Boolean']['output'];
   rotateSeconds: Scalars['Float']['output'];
   rsvpDeadline: Maybe<Scalars['DateTime']['output']>;
+  scheduleTicketRelease: Scalars['Boolean']['output'];
   seatColorGroups: Array<SeatColorGroupPayload>;
   startsAt: Scalars['DateTime']['output'];
   ticketReleaseAt: Maybe<Scalars['DateTime']['output']>;
@@ -2820,6 +3258,57 @@ export type SuccessPayload = {
   /** Indicates whether the operation was successful. */
   ok: Scalars['Boolean']['output'];
 };
+
+export type SupportConversation = {
+  __typename: 'SupportConversation';
+  assignedTo: Maybe<Scalars['String']['output']>;
+  channel: ConversationChannel;
+  closedAt: Maybe<Scalars['DateTime']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  eventId: Scalars['String']['output'];
+  guestContact: Maybe<Scalars['String']['output']>;
+  guestName: Scalars['String']['output'];
+  guestUserId: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  invitationId: Maybe<Scalars['String']['output']>;
+  lastMessageAt: Maybe<Scalars['DateTime']['output']>;
+  lastMessagePreview: Maybe<Scalars['String']['output']>;
+  priority: ConversationPriority;
+  status: ConversationStatus;
+  subject: Maybe<Scalars['String']['output']>;
+  unreadCount: Maybe<Scalars['Int']['output']>;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type SupportMessage = {
+  __typename: 'SupportMessage';
+  body: Maybe<Scalars['String']['output']>;
+  channel: ConversationChannel;
+  conversationId: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  deliveredAt: Maybe<Scalars['DateTime']['output']>;
+  direction: SupportMessageDirection;
+  externalId: Maybe<Scalars['String']['output']>;
+  fromGuest: Scalars['Boolean']['output'];
+  fromUserId: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  mediaUrl: Maybe<Scalars['String']['output']>;
+  mimeType: Maybe<Scalars['String']['output']>;
+  readAt: Maybe<Scalars['DateTime']['output']>;
+  status: SupportMessageStatus;
+};
+
+export enum SupportMessageDirection {
+  INBOUND = 'INBOUND',
+  OUTBOUND = 'OUTBOUND'
+}
+
+export enum SupportMessageStatus {
+  DELIVERED = 'DELIVERED',
+  FAILED = 'FAILED',
+  READ = 'READ',
+  SENT = 'SENT'
+}
 
 export type TableConfigInput = {
   meta: InputMaybe<Scalars['JSON']['input']>;
@@ -2957,6 +3446,15 @@ export type UpdateEventInput = {
   tags: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
+export type UpdateEventRoleInput = {
+  color: InputMaybe<Scalars['String']['input']>;
+  description: InputMaybe<Scalars['String']['input']>;
+  eventId: Scalars['ID']['input'];
+  icon: InputMaybe<Scalars['String']['input']>;
+  name: InputMaybe<Scalars['String']['input']>;
+  roleId: Scalars['ID']['input'];
+};
+
 export type UpdateKcUserInput = {
   email: InputMaybe<Scalars['String']['input']>;
   firstName: InputMaybe<Scalars['String']['input']>;
@@ -3031,6 +3529,7 @@ export type UpdateSettingsInput = {
   requireApprovalForPlusOnes: InputMaybe<Scalars['Boolean']['input']>;
   rotateSeconds: InputMaybe<Scalars['Int']['input']>;
   rsvpDeadline: InputMaybe<Scalars['DateTime']['input']>;
+  scheduleTicketRelease: InputMaybe<Scalars['Boolean']['input']>;
   seatColorGroups: InputMaybe<Array<SeatColorGroupInput>>;
   startsAt: InputMaybe<Scalars['DateTime']['input']>;
   ticketReleaseAt: InputMaybe<Scalars['DateTime']['input']>;
@@ -3162,7 +3661,8 @@ export type UserRolePayload = {
 export enum UserRoleType {
   ADMIN = 'ADMIN',
   GUEST = 'GUEST',
-  SECURITY = 'SECURITY'
+  SECURITY = 'SECURITY',
+  SUPPORT = 'SUPPORT'
 }
 
 export enum UserType {

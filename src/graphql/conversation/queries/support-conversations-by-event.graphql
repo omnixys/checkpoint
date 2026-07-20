@@ -1,0 +1,20 @@
+query SupportConversationsByEvent($eventId: String!) {
+  supportConversationsByEvent(eventId: $eventId) {
+    id
+    eventId
+    invitationId
+    guestUserId
+    guestName
+    guestContact
+    subject
+    status
+    priority
+    assignedTo
+    channel
+    lastMessageAt
+    lastMessagePreview
+    createdAt
+    updatedAt
+    closedAt
+  }
+}

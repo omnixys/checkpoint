@@ -1,0 +1,8 @@
+mutation ReopenSupportConversation($conversationId: String!) {
+  reopenSupportConversation(conversationId: $conversationId) {
+    id
+    status
+    assignedTo
+    updatedAt
+  }
+}

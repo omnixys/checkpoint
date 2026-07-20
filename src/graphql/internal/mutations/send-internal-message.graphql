@@ -1,0 +1,19 @@
+mutation SendInternalMessage(
+  $conversationId: String!
+  $body: String!
+  $priority: InternalMessagePriority
+) {
+  sendInternalMessage(
+    conversationId: $conversationId
+    body: $body
+    priority: $priority
+  ) {
+    id
+    conversationId
+    senderId
+    body
+    priority
+    createdAt
+    editedAt
+  }
+}

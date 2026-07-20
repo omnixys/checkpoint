@@ -3,6 +3,8 @@
 import { Box, Stack } from "@mui/material";
 import { useParams } from "next/navigation";
 
+import RouteGuard from "@/checkpoint/components/guard/RouteGuard";
+import DashboardGrid from "@/checkpoint/components/dashboard/DashboardGrid";
 import EventActions from "@/checkpoint/components/event/details/EventActions";
 import EventHeaderFactory from "@/checkpoint/components/event/details/EventHeaderFactory";
 import EventTabs from "@/checkpoint/components/event/details/EventTabs";
@@ -34,12 +36,6 @@ export default function EventPage() {
     isAuthenticated,
   });
 
-  /**
-   * AFTER hooks → conditional rendering
-   */
-  if (!isAuthenticated) {
-    return null;
-  }
   // TODO statt text ein skeleton oder loader
   if (eventPageLoading) {
     return <div>{tCommon("loading")}</div>;
@@ -51,6 +47,7 @@ export default function EventPage() {
   }
 
   return (
+    <RouteGuard featureId="event-dashboard">
     <Box sx={{ px: { xs: 2, md: 4 }, py: 3 }}>
       <Stack spacing={3} sx={{ pb: 5 }}>
         {/* Header Variant Toggle */}
@@ -72,10 +69,14 @@ export default function EventPage() {
           active={activeTab}
           onDescriptionChange={handleDescriptionChange}
         />
+
+        {/* Dashboard Widgets */}
+        <DashboardGrid />
       </Stack>
 
       {/* Actions */}
       <EventActions eventPageData={eventPage} />
     </Box>
+    </RouteGuard>
   );
 }

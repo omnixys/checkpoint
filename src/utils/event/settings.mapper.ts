@@ -25,6 +25,7 @@ type FullSettingsPatch = Partial<SettingsPayload> & {
   allowPlusOneUpdate?: boolean;
   allowGuestSeatSelection?: boolean;
   allowSeatOverbooking?: boolean;
+  scheduleTicketRelease?: boolean;
   ticketReleaseAt?: string | null;
   maxPlusOnes?: number;
   requireApprovalForPlusOnes?: boolean;
@@ -71,6 +72,7 @@ export function mapSettingsToUpdateInput(
     requireApprovalForPlusOnes: payload.requireApprovalForPlusOnes ?? null,
     rsvpDeadline: payload.rsvpDeadline ?? null,
     approvalMode: payload.approvalMode ?? null,
+    scheduleTicketRelease: payload.scheduleTicketRelease ?? null,
     ticketReleaseAt: payload.ticketReleaseAt ?? null,
     publicRsvpWebsite: payload.publicRsvpWebsite ?? null,
     invitedByOptions: payload.invitedByOptions ?? null,

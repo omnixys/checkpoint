@@ -1,0 +1,19 @@
+query AssignedToMeConversations($eventId: String!) {
+  assignedToMeConversations: supportAssignedToMe(eventId: $eventId) {
+    id
+    eventId
+    invitationId
+    guestUserId
+    guestName
+    guestContact
+    subject
+    status
+    priority
+    assignedTo
+    channel
+    lastMessageAt
+    lastMessagePreview
+    createdAt
+    updatedAt
+  }
+}

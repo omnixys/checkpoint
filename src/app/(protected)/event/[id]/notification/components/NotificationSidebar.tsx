@@ -13,6 +13,7 @@ import {
   Divider,
   Stack,
   Typography,
+  useMediaQuery,
   useTheme,
 } from "@mui/material";
 import { motion } from "framer-motion";
@@ -30,6 +31,9 @@ interface Props {
   channel: NotificationChannel;
   selectedChatId: string | null;
   onSelect: (chatId: string) => void;
+  onMarkAsRead?: (chatId: string) => void;
+  eventId: string;
+  unreadMap?: Record<string, number>;
 }
 
 const MotionBox = motion.create(Box);
@@ -95,16 +99,17 @@ function getLeadingIcon(item: NotificationListItem) {
   return <AlternateEmailRoundedIcon sx={{ fontSize: 16 }} />;
 }
 
-export function NotificationSidebar({ channel, selectedChatId, onSelect }: Props) {
+export function NotificationSidebar({ channel, selectedChatId, onSelect, onMarkAsRead, eventId, unreadMap }: Props) {
   const theme = useTheme();
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
   const tone = getNotificationTone(theme, channel);
-  const { items } = useNotificationItems(channel);
+  const { items } = useNotificationItems(channel, eventId);
 
   return (
     <Box
       sx={{
-        width: { xs: "100%", md: 370 },
-        maxWidth: { xs: "100%", md: 370 },
+        width: { xs: "100%", md: isTablet ? 280 : 370 },
+        maxWidth: { xs: "100%", md: isTablet ? 280 : 370 },
         height: { xs: "auto", md: "100%" },
         maxHeight: { xs: "38dvh", md: "none" },
         borderRight: { xs: 0, md: `1px solid ${tone.divider}` },
@@ -168,7 +173,10 @@ export function NotificationSidebar({ channel, selectedChatId, onSelect }: Props
                 }}
                 whileHover={{ y: -1 }}
                 whileTap={{ scale: 0.997 }}
-                onClick={() => onSelect(item.chatId)}
+                onClick={() => {
+                  onSelect(item.chatId);
+                  onMarkAsRead?.(item.chatId);
+                }}
                 sx={{
                   cursor: "pointer",
                   borderRadius: 3,
@@ -181,8 +189,14 @@ export function NotificationSidebar({ channel, selectedChatId, onSelect }: Props
                 <Stack direction="row" spacing={1.5} sx={{ alignItems: "flex-start" }}>
                   <Badge
                     color="primary"
-                    badgeContent={item.unreadCount > 0 ? item.unreadCount : 0}
-                    invisible={item.unreadCount === 0}
+                    badgeContent={(() => {
+                      const real = unreadMap?.[item.chatId] ?? item.unreadCount;
+                      return real > 0 ? real : 0;
+                    })()}
+                    invisible={(() => {
+                      const real = unreadMap?.[item.chatId] ?? item.unreadCount;
+                      return real === 0;
+                    })()}
                   >
                     <Avatar
                       sx={{

@@ -74,7 +74,7 @@ export default function EventSettingsLayout({
           <Tab value="meta" label="Event" />
           <Tab value="settings" label="Settings" />
           <Tab value="timeline" label="Timeline" />
-          <Tab value="roles" label="Roles" />
+          <Tab value="roles" label="Permissions & Roles" />
           <Tab value="tabs" label="Tabs" />
           <Tab value="seatColors" label="Seat Colors" />
           <Tab value="address" label="Address" />

@@ -23,6 +23,7 @@ fragment EventSettings on SettingsPayload {
   publicRsvpWebsite
   visibleTabs
   category
+  scheduleTicketRelease
   ticketReleaseAt
   createdAt
   updatedAt
