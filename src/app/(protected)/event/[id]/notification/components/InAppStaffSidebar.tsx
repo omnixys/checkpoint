@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import { ChannelFilter } from "@/checkpoint/components/communication/ChannelFilter";
 import { CommunicationSearch } from "@/checkpoint/components/communication/CommunicationSearch";
 import { PersonListItem, type PersonData } from "@/checkpoint/components/communication/PersonListItem";
-import { useEventStaff } from "@/checkpoint/hooks/events/useEventStaff";
+import { useEventStaff, resolveStaffName } from "@/checkpoint/hooks/events/useEventStaff";
 
 const CHANNELS = [
   { key: "IN_APP", label: "In-App" },
@@ -40,10 +40,7 @@ export function InAppStaffSidebar({ eventId, selectedStaffId, onSelect }: Props)
   const staffPersons = useMemo((): PersonData[] => {
     return staff.map((s) => ({
       id: s.userId,
-      name:
-        s.personalInfo
-          ? `${s.personalInfo.firstName ?? ""} ${s.personalInfo.lastName ?? ""}`.trim()
-          : s.username ?? s.userId,
+      name: resolveStaffName(s),
       roles: s.roles,
       channels: s.phoneNumbers?.length
         ? ["WHATSAPP", ...(s.email ? ["EMAIL"] : [])]

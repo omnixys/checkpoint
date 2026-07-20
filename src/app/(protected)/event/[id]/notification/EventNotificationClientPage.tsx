@@ -13,7 +13,7 @@ import { NotificationConversationPanel } from "./components/NotificationConversa
 import { NotificationSidebar } from "./components/NotificationSidebar";
 import { useNotificationItems } from "./hooks/useNotificationMocks";
 import { NotificationChannel } from "./types/notification-channel.enum";
-import { useEventStaff } from "@/checkpoint/hooks/events/useEventStaff";
+import { useEventStaff, resolveStaffName } from "@/checkpoint/hooks/events/useEventStaff";
 import { useConversationUnread, useConversationUnreadSubscription } from "@/checkpoint/hooks/support/useConversationUnread";
 
 const MotionBox = motion.create(Box);
@@ -51,11 +51,8 @@ export default function EventNotificationClientPage() {
 
   const { staffMap } = useEventStaff({ eventId, skip: !isInApp });
 
-  const selectedStaffName = selectedStaffId
-    ? staffMap.get(selectedStaffId)?.personalInfo?.firstName
-      ? `${staffMap.get(selectedStaffId)!.personalInfo!.firstName!} ${staffMap.get(selectedStaffId)!.personalInfo?.lastName ?? ""}`
-      : staffMap.get(selectedStaffId)?.username ?? selectedStaffId.slice(0, 8)
-    : "";
+  const selectedStaffMember = selectedStaffId ? staffMap.get(selectedStaffId) : undefined;
+  const selectedStaffName = selectedStaffMember ? resolveStaffName(selectedStaffMember) : "";
 
   const [unreadMap, setUnreadMap] = useState<Record<string, number>>({});
 

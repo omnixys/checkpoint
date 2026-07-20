@@ -24,6 +24,7 @@ import {
 import {
   AssignmentInd,
   CheckCircle,
+  Chat as ChatIcon,
   Close,
   ExitToApp,
   Group as GroupIcon,
@@ -249,6 +250,7 @@ export default function EventSupportClientPage() {
     assignToMe,
     unassign,
     close,
+    createConversation,
   } = useEventSupport(eventId, currentUser?.id);
 
   const {
@@ -279,6 +281,9 @@ export default function EventSupportClientPage() {
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [quickReplyManagerOpen, setQuickReplyManagerOpen] = useState(false);
+  const [newConvInput, setNewConvInput] = useState("");
+  const [showNewConvInput, setShowNewConvInput] = useState(false);
+  const [creatingConversation, setCreatingConversation] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const listContainerRef = useRef<HTMLDivElement>(null);
@@ -356,6 +361,25 @@ export default function EventSupportClientPage() {
     }
   }, [selectedId, close]);
 
+  const selectedGuestName = selectedGuestId
+    ? [...unassigned, ...assigned].find((c) => c.guestUserId === selectedGuestId)?.guestName ?? null
+    : null;
+
+  const handleCreateWhatsApp = useCallback(async () => {
+    if (!selectedGuestName || !newConvInput.trim() || creatingConversation) return;
+    setCreatingConversation(true);
+    try {
+      const conv = await createConversation(selectedGuestName, newConvInput.trim(), "WHATSAPP");
+      if (conv) {
+        setSelectedId(conv.id);
+        setNewConvInput("");
+        setShowNewConvInput(false);
+      }
+    } finally {
+      setCreatingConversation(false);
+    }
+  }, [selectedGuestName, newConvInput, creatingConversation, createConversation]);
+
   const queuePanel = (
     <Box
       sx={{
@@ -400,6 +424,61 @@ export default function EventSupportClientPage() {
           sx={{ fontSize: "0.75rem", minHeight: 36, textTransform: "none" }}
         />
       </Tabs>
+      {selectedGuestId && (
+        <Box sx={{ px: 2, pb: 1, pt: 1 }}>
+          <Stack spacing={1}>
+            {!showNewConvInput && (
+              <Button
+                size="small"
+                variant="outlined"
+                startIcon={<ChatIcon sx={{ fontSize: 16 }} />}
+                disabled={!selectedGuestName || creatingConversation}
+                onClick={() => setShowNewConvInput(true)}
+                sx={{ fontSize: "0.7rem", textTransform: "none" }}
+              >
+                New WhatsApp
+              </Button>
+            )}
+            {showNewConvInput && (
+              <Stack direction="row" spacing={0.5}>
+                <InputBase
+                  value={newConvInput}
+                  onChange={(e) => setNewConvInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleCreateWhatsApp();
+                    }
+                    if (e.key === "Escape") {
+                      setShowNewConvInput(false);
+                      setNewConvInput("");
+                    }
+                  }}
+                  placeholder="First message to guest..."
+                  autoFocus
+                  sx={{
+                    flex: 1,
+                    px: 1,
+                    py: 0.5,
+                    borderRadius: 1,
+                    fontSize: "0.75rem",
+                    bgcolor: alpha(theme.palette.action.hover, 0.3),
+                    border: `1px solid ${alpha(theme.palette.divider, 0.12)}`,
+                  }}
+                />
+                <IconButton
+                  size="small"
+                  disabled={!newConvInput.trim() || creatingConversation}
+                  onClick={handleCreateWhatsApp}
+                  sx={{ color: "primary.main" }}
+                >
+                  <SendIcon sx={{ fontSize: 14 }} />
+                </IconButton>
+              </Stack>
+            )}
+          </Stack>
+        </Box>
+      )}
       <Box ref={listContainerRef} sx={{ flex: 1, overflow: "hidden", py: 1 }}>
         {loading ? (
           <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>

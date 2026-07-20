@@ -26,6 +26,14 @@ export interface EventStaffMember {
   email?: string | null;
 }
 
+export function resolveStaffName(staff: EventStaffMember): string {
+  if (staff.personalInfo?.firstName) {
+    return `${staff.personalInfo.firstName} ${staff.personalInfo.lastName ?? ""}`.trim();
+  }
+  if (staff.username) return staff.username;
+  return `Staff #${staff.userId.slice(0, 8)}`;
+}
+
 const EVENT_STAFF_QUERY = gql`
   query EventStaff($eventId: ID!) {
     eventStaff(eventId: $eventId) {

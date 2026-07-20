@@ -149,6 +149,33 @@ const CLOSE_MUTATION = gql`
   }
 `;
 
+const CREATE_CONVERSATION_MUTATION = gql`
+  mutation CreateSupportConversation(
+    $eventId: String!
+    $guestName: String!
+    $firstMessage: String!
+    $channel: String!
+    $invitationId: String
+  ) {
+    createSupportConversation(
+      eventId: $eventId
+      guestName: $guestName
+      firstMessage: $firstMessage
+      channel: $channel
+      invitationId: $invitationId
+    ) {
+      id
+      eventId
+      guestName
+      status
+      priority
+      channel
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
 export function useEventSupport(eventId: string, currentUserId?: string) {
   const {
     data: unassignedData,
@@ -185,6 +212,10 @@ export function useEventSupport(eventId: string, currentUserId?: string) {
   const [closeMutation] = useMutation<{
     closeSupportConversation: AgentConversation;
   }>(CLOSE_MUTATION);
+
+  const [createConversationMutation] = useMutation<{
+    createSupportConversation: AgentConversation;
+  }>(CREATE_CONVERSATION_MUTATION);
 
   const fetchMessages = useCallback(
     async (conversationId: string) => {
@@ -240,6 +271,23 @@ export function useEventSupport(eventId: string, currentUserId?: string) {
     [closeMutation, refetchUnassigned, refetchAssigned],
   );
 
+  const createConversation = useCallback(
+    async (guestName: string, firstMessage: string, channel = "WHATSAPP") => {
+      const result = await createConversationMutation({
+        variables: {
+          eventId,
+          guestName,
+          firstMessage,
+          channel,
+          invitationId: null,
+        },
+      });
+      await Promise.all([refetchUnassigned(), refetchAssigned()]);
+      return result.data?.createSupportConversation ?? null;
+    },
+    [createConversationMutation, eventId, refetchUnassigned, refetchAssigned],
+  );
+
   return {
     unassigned: unassignedData?.unassignedConversations ?? [],
     unassignedLoading,
@@ -250,6 +298,7 @@ export function useEventSupport(eventId: string, currentUserId?: string) {
     assignToMe,
     unassign,
     close,
+    createConversation,
     refetchAll: useCallback(() => {
       refetchUnassigned();
       refetchAssigned();
