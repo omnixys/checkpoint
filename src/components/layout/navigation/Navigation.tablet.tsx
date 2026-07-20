@@ -61,7 +61,7 @@ export default function NavigationTablet(): JSX.Element {
   const groups = buildGroupedNavigation(experience, activeEvent?.id);
   const flatItems = groups.flatMap((g) => g.items);
   const itemPaths = flatItems.map((item) => item.path);
-  const activeColor = activeRole ? getRoleColor(activeRole) : theme.palette.primary.main;
+  const activeColor = activeRole ? getRoleColor(activeRole, theme) : theme.palette.primary.main;
 
   return (
     <Box

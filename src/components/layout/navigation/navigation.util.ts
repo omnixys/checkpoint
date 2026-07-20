@@ -2,6 +2,7 @@
 /* Active Navigation Logic */
 /* ------------------------------------------------------------------ */
 
+import type { Theme } from "@mui/material";
 import type { UserRoleType } from "@/checkpoint/generated/graphql";
 
 interface NormalizedNavPath {
@@ -66,13 +67,13 @@ export function isActiveNavItem(
 /* Role-based UI Styling */
 /* ------------------------------------------------------------------ */
 
-export function getRoleColor(role: UserRoleType): string {
+export function getRoleColor(role: UserRoleType, theme: Theme): string {
   switch (role) {
     case "ADMIN":
-      return "primary.main";
+      return theme.palette.primary.main;
     case "SECURITY":
-      return "warning.main";
+      return theme.palette.warning.main;
     default:
-      return "text.secondary";
+      return theme.palette.text.secondary;
   }
 }

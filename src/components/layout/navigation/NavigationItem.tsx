@@ -34,7 +34,7 @@ export default function NavigationItem({ item, items, collapsed = false, role }:
     item.path,
     items.map((i) => i.path),
   );
-  const activeColor = role ? getRoleColor(role) : theme.palette.primary.main;
+  const activeColor = role ? getRoleColor(role, theme) : theme.palette.primary.main;
 
   const button = (
     <ListItemButton
