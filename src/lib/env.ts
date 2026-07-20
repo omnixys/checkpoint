@@ -1,4 +1,3 @@
-import process from "node:process";
 
 const warned = new Set<string>();
 
