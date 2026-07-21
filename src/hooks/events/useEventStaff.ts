@@ -31,6 +31,8 @@ export function resolveStaffName(staff: EventStaffMember): string {
     return `${staff.personalInfo.firstName} ${staff.personalInfo.lastName ?? ""}`.trim();
   }
   if (staff.username) return staff.username;
+  if (staff.email) return staff.email;
+  if (staff.personalInfo?.email) return staff.personalInfo.email;
   return `Staff #${staff.userId.slice(0, 8)}`;
 }
 

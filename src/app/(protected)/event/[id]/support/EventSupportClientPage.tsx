@@ -274,6 +274,7 @@ export default function EventSupportClientPage() {
 
   const [tab, setTab] = useState<TabValue>("unassigned");
   const [selectedGuestId, setSelectedGuestId] = useState<string | null>(null);
+  const [selectedGuestName, setSelectedGuestName] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showGuests, setShowGuests] = useState(true);
   const [messages, setMessages] = useState<SupportMessage[]>([]);
@@ -361,10 +362,6 @@ export default function EventSupportClientPage() {
     }
   }, [selectedId, close]);
 
-  const selectedGuestName = selectedGuestId
-    ? [...unassigned, ...assigned].find((c) => c.guestUserId === selectedGuestId)?.guestName ?? null
-    : null;
-
   const handleCreateWhatsApp = useCallback(async () => {
     if (!selectedGuestName || !newConvInput.trim() || creatingConversation) return;
     setCreatingConversation(true);
@@ -432,7 +429,7 @@ export default function EventSupportClientPage() {
                 size="small"
                 variant="outlined"
                 startIcon={<ChatIcon sx={{ fontSize: 16 }} />}
-                disabled={!selectedGuestName || creatingConversation}
+                disabled={!selectedGuestId || creatingConversation}
                 onClick={() => setShowNewConvInput(true)}
                 sx={{ fontSize: "0.7rem", textTransform: "none" }}
               >
@@ -729,7 +726,10 @@ export default function EventSupportClientPage() {
               <SupportGuestSidebar
                 eventId={eventId}
                 selectedGuestId={selectedGuestId}
-                onSelect={(id) => setSelectedGuestId(id)}
+                onSelect={(id, name) => {
+                  setSelectedGuestId(id);
+                  setSelectedGuestName(name);
+                }}
               />
             </Box>
           </Box>
@@ -765,8 +765,9 @@ export default function EventSupportClientPage() {
           <SupportGuestSidebar
             eventId={eventId}
             selectedGuestId={selectedGuestId}
-            onSelect={(id) => {
+            onSelect={(id, name) => {
               setSelectedGuestId(id);
+              setSelectedGuestName(name);
               setSelectedId(null);
               setMessages([]);
               if (isTablet) setShowGuests(false);

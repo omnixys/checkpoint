@@ -10,7 +10,7 @@ import useGuestQuery from "@/checkpoint/hooks/user/useGuestQuery";
 interface Props {
   eventId?: string;
   selectedGuestId: string | null;
-  onSelect: (userId: string) => void;
+  onSelect: (userId: string, guestName: string) => void;
 }
 
 const Container = styled(Box)(({ theme }) => ({
@@ -80,7 +80,10 @@ export function SupportGuestSidebar({ eventId, selectedGuestId, onSelect }: Prop
               key={person.id}
               person={person}
               selected={person.id === selectedGuestId}
-              onClick={onSelect}
+              onClick={(id) => {
+                const guest = filtered.find((p) => p.id === id);
+                onSelect(id, guest?.name ?? "");
+              }}
             />
           ))
         )}
