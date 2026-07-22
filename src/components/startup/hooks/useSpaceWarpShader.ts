@@ -71,6 +71,8 @@ export function useSpaceWarpShader(
     // biome-ignore lint/correctness/useHookAtTopLevel: WebGLRenderingContext.useProgram is not a React hook.
     gl.useProgram(program);
 
+    let frameId: number;
+
     function render(time: number) {
       gl?.uniform1f(gl.getUniformLocation(program, "u_time"), time * 0.001);
 
@@ -86,9 +88,13 @@ export function useSpaceWarpShader(
 
       gl?.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
-      requestAnimationFrame(render);
+      frameId = requestAnimationFrame(render);
     }
 
-    render(0);
+    frameId = requestAnimationFrame(render);
+
+    return () => {
+      cancelAnimationFrame(frameId);
+    };
   }, [canvasRef, tiltX, tiltY, scheme, mode]);
 }
