@@ -3,14 +3,17 @@
 import { useLazyQuery, useMutation, useQuery, useSubscription } from "@apollo/client/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  ConversationsDocument,
-  CreateInAppConversationDocument,
-  SendMessageDocument,
-  MessagesDocument,
-  MessageReceivedDocument,
   type Conversation,
+  ConversationsDocument,
+  ConversationType,
+  CreateInAppConversationDocument,
   type Message,
+  MessageReceivedDocument,
+  MessagesDocument,
+  SendMessageDocument,
 } from "@/checkpoint/generated/graphql";
+import { findDirectConversation } from "./conversation-selection";
+import { appendMessageById } from "./message-stream";
 
 export type { Conversation, Message };
 
@@ -21,7 +24,8 @@ export function useInAppConversation(currentUserId?: string) {
 
   const sendDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sendingRef = useRef(false);
-  const creatingRef = useRef(false);
+  const selectionRequestRef = useRef(0);
+  const messageRequestRef = useRef(0);
 
   const {
     data: conversationsData,
@@ -32,19 +36,25 @@ export function useInAppConversation(currentUserId?: string) {
   });
 
   const conversations = (conversationsData?.conversations ?? []).filter(
-    (c) => c.channel === "IN_APP",
+    (conversation) =>
+      conversation.channel === "IN_APP" && conversation.type === ConversationType.DIRECT,
   );
 
   const [fetchMessages] = useLazyQuery<{ messages: Message[] }>(MessagesDocument);
 
   const loadMessages = useCallback(
     async (conversationId: string) => {
+      const requestId = ++messageRequestRef.current;
       setMessagesLoading(true);
       try {
         const { data } = await fetchMessages({ variables: { conversationId, limit: 100 } });
-        if (data) setMessages(data.messages);
+        if (data && requestId === messageRequestRef.current) {
+          setMessages(data.messages);
+        }
       } finally {
-        setMessagesLoading(false);
+        if (requestId === messageRequestRef.current) {
+          setMessagesLoading(false);
+        }
       }
     },
     [fetchMessages],
@@ -64,10 +74,7 @@ export function useInAppConversation(currentUserId?: string) {
     onData: ({ data: result }) => {
       const msg = result.data?.messageReceived;
       if (msg && msg.conversationId === selectedConversationId) {
-        setMessages((prev) => {
-          if (prev.some((m) => m.id === msg.id)) return prev;
-          return [...prev, msg];
-        });
+        setMessages((previous) => appendMessageById(previous, msg));
       }
     },
   });
@@ -77,33 +84,39 @@ export function useInAppConversation(currentUserId?: string) {
 
   const findOrCreateDirectConversation = useCallback(
     async (targetUserId: string) => {
-      if (creatingRef.current) return undefined;
-      creatingRef.current = true;
+      const selectionRequestId = ++selectionRequestRef.current;
       try {
-        const existing = conversationsRef.current.find((c) =>
-          c.participants.some((p) => p.userId === targetUserId),
+        const existing = findDirectConversation(
+          conversationsRef.current,
+          currentUserId,
+          targetUserId,
         );
         if (existing) {
-          setSelectedConversationId(existing.id);
+          if (selectionRequestId === selectionRequestRef.current) {
+            setMessages([]);
+            setSelectedConversationId(existing.id);
+          }
           return existing.id;
         }
         const { data } = await createConversationMutation({
-          variables: { participantUserId: targetUserId },
+          variables: {
+            participantUserId: targetUserId,
+            conversationType: ConversationType.DIRECT,
+          },
         });
-        if (data) {
+        if (data && selectionRequestId === selectionRequestRef.current) {
           const conv = data.createInAppConversation;
+          setMessages([]);
           setSelectedConversationId(conv.id);
           refetchConversations();
           return conv.id;
         }
       } catch (err) {
         console.error("Failed to create in-app conversation", err);
-      } finally {
-        creatingRef.current = false;
       }
       return undefined;
     },
-    [createConversationMutation, refetchConversations],
+    [createConversationMutation, currentUserId, refetchConversations],
   );
 
   const sendMessage = useCallback(
@@ -115,7 +128,7 @@ export function useInAppConversation(currentUserId?: string) {
           variables: { conversationId: selectedConversationId, body },
         });
         if (data) {
-          setMessages((prev) => [...prev, data.sendMessage]);
+          setMessages((previous) => appendMessageById(previous, data.sendMessage));
           return data.sendMessage;
         }
       } catch (err) {

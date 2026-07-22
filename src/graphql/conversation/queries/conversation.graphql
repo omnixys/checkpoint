@@ -1,6 +1,7 @@
 query ConversationById($id: ID!) {
   conversation(id: $id) {
     id
+    type
     channel
     lastMessage
     lastMessageAt

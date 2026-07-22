@@ -289,8 +289,16 @@ export type Conversation = {
   lastMessage: Maybe<Scalars['String']['output']>;
   lastMessageAt: Maybe<Scalars['DateTime']['output']>;
   participants: Array<Participant>;
+  type: ConversationType;
   unreadCount: Scalars['Int']['output'];
 };
+
+export enum ConversationType {
+  CHANNEL = 'CHANNEL',
+  DIRECT = 'DIRECT',
+  GROUP = 'GROUP',
+  SUPPORT = 'SUPPORT'
+}
 
 /**
  * =====================================================
@@ -1421,6 +1429,7 @@ export type MutationCreateEventRoleArgs = {
 
 
 export type MutationCreateInAppConversationArgs = {
+  conversationType?: ConversationType;
   participantUserId: Scalars['String']['input'];
 };
 

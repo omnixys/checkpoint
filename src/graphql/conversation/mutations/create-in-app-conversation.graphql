@@ -1,6 +1,13 @@
-mutation CreateInAppConversation($participantUserId: String!) {
-  createInAppConversation(participantUserId: $participantUserId) {
+mutation CreateInAppConversation(
+  $participantUserId: String!
+  $conversationType: ConversationType! = DIRECT
+) {
+  createInAppConversation(
+    participantUserId: $participantUserId
+    conversationType: $conversationType
+  ) {
     id
+    type
     channel
     lastMessage
     lastMessageAt

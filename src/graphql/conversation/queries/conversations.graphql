@@ -1,6 +1,7 @@
 query Conversations {
   conversations {
     id
+    type
     channel
     lastMessage
     lastMessageAt

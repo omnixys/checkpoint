@@ -5,7 +5,7 @@ import { getAuthContext } from "@/checkpoint/lib/apollo/auth-context";
 import { env } from "@/checkpoint/lib/env";
 import { getLogger } from "@/checkpoint/utils/logger";
 
-export function createWsLinkWithAuth(getToken: () => string | null): ApolloLink | null {
+export function createWsLinkWithAuth(): ApolloLink | null {
   if (typeof window === "undefined") {
     return null;
   }
@@ -25,16 +25,17 @@ export function createWsLinkWithAuth(getToken: () => string | null): ApolloLink 
     },
 
     connectionParams: () => {
-      const token = getToken();
       const ctx = getAuthContext();
 
       const params = {
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         "x-tenant-id": ctx.tenantId,
         ...(ctx.actorId ? { "x-actor-id": ctx.actorId } : {}),
       };
 
-      logger.debug("WS connectionParams", params);
+      logger.debug("WS connectionParams ready", {
+        hasTenantId: Boolean(ctx.tenantId),
+        hasActorId: Boolean(ctx.actorId),
+      });
 
       return params;
     },

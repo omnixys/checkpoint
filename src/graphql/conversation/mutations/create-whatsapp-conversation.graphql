@@ -1,6 +1,7 @@
 mutation CreateWhatsappConversation($phoneNumber: String!, $displayName: String) {
   createWhatsappConversation(phoneNumber: $phoneNumber, displayName: $displayName) {
     id
+    type
     channel
     lastMessage
     lastMessageAt

@@ -47,7 +47,7 @@ export const env = {
     "http://localhost:8000/graphql",
   ),
 
-  BACKEND_WS_URL: getClientEnv("NEXT_PUBLIC_GRAPHQL_WS_URL", "http://localhost:8000/ws"),
+  BACKEND_WS_URL: getClientEnv("NEXT_PUBLIC_GRAPHQL_WS_URL", "ws://localhost:8000/ws"),
 
   CHECKPOINT_BASE_PATH: getClientEnv("NEXT_PUBLIC_CHECKPOINT_BASE_PATH", "/"),
 

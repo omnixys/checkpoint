@@ -18,7 +18,7 @@ function isSubscription(def: DefinitionNode | null): def is OperationDefinitionN
  */
 export function createApolloClient(): ApolloClient {
   const httpLink = createHttpLinkWithMiddleware(getAccessTokenClient);
-  const wsLink = createWsLinkWithAuth(getAccessTokenClient);
+  const wsLink = createWsLinkWithAuth();
 
   const link =
     typeof window !== "undefined" && wsLink

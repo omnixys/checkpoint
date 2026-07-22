@@ -1,9 +1,17 @@
 "use client";
 
 import { useMutation, useQuery, useSubscription } from "@apollo/client/react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import {
+  ConversationsDocument,
+  ConversationType,
+  type Message,
+  MessageReceivedDocument,
+  MessagesDocument,
+  SendMessageDocument,
+} from "@/checkpoint/generated/graphql";
+import { appendMessageById, mergeMessagesById } from "@/checkpoint/hooks/internal/message-stream";
 import { getNotificationItems, getNotificationMessages } from "../mock/notification.mock";
-import { NotificationChannel } from "../types/notification-channel.enum";
 import type {
   EmailMessage,
   EmailThread,
@@ -12,17 +20,11 @@ import type {
   WhatsAppChat,
   WhatsAppMessage,
 } from "../types/notification.models";
-import {
-  ConversationsDocument,
-  MessagesDocument,
-  SendMessageDocument,
-  MessageReceivedDocument,
-  type Conversation,
-  type Message,
-} from "@/checkpoint/generated/graphql";
+import { NotificationChannel } from "../types/notification-channel.enum";
 
 interface GqlConversation {
   id: string;
+  type: string;
   channel: string;
   lastMessage: string | null;
   lastMessageAt: string | null;
@@ -111,19 +113,19 @@ function toEmailMessage(m: GqlMessage): EmailMessage {
 }
 
 export function useNotificationItems(channel: NotificationChannel, _eventId?: string) {
-  const queryResult = useQuery<{ conversations: GqlConversation[] }>(
-    ConversationsDocument,
-    {
-      skip: channel === NotificationChannel.IN_APP,
-    },
-  );
+  const queryResult = useQuery<{ conversations: GqlConversation[] }>(ConversationsDocument, {
+    skip: channel === NotificationChannel.IN_APP,
+  });
 
   const items = useMemo((): NotificationListItem[] => {
     if (channel === NotificationChannel.IN_APP) {
       return getNotificationItems(channel) as NotificationListItem[];
     }
     const conversations = queryResult.data?.conversations ?? [];
-    const filtered = conversations.filter((c) => c.channel === channel);
+    const filtered = conversations.filter(
+      (conversation) =>
+        conversation.channel === channel && conversation.type === ConversationType.DIRECT,
+    );
     if (channel === NotificationChannel.WHATSAPP) {
       return filtered.map(toWhatsAppChat);
     }
@@ -134,19 +136,31 @@ export function useNotificationItems(channel: NotificationChannel, _eventId?: st
 }
 
 export function useNotificationMessages(channel: NotificationChannel, chatId: string | null) {
-  const queryResult = useQuery<{ messages: GqlMessage[] }>(
-    MessagesDocument,
-    {
-      variables: { conversationId: chatId ?? "", limit: 100 },
-      skip: !chatId || channel === NotificationChannel.IN_APP,
-    },
-  );
+  const [realtimeByConversation, setRealtimeByConversation] = useState<
+    Record<string, GqlMessage[]>
+  >({});
+  const queryResult = useQuery<{ messages: GqlMessage[] }>(MessagesDocument, {
+    variables: { conversationId: chatId ?? "", limit: 100 },
+    skip: !chatId || channel === NotificationChannel.IN_APP,
+  });
 
-  const { data: subscriptionData } = useSubscription<{
+  useSubscription<{
     messageReceived: GqlMessage;
   }>(MessageReceivedDocument, {
     variables: { conversationId: chatId ?? "" },
     skip: !chatId || channel === NotificationChannel.IN_APP,
+    onData: ({ data: result }) => {
+      const message = result.data?.messageReceived;
+      if (message?.conversationId === chatId) {
+        setRealtimeByConversation((current) => ({
+          ...current,
+          [message.conversationId]: appendMessageById(
+            current[message.conversationId] ?? [],
+            message,
+          ),
+        }));
+      }
+    },
   });
 
   const messages = useMemo((): NotificationMessage[] => {
@@ -154,25 +168,20 @@ export function useNotificationMessages(channel: NotificationChannel, chatId: st
       return getNotificationMessages(channel, chatId) as NotificationMessage[];
     }
 
-    const msgs = queryResult.data?.messages ?? [];
-    const subMsg = subscriptionData?.messageReceived;
-
-    const allMsgs =
-      subMsg && !msgs.some((m) => m.id === subMsg.id) ? [...msgs, subMsg] : msgs;
+    const realtimeMessages = chatId ? (realtimeByConversation[chatId] ?? []) : [];
+    const allMsgs = mergeMessagesById(queryResult.data?.messages ?? [], realtimeMessages);
 
     if (channel === NotificationChannel.WHATSAPP) {
       return allMsgs.filter((m) => m.channel === channel).map(toWhatsAppMessage);
     }
     return allMsgs.filter((m) => m.channel === channel).map(toEmailMessage);
-  }, [channel, chatId, queryResult.data, subscriptionData]);
+  }, [channel, chatId, queryResult.data, realtimeByConversation]);
 
   return { messages, loading: queryResult.loading };
 }
 
 export function useSendMessage() {
-  const [sendMessageMutation] = useMutation<{ sendMessage: Message }>(
-    SendMessageDocument,
-  );
+  const [sendMessageMutation] = useMutation<{ sendMessage: Message }>(SendMessageDocument);
 
   return async (conversationId: string, body: string) => {
     if (!conversationId || !body.trim()) return null;

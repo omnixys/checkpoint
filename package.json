@@ -10,7 +10,7 @@
     "codegen": "graphql-codegen",
     "seed": "pnpm --dir ../../scripts seed",
     "test": "vitest run",
-    "test:unit": "vitest run src/errors src/lib/apollo",
+    "test:unit": "vitest run src/errors src/lib/apollo src/hooks/internal src/hooks/support src/components/notification",
     "test:components": "vitest run src/components/error src/hooks/error",
     "test:types": "tsc --noEmit",
     "release": "semantic-release",
