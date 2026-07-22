@@ -1,35 +1,28 @@
 "use client";
 
-import { gql } from "@apollo/client";
 import { useMutation, useQuery, useSubscription } from "@apollo/client/react";
 import { useCallback, useEffect, useState } from "react";
+import {
+  ConversationsDocument,
+  CreateInAppConversationDocument,
+  SendMessageDocument,
+  MessagesDocument,
+  MessageReceivedDocument,
+  type Conversation,
+  type Message,
+} from "@/checkpoint/generated/graphql";
 
-export interface SupportMessage {
-  id: string;
-  conversationId: string;
-  direction: "INBOUND" | "OUTBOUND";
-  channel: string;
-  fromUserId: string | null;
-  fromGuest: boolean;
-  body: string | null;
-  mediaUrl: string | null;
-  mimeType: string | null;
-  status: string;
-  createdAt: string;
-}
+export type SupportMessage = Message;
 
 interface SupportConversation {
   id: string;
-  eventId: string;
-  invitationId: string | null;
-  guestName: string;
-  status: string;
-  priority: string;
   channel: string;
+  lastMessage: string | null;
   lastMessageAt: string | null;
-  lastMessagePreview: string | null;
-  createdAt: string;
-  updatedAt: string;
+  unreadCount: number;
+  participants: Array<{ userId: string }>;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 interface UseSupportChatOptions {
@@ -39,111 +32,8 @@ interface UseSupportChatOptions {
   guestName?: string;
 }
 
-const SUPPORT_MESSAGES_QUERY = gql`
-  query SupportMessages($conversationId: String!, $limit: Int) {
-    supportMessages(conversationId: $conversationId, limit: $limit) {
-      id
-      conversationId
-      direction
-      channel
-      fromUserId
-      fromGuest
-      body
-      mediaUrl
-      mimeType
-      status
-      createdAt
-    }
-  }
-`;
-
-const SEND_MESSAGE_MUTATION = gql`
-  mutation SendSupportMessage($conversationId: String!, $body: String) {
-    sendSupportMessage(conversationId: $conversationId, body: $body) {
-      id
-      conversationId
-      direction
-      channel
-      fromUserId
-      fromGuest
-      body
-      mediaUrl
-      mimeType
-      status
-      createdAt
-    }
-  }
-`;
-
-const CREATE_CONVERSATION_MUTATION = gql`
-  mutation CreateSupportConversation(
-    $eventId: String!
-    $guestName: String!
-    $firstMessage: String!
-    $channel: String!
-    $invitationId: String
-  ) {
-    createSupportConversation(
-      eventId: $eventId
-      guestName: $guestName
-      firstMessage: $firstMessage
-      channel: $channel
-      invitationId: $invitationId
-    ) {
-      id
-      eventId
-      invitationId
-      guestName
-      status
-      priority
-      channel
-      createdAt
-      updatedAt
-    }
-  }
-`;
-
-const MY_CONVERSATIONS_QUERY = gql`
-  query MySupportConversations {
-    mySupportConversations {
-      id
-      eventId
-      invitationId
-      guestName
-      status
-      priority
-      channel
-      lastMessageAt
-      lastMessagePreview
-      createdAt
-      updatedAt
-    }
-  }
-`;
-
-const SUBSCRIPTION = gql`
-  subscription SupportMessageReceived($conversationId: String!) {
-    supportMessageReceived(conversationId: $conversationId) {
-      id
-      conversationId
-      direction
-      channel
-      fromUserId
-      fromGuest
-      body
-      mediaUrl
-      mimeType
-      status
-      createdAt
-    }
-  }
-`;
-
 export function useSupportChat({
   conversationId: initialConversationId,
-  invitationId,
-  eventId,
-  guestName,
 }: UseSupportChatOptions = {}) {
   const [conversationId, setConversationId] = useState<string | null>(
     initialConversationId ?? null,
@@ -156,10 +46,10 @@ export function useSupportChat({
     loading: messagesLoading,
     error: messagesError,
     fetchMore: fetchMoreMessages,
-  } = useQuery<{ supportMessages: SupportMessage[] }>(
-    SUPPORT_MESSAGES_QUERY,
+  } = useQuery<{ messages: Message[] }>(
+    MessagesDocument,
     {
-      variables: { conversationId, limit: 50 },
+      variables: { conversationId: conversationId ?? "", limit: 50 },
       skip: !conversationId,
     },
   );
@@ -167,39 +57,37 @@ export function useSupportChat({
   const {
     data: myConversationsData,
     loading: conversationsLoading,
-  } = useQuery<{ mySupportConversations: SupportConversation[] }>(
-    MY_CONVERSATIONS_QUERY,
+  } = useQuery<{ conversations: Conversation[] }>(
+    ConversationsDocument,
     { skip: !!conversationId },
   );
 
   useEffect(() => {
     if (conversationId) return;
-    const convs = myConversationsData?.mySupportConversations;
+    const convs = myConversationsData?.conversations;
     if (!convs || convs.length === 0) return;
-    const active = convs.find(
-      (c) => c.status === "OPEN" || c.status === "ASSIGNED",
-    );
+    const active = convs[0];
     if (active) {
       setConversationId(active.id);
     }
   }, [myConversationsData, conversationId]);
 
   const [sendMessageMutation, { loading: sending }] = useMutation<{
-    sendSupportMessage: SupportMessage;
-  }>(SEND_MESSAGE_MUTATION);
+    sendMessage: Message;
+  }>(SendMessageDocument);
 
   const [createConversation] = useMutation<{
-    createSupportConversation: SupportConversation;
-  }>(CREATE_CONVERSATION_MUTATION);
+    createInAppConversation: Conversation;
+  }>(CreateInAppConversationDocument);
 
   const { data: subscriptionData } = useSubscription<{
-    supportMessageReceived: SupportMessage;
-  }>(SUBSCRIPTION, {
-    variables: { conversationId },
+    messageReceived: Message;
+  }>(MessageReceivedDocument, {
+    variables: { conversationId: conversationId ?? "" },
     skip: !conversationId,
   });
 
-  const messages = messagesData?.supportMessages ?? [];
+  const messages = messagesData?.messages ?? [];
 
   const sendMessage = useCallback(
     async (body: string) => {
@@ -223,14 +111,10 @@ export function useSupportChat({
       try {
         const result = await createConversation({
           variables: {
-            eventId: opts.eventId,
-            guestName: opts.guestName,
-            firstMessage: opts.firstMessage ?? "",
-            channel: "WEBCHAT",
-            invitationId: opts.invitationId ?? null,
+            participantUserId: opts.guestName,
           },
         });
-        const conv = result.data?.createSupportConversation;
+        const conv = result.data?.createInAppConversation;
         if (conv) {
           setConversationId(conv.id);
         }
@@ -246,14 +130,14 @@ export function useSupportChat({
   );
 
   const latestMessage =
-    subscriptionData?.supportMessageReceived ?? null;
+    subscriptionData?.messageReceived ?? null;
 
   const loadMore = useCallback(() => {
     if (!conversationId) return;
     fetchMoreMessages({
-      variables: { conversationId, limit: 50, offset: messages.length },
+      variables: { conversationId, limit: 50, before: messages[0]?.createdAt },
     });
-  }, [conversationId, fetchMoreMessages, messages.length]);
+  }, [conversationId, fetchMoreMessages, messages]);
 
   return {
     conversationId,
@@ -267,7 +151,7 @@ export function useSupportChat({
     messagesLoading,
     messagesError,
     conversationsLoading,
-    myConversations: myConversationsData?.mySupportConversations ?? [],
+    myConversations: (myConversationsData?.conversations ?? []) as SupportConversation[],
     loadMore,
   };
 }

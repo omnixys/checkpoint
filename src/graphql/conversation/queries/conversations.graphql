@@ -1,0 +1,14 @@
+query Conversations {
+  conversations {
+    id
+    channel
+    lastMessage
+    lastMessageAt
+    unreadCount
+    externalAddress
+    externalDisplayName
+    participants {
+      userId
+    }
+  }
+}

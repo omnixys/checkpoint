@@ -13,7 +13,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useInternalConversation } from "@/checkpoint/hooks/internal/useInternalConversation";
+import { useInAppConversation } from "@/checkpoint/hooks/internal/useInternalConversation";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 
 interface Props {
@@ -31,20 +31,18 @@ export function InAppConversationPanel({ eventId, staffId, staffName }: Props) {
     messagesLoading,
     findOrCreateDirectConversation,
     sendMessage,
-    markAsRead,
-  } = useInternalConversation(eventId, currentUser?.id);
+  } = useInAppConversation(currentUser?.id);
 
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (staffId) findOrCreateDirectConversation(staffId);
-  }, [staffId, findOrCreateDirectConversation]);
+  const findOrCreateRef = useRef(findOrCreateDirectConversation);
+  findOrCreateRef.current = findOrCreateDirectConversation;
 
   useEffect(() => {
-    if (selectedConversationId) markAsRead(selectedConversationId);
-  }, [selectedConversationId, markAsRead]);
+    if (staffId) findOrCreateRef.current(staffId);
+  }, [staffId]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

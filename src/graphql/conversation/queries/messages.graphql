@@ -1,0 +1,13 @@
+query Messages($conversationId: ID!, $limit: Int, $before: DateTime) {
+  messages(conversationId: $conversationId, limit: $limit, before: $before) {
+    id
+    conversationId
+    senderId
+    body
+    contentType
+    channel
+    deliveryStatus
+    createdAt
+    editedAt
+  }
+}

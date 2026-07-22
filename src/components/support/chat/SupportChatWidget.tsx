@@ -1,6 +1,8 @@
 "use client";
 
-import type { SupportMessage } from "@/checkpoint/hooks/support/useSupportChat";
+import type { Message } from "@/checkpoint/generated/graphql";
+
+type SupportMessage = Message;
 import {
   alpha,
   Avatar,
@@ -32,6 +34,7 @@ interface SupportChatWidgetProps {
   onSend: (body: string) => Promise<void>;
   sending: boolean;
   guestName?: string;
+  currentUserId?: string;
   onStartConversation?: () => void;
   conversationExists: boolean;
   conversationLoading?: boolean;
@@ -40,12 +43,14 @@ interface SupportChatWidgetProps {
 function ChatBubble({
   message,
   isLatest,
+  currentUserId,
 }: {
   message: SupportMessage;
   isLatest: boolean;
+  currentUserId?: string | undefined;
 }) {
   const theme = useTheme();
-  const isGuest = message.fromGuest;
+  const isGuest = currentUserId ? message.senderId === currentUserId : false;
 
   return (
     <motion.div
@@ -112,6 +117,7 @@ export default function SupportChatWidget({
   onSend,
   sending,
   guestName,
+  currentUserId,
   onStartConversation,
   conversationExists,
   conversationLoading,
@@ -360,11 +366,12 @@ export default function SupportChatWidget({
                         latestMessage?.id === msg.id ||
                         messages[messages.length - 1]?.id === msg.id
                       }
+                      currentUserId={currentUserId}
                     />
                   ))}
                   {latestMessage &&
                     !messages.find((m) => m.id === latestMessage.id) && (
-                      <ChatBubble message={latestMessage} isLatest />
+                      <ChatBubble message={latestMessage} isLatest currentUserId={currentUserId} />
                     )}
                 </Stack>
               )}

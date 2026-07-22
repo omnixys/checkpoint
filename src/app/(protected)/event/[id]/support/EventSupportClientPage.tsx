@@ -6,9 +6,7 @@ import {
   Badge,
   Box,
   Button,
-  Chip,
   CircularProgress,
-  Divider,
   IconButton,
   InputBase,
   ListItemAvatar,
@@ -22,11 +20,8 @@ import {
   useTheme,
 } from "@mui/material";
 import {
-  AssignmentInd,
-  CheckCircle,
   Chat as ChatIcon,
   Close,
-  ExitToApp,
   Group as GroupIcon,
   Send as SendIcon,
   Settings as SettingsIcon,
@@ -36,7 +31,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { List as VList } from "react-window";
 import RouteGuard from "@/checkpoint/components/guard/RouteGuard";
 import { useEventSupport } from "@/checkpoint/hooks/support/useEventSupport";
-import type { AgentConversation, SupportMessage } from "@/checkpoint/hooks/support/useEventSupport";
+import type { Conversation, Message } from "@/checkpoint/hooks/support/useEventSupport";
 import { useConversationUnread, useConversationUnreadSubscription } from "@/checkpoint/hooks/support/useConversationUnread";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import QuickReplyManager from "@/checkpoint/components/support/quick-replies/QuickReplyManager";
@@ -45,17 +40,8 @@ import { SupportGuestSidebar } from "./SupportGuestSidebar";
 
 type TabValue = "unassigned" | "assigned";
 
-function priorityColor(priority: string) {
-  switch (priority) {
-    case "URGENT": return "error";
-    case "HIGH": return "warning";
-    case "LOW": return "info";
-    default: return "default";
-  }
-}
-
 function channelIcon(channel: string) {
-  return channel === "WHATSAPP" ? "📱" : channel === "WEBCHAT" ? "💬" : "✉️";
+  return channel === "WHATSAPP" ? "📱" : channel === "IN_APP" ? "💬" : "✉️";
 }
 
 function ConversationListItem({
@@ -64,12 +50,13 @@ function ConversationListItem({
   unreadCount,
   onClick,
 }: {
-  conversation: AgentConversation;
+  conversation: Conversation;
   selected: boolean;
   unreadCount?: number | null;
   onClick: () => void;
 }) {
   const theme = useTheme();
+  const displayName = conversation.externalDisplayName ?? "Guest";
 
   return (
     <ListItemButton
@@ -113,7 +100,7 @@ function ConversationListItem({
               }),
             }}
           >
-            {conversation.guestName.charAt(0).toUpperCase()}
+            {displayName.charAt(0).toUpperCase()}
           </Avatar>
         </Badge>
       </ListItemAvatar>
@@ -124,7 +111,7 @@ function ConversationListItem({
               noWrap
               sx={{ flex: 1, fontSize: "0.85rem", fontWeight: selected ? 700 : 500 }}
             >
-              {conversation.guestName}
+              {displayName}
             </Typography>
             <Typography sx={{ color: "text.disabled", fontSize: "0.65rem", flexShrink: 0 }}>
               {conversation.lastMessageAt
@@ -135,12 +122,6 @@ function ConversationListItem({
         }
         secondary={
           <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", mt: 0.3 }}>
-            <Chip
-              label={conversation.priority}
-              size="small"
-              color={priorityColor(conversation.priority) as any}
-              sx={{ height: 18, fontSize: "0.6rem" }}
-            />
             <Typography
               noWrap
               sx={{
@@ -150,7 +131,7 @@ function ConversationListItem({
                 fontWeight: unreadCount && unreadCount > 0 ? 600 : 400,
               }}
             >
-              {conversation.lastMessagePreview ?? "No messages yet"}
+              {conversation.lastMessage ?? "No messages yet"}
             </Typography>
             <Typography sx={{ fontSize: "0.75rem" }}>
               {channelIcon(conversation.channel)}
@@ -163,9 +144,9 @@ function ConversationListItem({
   );
 }
 
-function MessageBubble({ message }: { message: SupportMessage }) {
+function MessageBubble({ message, currentUserId }: { message: Message; currentUserId?: string | undefined }) {
   const theme = useTheme();
-  const fromAgent = !message.fromGuest;
+  const fromAgent = message.senderId === currentUserId;
 
   return (
     <Box
@@ -247,9 +228,6 @@ export default function EventSupportClientPage() {
     assignedLoading,
     fetchMessages,
     sendMessage,
-    assignToMe,
-    unassign,
-    close,
     createConversation,
   } = useEventSupport(eventId, currentUser?.id);
 
@@ -277,7 +255,7 @@ export default function EventSupportClientPage() {
   const [selectedGuestName, setSelectedGuestName] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showGuests, setShowGuests] = useState(true);
-  const [messages, setMessages] = useState<SupportMessage[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [messagesLoading, setMessagesLoading] = useState(false);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
@@ -309,9 +287,7 @@ export default function EventSupportClientPage() {
     (c) => c.id === selectedId,
   );
 
-  const filteredConversations = selectedGuestId
-    ? listItems.filter((c) => c.guestUserId === selectedGuestId)
-    : listItems;
+  const filteredConversations = listItems;
 
   useEffect(() => {
     if (!selectedId) return;
@@ -337,30 +313,6 @@ export default function EventSupportClientPage() {
       setSending(false);
     }
   }, [selectedId, input, sending, sendMessage]);
-
-  const handleAssign = useCallback(async () => {
-    if (!selectedId) return;
-    const result = await assignToMe(selectedId);
-    if (result) {
-      setSelectedId(null);
-      setMessages([]);
-    }
-  }, [selectedId, assignToMe]);
-
-  const handleUnassign = useCallback(async () => {
-    if (!selectedId) return;
-    const result = await unassign(selectedId);
-    if (result) setMessages([]);
-  }, [selectedId, unassign]);
-
-  const handleClose = useCallback(async () => {
-    if (!selectedId) return;
-    const result = await close(selectedId);
-    if (result) {
-      setSelectedId(null);
-      setMessages([]);
-    }
-  }, [selectedId, close]);
 
   const handleCreateWhatsApp = useCallback(async () => {
     if (!selectedGuestName || !newConvInput.trim() || creatingConversation) return;
@@ -552,23 +504,16 @@ export default function EventSupportClientPage() {
             fontSize: "0.9rem",
           }}
         >
-          {selectedConversation.guestName.charAt(0).toUpperCase()}
+          {(selectedConversation.externalDisplayName ?? "Guest").charAt(0).toUpperCase()}
         </Avatar>
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Typography sx={{ fontSize: "0.85rem", fontWeight: 600 }}>
-            {selectedConversation.guestName}
+            {selectedConversation.externalDisplayName ?? "Guest"}
           </Typography>
           <Typography sx={{ color: "text.secondary", fontSize: "0.7rem" }}>
-            {selectedConversation.channel} · {selectedConversation.status}
-            {selectedConversation.assignedTo ? " · Assigned" : ""}
+            {selectedConversation.channel}
           </Typography>
         </Box>
-        <Chip
-          label={selectedConversation.priority}
-          size="small"
-          color={priorityColor(selectedConversation.priority) as any}
-          sx={{ height: 22, fontSize: "0.65rem" }}
-        />
       </Box>
 
       <Box
@@ -600,7 +545,7 @@ export default function EventSupportClientPage() {
             </Typography>
           </Box>
         ) : (
-          messages.map((msg) => <MessageBubble key={msg.id} message={msg} />)
+          messages.map((msg) => <MessageBubble key={msg.id} message={msg} currentUserId={currentUser?.id} />)
         )}
         <div ref={messagesEndRef} />
       </Box>
@@ -615,43 +560,6 @@ export default function EventSupportClientPage() {
           py: 1.5,
         }}
       >
-        <Stack direction="row" spacing={1}>
-          {!selectedConversation.assignedTo && (
-            <Button
-              onClick={handleAssign}
-              size="small"
-              startIcon={<AssignmentInd />}
-              variant="outlined"
-              sx={{ fontSize: "0.7rem", textTransform: "none" }}
-            >
-              Assign to me
-            </Button>
-          )}
-          {selectedConversation.assignedTo && (
-            <Button
-              onClick={handleUnassign}
-              size="small"
-              startIcon={<ExitToApp />}
-              variant="outlined"
-              color="warning"
-              sx={{ fontSize: "0.7rem", textTransform: "none" }}
-            >
-              Unassign
-            </Button>
-          )}
-          {selectedConversation.status !== "CLOSED" && (
-            <Button
-              onClick={handleClose}
-              size="small"
-              startIcon={<CheckCircle />}
-              variant="outlined"
-              color="success"
-              sx={{ fontSize: "0.7rem", textTransform: "none" }}
-            >
-              Close
-            </Button>
-          )}
-        </Stack>
         <Stack direction="row" spacing={1}>
           <InputBase
             disabled={sending}
@@ -715,7 +623,7 @@ export default function EventSupportClientPage() {
                 <Close />
               </IconButton>
               <Typography sx={{ fontWeight: 600, fontSize: "0.9rem" }}>
-                {selectedConversation?.guestName ?? "Conversation"}
+                {selectedConversation?.externalDisplayName ?? "Conversation"}
               </Typography>
             </Box>
             {detailPanel}

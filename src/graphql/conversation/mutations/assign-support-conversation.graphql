@@ -1,8 +1,0 @@
-mutation AssignSupportConversation($conversationId: String!, $userId: String!) {
-  assignSupportConversation(conversationId: $conversationId, userId: $userId) {
-    id
-    status
-    assignedTo
-    updatedAt
-  }
-}

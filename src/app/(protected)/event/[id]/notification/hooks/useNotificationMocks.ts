@@ -1,6 +1,5 @@
 "use client";
 
-import { gql } from "@apollo/client";
 import { useMutation, useQuery, useSubscription } from "@apollo/client/react";
 import { useMemo } from "react";
 import { getNotificationItems, getNotificationMessages } from "../mock/notification.mock";
@@ -13,116 +12,36 @@ import type {
   WhatsAppChat,
   WhatsAppMessage,
 } from "../types/notification.models";
+import {
+  ConversationsDocument,
+  MessagesDocument,
+  SendMessageDocument,
+  MessageReceivedDocument,
+  type Conversation,
+  type Message,
+} from "@/checkpoint/generated/graphql";
 
 interface GqlConversation {
   id: string;
-  eventId: string;
-  invitationId: string | null;
-  guestUserId: string | null;
-  guestName: string;
-  guestContact: string | null;
-  subject: string | null;
-  status: string;
-  priority: string;
-  assignedTo: string | null;
   channel: string;
+  lastMessage: string | null;
   lastMessageAt: string | null;
-  lastMessagePreview: string | null;
-  createdAt: string;
-  updatedAt: string;
-  closedAt: string | null;
+  unreadCount: number;
+  externalAddress: string | null;
+  externalDisplayName: string | null;
+  participants: Array<{ userId: string }>;
 }
 
 interface GqlMessage {
   id: string;
   conversationId: string;
-  direction: string;
+  senderId: string;
+  body: string;
+  contentType: string;
   channel: string;
-  fromUserId: string | null;
-  fromGuest: boolean;
-  body: string | null;
-  mediaUrl: string | null;
-  mimeType: string | null;
-  status: string;
+  deliveryStatus: string;
   createdAt: string;
 }
-
-const SUPPORT_CONVERSATIONS_BY_EVENT = gql`
-  query SupportConversationsByEvent($eventId: String!) {
-    supportConversationsByEvent(eventId: $eventId) {
-      id
-      eventId
-      invitationId
-      guestUserId
-      guestName
-      guestContact
-      subject
-      status
-      priority
-      assignedTo
-      channel
-      lastMessageAt
-      lastMessagePreview
-      createdAt
-      updatedAt
-      closedAt
-    }
-  }
-`;
-
-const SUPPORT_MESSAGES_QUERY = gql`
-  query SupportMessages($conversationId: String!, $limit: Int) {
-    supportMessages(conversationId: $conversationId, limit: $limit) {
-      id
-      conversationId
-      direction
-      channel
-      fromUserId
-      fromGuest
-      body
-      mediaUrl
-      mimeType
-      status
-      createdAt
-    }
-  }
-`;
-
-const SEND_MESSAGE_MUTATION = gql`
-  mutation SendSupportMessage($conversationId: String!, $body: String) {
-    sendSupportMessage(conversationId: $conversationId, body: $body) {
-      id
-      conversationId
-      direction
-      channel
-      fromUserId
-      fromGuest
-      body
-      mediaUrl
-      mimeType
-      status
-      createdAt
-    }
-  }
-`;
-
-const MESSAGE_SUBSCRIPTION = gql`
-  subscription SupportMessageReceived($conversationId: String!) {
-    supportMessageReceived(conversationId: $conversationId) {
-      id
-      conversationId
-      direction
-      channel
-      fromUserId
-      fromGuest
-      body
-      mediaUrl
-      mimeType
-      status
-      createdAt
-    }
-  }
-`;
 
 function formatTime(dateStr: string | null): string {
   if (!dateStr) return "";
@@ -135,31 +54,31 @@ function toWhatsAppChat(c: GqlConversation): WhatsAppChat {
     id: c.id,
     channel: NotificationChannel.WHATSAPP,
     chatId: c.id,
-    contactName: c.guestName,
-    phoneNumber: c.guestContact ?? "",
+    contactName: c.externalDisplayName ?? "Guest",
+    phoneNumber: c.externalAddress ?? "",
     avatarColor: "#25D366",
-    lastMessage: c.lastMessagePreview ?? "",
+    lastMessage: c.lastMessage ?? "",
     lastMessageAt: formatTime(c.lastMessageAt),
-    unreadCount: 0,
+    unreadCount: c.unreadCount,
     isOnline: false,
-    labels: [c.status, c.priority].filter(Boolean),
+    labels: [],
   };
 }
 
 function toEmailThread(c: GqlConversation): EmailThread {
-  const [fromName, fromEmail] = c.guestContact
-    ? [c.guestName, c.guestContact]
-    : [c.guestName, `guest-${c.id.slice(0, 8)}@omnixys.events`];
+  const [fromName, fromEmail] = c.externalAddress
+    ? [c.externalDisplayName ?? "Guest", c.externalAddress]
+    : [c.externalDisplayName ?? "Guest", `guest-${c.id.slice(0, 8)}@omnixys.events`];
   return {
     id: c.id,
     channel: NotificationChannel.EMAIL,
     chatId: c.id,
-    subject: c.subject ?? "Support Conversation",
+    subject: "Support Conversation",
     fromName,
     fromEmail,
-    preview: c.lastMessagePreview ?? "",
+    preview: c.lastMessage ?? "",
     updatedAt: formatTime(c.lastMessageAt),
-    unreadCount: 0,
+    unreadCount: c.unreadCount,
     hasAttachment: false,
     category: "Primary",
   };
@@ -169,11 +88,11 @@ function toWhatsAppMessage(m: GqlMessage): WhatsAppMessage {
   return {
     id: m.id,
     channel: NotificationChannel.WHATSAPP,
-    direction: m.direction as "INBOUND" | "OUTBOUND",
-    body: m.body ?? "",
+    direction: "INBOUND" as const,
+    body: m.body,
     timestamp: formatTime(m.createdAt),
-    delivered: m.status !== "FAILED",
-    seen: m.status === "READ",
+    delivered: m.deliveryStatus !== "FAILED",
+    seen: m.deliveryStatus === "READ",
   };
 }
 
@@ -181,22 +100,21 @@ function toEmailMessage(m: GqlMessage): EmailMessage {
   return {
     id: m.id,
     channel: NotificationChannel.EMAIL,
-    fromName: m.fromGuest ? "Guest" : "Support Agent",
+    fromName: "Guest",
     fromEmail: "",
     toName: "Support",
     toEmail: "",
-    body: m.body ?? "",
+    body: m.body,
     timestamp: formatTime(m.createdAt),
     subject: "Re: Support Conversation",
   };
 }
 
-export function useNotificationItems(channel: NotificationChannel, eventId?: string) {
-  const queryResult = useQuery<{ supportConversationsByEvent: GqlConversation[] }>(
-    SUPPORT_CONVERSATIONS_BY_EVENT,
+export function useNotificationItems(channel: NotificationChannel, _eventId?: string) {
+  const queryResult = useQuery<{ conversations: GqlConversation[] }>(
+    ConversationsDocument,
     {
-      variables: { eventId },
-      skip: !eventId || channel === NotificationChannel.IN_APP,
+      skip: channel === NotificationChannel.IN_APP,
     },
   );
 
@@ -204,7 +122,7 @@ export function useNotificationItems(channel: NotificationChannel, eventId?: str
     if (channel === NotificationChannel.IN_APP) {
       return getNotificationItems(channel) as NotificationListItem[];
     }
-    const conversations = queryResult.data?.supportConversationsByEvent ?? [];
+    const conversations = queryResult.data?.conversations ?? [];
     const filtered = conversations.filter((c) => c.channel === channel);
     if (channel === NotificationChannel.WHATSAPP) {
       return filtered.map(toWhatsAppChat);
@@ -216,18 +134,18 @@ export function useNotificationItems(channel: NotificationChannel, eventId?: str
 }
 
 export function useNotificationMessages(channel: NotificationChannel, chatId: string | null) {
-  const queryResult = useQuery<{ supportMessages: GqlMessage[] }>(
-    SUPPORT_MESSAGES_QUERY,
+  const queryResult = useQuery<{ messages: GqlMessage[] }>(
+    MessagesDocument,
     {
-      variables: { conversationId: chatId, limit: 100 },
+      variables: { conversationId: chatId ?? "", limit: 100 },
       skip: !chatId || channel === NotificationChannel.IN_APP,
     },
   );
 
   const { data: subscriptionData } = useSubscription<{
-    supportMessageReceived: GqlMessage;
-  }>(MESSAGE_SUBSCRIPTION, {
-    variables: { conversationId: chatId },
+    messageReceived: GqlMessage;
+  }>(MessageReceivedDocument, {
+    variables: { conversationId: chatId ?? "" },
     skip: !chatId || channel === NotificationChannel.IN_APP,
   });
 
@@ -236,8 +154,8 @@ export function useNotificationMessages(channel: NotificationChannel, chatId: st
       return getNotificationMessages(channel, chatId) as NotificationMessage[];
     }
 
-    const msgs = queryResult.data?.supportMessages ?? [];
-    const subMsg = subscriptionData?.supportMessageReceived;
+    const msgs = queryResult.data?.messages ?? [];
+    const subMsg = subscriptionData?.messageReceived;
 
     const allMsgs =
       subMsg && !msgs.some((m) => m.id === subMsg.id) ? [...msgs, subMsg] : msgs;
@@ -252,8 +170,8 @@ export function useNotificationMessages(channel: NotificationChannel, chatId: st
 }
 
 export function useSendMessage() {
-  const [sendMessageMutation] = useMutation<{ sendSupportMessage: GqlMessage }>(
-    SEND_MESSAGE_MUTATION,
+  const [sendMessageMutation] = useMutation<{ sendMessage: Message }>(
+    SendMessageDocument,
   );
 
   return async (conversationId: string, body: string) => {
@@ -261,6 +179,6 @@ export function useSendMessage() {
     const result = await sendMessageMutation({
       variables: { conversationId, body: body.trim() },
     });
-    return result.data?.sendSupportMessage ?? null;
+    return result.data?.sendMessage ?? null;
   };
 }

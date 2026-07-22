@@ -1,7 +1,0 @@
-subscription ConversationUnreadUpdated($conversationId: String!) {
-  conversationUnreadUpdated(conversationId: $conversationId) {
-    conversationId
-    unreadCount
-    eventId
-  }
-}

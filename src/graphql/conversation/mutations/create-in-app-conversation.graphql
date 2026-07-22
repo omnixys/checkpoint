@@ -1,0 +1,14 @@
+mutation CreateInAppConversation($participantUserId: String!) {
+  createInAppConversation(participantUserId: $participantUserId) {
+    id
+    channel
+    lastMessage
+    lastMessageAt
+    unreadCount
+    externalAddress
+    externalDisplayName
+    participants {
+      userId
+    }
+  }
+}

@@ -1,0 +1,14 @@
+mutation CreateWhatsappConversation($phoneNumber: String!, $displayName: String) {
+  createWhatsappConversation(phoneNumber: $phoneNumber, displayName: $displayName) {
+    id
+    channel
+    lastMessage
+    lastMessageAt
+    unreadCount
+    externalAddress
+    externalDisplayName
+    participants {
+      userId
+    }
+  }
+}

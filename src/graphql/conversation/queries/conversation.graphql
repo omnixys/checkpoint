@@ -1,0 +1,14 @@
+query ConversationById($id: ID!) {
+  conversation(id: $id) {
+    id
+    channel
+    lastMessage
+    lastMessageAt
+    unreadCount
+    externalAddress
+    externalDisplayName
+    participants {
+      userId
+    }
+  }
+}

@@ -1,0 +1,14 @@
+subscription ConversationUpdated {
+  conversationUpdated {
+    id
+    channel
+    lastMessage
+    lastMessageAt
+    unreadCount
+    externalAddress
+    externalDisplayName
+    participants {
+      userId
+    }
+  }
+}
