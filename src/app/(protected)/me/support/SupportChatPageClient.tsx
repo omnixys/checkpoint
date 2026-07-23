@@ -1,28 +1,21 @@
 "use client";
 
-import {
-  alpha,
-  Box,
-  Stack,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { alpha, Box, Stack, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
-import { useSupportChat } from "@/checkpoint/hooks/support/useSupportChat";
 import SupportChatWidget from "@/checkpoint/components/support/chat/SupportChatWidget";
+import { useSupportChat } from "@/checkpoint/hooks/support/useSupportChat";
 
 export default function SupportChatPage() {
   const theme = useTheme();
   const {
-    conversationId,
     messages,
+    pendingMessages,
     latestMessage,
     sendMessage,
+    retryMessage,
     sending,
-    myConversations,
-    conversationsLoading,
-    initializeConversation,
     isCreating,
+    messagesLoading,
   } = useSupportChat({});
 
   return (
@@ -43,36 +36,25 @@ export default function SupportChatPage() {
           Support
         </Typography>
         <Typography color="text.secondary">
-          {conversationId
+          {messages.length > 0 || pendingMessages.length > 0
             ? "Your conversation with our support team"
-            : "Start a conversation with our support team"}
+            : "Describe your issue and we'll connect you with our support team"}
         </Typography>
       </Box>
 
-      {conversationsLoading || isCreating ? (
-        <Typography color="text.disabled" sx={{ textAlign: "center", py: 4 }}>
-          Loading...
-        </Typography>
-      ) : !conversationId && myConversations.length === 0 ? (
-        <Box sx={{ textAlign: "center", py: 4 }}>
-          <Typography color="text.disabled" sx={{ mb: 2 }}>
-            No active conversations. Start one from the RSVP page or contact us directly.
-          </Typography>
-        </Box>
-      ) : null}
-
-      {conversationId && (
-        <Box sx={{ height: "60vh", minHeight: 400, position: "relative" }}>
-          <SupportChatWidget
-            guestName="Me"
-            latestMessage={latestMessage}
-            messages={messages}
-            sending={sending}
-            onSend={sendMessage}
-            conversationExists
-          />
-        </Box>
-      )}
+      <Box sx={{ height: "60vh", minHeight: 400, position: "relative" }}>
+        <SupportChatWidget
+          guestName="Me"
+          latestMessage={latestMessage}
+          messages={messages}
+          pendingMessages={pendingMessages}
+          sending={sending}
+          isCreating={isCreating}
+          onSend={sendMessage}
+          onRetry={retryMessage}
+          messagesLoading={messagesLoading}
+        />
+      </Box>
     </Stack>
   );
 }

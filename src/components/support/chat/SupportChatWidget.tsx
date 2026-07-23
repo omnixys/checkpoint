@@ -1,43 +1,40 @@
 "use client";
 
 import type { Message } from "@/checkpoint/generated/graphql";
+import type { PendingMessage } from "@/checkpoint/hooks/support/useSupportChat";
 
 type SupportMessage = Message;
+
+import { ArrowDownward, Chat, Close, RefreshOutlined, Send as SendIcon } from "@mui/icons-material";
 import {
-  alpha,
   Avatar,
+  alpha,
   Box,
-  Button,
   CircularProgress,
   Fab,
   IconButton,
   InputBase,
   Paper,
   Stack,
+  Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  ArrowDownward,
-  Chat,
-  Close,
-  HelpOutlineRounded as HelpOutline,
-  Send as SendIcon,
-} from "@mui/icons-material";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 interface SupportChatWidgetProps {
   messages: SupportMessage[];
+  pendingMessages?: PendingMessage[];
   latestMessage: SupportMessage | null;
   onSend: (body: string) => Promise<void>;
+  onRetry?: (pending: PendingMessage) => Promise<void>;
   sending: boolean;
+  isCreating?: boolean;
   guestName?: string;
   currentUserId?: string;
-  onStartConversation?: () => void;
-  conversationExists: boolean;
-  conversationLoading?: boolean;
+  messagesLoading?: boolean;
 }
 
 function ChatBubble({
@@ -72,11 +69,9 @@ function ChatBubble({
           borderColor: isGuest
             ? alpha(theme.palette.primary.main, 0.18)
             : alpha(theme.palette.divider, 0.12),
-          borderRadius: isGuest
-            ? "18px 18px 4px 18px"
-            : "18px 18px 18px 4px",
-          px: 2,
-          py: 1.2,
+          borderRadius: isGuest ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
+          px: 2.5,
+          py: 1.5,
         }}
       >
         <Typography
@@ -84,7 +79,7 @@ function ChatBubble({
           sx={{
             color: "text.primary",
             fontSize: "0.875rem",
-            lineHeight: 1.5,
+            lineHeight: 1.6,
             whiteSpace: "pre-wrap",
             wordBreak: "break-word",
           }}
@@ -97,7 +92,7 @@ function ChatBubble({
             color: "text.disabled",
             display: "block",
             fontSize: "0.65rem",
-            mt: 0.3,
+            mt: 0.5,
             textAlign: isGuest ? "right" : "left",
           }}
         >
@@ -111,16 +106,148 @@ function ChatBubble({
   );
 }
 
+function PendingBubble({
+  pending,
+  onRetry,
+}: {
+  pending: PendingMessage;
+  onRetry?: (pending: PendingMessage) => Promise<void>;
+}) {
+  const theme = useTheme();
+  const isFailed = pending.status === "failed";
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8, scale: 0.96 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 0.15 }}
+      style={{ alignSelf: "flex-end", maxWidth: "82%" }}
+    >
+      <Paper
+        elevation={0}
+        sx={{
+          background: isFailed
+            ? alpha(theme.palette.error.main, 0.08)
+            : alpha(theme.palette.primary.main, 0.08),
+          border: "1px solid",
+          borderColor: isFailed
+            ? alpha(theme.palette.error.main, 0.18)
+            : alpha(theme.palette.primary.main, 0.12),
+          borderRadius: "18px 18px 4px 18px",
+          px: 2.5,
+          py: 1.5,
+          opacity: pending.status === "sending" ? 0.7 : 1,
+        }}
+      >
+        <Typography
+          variant="body2"
+          sx={{
+            color: "text.primary",
+            fontSize: "0.875rem",
+            lineHeight: 1.6,
+            whiteSpace: "pre-wrap",
+            wordBreak: "break-word",
+          }}
+        >
+          {pending.body}
+        </Typography>
+        <Box
+          sx={{
+            alignItems: "center",
+            display: "flex",
+            gap: 0.5,
+            justifyContent: "flex-end",
+            mt: 0.5,
+          }}
+        >
+          {pending.status === "sending" && (
+            <CircularProgress size={10} sx={{ color: "text.disabled" }} />
+          )}
+          {isFailed && onRetry && (
+            <Tooltip title="Retry">
+              <IconButton
+                onClick={() => onRetry(pending)}
+                size="small"
+                sx={{ color: "error.main", p: 0, mr: 0.5 }}
+              >
+                <RefreshOutlined sx={{ fontSize: 12 }} />
+              </IconButton>
+            </Tooltip>
+          )}
+          <Typography
+            variant="caption"
+            sx={{
+              color: isFailed ? "error.main" : "text.disabled",
+              fontSize: "0.65rem",
+            }}
+          >
+            {isFailed ? "Failed" : "Sending..."}
+          </Typography>
+        </Box>
+      </Paper>
+    </motion.div>
+  );
+}
+
+function EmptyState() {
+  return (
+    <Box
+      sx={{
+        alignItems: "center",
+        display: "flex",
+        flexDirection: "column",
+        gap: 2,
+        height: "100%",
+        justifyContent: "center",
+        py: 4,
+      }}
+    >
+      <Avatar
+        sx={{
+          bgcolor: (t) => alpha(t.palette.primary.main, 0.08),
+          color: "primary.main",
+          height: 56,
+          width: 56,
+        }}
+      >
+        <Chat sx={{ fontSize: 28 }} />
+      </Avatar>
+      <Typography
+        sx={{
+          color: "text.primary",
+          fontSize: "0.95rem",
+          fontWeight: 600,
+          textAlign: "center",
+        }}
+      >
+        Need help?
+      </Typography>
+      <Typography
+        sx={{
+          color: "text.secondary",
+          fontSize: "0.8rem",
+          lineHeight: 1.6,
+          maxWidth: 260,
+          textAlign: "center",
+        }}
+      >
+        Describe your issue and we&apos;ll connect you with our support team.
+      </Typography>
+    </Box>
+  );
+}
+
 export default function SupportChatWidget({
   messages,
+  pendingMessages = [],
   latestMessage,
   onSend,
+  onRetry,
   sending,
+  isCreating = false,
   guestName,
   currentUserId,
-  onStartConversation,
-  conversationExists,
-  conversationLoading,
+  messagesLoading = false,
 }: SupportChatWidgetProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -129,15 +256,19 @@ export default function SupportChatWidget({
   const listRef = useRef<HTMLDivElement>(null);
   const [autoScroll, setAutoScroll] = useState(true);
 
-  const scrollToBottom = useCallback((force = false) => {
-    if (!listRef.current) return;
-    if (!autoScroll && !force) return;
-    listRef.current.scrollTop = listRef.current.scrollHeight;
-  }, [autoScroll]);
+  const scrollToBottom = useCallback(
+    (force = false) => {
+      if (!listRef.current) return;
+      if (!autoScroll && !force) return;
+      listRef.current.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" });
+    },
+    [autoScroll],
+  );
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: scroll on any message change
   useEffect(() => {
     scrollToBottom();
-  }, [messages, latestMessage, scrollToBottom]);
+  }, [messages, latestMessage, pendingMessages, scrollToBottom]);
 
   const handleScroll = useCallback(() => {
     if (!listRef.current) return;
@@ -147,12 +278,12 @@ export default function SupportChatWidget({
   }, []);
 
   const handleSend = useCallback(async () => {
-    if (!input.trim() || sending) return;
+    if (!input.trim() || sending || isCreating) return;
     const body = input;
     setInput("");
     await onSend(body);
     setAutoScroll(true);
-  }, [input, sending, onSend]);
+  }, [input, sending, isCreating, onSend]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -165,6 +296,7 @@ export default function SupportChatWidget({
   );
 
   const fabSize = isMobile ? 48 : 56;
+  const showEmpty = messages.length === 0 && pendingMessages.length === 0;
 
   return (
     <>
@@ -291,88 +423,39 @@ export default function SupportChatWidget({
                 },
               }}
             >
-              {!conversationExists && onStartConversation ? (
+              {messagesLoading ? (
                 <Box
                   sx={{
                     alignItems: "center",
                     display: "flex",
-                    flexDirection: "column",
-                    gap: 2,
-                    height: "100%",
                     justifyContent: "center",
                     py: 4,
                   }}
                 >
-                  <HelpOutline
-                    sx={{
-                      color: "text.disabled",
-                      fontSize: 48,
-                    }}
-                  />
-                  <Typography
-                    sx={{
-                      color: "text.secondary",
-                      fontSize: "0.9rem",
-                      fontWeight: 600,
-                      textAlign: "center",
-                    }}
-                  >
-                    Need help?
-                  </Typography>
-                  <Typography
-                    sx={{
-                      color: "text.disabled",
-                      fontSize: "0.8rem",
-                      px: 2,
-                      textAlign: "center",
-                    }}
-                  >
-                    Contact the event support team. We typically reply within a few minutes.
-                  </Typography>
-                  <Button
-                    disabled={conversationLoading}
-                    onClick={onStartConversation}
-                    size="small"
-                    startIcon={
-                      conversationLoading ? (
-                        <CircularProgress size={14} />
-                      ) : undefined
-                    }
-                    variant="contained"
-                  >
-                    {conversationLoading
-                      ? "Starting..."
-                      : "Start Conversation"}
-                  </Button>
+                  <CircularProgress size={20} />
                 </Box>
-              ) : messages.length === 0 ? (
-                <Typography
-                  sx={{
-                    color: "text.disabled",
-                    fontSize: "0.8rem",
-                    py: 4,
-                    textAlign: "center",
-                  }}
-                >
-                  No messages yet. Send a message to start the conversation.
-                </Typography>
+              ) : showEmpty ? (
+                <EmptyState />
               ) : (
-                <Stack spacing={1}>
-                  {messages.map((msg) => (
+                <Stack spacing={1.5}>
+                  {messages.map((msg, i) => (
                     <ChatBubble
                       key={msg.id}
                       message={msg}
-                      isLatest={
-                        latestMessage?.id === msg.id ||
-                        messages[messages.length - 1]?.id === msg.id
-                      }
+                      isLatest={latestMessage?.id === msg.id || i === messages.length - 1}
                       currentUserId={currentUserId}
                     />
                   ))}
-                  {latestMessage &&
-                    !messages.find((m) => m.id === latestMessage.id) && (
-                      <ChatBubble message={latestMessage} isLatest currentUserId={currentUserId} />
-                    )}
+                  {latestMessage && !messages.find((m) => m.id === latestMessage.id) && (
+                    <ChatBubble message={latestMessage} isLatest currentUserId={currentUserId} />
+                  )}
+                  {pendingMessages.map((pending) => (
+                    <PendingBubble
+                      key={pending.id}
+                      pending={pending}
+                      {...(onRetry ? { onRetry } : {})}
+                    />
+                  ))}
                 </Stack>
               )}
             </Box>
@@ -396,44 +479,42 @@ export default function SupportChatWidget({
               </IconButton>
             )}
 
-            {conversationExists && (
-              <Box
+            <Box
+              sx={{
+                borderTop: "1px solid",
+                borderColor: alpha(theme.palette.divider, 0.08),
+                display: "flex",
+                gap: 1,
+                p: 1.5,
+              }}
+            >
+              <InputBase
+                disabled={sending || isCreating}
+                multiline
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder={isCreating ? "Starting conversation..." : "Type your message..."}
+                maxRows={4}
+                value={input}
                 sx={{
-                  borderTop: "1px solid",
-                  borderColor: alpha(theme.palette.divider, 0.08),
-                  display: "flex",
-                  gap: 1,
-                  p: 1.5,
+                  bgcolor: alpha(theme.palette.action.hover, 0.3),
+                  borderRadius: 2,
+                  flex: 1,
+                  fontSize: "0.85rem",
+                  px: 1.5,
+                  py: 1,
                 }}
+              />
+              <IconButton
+                color="primary"
+                disabled={!input.trim() || sending || isCreating}
+                onClick={handleSend}
+                size="small"
+                sx={{ alignSelf: "flex-end" }}
               >
-                <InputBase
-                  disabled={sending}
-                  multiline
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Type a message..."
-                  maxRows={4}
-                  value={input}
-                  sx={{
-                    bgcolor: alpha(theme.palette.action.hover, 0.3),
-                    borderRadius: 2,
-                    flex: 1,
-                    fontSize: "0.85rem",
-                    px: 1.5,
-                    py: 1,
-                  }}
-                />
-                <IconButton
-                  color="primary"
-                  disabled={!input.trim() || sending}
-                  onClick={handleSend}
-                  size="small"
-                  sx={{ alignSelf: "flex-end" }}
-                >
-                  <SendIcon sx={{ fontSize: 18 }} />
-                </IconButton>
-              </Box>
-            )}
+                {isCreating ? <CircularProgress size={18} /> : <SendIcon sx={{ fontSize: 18 }} />}
+              </IconButton>
+            </Box>
           </Paper>
         )}
       </AnimatePresence>

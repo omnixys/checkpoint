@@ -1,17 +1,26 @@
 "use client";
 
 import {
-  alpha,
+  AssignmentInd as AssignIcon,
+  Chat as ChatIcon,
+  Close,
+  MoreVert as MoreIcon,
+  CheckCircle as ResolveIcon,
+  Send as SendIcon,
+} from "@mui/icons-material";
+import {
   Avatar,
+  alpha,
   Badge,
   Box,
   Button,
+  Chip,
   CircularProgress,
   IconButton,
   InputBase,
-  ListItemAvatar,
-  ListItemButton,
-  ListItemText,
+  Menu,
+  MenuItem,
+  Paper,
   Stack,
   Tab,
   Tabs,
@@ -19,29 +28,30 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import {
-  Chat as ChatIcon,
-  Close,
-  Group as GroupIcon,
-  Send as SendIcon,
-  Settings as SettingsIcon,
-} from "@mui/icons-material";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { List as VList } from "react-window";
 import RouteGuard from "@/checkpoint/components/guard/RouteGuard";
-import { useEventSupport } from "@/checkpoint/hooks/support/useEventSupport";
+import {
+  useConversationUnread,
+  useConversationUnreadSubscription,
+} from "@/checkpoint/hooks/support/useConversationUnread";
 import type { Conversation, Message } from "@/checkpoint/hooks/support/useEventSupport";
-import { useConversationUnread, useConversationUnreadSubscription } from "@/checkpoint/hooks/support/useConversationUnread";
+import { useEventSupport } from "@/checkpoint/hooks/support/useEventSupport";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
-import QuickReplyManager from "@/checkpoint/components/support/quick-replies/QuickReplyManager";
-import QuickReplyPicker from "@/checkpoint/components/support/quick-replies/QuickReplyPicker";
 import { SupportGuestSidebar } from "./SupportGuestSidebar";
 
-type TabValue = "unassigned" | "assigned";
+type TabValue = "unassigned" | "assigned" | "closed";
 
-function channelIcon(channel: string) {
-  return channel === "WHATSAPP" ? "📱" : channel === "IN_APP" ? "💬" : "✉️";
+function channelBadge(channel: string) {
+  switch (channel) {
+    case "WHATSAPP":
+      return { label: "WhatsApp", color: "#25D366" as const };
+    case "IN_APP":
+      return { label: "In-App", color: undefined };
+    default:
+      return { label: channel, color: undefined };
+  }
 }
 
 function ConversationListItem({
@@ -57,22 +67,30 @@ function ConversationListItem({
 }) {
   const theme = useTheme();
   const displayName = conversation.externalDisplayName ?? "Guest";
+  const badge = channelBadge(conversation.channel);
 
   return (
-    <ListItemButton
+    <Box
       onClick={onClick}
-      selected={selected}
       sx={{
         borderRadius: 2,
-        mb: 0.5,
+        cursor: "pointer",
         mx: 1,
-        opacity: selected || !unreadCount ? 1 : 0.85,
+        mb: 0.5,
+        p: 1.5,
+        transition: "background 0.15s",
         ...(selected && {
           bgcolor: alpha(theme.palette.primary.main, 0.08),
         }),
+        ...(!selected && {
+          "&:hover": {
+            bgcolor:
+              theme.palette.mode === "dark" ? alpha("#FFFFFF", 0.04) : alpha("#000000", 0.03),
+          },
+        }),
       }}
     >
-      <ListItemAvatar>
+      <Stack direction="row" spacing={1.5} sx={{ alignItems: "flex-start" }}>
         <Badge
           overlap="circular"
           anchorOrigin={{ vertical: "top", horizontal: "right" }}
@@ -95,33 +113,35 @@ function ConversationListItem({
               color: "primary.main",
               width: 40,
               height: 40,
-              ...(unreadCount && unreadCount > 0 && {
-                boxShadow: `0 0 0 2px ${theme.palette.error.main}`,
-              }),
+              fontSize: "0.85rem",
+              fontWeight: 700,
+              ...(unreadCount &&
+                unreadCount > 0 && {
+                  boxShadow: `0 0 0 2px ${theme.palette.error.main}`,
+                }),
             }}
           >
             {displayName.charAt(0).toUpperCase()}
           </Avatar>
         </Badge>
-      </ListItemAvatar>
-      <ListItemText
-        primary={
+
+        <Box sx={{ flex: 1, minWidth: 0 }}>
           <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
             <Typography
               noWrap
-              sx={{ flex: 1, fontSize: "0.85rem", fontWeight: selected ? 700 : 500 }}
+              sx={{
+                flex: 1,
+                fontSize: "0.85rem",
+                fontWeight: unreadCount && unreadCount > 0 ? 700 : 500,
+              }}
             >
               {displayName}
             </Typography>
             <Typography sx={{ color: "text.disabled", fontSize: "0.65rem", flexShrink: 0 }}>
-              {conversation.lastMessageAt
-                ? new Date(conversation.lastMessageAt).toLocaleDateString()
-                : ""}
+              {conversation.lastMessageAt ? formatRelativeTime(conversation.lastMessageAt) : ""}
             </Typography>
           </Stack>
-        }
-        secondary={
-          <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", mt: 0.3 }}>
+          <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", mt: 0.25 }}>
             <Typography
               noWrap
               sx={{
@@ -133,18 +153,38 @@ function ConversationListItem({
             >
               {conversation.lastMessage ?? "No messages yet"}
             </Typography>
-            <Typography sx={{ fontSize: "0.75rem" }}>
-              {channelIcon(conversation.channel)}
-            </Typography>
+            {badge.color ? (
+              <Chip
+                label={badge.label}
+                size="small"
+                sx={{
+                  height: 14,
+                  fontSize: "0.55rem",
+                  fontWeight: 600,
+                  bgcolor: alpha(badge.color, 0.1),
+                  color: badge.color,
+                  "& .MuiChip-label": { px: 0.5 },
+                }}
+              />
+            ) : (
+              <Typography sx={{ fontSize: "0.65rem", color: "text.disabled" }}>
+                {badge.label}
+              </Typography>
+            )}
           </Stack>
-        }
-        sx={{ my: 0 }}
-      />
-    </ListItemButton>
+        </Box>
+      </Stack>
+    </Box>
   );
 }
 
-function MessageBubble({ message, currentUserId }: { message: Message; currentUserId?: string | undefined }) {
+function MessageBubble({
+  message,
+  currentUserId,
+}: {
+  message: Message;
+  currentUserId?: string | undefined;
+}) {
   const theme = useTheme();
   const fromAgent = message.senderId === currentUserId;
 
@@ -155,7 +195,8 @@ function MessageBubble({ message, currentUserId }: { message: Message; currentUs
         maxWidth: "78%",
       }}
     >
-      <Box
+      <Paper
+        elevation={0}
         sx={{
           background: fromAgent
             ? alpha(theme.palette.primary.main, 0.12)
@@ -165,15 +206,15 @@ function MessageBubble({ message, currentUserId }: { message: Message; currentUs
             ? alpha(theme.palette.primary.main, 0.18)
             : alpha(theme.palette.divider, 0.12),
           borderRadius: fromAgent ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
-          px: 2,
-          py: 1.2,
+          px: 2.5,
+          py: 1.5,
         }}
       >
         <Typography
           variant="body2"
           sx={{
-            fontSize: "0.85rem",
-            lineHeight: 1.5,
+            fontSize: "0.875rem",
+            lineHeight: 1.6,
             whiteSpace: "pre-wrap",
             wordBreak: "break-word",
           }}
@@ -185,8 +226,8 @@ function MessageBubble({ message, currentUserId }: { message: Message; currentUs
           sx={{
             color: "text.disabled",
             display: "block",
-            fontSize: "0.6rem",
-            mt: 0.2,
+            fontSize: "0.65rem",
+            mt: 0.5,
             textAlign: fromAgent ? "right" : "left",
           }}
         >
@@ -194,8 +235,19 @@ function MessageBubble({ message, currentUserId }: { message: Message; currentUs
             hour: "2-digit",
             minute: "2-digit",
           })}
+          {fromAgent && message.deliveryStatus && (
+            <Box component="span" sx={{ ml: 0.5 }}>
+              {message.deliveryStatus === "READ"
+                ? "✓✓"
+                : message.deliveryStatus === "DELIVERED"
+                  ? "✓✓"
+                  : message.deliveryStatus === "SENT"
+                    ? "✓"
+                    : ""}
+            </Box>
+          )}
         </Typography>
-      </Box>
+      </Paper>
     </Box>
   );
 }
@@ -214,6 +266,20 @@ function ConversationUnreadWatcher({
   return null;
 }
 
+function formatRelativeTime(dateStr: string): string {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMin = Math.floor(diffMs / 60000);
+  if (diffMin < 1) return "now";
+  if (diffMin < 60) return `${diffMin}m`;
+  const diffH = Math.floor(diffMin / 60);
+  if (diffH < 24) return `${diffH}h`;
+  const diffD = Math.floor(diffH / 24);
+  if (diffD < 7) return `${diffD}d`;
+  return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
+
 export default function EventSupportClientPage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -226,15 +292,16 @@ export default function EventSupportClientPage() {
     unassignedLoading,
     assigned,
     assignedLoading,
+    selectedId,
+    setSelectedId,
+    messages,
+    messagesLoading,
     fetchMessages,
     sendMessage,
     createConversation,
   } = useEventSupport(eventId, currentUser?.id);
 
-  const {
-    conversations: unreadConversations,
-    markAsRead,
-  } = useConversationUnread(eventId);
+  const { conversations: unreadConversations, markAsRead } = useConversationUnread(eventId);
 
   const [unreadMap, setUnreadMap] = useState<Map<string, number>>(new Map());
 
@@ -253,17 +320,16 @@ export default function EventSupportClientPage() {
   const [tab, setTab] = useState<TabValue>("unassigned");
   const [selectedGuestId, setSelectedGuestId] = useState<string | null>(null);
   const [selectedGuestName, setSelectedGuestName] = useState<string | null>(null);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedGuestPhone, setSelectedGuestPhone] = useState<string | null>(null);
   const [showGuests, setShowGuests] = useState(true);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [messagesLoading, setMessagesLoading] = useState(false);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
-  const [quickReplyManagerOpen, setQuickReplyManagerOpen] = useState(false);
   const [newConvInput, setNewConvInput] = useState("");
   const [showNewConvInput, setShowNewConvInput] = useState(false);
   const [creatingConversation, setCreatingConversation] = useState(false);
+  const [moreAnchor, setMoreAnchor] = useState<null | HTMLElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   const listContainerRef = useRef<HTMLDivElement>(null);
   const [listHeight, setListHeight] = useState(600);
@@ -278,25 +344,21 @@ export default function EventSupportClientPage() {
     return () => observer.disconnect();
   }, []);
 
-  const CONVERSATION_ITEM_HEIGHT = 72;
+  const CONVERSATION_ITEM_HEIGHT = 76;
 
-  const listItems = tab === "unassigned" ? unassigned : assigned;
-  const loading = tab === "unassigned" ? unassignedLoading : assignedLoading;
+  const allConversations = [...unassigned, ...assigned];
+  const listItems = tab === "unassigned" ? unassigned : tab === "assigned" ? assigned : [];
+  const loading =
+    tab === "unassigned" ? unassignedLoading : tab === "assigned" ? assignedLoading : false;
 
-  const selectedConversation = [...unassigned, ...assigned].find(
-    (c) => c.id === selectedId,
-  );
-
-  const filteredConversations = listItems;
+  const selectedConversation = allConversations.find((c) => c.id === selectedId);
 
   useEffect(() => {
     if (!selectedId) return;
-    setMessagesLoading(true);
-    fetchMessages(selectedId)
-      .then(setMessages)
-      .finally(() => setMessagesLoading(false));
+    fetchMessages(selectedId);
   }, [selectedId, fetchMessages]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: scroll on message changes
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -307,8 +369,7 @@ export default function EventSupportClientPage() {
     const body = input;
     setInput("");
     try {
-      const msg = await sendMessage(selectedId, body);
-      if (msg) setMessages((prev) => [...prev, msg]);
+      await sendMessage(selectedId, body);
     } finally {
       setSending(false);
     }
@@ -318,7 +379,12 @@ export default function EventSupportClientPage() {
     if (!selectedGuestName || !newConvInput.trim() || creatingConversation) return;
     setCreatingConversation(true);
     try {
-      const conv = await createConversation(selectedGuestName, newConvInput.trim(), "WHATSAPP");
+      const conv = await createConversation(
+        selectedGuestName,
+        newConvInput.trim(),
+        "WHATSAPP",
+        selectedGuestPhone ?? undefined,
+      );
       if (conv) {
         setSelectedId(conv.id);
         setNewConvInput("");
@@ -327,7 +393,14 @@ export default function EventSupportClientPage() {
     } finally {
       setCreatingConversation(false);
     }
-  }, [selectedGuestName, newConvInput, creatingConversation, createConversation]);
+  }, [
+    selectedGuestName,
+    selectedGuestPhone,
+    newConvInput,
+    creatingConversation,
+    createConversation,
+    setSelectedId,
+  ]);
 
   const queuePanel = (
     <Box
@@ -345,32 +418,32 @@ export default function EventSupportClientPage() {
           <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
             {isTablet && !showGuests && (
               <IconButton size="small" onClick={() => setShowGuests(true)} title="Show guests">
-                <GroupIcon fontSize="small" />
+                <AssignIcon fontSize="small" />
               </IconButton>
             )}
             <Typography variant="h6" sx={{ fontWeight: 700, fontSize: "1.1rem" }}>
               Support Queue
             </Typography>
           </Stack>
-          <IconButton size="small" onClick={() => setQuickReplyManagerOpen(true)} title="Manage quick replies">
-            <SettingsIcon fontSize="small" />
-          </IconButton>
         </Stack>
       </Box>
       <Tabs
         value={tab}
-        onChange={(_, v) => { setTab(v); setSelectedId(null); setMessages([]); }}
-        sx={{ px: 2 }}
+        onChange={(_, v) => {
+          setTab(v);
+          setSelectedId(null);
+        }}
+        sx={{ px: 1 }}
       >
         <Tab
           label={`Unassigned (${unassigned.length})`}
           value="unassigned"
-          sx={{ fontSize: "0.75rem", minHeight: 36, textTransform: "none" }}
+          sx={{ fontSize: "0.72rem", minHeight: 36, textTransform: "none" }}
         />
         <Tab
           label={`Assigned (${assigned.length})`}
           value="assigned"
-          sx={{ fontSize: "0.75rem", minHeight: 36, textTransform: "none" }}
+          sx={{ fontSize: "0.72rem", minHeight: 36, textTransform: "none" }}
         />
       </Tabs>
       {selectedGuestId && (
@@ -380,7 +453,7 @@ export default function EventSupportClientPage() {
               <Button
                 size="small"
                 variant="outlined"
-                startIcon={<ChatIcon sx={{ fontSize: 16 }} />}
+                startIcon={<ChatIcon sx={{ fontSize: 14 }} />}
                 disabled={!selectedGuestId || creatingConversation}
                 onClick={() => setShowNewConvInput(true)}
                 sx={{ fontSize: "0.7rem", textTransform: "none" }}
@@ -428,26 +501,30 @@ export default function EventSupportClientPage() {
           </Stack>
         </Box>
       )}
-      <Box ref={listContainerRef} sx={{ flex: 1, overflow: "hidden", py: 1 }}>
+      <Box ref={listContainerRef} sx={{ flex: 1, overflow: "hidden", py: 0.5 }}>
         {loading ? (
           <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
             <CircularProgress size={24} />
           </Box>
-        ) : filteredConversations.length === 0 ? (
+        ) : listItems.length === 0 ? (
           <Typography
-            sx={{ color: "text.disabled", fontSize: "0.8rem", py: 4, textAlign: "center" }}
+            sx={{ color: "text.disabled", fontSize: "0.8rem", py: 4, textAlign: "center", px: 2 }}
           >
-            {selectedGuestId ? "No conversations with this guest" : tab === "unassigned" ? "No unassigned conversations" : "No assigned conversations"}
+            {selectedGuestId
+              ? "No conversations with this guest"
+              : tab === "unassigned"
+                ? "No unassigned conversations"
+                : "No assigned conversations"}
           </Typography>
         ) : (
           <VList
             style={{ height: listHeight, width: "100%" }}
-            rowCount={filteredConversations.length}
+            rowCount={listItems.length}
             rowHeight={CONVERSATION_ITEM_HEIGHT}
             overscanCount={5}
             rowProps={{}}
             rowComponent={({ index, style }) => {
-              const conv = filteredConversations[index];
+              const conv = listItems[index];
               if (!conv) return null;
               return (
                 <div style={style}>
@@ -470,19 +547,47 @@ export default function EventSupportClientPage() {
     </Box>
   );
 
-  const detailPanel = !selectedConversation ? (
+  const emptyState = (
     <Box
       sx={{
         alignItems: "center",
         display: "flex",
         flex: 1,
+        flexDirection: "column",
+        gap: 2,
         justifyContent: "center",
+        px: 4,
       }}
     >
-      <Typography sx={{ color: "text.disabled", fontSize: "0.9rem" }}>
-        Select a conversation to view
+      <Avatar
+        sx={{
+          bgcolor: alpha(theme.palette.primary.main, 0.08),
+          color: "primary.main",
+          height: 64,
+          width: 64,
+        }}
+      >
+        <ChatIcon sx={{ fontSize: 32 }} />
+      </Avatar>
+      <Typography sx={{ color: "text.primary", fontSize: "1rem", fontWeight: 600 }}>
+        Select a conversation
+      </Typography>
+      <Typography
+        sx={{
+          color: "text.secondary",
+          fontSize: "0.85rem",
+          lineHeight: 1.6,
+          maxWidth: 320,
+          textAlign: "center",
+        }}
+      >
+        Choose a guest from the sidebar to view their conversations and respond to messages.
       </Typography>
     </Box>
+  );
+
+  const detailPanel = !selectedConversation ? (
+    emptyState
   ) : (
     <Box sx={{ display: "flex", flex: 1, flexDirection: "column", height: "100%" }}>
       <Box
@@ -491,7 +596,7 @@ export default function EventSupportClientPage() {
           borderBottom: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
           display: "flex",
           gap: 1.5,
-          px: 2,
+          px: 2.5,
           py: 1.5,
         }}
       >
@@ -499,32 +604,71 @@ export default function EventSupportClientPage() {
           sx={{
             bgcolor: alpha(theme.palette.primary.main, 0.1),
             color: "primary.main",
-            width: 36,
-            height: 36,
-            fontSize: "0.9rem",
+            width: 40,
+            height: 40,
+            fontSize: "0.95rem",
+            fontWeight: 700,
           }}
         >
           {(selectedConversation.externalDisplayName ?? "Guest").charAt(0).toUpperCase()}
         </Avatar>
         <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Typography sx={{ fontSize: "0.85rem", fontWeight: 600 }}>
+          <Typography sx={{ fontSize: "0.9rem", fontWeight: 600 }}>
             {selectedConversation.externalDisplayName ?? "Guest"}
           </Typography>
-          <Typography sx={{ color: "text.secondary", fontSize: "0.7rem" }}>
-            {selectedConversation.channel}
-          </Typography>
+          <Stack direction="row" spacing={1} sx={{ alignItems: "center", mt: 0.25 }}>
+            {(() => {
+              const badge = channelBadge(selectedConversation.channel);
+              return badge.color ? (
+                <Chip
+                  label={badge.label}
+                  size="small"
+                  sx={{
+                    height: 16,
+                    fontSize: "0.6rem",
+                    fontWeight: 600,
+                    bgcolor: alpha(badge.color, 0.1),
+                    color: badge.color,
+                    "& .MuiChip-label": { px: 0.5 },
+                  }}
+                />
+              ) : (
+                <Typography sx={{ color: "text.secondary", fontSize: "0.7rem" }}>
+                  {badge.label}
+                </Typography>
+              );
+            })()}
+            <Typography sx={{ color: "text.secondary", fontSize: "0.7rem" }}>Online</Typography>
+          </Stack>
         </Box>
+        <IconButton size="small" onClick={(e) => setMoreAnchor(e.currentTarget)}>
+          <MoreIcon fontSize="small" />
+        </IconButton>
+        <Menu anchorEl={moreAnchor} open={Boolean(moreAnchor)} onClose={() => setMoreAnchor(null)}>
+          <MenuItem onClick={() => setMoreAnchor(null)}>
+            <AssignIcon sx={{ mr: 1, fontSize: 16 }} /> Assign to me
+          </MenuItem>
+          <MenuItem onClick={() => setMoreAnchor(null)}>
+            <ResolveIcon sx={{ mr: 1, fontSize: 16 }} /> Resolve
+          </MenuItem>
+        </Menu>
       </Box>
 
       <Box
+        ref={messagesContainerRef}
         sx={{
           display: "flex",
           flexDirection: "column",
           flex: 1,
-          gap: 1,
+          gap: 1.5,
           overflowY: "auto",
-          px: 2,
-          py: 1.5,
+          px: 2.5,
+          py: 2,
+          "&::-webkit-scrollbar": { width: 4 },
+          "&::-webkit-scrollbar-thumb": {
+            bgcolor: alpha(theme.palette.text.primary, 0.08),
+            borderRadius: 4,
+          },
         }}
       >
         {messagesLoading ? (
@@ -540,12 +684,14 @@ export default function EventSupportClientPage() {
               justifyContent: "center",
             }}
           >
-            <Typography sx={{ color: "text.disabled", fontSize: "0.8rem" }}>
+            <Typography sx={{ color: "text.disabled", fontSize: "0.85rem" }}>
               No messages yet
             </Typography>
           </Box>
         ) : (
-          messages.map((msg) => <MessageBubble key={msg.id} message={msg} currentUserId={currentUser?.id} />)
+          messages.map((msg) => (
+            <MessageBubble key={msg.id} message={msg} currentUserId={currentUser?.id} />
+          ))
         )}
         <div ref={messagesEndRef} />
       </Box>
@@ -554,143 +700,144 @@ export default function EventSupportClientPage() {
         sx={{
           borderTop: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
           display: "flex",
-          flexDirection: "column",
           gap: 1,
-          px: 2,
-          py: 1.5,
+          p: 1.5,
         }}
       >
-        <Stack direction="row" spacing={1}>
-          <InputBase
-            disabled={sending}
-            multiline
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleSend();
-              }
-            }}
-            placeholder="Reply as agent..."
-            maxRows={4}
-            value={input}
-            sx={{
-              bgcolor: alpha(theme.palette.action.hover, 0.3),
-              borderRadius: 2,
-              flex: 1,
-              fontSize: "0.85rem",
-              px: 1.5,
-              py: 1,
-            }}
-          />
-          <QuickReplyPicker onSelect={(body) => setInput((prev) => prev + body)} />
-          <IconButton
-            color="primary"
-            disabled={!input.trim() || sending}
-            onClick={handleSend}
-            size="small"
-            sx={{ alignSelf: "flex-end" }}
-          >
-            <SendIcon sx={{ fontSize: 18 }} />
-          </IconButton>
-        </Stack>
+        <InputBase
+          disabled={sending}
+          multiline
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSend();
+            }
+          }}
+          placeholder="Reply as agent..."
+          maxRows={4}
+          value={input}
+          sx={{
+            bgcolor: alpha(theme.palette.action.hover, 0.3),
+            borderRadius: 2,
+            flex: 1,
+            fontSize: "0.85rem",
+            px: 1.5,
+            py: 1,
+          }}
+        />
+        <IconButton
+          color="primary"
+          disabled={!input.trim() || sending}
+          onClick={handleSend}
+          size="small"
+          sx={{ alignSelf: "flex-end" }}
+        >
+          <SendIcon sx={{ fontSize: 18 }} />
+        </IconButton>
       </Box>
     </Box>
   );
 
   if (isMobile) {
     return (
-      <>
       <RouteGuard featureId="support">
-      <ConversationUnreadWatcher conversationId={selectedId} onUpdate={handleUnreadUpdate} />
-      <Box sx={{ display: "flex", flexDirection: "column", height: "calc(100dvh - 160px)", width: "100%", maxWidth: 700, mx: "auto" }}>
-        {selectedGuestId && !selectedId ? (
-          <>
-            <Box sx={{ display: "flex", alignItems: "center", px: 1, py: 0.5 }}>
-              <IconButton onClick={() => setSelectedGuestId(null)}>
-                <Close />
-              </IconButton>
-              <Typography sx={{ fontWeight: 600, fontSize: "0.9rem" }}>
-                Conversations
-              </Typography>
+        <ConversationUnreadWatcher conversationId={selectedId} onUpdate={handleUnreadUpdate} />
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            height: "calc(100dvh - 160px)",
+            width: "100%",
+            maxWidth: 700,
+            mx: "auto",
+          }}
+        >
+          {selectedGuestId && !selectedId ? (
+            <>
+              <Box sx={{ display: "flex", alignItems: "center", px: 1, py: 0.5 }}>
+                <IconButton
+                  onClick={() => {
+                    setSelectedGuestId(null);
+                    setSelectedGuestName(null);
+                    setSelectedGuestPhone(null);
+                  }}
+                >
+                  <Close />
+                </IconButton>
+                <Typography sx={{ fontWeight: 600, fontSize: "0.9rem" }}>Conversations</Typography>
+              </Box>
+              {queuePanel}
+            </>
+          ) : selectedId ? (
+            <>
+              <Box sx={{ display: "flex", alignItems: "center", px: 1, py: 0.5 }}>
+                <IconButton
+                  onClick={() => {
+                    setSelectedId(null);
+                  }}
+                >
+                  <Close />
+                </IconButton>
+                <Typography sx={{ fontWeight: 600, fontSize: "0.9rem" }}>
+                  {selectedConversation?.externalDisplayName ?? "Conversation"}
+                </Typography>
+              </Box>
+              {detailPanel}
+            </>
+          ) : (
+            <Box sx={{ display: "flex", flex: 1 }}>
+              <Box sx={{ width: "100%" }}>
+                <SupportGuestSidebar
+                  eventId={eventId}
+                  selectedGuestId={selectedGuestId}
+                  onSelect={(id, name, phone) => {
+                    setSelectedGuestId(id);
+                    setSelectedGuestName(name);
+                    setSelectedGuestPhone(phone ?? null);
+                  }}
+                />
+              </Box>
             </Box>
-            {queuePanel}
-          </>
-        ) : selectedId ? (
-          <>
-            <Box sx={{ display: "flex", alignItems: "center", px: 1, py: 0.5 }}>
-              <IconButton onClick={() => { setSelectedId(null); setMessages([]); }}>
-                <Close />
-              </IconButton>
-              <Typography sx={{ fontWeight: 600, fontSize: "0.9rem" }}>
-                {selectedConversation?.externalDisplayName ?? "Conversation"}
-              </Typography>
-            </Box>
-            {detailPanel}
-          </>
-        ) : (
-          <Box sx={{ display: "flex", flex: 1 }}>
-            <Box sx={{ width: "100%" }}>
-              <SupportGuestSidebar
-                eventId={eventId}
-                selectedGuestId={selectedGuestId}
-                onSelect={(id, name) => {
-                  setSelectedGuestId(id);
-                  setSelectedGuestName(name);
-                }}
-              />
-            </Box>
-          </Box>
-        )}
-        <QuickReplyManager
-          open={quickReplyManagerOpen}
-          onClose={() => setQuickReplyManagerOpen(false)}
-        />
-      </Box>
+          )}
+        </Box>
       </RouteGuard>
-    </>
     );
   }
 
   return (
-    <>
     <RouteGuard featureId="support">
-    <ConversationUnreadWatcher conversationId={selectedId} onUpdate={handleUnreadUpdate} />
-    <Box
-      sx={{
-        border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-        borderRadius: 3,
-        display: "flex",
-        height: "calc(100dvh - 200px)",
-        maxWidth: 1200,
-        mx: "auto",
-        overflow: "hidden",
-        width: "100%",
-      }}
-    >
-      {isTablet && !showGuests ? null : (
-        <Box sx={{ width: isTablet ? 240 : 280, flexShrink: 0 }}>
-          <SupportGuestSidebar
-            eventId={eventId}
-            selectedGuestId={selectedGuestId}
-            onSelect={(id, name) => {
-              setSelectedGuestId(id);
-              setSelectedGuestName(name);
-              setSelectedId(null);
-              setMessages([]);
-              if (isTablet) setShowGuests(false);
-            }}
-          />
-        </Box>
-      )}
-      {queuePanel}
-      <Box sx={{ display: "flex", flex: 1 }}>{detailPanel}</Box>
-      <QuickReplyManager
-        open={quickReplyManagerOpen}
-        onClose={() => setQuickReplyManagerOpen(false)}
-      />
-    </Box>
+      <ConversationUnreadWatcher conversationId={selectedId} onUpdate={handleUnreadUpdate} />
+      <Box
+        sx={{
+          border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+          borderRadius: 3,
+          display: "flex",
+          height: "calc(100dvh - 200px)",
+          maxWidth: 1400,
+          mx: "auto",
+          overflow: "hidden",
+          width: "100%",
+        }}
+      >
+        {isTablet && !showGuests ? null : (
+          <Box sx={{ width: isTablet ? 240 : 280, flexShrink: 0 }}>
+            <SupportGuestSidebar
+              eventId={eventId}
+              selectedGuestId={selectedGuestId}
+              onSelect={(id, name, phone) => {
+                setSelectedGuestId(id);
+                setSelectedGuestName(name);
+                setSelectedGuestPhone(phone ?? null);
+                setSelectedId(null);
+                if (isTablet) setShowGuests(false);
+              }}
+            />
+          </Box>
+        )}
+        {queuePanel}
+        <Box sx={{ display: "flex", flex: 1 }}>{detailPanel}</Box>
+      </Box>
     </RouteGuard>
-    </>
   );
 }

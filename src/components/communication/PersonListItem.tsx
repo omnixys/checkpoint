@@ -65,6 +65,7 @@ export interface PersonData {
   lastMessage?: string;
   lastMessageAt?: string;
   channels?: string[];
+  phoneNumber?: string | undefined;
 }
 
 interface Props {

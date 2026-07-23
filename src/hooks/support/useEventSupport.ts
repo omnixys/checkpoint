@@ -1,19 +1,27 @@
 "use client";
 
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client/react";
-import { useCallback } from "react";
+import { useLazyQuery, useMutation, useQuery, useSubscription } from "@apollo/client/react";
+import { useCallback, useMemo, useState } from "react";
 import {
+  type Conversation,
   ConversationsDocument,
   CreateWhatsappConversationDocument,
-  SendMessageDocument,
-  MessagesDocument,
-  type Conversation,
   type Message,
+  MessageReceivedDocument,
+  MessagesDocument,
+  SendMessageDocument,
 } from "@/checkpoint/generated/graphql";
+import { appendMessageById, mergeMessagesById } from "@/checkpoint/hooks/internal/message-stream";
 
 export type { Conversation, Message };
 
 export function useEventSupport(_eventId?: string, _currentUserId?: string) {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [realtimeByConversation, setRealtimeByConversation] = useState<Record<string, Message[]>>(
+    {},
+  );
+  const [fetchedMessages, setFetchedMessages] = useState<Record<string, Message[]>>({});
+
   const {
     data: conversationsData,
     loading: conversationsLoading,
@@ -30,15 +38,43 @@ export function useEventSupport(_eventId?: string, _currentUserId?: string) {
 
   const [createWhatsappConversationMutation] = useMutation(CreateWhatsappConversationDocument);
 
+  useSubscription<{ messageReceived: Message }>(MessageReceivedDocument, {
+    variables: { conversationId: selectedId ?? "" },
+    skip: !selectedId,
+    onData: ({ data: result }) => {
+      const message = result.data?.messageReceived;
+      if (message?.conversationId === selectedId) {
+        setRealtimeByConversation((current) => ({
+          ...current,
+          [message.conversationId]: appendMessageById(
+            current[message.conversationId] ?? [],
+            message,
+          ),
+        }));
+      }
+    },
+  });
+
   const fetchMessages = useCallback(
     async (conversationId: string) => {
+      setSelectedId(conversationId);
       const result = await loadMessages({
         variables: { conversationId, limit: 100 },
       });
-      return result.data?.messages ?? [];
+      const msgs = result.data?.messages ?? [];
+      setFetchedMessages((prev) => ({ ...prev, [conversationId]: msgs }));
+      return msgs;
     },
     [loadMessages],
   );
+
+  const messages = useMemo(() => {
+    if (!selectedId) return [];
+    return mergeMessagesById(
+      fetchedMessages[selectedId] ?? [],
+      realtimeByConversation[selectedId] ?? [],
+    );
+  }, [selectedId, fetchedMessages, realtimeByConversation]);
 
   const sendMessage = useCallback(
     async (conversationId: string, body: string) => {
@@ -51,10 +87,15 @@ export function useEventSupport(_eventId?: string, _currentUserId?: string) {
   );
 
   const createConversation = useCallback(
-    async (_guestName: string, _firstMessage: string, channel = "WHATSAPP") => {
+    async (
+      _guestName: string,
+      _firstMessage: string,
+      channel = "WHATSAPP",
+      phoneNumber?: string,
+    ) => {
       if (channel === "WHATSAPP") {
         const result = await createWhatsappConversationMutation({
-          variables: { phoneNumber: _guestName, displayName: _guestName },
+          variables: { phoneNumber: phoneNumber ?? _guestName, displayName: _guestName },
         });
         await refetchConversations();
         return result.data?.createWhatsappConversation ?? null;
@@ -69,6 +110,10 @@ export function useEventSupport(_eventId?: string, _currentUserId?: string) {
     unassignedLoading: conversationsLoading,
     assigned: [] as Conversation[],
     assignedLoading: false,
+    selectedId,
+    setSelectedId,
+    messages,
+    messagesLoading: false,
     fetchMessages,
     sendMessage,
     assignToMe: async () => null,

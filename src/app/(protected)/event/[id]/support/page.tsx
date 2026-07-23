@@ -1,7 +1,7 @@
 import { Skeleton } from "@mui/material";
 import { type JSX, Suspense } from "react";
-import EventSupportClientPage from "./EventSupportClientPage";
 import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
+import EventSupportClientPage from "./EventSupportClientPage";
 
 export const metadata = buildMetadata({
   title: "Event Support",

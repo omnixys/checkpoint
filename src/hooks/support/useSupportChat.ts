@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useSubscription } from "@apollo/client/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   type Conversation,
   ConversationsDocument,
@@ -16,6 +16,13 @@ import { conversationsOfType } from "@/checkpoint/hooks/internal/conversation-se
 import { appendMessageById, mergeMessagesById } from "@/checkpoint/hooks/internal/message-stream";
 
 export type SupportMessage = Message;
+
+export type PendingMessage = {
+  id: string;
+  body: string;
+  status: "sending" | "sent" | "failed";
+  createdAt: string;
+};
 
 interface SupportConversation {
   id: string;
@@ -43,8 +50,10 @@ export function useSupportChat({
   const [realtimeByConversation, setRealtimeByConversation] = useState<Record<string, Message[]>>(
     {},
   );
+  const [pendingMessages, setPendingMessages] = useState<PendingMessage[]>([]);
   const [isCreating, setIsCreating] = useState(false);
   const [creationError, setCreationError] = useState<string | null>(null);
+  const creatingRef = useRef(false);
 
   const {
     data: messagesData,
@@ -112,51 +121,90 @@ export function useSupportChat({
 
   const sendMessage = useCallback(
     async (body: string) => {
-      if (!conversationId || !body.trim()) return;
-      const result = await sendMessageMutation({
-        variables: { conversationId, body: body.trim() },
-      });
-      const message = result.data?.sendMessage;
-      if (message) {
-        setRealtimeByConversation((current) => ({
-          ...current,
-          [message.conversationId]: appendMessageById(
-            current[message.conversationId] ?? [],
-            message,
-          ),
-        }));
+      if (!body.trim()) return;
+
+      const pendingId = `pending-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      const pending: PendingMessage = {
+        id: pendingId,
+        body: body.trim(),
+        status: "sending",
+        createdAt: new Date().toISOString(),
+      };
+      setPendingMessages((prev) => [...prev, pending]);
+
+      try {
+        let activeConversationId = conversationId;
+
+        if (!activeConversationId) {
+          if (creatingRef.current) {
+            setPendingMessages((prev) =>
+              prev.map((m) => (m.id === pendingId ? { ...m, status: "failed" as const } : m)),
+            );
+            return;
+          }
+
+          creatingRef.current = true;
+          setIsCreating(true);
+          setCreationError(null);
+
+          try {
+            const result = await createConversation({
+              variables: {
+                participantUserId: "support",
+                conversationType: ConversationType.SUPPORT,
+              },
+            });
+            const conv = result.data?.createInAppConversation;
+            if (!conv) {
+              throw new Error("Failed to create conversation");
+            }
+            activeConversationId = conv.id;
+            setConversationId(conv.id);
+          } catch (err) {
+            setCreationError(err instanceof Error ? err.message : "Failed to create conversation");
+            setPendingMessages((prev) =>
+              prev.map((m) => (m.id === pendingId ? { ...m, status: "failed" as const } : m)),
+            );
+            return;
+          } finally {
+            creatingRef.current = false;
+            setIsCreating(false);
+          }
+        }
+
+        const result = await sendMessageMutation({
+          variables: { conversationId: activeConversationId, body: body.trim() },
+        });
+        const message = result.data?.sendMessage;
+        if (message) {
+          setPendingMessages((prev) => prev.filter((m) => m.id !== pendingId));
+          setRealtimeByConversation((current) => ({
+            ...current,
+            [message.conversationId]: appendMessageById(
+              current[message.conversationId] ?? [],
+              message,
+            ),
+          }));
+        } else {
+          setPendingMessages((prev) =>
+            prev.map((m) => (m.id === pendingId ? { ...m, status: "failed" as const } : m)),
+          );
+        }
+      } catch {
+        setPendingMessages((prev) =>
+          prev.map((m) => (m.id === pendingId ? { ...m, status: "failed" as const } : m)),
+        );
       }
     },
-    [conversationId, sendMessageMutation],
+    [conversationId, sendMessageMutation, createConversation],
   );
 
-  const initializeConversation = useCallback(
-    async (opts: {
-      eventId: string;
-      guestName: string;
-      firstMessage?: string;
-      invitationId?: string;
-    }) => {
-      setIsCreating(true);
-      setCreationError(null);
-      try {
-        const result = await createConversation({
-          variables: {
-            participantUserId: opts.guestName,
-            conversationType: ConversationType.SUPPORT,
-          },
-        });
-        const conv = result.data?.createInAppConversation;
-        if (conv) {
-          setConversationId(conv.id);
-        }
-      } catch (err) {
-        setCreationError(err instanceof Error ? err.message : "Failed to create conversation");
-      } finally {
-        setIsCreating(false);
-      }
+  const retryMessage = useCallback(
+    async (pending: PendingMessage) => {
+      setPendingMessages((prev) => prev.filter((m) => m.id !== pending.id));
+      await sendMessage(pending.body);
     },
-    [createConversation],
+    [sendMessage],
   );
 
   const latestMessage = subscriptionData?.messageReceived ?? null;
@@ -171,10 +219,11 @@ export function useSupportChat({
   return {
     conversationId,
     messages,
+    pendingMessages,
     latestMessage,
     sendMessage,
+    retryMessage,
     sending,
-    initializeConversation,
     isCreating,
     creationError,
     messagesLoading,

@@ -1,8 +1,8 @@
 "use client";
 
-import { useSupportChat } from "@/checkpoint/hooks/support/useSupportChat";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
+import { useSupportChat } from "@/checkpoint/hooks/support/useSupportChat";
 
 const SupportChatWidget = dynamic(
   () => import("@/checkpoint/components/support/chat/SupportChatWidget"),
@@ -15,50 +15,36 @@ interface RsvpSupportChatProps {
   invitationId: string;
 }
 
-export default function RsvpSupportChat({
-  eventId,
-  guestName,
-  invitationId,
-}: RsvpSupportChatProps) {
+export default function RsvpSupportChat({ guestName, invitationId }: RsvpSupportChatProps) {
   const [initialized, setInitialized] = useState(false);
 
   const {
-    conversationId,
     messages,
+    pendingMessages,
     latestMessage,
     sendMessage,
+    retryMessage,
     sending,
-    initializeConversation,
     isCreating,
+    messagesLoading,
   } = useSupportChat({ invitationId });
 
   useEffect(() => {
-    if (initialized || isCreating || conversationId) return;
+    if (initialized) return;
     setInitialized(true);
-    initializeConversation({
-      eventId,
-      guestName,
-      invitationId,
-    });
-  }, [
-    initialized,
-    isCreating,
-    conversationId,
-    eventId,
-    guestName,
-    invitationId,
-    initializeConversation,
-  ]);
+  }, [initialized]);
 
   return (
     <SupportChatWidget
       guestName={guestName}
       latestMessage={latestMessage}
       messages={messages}
+      pendingMessages={pendingMessages}
       sending={sending}
+      isCreating={isCreating}
       onSend={sendMessage}
-      conversationExists={!!conversationId}
-      conversationLoading={isCreating}
+      onRetry={retryMessage}
+      messagesLoading={messagesLoading}
     />
   );
 }
