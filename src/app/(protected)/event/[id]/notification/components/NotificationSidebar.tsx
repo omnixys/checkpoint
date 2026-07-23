@@ -3,7 +3,6 @@
 import AlternateEmailRoundedIcon from "@mui/icons-material/AlternateEmailRounded";
 import AttachFileRoundedIcon from "@mui/icons-material/AttachFileRounded";
 import ForumRoundedIcon from "@mui/icons-material/ForumRounded";
-import VerifiedRoundedIcon from "@mui/icons-material/VerifiedRounded";
 import {
   Avatar,
   alpha,
@@ -18,13 +17,8 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { useNotificationItems } from "@/checkpoint/app/(protected)/event/[id]/notification/hooks/useNotificationMocks";
-import { getNotificationTone, getPriorityColor, getStatusColor } from "../themes/notificationTheme";
-import type {
-  EmailThread,
-  InAppChat,
-  NotificationListItem,
-  WhatsAppChat,
-} from "../types/notification.models";
+import { getNotificationTone } from "../themes/notificationTheme";
+import type { EmailThread, NotificationListItem, WhatsAppChat } from "../types/notification.models";
 import { NotificationChannel } from "../types/notification-channel.enum";
 
 interface Props {
@@ -42,10 +36,6 @@ function isWhatsApp(item: NotificationListItem): item is WhatsAppChat {
   return item.channel === NotificationChannel.WHATSAPP;
 }
 
-function isInApp(item: NotificationListItem): item is InAppChat {
-  return item.channel === NotificationChannel.IN_APP;
-}
-
 function isEmail(item: NotificationListItem): item is EmailThread {
   return item.channel === NotificationChannel.EMAIL;
 }
@@ -54,9 +44,6 @@ function getTitle(item: NotificationListItem): string {
   if (isWhatsApp(item)) {
     return item.contactName;
   }
-  if (isInApp(item)) {
-    return item.userName;
-  }
   return item.subject;
 }
 
@@ -64,18 +51,12 @@ function getSubtitle(item: NotificationListItem): string {
   if (isWhatsApp(item)) {
     return item.phoneNumber;
   }
-  if (isInApp(item)) {
-    return item.handle;
-  }
   return `${item.fromName} · ${item.fromEmail}`;
 }
 
 function getPreview(item: NotificationListItem): string {
   if (isWhatsApp(item)) {
     return item.lastMessage;
-  }
-  if (isInApp(item)) {
-    return item.preview;
   }
   return item.preview;
 }
@@ -92,14 +73,17 @@ function getLeadingIcon(item: NotificationListItem) {
     return <ForumRoundedIcon sx={{ fontSize: 16 }} />;
   }
 
-  if (isInApp(item)) {
-    return <VerifiedRoundedIcon sx={{ fontSize: 16 }} />;
-  }
-
   return <AlternateEmailRoundedIcon sx={{ fontSize: 16 }} />;
 }
 
-export function NotificationSidebar({ channel, selectedChatId, onSelect, onMarkAsRead, eventId, unreadMap }: Props) {
+export function NotificationSidebar({
+  channel,
+  selectedChatId,
+  onSelect,
+  onMarkAsRead,
+  eventId,
+  unreadMap,
+}: Props) {
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
   const tone = getNotificationTone(theme, channel);
@@ -285,34 +269,6 @@ export function NotificationSidebar({ channel, selectedChatId, onSelect, onMarkA
                             }}
                           />
                         ))}
-                      </Stack>
-                    ) : null}
-
-                    {isInApp(item) ? (
-                      <Stack direction="row" spacing={0.75} sx={{ mt: 1 }}>
-                        <Chip
-                          size="small"
-                          label={item.priority}
-                          sx={{
-                            height: 22,
-                            color: theme.palette.text.primary,
-                            backgroundColor: alpha(getPriorityColor(theme, item.priority), 0.14),
-                            border: `1px solid ${alpha(
-                              getPriorityColor(theme, item.priority),
-                              0.28,
-                            )}`,
-                          }}
-                        />
-                        <Chip
-                          size="small"
-                          label={item.status}
-                          sx={{
-                            height: 22,
-                            color: theme.palette.text.primary,
-                            backgroundColor: alpha(getStatusColor(theme, item.status), 0.14),
-                            border: `1px solid ${alpha(getStatusColor(theme, item.status), 0.28)}`,
-                          }}
-                        />
                       </Stack>
                     ) : null}
 

@@ -1,6 +1,5 @@
 "use client";
 
-import BoltRoundedIcon from "@mui/icons-material/BoltRounded";
 import DoneAllRoundedIcon from "@mui/icons-material/DoneAllRounded";
 import MailOutlineRoundedIcon from "@mui/icons-material/MailOutlineRounded";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
@@ -22,17 +21,10 @@ import {
   useNotificationMessages,
   useSendMessage,
 } from "../hooks/useNotificationMocks";
-import {
-  getEventTypeColor,
-  getNotificationTone,
-  getPriorityColor,
-  getStatusColor,
-} from "../themes/notificationTheme";
+import { getNotificationTone } from "../themes/notificationTheme";
 import type {
   EmailMessage,
   EmailThread,
-  InAppChat,
-  InAppMessage,
   NotificationListItem,
   NotificationMessage,
   WhatsAppChat,
@@ -52,20 +44,12 @@ function isWhatsAppItem(item: NotificationListItem): item is WhatsAppChat {
   return item.channel === NotificationChannel.WHATSAPP;
 }
 
-function isInAppItem(item: NotificationListItem): item is InAppChat {
-  return item.channel === NotificationChannel.IN_APP;
-}
-
 function isEmailItem(item: NotificationListItem): item is EmailThread {
   return item.channel === NotificationChannel.EMAIL;
 }
 
 function isWhatsAppMessage(message: NotificationMessage): message is WhatsAppMessage {
   return message.channel === NotificationChannel.WHATSAPP;
-}
-
-function isInAppMessage(message: NotificationMessage): message is InAppMessage {
-  return message.channel === NotificationChannel.IN_APP;
 }
 
 function isEmailMessage(message: NotificationMessage): message is EmailMessage {
@@ -226,61 +210,6 @@ function WhatsAppHeader({ item }: { item: WhatsAppChat }) {
   );
 }
 
-function InAppHeader({ item }: { item: InAppChat }) {
-  const theme = useTheme();
-  const priorityColor = getPriorityColor(theme, item.priority);
-  const statusColor = getStatusColor(theme, item.status);
-
-  return (
-    <Stack
-      direction={{ xs: "column", sm: "row" }}
-      spacing={1.5}
-      sx={{ justifyContent: "space-between", alignItems: { xs: "stretch", sm: "center" } }}
-    >
-      <Box sx={{ minWidth: 0 }}>
-        <Typography
-          sx={{
-            color: theme.palette.text.primary,
-            fontWeight: 700,
-            fontSize: 20,
-            overflowWrap: "anywhere",
-          }}
-        >
-          {item.title}
-        </Typography>
-        <Typography
-          sx={{
-            mt: 0.4,
-            color: alpha(theme.palette.text.primary, 0.58),
-            fontSize: 13,
-          }}
-        >
-          {item.userName} · {item.handle}
-        </Typography>
-      </Box>
-
-      <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
-        <Chip
-          label={item.priority}
-          sx={{
-            color: theme.palette.text.primary,
-            backgroundColor: alpha(priorityColor, 0.16),
-            border: `1px solid ${alpha(priorityColor, 0.28)}`,
-          }}
-        />
-        <Chip
-          label={item.status}
-          sx={{
-            color: theme.palette.text.primary,
-            backgroundColor: alpha(statusColor, 0.16),
-            border: `1px solid ${alpha(statusColor, 0.28)}`,
-          }}
-        />
-      </Stack>
-    </Stack>
-  );
-}
-
 function EmailHeader({ item }: { item: EmailThread }) {
   const theme = useTheme();
 
@@ -411,79 +340,6 @@ function WhatsAppTimeline({ messages }: { messages: WhatsAppMessage[] }) {
   );
 }
 
-function InAppTimeline({ messages }: { messages: InAppMessage[] }) {
-  const theme = useTheme();
-
-  return (
-    <Stack spacing={1.5}>
-      {messages.map((message, index) => {
-        const color = getEventTypeColor(theme, message.eventType);
-
-        return (
-          <MotionBox
-            key={message.id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2, delay: index * 0.03 }}
-            sx={{
-              borderRadius: 3,
-              p: 2,
-              border: `1px solid ${alpha(color, 0.28)}`,
-              backgroundColor: alpha(color, 0.08),
-            }}
-          >
-            <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
-              <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-                <Box
-                  sx={{
-                    width: 12,
-                    height: 12,
-                    borderRadius: "50%",
-                    backgroundColor: color,
-                  }}
-                />
-                <Typography sx={{ color: theme.palette.text.primary, fontWeight: 700 }}>
-                  {message.title ?? message.eventType}
-                </Typography>
-              </Stack>
-
-              <Chip
-                label={message.eventType}
-                sx={{
-                  color: theme.palette.text.primary,
-                  backgroundColor: alpha(color, 0.14),
-                  border: `1px solid ${alpha(color, 0.24)}`,
-                }}
-              />
-            </Stack>
-
-            <Typography
-              sx={{
-                mt: 1.2,
-                color: alpha(theme.palette.text.primary, 0.76),
-                lineHeight: 1.7,
-                fontSize: 14.5,
-              }}
-            >
-              {message.body}
-            </Typography>
-
-            <Typography
-              sx={{
-                mt: 1.2,
-                color: alpha(theme.palette.text.primary, 0.46),
-                fontSize: 12,
-              }}
-            >
-              {message.actor} · {message.timestamp}
-            </Typography>
-          </MotionBox>
-        );
-      })}
-    </Stack>
-  );
-}
-
 function EmailTimeline({ messages }: { messages: EmailMessage[] }) {
   const theme = useTheme();
 
@@ -568,27 +424,12 @@ function ConversationInput({
   const [value, setValue] = useState("");
 
   const buttonIcon =
-    channel === NotificationChannel.EMAIL ? (
-      <MailOutlineRoundedIcon />
-    ) : channel === NotificationChannel.IN_APP ? (
-      <BoltRoundedIcon />
-    ) : (
-      <SendRoundedIcon />
-    );
+    channel === NotificationChannel.EMAIL ? <MailOutlineRoundedIcon /> : <SendRoundedIcon />;
 
-  const buttonLabel =
-    channel === NotificationChannel.EMAIL
-      ? "Send Mail"
-      : channel === NotificationChannel.IN_APP
-        ? "Add Update"
-        : "Send";
+  const buttonLabel = channel === NotificationChannel.EMAIL ? "Send Mail" : "Send";
 
   const placeholder =
-    channel === NotificationChannel.EMAIL
-      ? "Compose reply..."
-      : channel === NotificationChannel.IN_APP
-        ? "Add workflow note or status update..."
-        : "Type a WhatsApp message...";
+    channel === NotificationChannel.EMAIL ? "Compose reply..." : "Type a WhatsApp message...";
 
   function handleSend() {
     if (value.trim() && onSend) {
@@ -628,7 +469,7 @@ function ConversationInput({
           startIcon={buttonIcon}
           onClick={handleSend}
           sx={{
-            minWidth: { xs: "100%", sm: channel === NotificationChannel.IN_APP ? 170 : 160 },
+            minWidth: { xs: "100%", sm: 160 },
             borderRadius: channel === NotificationChannel.EMAIL ? 3 : 999,
             backgroundColor: tone.accent,
             color: theme.palette.getContrastText(tone.accent),
@@ -689,7 +530,6 @@ export function NotificationConversationPanel({ channel, chatId, eventId }: Prop
         }}
       >
         {isWhatsAppItem(selectedItem) ? <WhatsAppHeader item={selectedItem} /> : null}
-        {isInAppItem(selectedItem) ? <InAppHeader item={selectedItem} /> : null}
         {isEmailItem(selectedItem) ? <EmailHeader item={selectedItem} /> : null}
       </Box>
 
@@ -704,10 +544,6 @@ export function NotificationConversationPanel({ channel, chatId, eventId }: Prop
       >
         {channel === NotificationChannel.WHATSAPP ? (
           <WhatsAppTimeline messages={messages.filter(isWhatsAppMessage)} />
-        ) : null}
-
-        {channel === NotificationChannel.IN_APP ? (
-          <InAppTimeline messages={messages.filter(isInAppMessage)} />
         ) : null}
 
         {channel === NotificationChannel.EMAIL ? (

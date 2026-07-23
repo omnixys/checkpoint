@@ -11,7 +11,6 @@ import {
   SendMessageDocument,
 } from "@/checkpoint/generated/graphql";
 import { appendMessageById, mergeMessagesById } from "@/checkpoint/hooks/internal/message-stream";
-import { getNotificationItems, getNotificationMessages } from "../mock/notification.mock";
 import type {
   EmailMessage,
   EmailThread,
@@ -119,12 +118,14 @@ export function useNotificationItems(channel: NotificationChannel, _eventId?: st
 
   const items = useMemo((): NotificationListItem[] => {
     if (channel === NotificationChannel.IN_APP) {
-      return getNotificationItems(channel) as NotificationListItem[];
+      return [];
     }
     const conversations = queryResult.data?.conversations ?? [];
     const filtered = conversations.filter(
       (conversation) =>
-        conversation.channel === channel && conversation.type === ConversationType.DIRECT,
+        conversation.channel === channel &&
+        conversation.type === ConversationType.DIRECT &&
+        !conversation.externalDisplayName,
     );
     if (channel === NotificationChannel.WHATSAPP) {
       return filtered.map(toWhatsAppChat);
@@ -165,7 +166,7 @@ export function useNotificationMessages(channel: NotificationChannel, chatId: st
 
   const messages = useMemo((): NotificationMessage[] => {
     if (channel === NotificationChannel.IN_APP) {
-      return getNotificationMessages(channel, chatId) as NotificationMessage[];
+      return [];
     }
 
     const realtimeMessages = chatId ? (realtimeByConversation[chatId] ?? []) : [];

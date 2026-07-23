@@ -14,21 +14,6 @@ export interface WhatsAppChat {
   labels: string[];
 }
 
-export interface InAppChat {
-  id: string;
-  channel: NotificationChannel.IN_APP;
-  chatId: string;
-  userName: string;
-  handle: string;
-  avatarColor: string;
-  title: string;
-  preview: string;
-  updatedAt: string;
-  unreadCount: number;
-  priority: "LOW" | "MEDIUM" | "HIGH";
-  status: "OPEN" | "PENDING" | "RESOLVED";
-}
-
 export interface EmailThread {
   id: string;
   channel: NotificationChannel.EMAIL;
@@ -43,7 +28,7 @@ export interface EmailThread {
   category: "Primary" | "Business" | "Contracts" | "VIP";
 }
 
-export type NotificationListItem = WhatsAppChat | InAppChat | EmailThread;
+export type NotificationListItem = WhatsAppChat | EmailThread;
 
 export interface WhatsAppMessage {
   id: string;
@@ -53,16 +38,6 @@ export interface WhatsAppMessage {
   timestamp: string;
   delivered: boolean;
   seen: boolean;
-}
-
-export interface InAppMessage {
-  id: string;
-  channel: NotificationChannel.IN_APP;
-  actor: "SYSTEM" | "USER" | "AGENT";
-  title?: string;
-  body: string;
-  timestamp: string;
-  eventType: "COMMENT" | "STATUS_CHANGE" | "INTERNAL_NOTE" | "ALERT";
 }
 
 export interface EmailMessage {
@@ -77,4 +52,4 @@ export interface EmailMessage {
   subject: string;
 }
 
-export type NotificationMessage = WhatsAppMessage | InAppMessage | EmailMessage;
+export type NotificationMessage = WhatsAppMessage | EmailMessage;
