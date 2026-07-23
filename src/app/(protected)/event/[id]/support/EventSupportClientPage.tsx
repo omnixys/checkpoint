@@ -1,8 +1,6 @@
 "use client";
 
 import {
-  AssignmentInd as AssignIcon,
-  Chat as ChatIcon,
   Close,
   MoreVert as MoreIcon,
   CheckCircle as ResolveIcon,
@@ -13,7 +11,6 @@ import {
   alpha,
   Badge,
   Box,
-  Button,
   Chip,
   CircularProgress,
   IconButton,
@@ -22,14 +19,12 @@ import {
   MenuItem,
   Paper,
   Stack,
-  Tab,
-  Tabs,
   Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
 import { useParams } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { List as VList } from "react-window";
 import RouteGuard from "@/checkpoint/components/guard/RouteGuard";
 import {
@@ -41,7 +36,7 @@ import { useEventSupport } from "@/checkpoint/hooks/support/useEventSupport";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { SupportGuestSidebar } from "./SupportGuestSidebar";
 
-type TabValue = "unassigned" | "assigned" | "closed";
+type FilterValue = "all" | "whatsapp" | "inapp";
 
 function channelBadge(channel: string) {
   switch (channel) {
@@ -238,11 +233,11 @@ function MessageBubble({
           {fromAgent && message.deliveryStatus && (
             <Box component="span" sx={{ ml: 0.5 }}>
               {message.deliveryStatus === "READ"
-                ? "✓✓"
+                ? "\u2713\u2713"
                 : message.deliveryStatus === "DELIVERED"
-                  ? "✓✓"
+                  ? "\u2713\u2713"
                   : message.deliveryStatus === "SENT"
-                    ? "✓"
+                    ? "\u2713"
                     : ""}
             </Box>
           )}
@@ -280,25 +275,75 @@ function formatRelativeTime(dateStr: string): string {
   return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 
+function FilterChipGroup({
+  value,
+  onChange,
+  counts,
+}: {
+  value: FilterValue;
+  onChange: (v: FilterValue) => void;
+  counts: { all: number; whatsapp: number; inapp: number };
+}) {
+  const theme = useTheme();
+  const filters: { key: FilterValue; label: string; count: number }[] = [
+    { key: "all", label: "All", count: counts.all },
+    { key: "whatsapp", label: "WhatsApp", count: counts.whatsapp },
+    { key: "inapp", label: "In-App", count: counts.inapp },
+  ];
+
+  return (
+    <Stack direction="row" spacing={0.5}>
+      {filters.map((f) => (
+        <Chip
+          key={f.key}
+          label={`${f.label} (${f.count})`}
+          size="small"
+          onClick={() => onChange(f.key)}
+          sx={{
+            height: 26,
+            fontSize: "0.72rem",
+            fontWeight: value === f.key ? 700 : 500,
+            bgcolor:
+              value === f.key
+                ? alpha(theme.palette.primary.main, 0.12)
+                : alpha(theme.palette.action.hover, 0.4),
+            color: value === f.key ? "primary.main" : "text.secondary",
+            border: "1px solid",
+            borderColor:
+              value === f.key
+                ? alpha(theme.palette.primary.main, 0.24)
+                : alpha(theme.palette.divider, 0.12),
+            cursor: "pointer",
+            "&:hover": {
+              bgcolor:
+                value === f.key
+                  ? alpha(theme.palette.primary.main, 0.16)
+                  : alpha(theme.palette.action.hover, 0.6),
+            },
+          }}
+        />
+      ))}
+    </Stack>
+  );
+}
+
+const CONVERSATION_ITEM_HEIGHT = 76;
+
 export default function EventSupportClientPage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
   const { id: eventId } = useParams<{ id: string }>();
   const { currentUser } = useAuth();
 
   const {
-    unassigned,
-    unassignedLoading,
-    assigned,
-    assignedLoading,
+    conversations,
+    conversationsLoading,
     selectedId,
     setSelectedId,
     messages,
     messagesLoading,
     fetchMessages,
     sendMessage,
-    createConversation,
   } = useEventSupport(eventId, currentUser?.id);
 
   const { conversations: unreadConversations, markAsRead } = useConversationUnread(eventId);
@@ -317,16 +362,9 @@ export default function EventSupportClientPage() {
     });
   }, []);
 
-  const [tab, setTab] = useState<TabValue>("unassigned");
-  const [selectedGuestId, setSelectedGuestId] = useState<string | null>(null);
-  const [selectedGuestName, setSelectedGuestName] = useState<string | null>(null);
-  const [selectedGuestPhone, setSelectedGuestPhone] = useState<string | null>(null);
-  const [showGuests, setShowGuests] = useState(true);
+  const [filter, setFilter] = useState<FilterValue>("all");
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
-  const [newConvInput, setNewConvInput] = useState("");
-  const [showNewConvInput, setShowNewConvInput] = useState(false);
-  const [creatingConversation, setCreatingConversation] = useState(false);
   const [moreAnchor, setMoreAnchor] = useState<null | HTMLElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -344,14 +382,22 @@ export default function EventSupportClientPage() {
     return () => observer.disconnect();
   }, []);
 
-  const CONVERSATION_ITEM_HEIGHT = 76;
+  const filterCounts = useMemo(() => {
+    const all = conversations.length;
+    const whatsapp = conversations.filter((c) => c.channel === "WHATSAPP").length;
+    return { all, whatsapp, inapp: all - whatsapp };
+  }, [conversations]);
 
-  const allConversations = [...unassigned, ...assigned];
-  const listItems = tab === "unassigned" ? unassigned : tab === "assigned" ? assigned : [];
-  const loading =
-    tab === "unassigned" ? unassignedLoading : tab === "assigned" ? assignedLoading : false;
+  const filteredConversations = useMemo(() => {
+    if (filter === "all") return conversations;
+    if (filter === "whatsapp") return conversations.filter((c) => c.channel === "WHATSAPP");
+    return conversations.filter((c) => c.channel !== "WHATSAPP");
+  }, [conversations, filter]);
 
-  const selectedConversation = allConversations.find((c) => c.id === selectedId);
+  const selectedConversation = useMemo(
+    () => conversations.find((c) => c.id === selectedId) ?? null,
+    [conversations, selectedId],
+  );
 
   useEffect(() => {
     if (!selectedId) return;
@@ -375,367 +421,196 @@ export default function EventSupportClientPage() {
     }
   }, [selectedId, input, sending, sendMessage]);
 
-  const handleCreateWhatsApp = useCallback(async () => {
-    if (!selectedGuestName || !newConvInput.trim() || creatingConversation) return;
-    setCreatingConversation(true);
-    try {
-      const conv = await createConversation(
-        selectedGuestName,
-        newConvInput.trim(),
-        "WHATSAPP",
-        selectedGuestPhone ?? undefined,
-      );
-      if (conv) {
-        setSelectedId(conv.id);
-        setNewConvInput("");
-        setShowNewConvInput(false);
-      }
-    } finally {
-      setCreatingConversation(false);
-    }
-  }, [
-    selectedGuestName,
-    selectedGuestPhone,
-    newConvInput,
-    creatingConversation,
-    createConversation,
-    setSelectedId,
-  ]);
-
-  const queuePanel = (
-    <Box
-      sx={{
-        borderRight: isMobile ? "none" : `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
-        width: isMobile ? "100%" : 340,
-        flexShrink: 0,
-      }}
-    >
-      <Box sx={{ px: 2, pt: 2, pb: 1 }}>
-        <Stack direction="row" sx={{ alignItems: "center", justifyContent: "space-between" }}>
-          <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-            {isTablet && !showGuests && (
-              <IconButton size="small" onClick={() => setShowGuests(true)} title="Show guests">
-                <AssignIcon fontSize="small" />
-              </IconButton>
-            )}
-            <Typography variant="h6" sx={{ fontWeight: 700, fontSize: "1.1rem" }}>
-              Support Queue
-            </Typography>
-          </Stack>
-        </Stack>
-      </Box>
-      <Tabs
-        value={tab}
-        onChange={(_, v) => {
-          setTab(v);
-          setSelectedId(null);
-        }}
-        sx={{ px: 1 }}
-      >
-        <Tab
-          label={`Unassigned (${unassigned.length})`}
-          value="unassigned"
-          sx={{ fontSize: "0.72rem", minHeight: 36, textTransform: "none" }}
-        />
-        <Tab
-          label={`Assigned (${assigned.length})`}
-          value="assigned"
-          sx={{ fontSize: "0.72rem", minHeight: 36, textTransform: "none" }}
-        />
-      </Tabs>
-      {selectedGuestId && (
-        <Box sx={{ px: 2, pb: 1, pt: 1 }}>
-          <Stack spacing={1}>
-            {!showNewConvInput && (
-              <Button
-                size="small"
-                variant="outlined"
-                startIcon={<ChatIcon sx={{ fontSize: 14 }} />}
-                disabled={!selectedGuestId || creatingConversation}
-                onClick={() => setShowNewConvInput(true)}
-                sx={{ fontSize: "0.7rem", textTransform: "none" }}
-              >
-                New WhatsApp
-              </Button>
-            )}
-            {showNewConvInput && (
-              <Stack direction="row" spacing={0.5}>
-                <InputBase
-                  value={newConvInput}
-                  onChange={(e) => setNewConvInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      handleCreateWhatsApp();
-                    }
-                    if (e.key === "Escape") {
-                      setShowNewConvInput(false);
-                      setNewConvInput("");
-                    }
-                  }}
-                  placeholder="First message to guest..."
-                  autoFocus
-                  sx={{
-                    flex: 1,
-                    px: 1,
-                    py: 0.5,
-                    borderRadius: 1,
-                    fontSize: "0.75rem",
-                    bgcolor: alpha(theme.palette.action.hover, 0.3),
-                    border: `1px solid ${alpha(theme.palette.divider, 0.12)}`,
+  const conversationList = (
+    <Box ref={listContainerRef} sx={{ flex: 1, overflow: "hidden" }}>
+      {conversationsLoading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+          <CircularProgress size={24} />
+        </Box>
+      ) : filteredConversations.length === 0 ? (
+        <Typography
+          sx={{ color: "text.disabled", fontSize: "0.8rem", py: 4, textAlign: "center", px: 2 }}
+        >
+          No conversations found
+        </Typography>
+      ) : (
+        <VList
+          style={{ height: listHeight, width: "100%" }}
+          rowCount={filteredConversations.length}
+          rowHeight={CONVERSATION_ITEM_HEIGHT}
+          overscanCount={5}
+          rowProps={{}}
+          rowComponent={({ index, style }) => {
+            const conv = filteredConversations[index];
+            if (!conv) return null;
+            return (
+              <div style={style}>
+                <ConversationListItem
+                  conversation={conv}
+                  selected={selectedId === conv.id}
+                  unreadCount={unreadMap.get(conv.id) ?? null}
+                  onClick={() => {
+                    setSelectedId(conv.id);
+                    const count = unreadMap.get(conv.id);
+                    if (count && count > 0) markAsRead(conv.id);
                   }}
                 />
-                <IconButton
-                  size="small"
-                  disabled={!newConvInput.trim() || creatingConversation}
-                  onClick={handleCreateWhatsApp}
-                  sx={{ color: "primary.main" }}
-                >
-                  <SendIcon sx={{ fontSize: 14 }} />
-                </IconButton>
-              </Stack>
-            )}
-          </Stack>
-        </Box>
+              </div>
+            );
+          }}
+        />
       )}
-      <Box ref={listContainerRef} sx={{ flex: 1, overflow: "hidden", py: 0.5 }}>
-        {loading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
-            <CircularProgress size={24} />
-          </Box>
-        ) : listItems.length === 0 ? (
-          <Typography
-            sx={{ color: "text.disabled", fontSize: "0.8rem", py: 4, textAlign: "center", px: 2 }}
-          >
-            {selectedGuestId
-              ? "No conversations with this guest"
-              : tab === "unassigned"
-                ? "No unassigned conversations"
-                : "No assigned conversations"}
-          </Typography>
-        ) : (
-          <VList
-            style={{ height: listHeight, width: "100%" }}
-            rowCount={listItems.length}
-            rowHeight={CONVERSATION_ITEM_HEIGHT}
-            overscanCount={5}
-            rowProps={{}}
-            rowComponent={({ index, style }) => {
-              const conv = listItems[index];
-              if (!conv) return null;
-              return (
-                <div style={style}>
-                  <ConversationListItem
-                    conversation={conv}
-                    selected={selectedId === conv.id}
-                    unreadCount={unreadMap.get(conv.id) ?? null}
-                    onClick={() => {
-                      setSelectedId(conv.id);
-                      const count = unreadMap.get(conv.id);
-                      if (count && count > 0) markAsRead(conv.id);
-                    }}
-                  />
-                </div>
-              );
-            }}
-          />
-        )}
-      </Box>
     </Box>
   );
 
-  const emptyState = (
+  const chatHeader = selectedConversation ? (
     <Box
       sx={{
         alignItems: "center",
+        borderBottom: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
         display: "flex",
-        flex: 1,
-        flexDirection: "column",
-        gap: 2,
-        justifyContent: "center",
-        px: 4,
+        gap: 1.5,
+        px: 2.5,
+        py: 1.5,
       }}
     >
       <Avatar
         sx={{
-          bgcolor: alpha(theme.palette.primary.main, 0.08),
+          bgcolor: alpha(theme.palette.primary.main, 0.1),
           color: "primary.main",
-          height: 64,
-          width: 64,
+          width: 40,
+          height: 40,
+          fontSize: "0.95rem",
+          fontWeight: 700,
         }}
       >
-        <ChatIcon sx={{ fontSize: 32 }} />
+        {(selectedConversation.externalDisplayName ?? "Guest").charAt(0).toUpperCase()}
       </Avatar>
-      <Typography sx={{ color: "text.primary", fontSize: "1rem", fontWeight: 600 }}>
-        Select a conversation
-      </Typography>
-      <Typography
-        sx={{
-          color: "text.secondary",
-          fontSize: "0.85rem",
-          lineHeight: 1.6,
-          maxWidth: 320,
-          textAlign: "center",
-        }}
-      >
-        Choose a guest from the sidebar to view their conversations and respond to messages.
-      </Typography>
+      <Box sx={{ flex: 1, minWidth: 0 }}>
+        <Typography sx={{ fontSize: "0.9rem", fontWeight: 600 }}>
+          {selectedConversation.externalDisplayName ?? "Guest"}
+        </Typography>
+        <Stack direction="row" spacing={1} sx={{ alignItems: "center", mt: 0.25 }}>
+          {(() => {
+            const badge = channelBadge(selectedConversation.channel);
+            return badge.color ? (
+              <Chip
+                label={badge.label}
+                size="small"
+                sx={{
+                  height: 16,
+                  fontSize: "0.6rem",
+                  fontWeight: 600,
+                  bgcolor: alpha(badge.color, 0.1),
+                  color: badge.color,
+                  "& .MuiChip-label": { px: 0.5 },
+                }}
+              />
+            ) : (
+              <Typography sx={{ color: "text.secondary", fontSize: "0.7rem" }}>
+                {badge.label}
+              </Typography>
+            );
+          })()}
+          <Typography sx={{ color: "text.secondary", fontSize: "0.7rem" }}>Online</Typography>
+        </Stack>
+      </Box>
+      <IconButton size="small" onClick={(e) => setMoreAnchor(e.currentTarget)}>
+        <MoreIcon fontSize="small" />
+      </IconButton>
+      <Menu anchorEl={moreAnchor} open={Boolean(moreAnchor)} onClose={() => setMoreAnchor(null)}>
+        <MenuItem onClick={() => setMoreAnchor(null)}>
+          <ResolveIcon sx={{ mr: 1, fontSize: 16 }} /> Resolve
+        </MenuItem>
+      </Menu>
+    </Box>
+  ) : null;
+
+  const chatMessages = (
+    <Box
+      ref={messagesContainerRef}
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        flex: 1,
+        gap: 1.5,
+        overflowY: "auto",
+        px: 2.5,
+        py: 2,
+        background: `linear-gradient(135deg, ${alpha(theme.palette.background.default, 0.5)} 0%, ${alpha(theme.palette.background.default, 0.8)} 100%)`,
+        "&::-webkit-scrollbar": { width: 4 },
+        "&::-webkit-scrollbar-thumb": {
+          bgcolor: alpha(theme.palette.text.primary, 0.08),
+          borderRadius: 4,
+        },
+      }}
+    >
+      {messagesLoading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+          <CircularProgress size={20} />
+        </Box>
+      ) : messages.length === 0 ? (
+        <Box
+          sx={{
+            alignItems: "center",
+            display: "flex",
+            flex: 1,
+            justifyContent: "center",
+          }}
+        >
+          <Typography sx={{ color: "text.disabled", fontSize: "0.85rem" }}>
+            No messages yet
+          </Typography>
+        </Box>
+      ) : (
+        messages.map((msg) => (
+          <MessageBubble key={msg.id} message={msg} currentUserId={currentUser?.id} />
+        ))
+      )}
+      <div ref={messagesEndRef} />
     </Box>
   );
 
-  const detailPanel = !selectedConversation ? (
-    emptyState
-  ) : (
-    <Box sx={{ display: "flex", flex: 1, flexDirection: "column", height: "100%" }}>
-      <Box
-        sx={{
-          alignItems: "center",
-          borderBottom: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-          display: "flex",
-          gap: 1.5,
-          px: 2.5,
-          py: 1.5,
+  const chatInput = (
+    <Box
+      sx={{
+        borderTop: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+        display: "flex",
+        gap: 1,
+        p: 1.5,
+      }}
+    >
+      <InputBase
+        disabled={sending}
+        multiline
+        onChange={(e) => setInput(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            handleSend();
+          }
         }}
-      >
-        <Avatar
-          sx={{
-            bgcolor: alpha(theme.palette.primary.main, 0.1),
-            color: "primary.main",
-            width: 40,
-            height: 40,
-            fontSize: "0.95rem",
-            fontWeight: 700,
-          }}
-        >
-          {(selectedConversation.externalDisplayName ?? "Guest").charAt(0).toUpperCase()}
-        </Avatar>
-        <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Typography sx={{ fontSize: "0.9rem", fontWeight: 600 }}>
-            {selectedConversation.externalDisplayName ?? "Guest"}
-          </Typography>
-          <Stack direction="row" spacing={1} sx={{ alignItems: "center", mt: 0.25 }}>
-            {(() => {
-              const badge = channelBadge(selectedConversation.channel);
-              return badge.color ? (
-                <Chip
-                  label={badge.label}
-                  size="small"
-                  sx={{
-                    height: 16,
-                    fontSize: "0.6rem",
-                    fontWeight: 600,
-                    bgcolor: alpha(badge.color, 0.1),
-                    color: badge.color,
-                    "& .MuiChip-label": { px: 0.5 },
-                  }}
-                />
-              ) : (
-                <Typography sx={{ color: "text.secondary", fontSize: "0.7rem" }}>
-                  {badge.label}
-                </Typography>
-              );
-            })()}
-            <Typography sx={{ color: "text.secondary", fontSize: "0.7rem" }}>Online</Typography>
-          </Stack>
-        </Box>
-        <IconButton size="small" onClick={(e) => setMoreAnchor(e.currentTarget)}>
-          <MoreIcon fontSize="small" />
-        </IconButton>
-        <Menu anchorEl={moreAnchor} open={Boolean(moreAnchor)} onClose={() => setMoreAnchor(null)}>
-          <MenuItem onClick={() => setMoreAnchor(null)}>
-            <AssignIcon sx={{ mr: 1, fontSize: 16 }} /> Assign to me
-          </MenuItem>
-          <MenuItem onClick={() => setMoreAnchor(null)}>
-            <ResolveIcon sx={{ mr: 1, fontSize: 16 }} /> Resolve
-          </MenuItem>
-        </Menu>
-      </Box>
-
-      <Box
-        ref={messagesContainerRef}
+        placeholder="Reply as agent..."
+        maxRows={4}
+        value={input}
         sx={{
-          display: "flex",
-          flexDirection: "column",
+          bgcolor: alpha(theme.palette.action.hover, 0.3),
+          borderRadius: 2,
           flex: 1,
-          gap: 1.5,
-          overflowY: "auto",
-          px: 2.5,
-          py: 2,
-          "&::-webkit-scrollbar": { width: 4 },
-          "&::-webkit-scrollbar-thumb": {
-            bgcolor: alpha(theme.palette.text.primary, 0.08),
-            borderRadius: 4,
-          },
+          fontSize: "0.875rem",
+          px: 1.5,
+          py: 1,
         }}
+      />
+      <IconButton
+        color="primary"
+        disabled={!input.trim() || sending}
+        onClick={handleSend}
+        size="small"
+        sx={{ alignSelf: "flex-end" }}
       >
-        {messagesLoading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
-            <CircularProgress size={20} />
-          </Box>
-        ) : messages.length === 0 ? (
-          <Box
-            sx={{
-              alignItems: "center",
-              display: "flex",
-              flex: 1,
-              justifyContent: "center",
-            }}
-          >
-            <Typography sx={{ color: "text.disabled", fontSize: "0.85rem" }}>
-              No messages yet
-            </Typography>
-          </Box>
-        ) : (
-          messages.map((msg) => (
-            <MessageBubble key={msg.id} message={msg} currentUserId={currentUser?.id} />
-          ))
-        )}
-        <div ref={messagesEndRef} />
-      </Box>
-
-      <Box
-        sx={{
-          borderTop: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-          display: "flex",
-          gap: 1,
-          p: 1.5,
-        }}
-      >
-        <InputBase
-          disabled={sending}
-          multiline
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              handleSend();
-            }
-          }}
-          placeholder="Reply as agent..."
-          maxRows={4}
-          value={input}
-          sx={{
-            bgcolor: alpha(theme.palette.action.hover, 0.3),
-            borderRadius: 2,
-            flex: 1,
-            fontSize: "0.85rem",
-            px: 1.5,
-            py: 1,
-          }}
-        />
-        <IconButton
-          color="primary"
-          disabled={!input.trim() || sending}
-          onClick={handleSend}
-          size="small"
-          sx={{ alignSelf: "flex-end" }}
-        >
-          <SendIcon sx={{ fontSize: 18 }} />
-        </IconButton>
-      </Box>
+        <SendIcon sx={{ fontSize: 18 }} />
+      </IconButton>
     </Box>
   );
 
@@ -749,56 +624,35 @@ export default function EventSupportClientPage() {
             flexDirection: "column",
             height: "calc(100dvh - 160px)",
             width: "100%",
-            maxWidth: 700,
             mx: "auto",
           }}
         >
-          {selectedGuestId && !selectedId ? (
+          {selectedId ? (
             <>
               <Box sx={{ display: "flex", alignItems: "center", px: 1, py: 0.5 }}>
-                <IconButton
-                  onClick={() => {
-                    setSelectedGuestId(null);
-                    setSelectedGuestName(null);
-                    setSelectedGuestPhone(null);
-                  }}
-                >
-                  <Close />
-                </IconButton>
-                <Typography sx={{ fontWeight: 600, fontSize: "0.9rem" }}>Conversations</Typography>
-              </Box>
-              {queuePanel}
-            </>
-          ) : selectedId ? (
-            <>
-              <Box sx={{ display: "flex", alignItems: "center", px: 1, py: 0.5 }}>
-                <IconButton
-                  onClick={() => {
-                    setSelectedId(null);
-                  }}
-                >
+                <IconButton onClick={() => setSelectedId(null)}>
                   <Close />
                 </IconButton>
                 <Typography sx={{ fontWeight: 600, fontSize: "0.9rem" }}>
                   {selectedConversation?.externalDisplayName ?? "Conversation"}
                 </Typography>
               </Box>
-              {detailPanel}
+              {chatHeader}
+              {chatMessages}
+              {chatInput}
             </>
           ) : (
-            <Box sx={{ display: "flex", flex: 1 }}>
-              <Box sx={{ width: "100%" }}>
-                <SupportGuestSidebar
-                  eventId={eventId}
-                  selectedGuestId={selectedGuestId}
-                  onSelect={(id, name, phone) => {
-                    setSelectedGuestId(id);
-                    setSelectedGuestName(name);
-                    setSelectedGuestPhone(phone ?? null);
-                  }}
-                />
+            <>
+              <Box sx={{ px: 2, pt: 2, pb: 1 }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, fontSize: "1.1rem" }}>
+                  Conversations
+                </Typography>
+                <Box sx={{ mt: 1 }}>
+                  <FilterChipGroup value={filter} onChange={setFilter} counts={filterCounts} />
+                </Box>
               </Box>
-            </Box>
+              {conversationList}
+            </>
           )}
         </Box>
       </RouteGuard>
@@ -820,23 +674,56 @@ export default function EventSupportClientPage() {
           width: "100%",
         }}
       >
-        {isTablet && !showGuests ? null : (
-          <Box sx={{ width: isTablet ? 240 : 280, flexShrink: 0 }}>
-            <SupportGuestSidebar
-              eventId={eventId}
-              selectedGuestId={selectedGuestId}
-              onSelect={(id, name, phone) => {
-                setSelectedGuestId(id);
-                setSelectedGuestName(name);
-                setSelectedGuestPhone(phone ?? null);
-                setSelectedId(null);
-                if (isTablet) setShowGuests(false);
-              }}
-            />
+        <Box
+          sx={{
+            width: 300,
+            flexShrink: 0,
+            borderRight: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+          }}
+        >
+          <SupportGuestSidebar eventId={eventId} selectedGuestId={null} onSelect={() => {}} />
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            flex: 1,
+            minWidth: 0,
+          }}
+        >
+          <Box
+            sx={{
+              px: 2,
+              pt: 1.5,
+              pb: 1,
+              borderBottom: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+            }}
+          >
+            <Stack
+              direction="row"
+              spacing={2}
+              sx={{ alignItems: "center", justifyContent: "space-between" }}
+            >
+              <Typography variant="h6" sx={{ fontWeight: 700, fontSize: "1.1rem" }}>
+                {selectedConversation
+                  ? `${selectedConversation.externalDisplayName ?? "Guest"}`
+                  : "Conversations"}
+              </Typography>
+              {!selectedConversation && (
+                <FilterChipGroup value={filter} onChange={setFilter} counts={filterCounts} />
+              )}
+            </Stack>
           </Box>
-        )}
-        {queuePanel}
-        <Box sx={{ display: "flex", flex: 1 }}>{detailPanel}</Box>
+          {selectedConversation ? (
+            <>
+              {chatHeader}
+              {chatMessages}
+              {chatInput}
+            </>
+          ) : (
+            conversationList
+          )}
+        </Box>
       </Box>
     </RouteGuard>
   );

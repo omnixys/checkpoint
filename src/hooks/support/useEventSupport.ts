@@ -106,18 +106,14 @@ export function useEventSupport(_eventId?: string, _currentUserId?: string) {
   );
 
   return {
-    unassigned: conversations,
-    unassignedLoading: conversationsLoading,
-    assigned: [] as Conversation[],
-    assignedLoading: false,
+    conversations,
+    conversationsLoading,
     selectedId,
     setSelectedId,
     messages,
     messagesLoading: false,
     fetchMessages,
     sendMessage,
-    assignToMe: async () => null,
-    unassign: async () => null,
     close: async () => null,
     createConversation,
     refetchAll: useCallback(() => {
