@@ -187,29 +187,35 @@ function MessageBubble({
     <Box
       sx={{
         alignSelf: fromAgent ? "flex-end" : "flex-start",
-        maxWidth: "78%",
+        maxWidth: "72%",
+        px: 1,
       }}
     >
       <Paper
         elevation={0}
         sx={{
           background: fromAgent
-            ? alpha(theme.palette.primary.main, 0.12)
-            : alpha(theme.palette.background.paper, 0.6),
+            ? `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.15)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
+            : theme.palette.mode === "dark"
+              ? alpha("#FFFFFF", 0.06)
+              : alpha("#FFFFFF", 0.9),
           border: "1px solid",
           borderColor: fromAgent
-            ? alpha(theme.palette.primary.main, 0.18)
-            : alpha(theme.palette.divider, 0.12),
-          borderRadius: fromAgent ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
-          px: 2.5,
-          py: 1.5,
+            ? alpha(theme.palette.primary.main, 0.2)
+            : alpha(theme.palette.divider, 0.08),
+          borderRadius: fromAgent ? "20px 20px 6px 20px" : "20px 20px 20px 6px",
+          px: 3,
+          py: 2,
+          boxShadow: fromAgent
+            ? `0 1px 2px ${alpha(theme.palette.primary.main, 0.08)}`
+            : `0 1px 3px ${alpha("#000000", 0.06)}`,
         }}
       >
         <Typography
           variant="body2"
           sx={{
-            fontSize: "0.875rem",
-            lineHeight: 1.6,
+            fontSize: "0.9rem",
+            lineHeight: 1.65,
             whiteSpace: "pre-wrap",
             wordBreak: "break-word",
           }}
@@ -219,10 +225,10 @@ function MessageBubble({
         <Typography
           variant="caption"
           sx={{
-            color: "text.disabled",
+            color: fromAgent ? alpha(theme.palette.primary.main, 0.5) : "text.disabled",
             display: "block",
             fontSize: "0.65rem",
-            mt: 0.5,
+            mt: 0.75,
             textAlign: fromAgent ? "right" : "left",
           }}
         >
@@ -533,15 +539,22 @@ export default function EventSupportClientPage() {
         display: "flex",
         flexDirection: "column",
         flex: 1,
-        gap: 1.5,
+        gap: 1,
         overflowY: "auto",
-        px: 2.5,
+        px: 3,
         py: 2,
-        background: `linear-gradient(135deg, ${alpha(theme.palette.background.default, 0.5)} 0%, ${alpha(theme.palette.background.default, 0.8)} 100%)`,
-        "&::-webkit-scrollbar": { width: 4 },
+        background:
+          theme.palette.mode === "dark"
+            ? `linear-gradient(180deg, ${alpha("#0D1117", 0.95)} 0%, ${alpha("#161B22", 0.95)} 100%)`
+            : `linear-gradient(180deg, ${alpha("#F8F9FA", 0.8)} 0%, ${alpha("#FFFFFF", 0.95)} 100%)`,
+        "&::-webkit-scrollbar": { width: 5 },
+        "&::-webkit-scrollbar-track": { bgcolor: "transparent" },
         "&::-webkit-scrollbar-thumb": {
-          bgcolor: alpha(theme.palette.text.primary, 0.08),
+          bgcolor: alpha(theme.palette.text.primary, 0.1),
           borderRadius: 4,
+          "&:hover": {
+            bgcolor: alpha(theme.palette.text.primary, 0.2),
+          },
         },
       }}
     >
@@ -574,40 +587,59 @@ export default function EventSupportClientPage() {
   const chatInput = (
     <Box
       sx={{
-        borderTop: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+        borderTop: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
         display: "flex",
+        alignItems: "flex-end",
         gap: 1,
         p: 1.5,
+        background: theme.palette.mode === "dark" ? alpha("#FFFFFF", 0.02) : alpha("#F5F5F5", 0.5),
       }}
     >
-      <InputBase
-        disabled={sending}
-        multiline
-        onChange={(e) => setInput(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            handleSend();
-          }
-        }}
-        placeholder="Reply as agent..."
-        maxRows={4}
-        value={input}
+      <Box
         sx={{
-          bgcolor: alpha(theme.palette.action.hover, 0.3),
+          bgcolor: alpha(theme.palette.action.hover, 0.4),
           borderRadius: 2,
           flex: 1,
-          fontSize: "0.875rem",
-          px: 1.5,
-          py: 1,
+          display: "flex",
+          alignItems: "flex-end",
         }}
-      />
+      >
+        <InputBase
+          disabled={sending}
+          multiline
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSend();
+            }
+          }}
+          placeholder="Type a message..."
+          maxRows={4}
+          value={input}
+          sx={{
+            flex: 1,
+            fontSize: "0.9rem",
+            px: 1.5,
+            py: 1,
+          }}
+        />
+      </Box>
       <IconButton
         color="primary"
         disabled={!input.trim() || sending}
         onClick={handleSend}
-        size="small"
-        sx={{ alignSelf: "flex-end" }}
+        size="medium"
+        sx={{
+          bgcolor: input.trim() ? "primary.main" : "transparent",
+          color: input.trim() ? "primary.contrastText" : "text.disabled",
+          width: 40,
+          height: 40,
+          transition: "all 0.2s",
+          "&:hover": {
+            bgcolor: input.trim() ? "primary.dark" : "transparent",
+          },
+        }}
       >
         <SendIcon sx={{ fontSize: 18 }} />
       </IconButton>
@@ -664,21 +696,25 @@ export default function EventSupportClientPage() {
       <ConversationUnreadWatcher conversationId={selectedId} onUpdate={handleUnreadUpdate} />
       <Box
         sx={{
-          border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+          border: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
           borderRadius: 3,
           display: "flex",
-          height: "calc(100dvh - 200px)",
+          height: "calc(100dvh - 180px)",
           maxWidth: 1400,
           mx: "auto",
           overflow: "hidden",
           width: "100%",
+          boxShadow:
+            theme.palette.mode === "dark"
+              ? `0 4px 24px ${alpha("#000000", 0.4)}`
+              : `0 2px 12px ${alpha("#000000", 0.06)}`,
         }}
       >
         <Box
           sx={{
             width: 300,
             flexShrink: 0,
-            borderRight: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+            borderRight: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
           }}
         >
           <SupportGuestSidebar eventId={eventId} selectedGuestId={null} onSelect={() => {}} />
