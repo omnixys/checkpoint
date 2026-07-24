@@ -3,9 +3,10 @@
 import { useQuery, useSubscription } from "@apollo/client/react";
 import { useCallback, useMemo } from "react";
 import {
-  ConversationsDocument,
-  ConversationUpdatedDocument,
   type Conversation,
+  ConversationsDocument,
+  type ConversationType,
+  ConversationUpdatedDocument,
 } from "@/checkpoint/generated/graphql";
 
 export interface ConversationUnreadInfo {
@@ -13,27 +14,22 @@ export interface ConversationUnreadInfo {
   unreadCount: number;
 }
 
-export function useConversationUnread(_eventId?: string) {
-  const {
-    data,
-    loading,
-    error,
-    refetch,
-  } = useQuery<{ conversations: Conversation[] }>(
+export function useConversationUnread(_eventId?: string, filterType?: ConversationType) {
+  const { data, loading, error, refetch } = useQuery<{ conversations: Conversation[] }>(
     ConversationsDocument,
     {
       fetchPolicy: "cache-and-network",
     },
   );
 
-  const conversations = useMemo(
-    () =>
-      (data?.conversations ?? []).map((c) => ({
-        id: c.id,
-        unreadCount: c.unreadCount,
-      })),
-    [data],
-  );
+  const conversations = useMemo(() => {
+    const all = data?.conversations ?? [];
+    const filtered = filterType ? all.filter((c) => c.type === filterType) : all;
+    return filtered.map((c) => ({
+      id: c.id,
+      unreadCount: c.unreadCount,
+    }));
+  }, [data, filterType]);
 
   const totalUnread = useMemo(
     () => conversations.reduce((sum, c) => sum + c.unreadCount, 0),

@@ -136,39 +136,47 @@ export function useSupportChat({
         let activeConversationId = conversationId;
 
         if (!activeConversationId) {
-          if (creatingRef.current) {
-            setPendingMessages((prev) =>
-              prev.map((m) => (m.id === pendingId ? { ...m, status: "failed" as const } : m)),
-            );
-            return;
-          }
-
-          creatingRef.current = true;
-          setIsCreating(true);
-          setCreationError(null);
-
-          try {
-            const result = await createConversation({
-              variables: {
-                participantUserId: "support",
-                conversationType: ConversationType.SUPPORT,
-              },
-            });
-            const conv = result.data?.createInAppConversation;
-            if (!conv) {
-              throw new Error("Failed to create conversation");
+          const existing = supportConversations[0];
+          if (existing) {
+            activeConversationId = existing.id;
+            setConversationId(existing.id);
+          } else {
+            if (creatingRef.current) {
+              setPendingMessages((prev) =>
+                prev.map((m) => (m.id === pendingId ? { ...m, status: "failed" as const } : m)),
+              );
+              return;
             }
-            activeConversationId = conv.id;
-            setConversationId(conv.id);
-          } catch (err) {
-            setCreationError(err instanceof Error ? err.message : "Failed to create conversation");
-            setPendingMessages((prev) =>
-              prev.map((m) => (m.id === pendingId ? { ...m, status: "failed" as const } : m)),
-            );
-            return;
-          } finally {
-            creatingRef.current = false;
-            setIsCreating(false);
+
+            creatingRef.current = true;
+            setIsCreating(true);
+            setCreationError(null);
+
+            try {
+              const result = await createConversation({
+                variables: {
+                  participantUserId: "support",
+                  conversationType: ConversationType.SUPPORT,
+                },
+              });
+              const conv = result.data?.createInAppConversation;
+              if (!conv) {
+                throw new Error("Failed to create conversation");
+              }
+              activeConversationId = conv.id;
+              setConversationId(conv.id);
+            } catch (err) {
+              setCreationError(
+                err instanceof Error ? err.message : "Failed to create conversation",
+              );
+              setPendingMessages((prev) =>
+                prev.map((m) => (m.id === pendingId ? { ...m, status: "failed" as const } : m)),
+              );
+              return;
+            } finally {
+              creatingRef.current = false;
+              setIsCreating(false);
+            }
           }
         }
 
@@ -196,7 +204,7 @@ export function useSupportChat({
         );
       }
     },
-    [conversationId, sendMessageMutation, createConversation],
+    [conversationId, sendMessageMutation, createConversation, supportConversations[0]],
   );
 
   const retryMessage = useCallback(

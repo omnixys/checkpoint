@@ -1,49 +1,49 @@
 "use client";
 
-import AppsRoundedIcon from "@mui/icons-material/AppsRounded";
 import ChatRoundedIcon from "@mui/icons-material/ChatRounded";
+import HeadsetMicRoundedIcon from "@mui/icons-material/HeadsetMicRounded";
 import MailRoundedIcon from "@mui/icons-material/MailRounded";
 import { alpha, Box, Chip, Stack, Typography, useTheme } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 import type { JSX } from "react";
-import { getNotificationTone } from "@/checkpoint/app/(protected)/event/[id]/notification/themes/notificationTheme";
-import { NotificationChannel } from "../types/notification-channel.enum";
+import { activeIndicator, tabHover } from "../workspaceAnimation";
+import { getWorkspaceTone, type WorkspaceChannel } from "../workspaceTheme";
 
 interface Props {
-  value: NotificationChannel;
-  onChange: (value: NotificationChannel) => void;
+  title: string;
+  subtitle: string;
+  value: WorkspaceChannel;
+  onChange: (value: WorkspaceChannel) => void;
 }
 
 const MotionDiv = motion.div;
 
-export function NotificationChannelTabs({ value, onChange }: Props) {
-  const theme = useTheme();
-  const activeTone = getNotificationTone(theme, value);
+const channels: WorkspaceChannel[] = ["WHATSAPP", "IN_APP", "EMAIL"];
 
-  const channelMeta: Record<
-    NotificationChannel,
-    {
-      label: string;
-      description: string;
-      icon: JSX.Element;
-    }
-  > = {
-    [NotificationChannel.WHATSAPP]: {
-      label: "WhatsApp",
-      description: "Direct customer communication",
-      icon: <ChatRoundedIcon fontSize="small" />,
-    },
-    [NotificationChannel.IN_APP]: {
-      label: "In-App",
-      description: "System workflows and collaboration",
-      icon: <AppsRoundedIcon fontSize="small" />,
-    },
-    [NotificationChannel.EMAIL]: {
-      label: "Mail",
-      description: "Executive and business correspondence",
-      icon: <MailRoundedIcon fontSize="small" />,
-    },
-  };
+const channelMeta: Record<
+  WorkspaceChannel,
+  { label: string; description: string; icon: JSX.Element }
+> = {
+  WHATSAPP: {
+    label: "WhatsApp",
+    description: "Direct guest communication",
+    icon: <ChatRoundedIcon fontSize="small" />,
+  },
+  IN_APP: {
+    label: "In-App",
+    description: "Internal support channel",
+    icon: <HeadsetMicRoundedIcon fontSize="small" />,
+  },
+  EMAIL: {
+    label: "Email",
+    description: "Email-based correspondence",
+    icon: <MailRoundedIcon fontSize="small" />,
+  },
+};
+
+export function WorkspaceChannelTabs({ title, subtitle, value, onChange }: Props) {
+  const theme = useTheme();
+  const activeTone = getWorkspaceTone(theme, value);
 
   return (
     <Box
@@ -74,17 +74,14 @@ export function NotificationChannelTabs({ value, onChange }: Props) {
               overflowWrap: "anywhere",
             }}
           >
-            Notification Center
+            {title}
           </Typography>
 
           <Typography
             variant="body2"
-            sx={{
-              mt: 0.5,
-              color: alpha(theme.palette.text.primary, 0.64),
-            }}
+            sx={{ mt: 0.5, color: alpha(theme.palette.text.primary, 0.64) }}
           >
-            Omnichannel communication workspace
+            {subtitle}
           </Typography>
         </Box>
 
@@ -108,10 +105,10 @@ export function NotificationChannelTabs({ value, onChange }: Props) {
           flexWrap: { xs: "wrap", md: "nowrap" },
         }}
       >
-        {Object.values(NotificationChannel).map((channel) => {
+        {channels.map((channel) => {
           const meta = channelMeta[channel];
           const active = value === channel;
-          const tone = getNotificationTone(theme, channel);
+          const tone = getWorkspaceTone(theme, channel);
 
           return (
             <Box
@@ -124,11 +121,7 @@ export function NotificationChannelTabs({ value, onChange }: Props) {
                 cursor: "pointer",
               }}
             >
-              <MotionDiv
-                whileHover={{ y: -1 }}
-                whileTap={{ scale: 0.995 }}
-                transition={{ duration: 0.16 }}
-              >
+              <MotionDiv {...tabHover}>
                 <Box
                   sx={{
                     borderRadius: 3,
@@ -179,9 +172,7 @@ export function NotificationChannelTabs({ value, onChange }: Props) {
 
                         <Typography
                           variant="caption"
-                          sx={{
-                            color: alpha(theme.palette.text.primary, 0.58),
-                          }}
+                          sx={{ color: alpha(theme.palette.text.primary, 0.58) }}
                         >
                           {meta.description}
                         </Typography>
@@ -190,13 +181,7 @@ export function NotificationChannelTabs({ value, onChange }: Props) {
 
                     <AnimatePresence mode="wait">
                       {active ? (
-                        <MotionDiv
-                          key="active"
-                          initial={{ opacity: 0, scale: 0.7 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.7 }}
-                          transition={{ duration: 0.16 }}
-                        >
+                        <MotionDiv key="active" {...activeIndicator}>
                           <Box
                             sx={{
                               width: 10,

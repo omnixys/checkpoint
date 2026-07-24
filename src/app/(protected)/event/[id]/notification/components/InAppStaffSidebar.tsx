@@ -5,8 +5,11 @@ import { alpha, styled } from "@mui/material/styles";
 import { useMemo, useState } from "react";
 import { ChannelFilter } from "@/checkpoint/components/communication/ChannelFilter";
 import { CommunicationSearch } from "@/checkpoint/components/communication/CommunicationSearch";
-import { PersonListItem, type PersonData } from "@/checkpoint/components/communication/PersonListItem";
-import { useEventStaff, resolveStaffName } from "@/checkpoint/hooks/events/useEventStaff";
+import {
+  type PersonData,
+  PersonListItem,
+} from "@/checkpoint/components/communication/PersonListItem";
+import { resolveStaffName, useEventStaff } from "@/checkpoint/hooks/events/useEventStaff";
 
 const CHANNELS = [
   { key: "IN_APP", label: "In-App" },
@@ -25,9 +28,7 @@ const Container = styled(Box)(({ theme }) => ({
   flexDirection: "column",
   height: "100%",
   borderRight: `1px solid ${
-    theme.palette.mode === "dark"
-      ? alpha("#FFFFFF", 0.06)
-      : alpha("#000000", 0.06)
+    theme.palette.mode === "dark" ? alpha("#FFFFFF", 0.06) : alpha("#000000", 0.06)
   }`,
 }));
 
@@ -58,8 +59,7 @@ export function InAppStaffSidebar({ eventId, selectedStaffId, onSelect }: Props)
       const q = search.toLowerCase().trim();
       result = result.filter(
         (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.roles?.some((r) => r.toLowerCase().includes(q)),
+          p.name.toLowerCase().includes(q) || p.roles?.some((r) => r.toLowerCase().includes(q)),
       );
     }
     if (channelFilter) {
@@ -86,18 +86,10 @@ export function InAppStaffSidebar({ eventId, selectedStaffId, onSelect }: Props)
       </Box>
 
       <Box sx={{ px: 1.5, pb: 1 }}>
-        <CommunicationSearch
-          placeholder="Search staff..."
-          value={search}
-          onChange={setSearch}
-        />
+        <CommunicationSearch placeholder="Search staff..." value={search} onChange={setSearch} />
       </Box>
 
-      <ChannelFilter
-        channels={CHANNELS}
-        selected={channelFilter}
-        onChange={setChannelFilter}
-      />
+      <ChannelFilter channels={CHANNELS} selected={channelFilter} onChange={setChannelFilter} />
 
       <Box sx={{ flex: 1, overflow: "auto", px: 1, pb: 1 }}>
         {loading ? (
@@ -109,9 +101,7 @@ export function InAppStaffSidebar({ eventId, selectedStaffId, onSelect }: Props)
                   height: 36,
                   borderRadius: "50%",
                   background: (t) =>
-                    t.palette.mode === "dark"
-                      ? alpha("#FFFFFF", 0.06)
-                      : alpha("#000000", 0.04),
+                    t.palette.mode === "dark" ? alpha("#FFFFFF", 0.06) : alpha("#000000", 0.04),
                 }}
               />
               <Box sx={{ flex: 1 }}>
@@ -121,9 +111,7 @@ export function InAppStaffSidebar({ eventId, selectedStaffId, onSelect }: Props)
                     height: 14,
                     borderRadius: 1,
                     background: (t) =>
-                      t.palette.mode === "dark"
-                        ? alpha("#FFFFFF", 0.06)
-                        : alpha("#000000", 0.04),
+                      t.palette.mode === "dark" ? alpha("#FFFFFF", 0.06) : alpha("#000000", 0.04),
                     mb: 0.5,
                   }}
                 />
@@ -133,19 +121,14 @@ export function InAppStaffSidebar({ eventId, selectedStaffId, onSelect }: Props)
                     height: 10,
                     borderRadius: 1,
                     background: (t) =>
-                      t.palette.mode === "dark"
-                        ? alpha("#FFFFFF", 0.04)
-                        : alpha("#000000", 0.03),
+                      t.palette.mode === "dark" ? alpha("#FFFFFF", 0.04) : alpha("#000000", 0.03),
                   }}
                 />
               </Box>
             </Box>
           ))
         ) : filtered.length === 0 ? (
-          <Typography
-            variant="body2"
-            sx={{ color: "text.secondary", textAlign: "center", py: 4 }}
-          >
+          <Typography variant="body2" sx={{ color: "text.secondary", textAlign: "center", py: 4 }}>
             No staff found
           </Typography>
         ) : (

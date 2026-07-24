@@ -1,339 +1,49 @@
 "use client";
 
-import {
-  Close,
-  MoreVert as MoreIcon,
-  CheckCircle as ResolveIcon,
-  Send as SendIcon,
-} from "@mui/icons-material";
-import {
-  Avatar,
-  alpha,
-  Badge,
-  Box,
-  Chip,
-  CircularProgress,
-  IconButton,
-  InputBase,
-  Menu,
-  MenuItem,
-  Paper,
-  Stack,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
+import ResolveIcon from "@mui/icons-material/CheckCircle";
+import CloseIcon from "@mui/icons-material/Close";
+import { alpha, Box, CircularProgress, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { motion } from "framer-motion";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { List as VList } from "react-window";
 import RouteGuard from "@/checkpoint/components/guard/RouteGuard";
-import {
-  useConversationUnread,
-  useConversationUnreadSubscription,
-} from "@/checkpoint/hooks/support/useConversationUnread";
-import type { Conversation, Message } from "@/checkpoint/hooks/support/useEventSupport";
+import { useConversationUnread } from "@/checkpoint/hooks/support/useConversationUnread";
 import { useEventSupport } from "@/checkpoint/hooks/support/useEventSupport";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
-import { SupportGuestSidebar } from "./SupportGuestSidebar";
+import type { WorkspaceChannel } from "../_shared";
+import {
+  ConversationUnreadWatcher,
+  getChannelColor,
+  getChannelLabel,
+  getWorkspaceTone,
+  WorkspaceChannelTabs,
+  WorkspaceChatHeader,
+  WorkspaceChatInput,
+  WorkspaceEmptyState,
+  WorkspaceMessageBubble,
+  WorkspacePanel,
+  WorkspaceSidebar,
+} from "../_shared";
 
-type FilterValue = "all" | "whatsapp" | "inapp";
+const MotionBox = motion.create(Box);
 
-function channelBadge(channel: string) {
-  switch (channel) {
-    case "WHATSAPP":
-      return { label: "WhatsApp", color: "#25D366" as const };
-    case "IN_APP":
-      return { label: "In-App", color: undefined };
-    default:
-      return { label: channel, color: undefined };
-  }
-}
-
-function ConversationListItem({
-  conversation,
-  selected,
-  unreadCount,
-  onClick,
-}: {
-  conversation: Conversation;
-  selected: boolean;
-  unreadCount?: number | null;
-  onClick: () => void;
+function mapConversation(conv: {
+  id: string;
+  externalDisplayName?: string | null;
+  channel: string;
+  lastMessage?: string | null;
+  lastMessageAt?: string | null;
+  externalAddress?: string | null;
 }) {
-  const theme = useTheme();
-  const displayName = conversation.externalDisplayName ?? "Guest";
-  const badge = channelBadge(conversation.channel);
-
-  return (
-    <Box
-      onClick={onClick}
-      sx={{
-        borderRadius: 2,
-        cursor: "pointer",
-        mx: 1,
-        mb: 0.5,
-        p: 1.5,
-        transition: "background 0.15s",
-        ...(selected && {
-          bgcolor: alpha(theme.palette.primary.main, 0.08),
-        }),
-        ...(!selected && {
-          "&:hover": {
-            bgcolor:
-              theme.palette.mode === "dark" ? alpha("#FFFFFF", 0.04) : alpha("#000000", 0.03),
-          },
-        }),
-      }}
-    >
-      <Stack direction="row" spacing={1.5} sx={{ alignItems: "flex-start" }}>
-        <Badge
-          overlap="circular"
-          anchorOrigin={{ vertical: "top", horizontal: "right" }}
-          badgeContent={unreadCount && unreadCount > 0 ? unreadCount : 0}
-          color="error"
-          invisible={!unreadCount || unreadCount === 0}
-          sx={{
-            "& .MuiBadge-badge": {
-              fontSize: "0.6rem",
-              height: 18,
-              minWidth: 18,
-              lineHeight: "18px",
-              fontWeight: 700,
-            },
-          }}
-        >
-          <Avatar
-            sx={{
-              bgcolor: alpha(theme.palette.primary.main, 0.1),
-              color: "primary.main",
-              width: 40,
-              height: 40,
-              fontSize: "0.85rem",
-              fontWeight: 700,
-              ...(unreadCount &&
-                unreadCount > 0 && {
-                  boxShadow: `0 0 0 2px ${theme.palette.error.main}`,
-                }),
-            }}
-          >
-            {displayName.charAt(0).toUpperCase()}
-          </Avatar>
-        </Badge>
-
-        <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-            <Typography
-              noWrap
-              sx={{
-                flex: 1,
-                fontSize: "0.85rem",
-                fontWeight: unreadCount && unreadCount > 0 ? 700 : 500,
-              }}
-            >
-              {displayName}
-            </Typography>
-            <Typography sx={{ color: "text.disabled", fontSize: "0.65rem", flexShrink: 0 }}>
-              {conversation.lastMessageAt ? formatRelativeTime(conversation.lastMessageAt) : ""}
-            </Typography>
-          </Stack>
-          <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", mt: 0.25 }}>
-            <Typography
-              noWrap
-              sx={{
-                color: "text.disabled",
-                flex: 1,
-                fontSize: "0.75rem",
-                fontWeight: unreadCount && unreadCount > 0 ? 600 : 400,
-              }}
-            >
-              {conversation.lastMessage ?? "No messages yet"}
-            </Typography>
-            {badge.color ? (
-              <Chip
-                label={badge.label}
-                size="small"
-                sx={{
-                  height: 14,
-                  fontSize: "0.55rem",
-                  fontWeight: 600,
-                  bgcolor: alpha(badge.color, 0.1),
-                  color: badge.color,
-                  "& .MuiChip-label": { px: 0.5 },
-                }}
-              />
-            ) : (
-              <Typography sx={{ fontSize: "0.65rem", color: "text.disabled" }}>
-                {badge.label}
-              </Typography>
-            )}
-          </Stack>
-        </Box>
-      </Stack>
-    </Box>
-  );
+  return {
+    id: conv.id,
+    displayName: conv.externalDisplayName ?? "Guest",
+    channel: conv.channel as WorkspaceChannel,
+    lastMessage: conv.lastMessage ?? null,
+    lastMessageAt: conv.lastMessageAt ?? null,
+    externalAddress: conv.externalAddress ?? null,
+  };
 }
-
-function MessageBubble({
-  message,
-  currentUserId,
-}: {
-  message: Message;
-  currentUserId?: string | undefined;
-}) {
-  const theme = useTheme();
-  const fromAgent = message.senderId === currentUserId;
-
-  return (
-    <Box
-      sx={{
-        alignSelf: fromAgent ? "flex-end" : "flex-start",
-        maxWidth: "72%",
-        px: 1,
-      }}
-    >
-      <Paper
-        elevation={0}
-        sx={{
-          background: fromAgent
-            ? `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.15)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`
-            : theme.palette.mode === "dark"
-              ? alpha("#FFFFFF", 0.06)
-              : alpha("#FFFFFF", 0.9),
-          border: "1px solid",
-          borderColor: fromAgent
-            ? alpha(theme.palette.primary.main, 0.2)
-            : alpha(theme.palette.divider, 0.08),
-          borderRadius: fromAgent ? "20px 20px 6px 20px" : "20px 20px 20px 6px",
-          px: 3,
-          py: 2,
-          boxShadow: fromAgent
-            ? `0 1px 2px ${alpha(theme.palette.primary.main, 0.08)}`
-            : `0 1px 3px ${alpha("#000000", 0.06)}`,
-        }}
-      >
-        <Typography
-          variant="body2"
-          sx={{
-            fontSize: "0.9rem",
-            lineHeight: 1.65,
-            whiteSpace: "pre-wrap",
-            wordBreak: "break-word",
-          }}
-        >
-          {message.body}
-        </Typography>
-        <Typography
-          variant="caption"
-          sx={{
-            color: fromAgent ? alpha(theme.palette.primary.main, 0.5) : "text.disabled",
-            display: "block",
-            fontSize: "0.65rem",
-            mt: 0.75,
-            textAlign: fromAgent ? "right" : "left",
-          }}
-        >
-          {new Date(message.createdAt).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-          {fromAgent && message.deliveryStatus && (
-            <Box component="span" sx={{ ml: 0.5 }}>
-              {message.deliveryStatus === "READ"
-                ? "\u2713\u2713"
-                : message.deliveryStatus === "DELIVERED"
-                  ? "\u2713\u2713"
-                  : message.deliveryStatus === "SENT"
-                    ? "\u2713"
-                    : ""}
-            </Box>
-          )}
-        </Typography>
-      </Paper>
-    </Box>
-  );
-}
-
-function ConversationUnreadWatcher({
-  conversationId,
-  onUpdate,
-}: {
-  conversationId: string | null;
-  onUpdate: (conversationId: string, unreadCount: number) => void;
-}) {
-  const { unreadUpdate } = useConversationUnreadSubscription(conversationId);
-  useEffect(() => {
-    if (unreadUpdate) onUpdate(unreadUpdate.conversationId, unreadUpdate.unreadCount);
-  }, [unreadUpdate, onUpdate]);
-  return null;
-}
-
-function formatRelativeTime(dateStr: string): string {
-  const date = new Date(dateStr);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMin = Math.floor(diffMs / 60000);
-  if (diffMin < 1) return "now";
-  if (diffMin < 60) return `${diffMin}m`;
-  const diffH = Math.floor(diffMin / 60);
-  if (diffH < 24) return `${diffH}h`;
-  const diffD = Math.floor(diffH / 24);
-  if (diffD < 7) return `${diffD}d`;
-  return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
-}
-
-function FilterChipGroup({
-  value,
-  onChange,
-  counts,
-}: {
-  value: FilterValue;
-  onChange: (v: FilterValue) => void;
-  counts: { all: number; whatsapp: number; inapp: number };
-}) {
-  const theme = useTheme();
-  const filters: { key: FilterValue; label: string; count: number }[] = [
-    { key: "all", label: "All", count: counts.all },
-    { key: "whatsapp", label: "WhatsApp", count: counts.whatsapp },
-    { key: "inapp", label: "In-App", count: counts.inapp },
-  ];
-
-  return (
-    <Stack direction="row" spacing={0.5}>
-      {filters.map((f) => (
-        <Chip
-          key={f.key}
-          label={`${f.label} (${f.count})`}
-          size="small"
-          onClick={() => onChange(f.key)}
-          sx={{
-            height: 26,
-            fontSize: "0.72rem",
-            fontWeight: value === f.key ? 700 : 500,
-            bgcolor:
-              value === f.key
-                ? alpha(theme.palette.primary.main, 0.12)
-                : alpha(theme.palette.action.hover, 0.4),
-            color: value === f.key ? "primary.main" : "text.secondary",
-            border: "1px solid",
-            borderColor:
-              value === f.key
-                ? alpha(theme.palette.primary.main, 0.24)
-                : alpha(theme.palette.divider, 0.12),
-            cursor: "pointer",
-            "&:hover": {
-              bgcolor:
-                value === f.key
-                  ? alpha(theme.palette.primary.main, 0.16)
-                  : alpha(theme.palette.action.hover, 0.6),
-            },
-          }}
-        />
-      ))}
-    </Stack>
-  );
-}
-
-const CONVERSATION_ITEM_HEIGHT = 76;
 
 export default function EventSupportClientPage() {
   const theme = useTheme();
@@ -343,9 +53,10 @@ export default function EventSupportClientPage() {
 
   const {
     conversations,
-    conversationsLoading,
     selectedId,
     setSelectedId,
+    channel,
+    setChannel,
     messages,
     messagesLoading,
     fetchMessages,
@@ -368,42 +79,35 @@ export default function EventSupportClientPage() {
     });
   }, []);
 
-  const [filter, setFilter] = useState<FilterValue>("all");
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
-  const [moreAnchor, setMoreAnchor] = useState<null | HTMLElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
-  const listContainerRef = useRef<HTMLDivElement>(null);
-  const [listHeight, setListHeight] = useState(600);
-
-  useEffect(() => {
-    const el = listContainerRef.current;
-    if (!el) return;
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) setListHeight(entry.contentRect.height);
-    });
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  const filterCounts = useMemo(() => {
-    const all = conversations.length;
-    const whatsapp = conversations.filter((c) => c.channel === "WHATSAPP").length;
-    return { all, whatsapp, inapp: all - whatsapp };
-  }, [conversations]);
-
-  const filteredConversations = useMemo(() => {
-    if (filter === "all") return conversations;
-    if (filter === "whatsapp") return conversations.filter((c) => c.channel === "WHATSAPP");
-    return conversations.filter((c) => c.channel !== "WHATSAPP");
-  }, [conversations, filter]);
+  const tone = getWorkspaceTone(theme, channel);
 
   const selectedConversation = useMemo(
     () => conversations.find((c) => c.id === selectedId) ?? null,
     [conversations, selectedId],
   );
+
+  const previousChannelRef = useRef(channel);
+  const hasAutoSelectedRef = useRef(false);
+
+  useEffect(() => {
+    if (channel !== previousChannelRef.current) {
+      previousChannelRef.current = channel;
+      setSelectedId(null);
+      hasAutoSelectedRef.current = false;
+      return;
+    }
+    if (hasAutoSelectedRef.current) return;
+    const first = conversations[0];
+    if (!selectedId && first) {
+      hasAutoSelectedRef.current = true;
+      setSelectedId(first.id);
+    }
+  }, [conversations, channel, selectedId, setSelectedId]);
 
   useEffect(() => {
     if (!selectedId) return;
@@ -427,224 +131,15 @@ export default function EventSupportClientPage() {
     }
   }, [selectedId, input, sending, sendMessage]);
 
-  const conversationList = (
-    <Box ref={listContainerRef} sx={{ flex: 1, overflow: "hidden" }}>
-      {conversationsLoading ? (
-        <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
-          <CircularProgress size={24} />
-        </Box>
-      ) : filteredConversations.length === 0 ? (
-        <Typography
-          sx={{ color: "text.disabled", fontSize: "0.8rem", py: 4, textAlign: "center", px: 2 }}
-        >
-          No conversations found
-        </Typography>
-      ) : (
-        <VList
-          style={{ height: listHeight, width: "100%" }}
-          rowCount={filteredConversations.length}
-          rowHeight={CONVERSATION_ITEM_HEIGHT}
-          overscanCount={5}
-          rowProps={{}}
-          rowComponent={({ index, style }) => {
-            const conv = filteredConversations[index];
-            if (!conv) return null;
-            return (
-              <div style={style}>
-                <ConversationListItem
-                  conversation={conv}
-                  selected={selectedId === conv.id}
-                  unreadCount={unreadMap.get(conv.id) ?? null}
-                  onClick={() => {
-                    setSelectedId(conv.id);
-                    const count = unreadMap.get(conv.id);
-                    if (count && count > 0) markAsRead(conv.id);
-                  }}
-                />
-              </div>
-            );
-          }}
-        />
-      )}
-    </Box>
-  );
+  const mappedConversations = useMemo(() => conversations.map(mapConversation), [conversations]);
 
-  const chatHeader = selectedConversation ? (
-    <Box
-      sx={{
-        alignItems: "center",
-        borderBottom: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-        display: "flex",
-        gap: 1.5,
-        px: 2.5,
-        py: 1.5,
-      }}
-    >
-      <Avatar
-        sx={{
-          bgcolor: alpha(theme.palette.primary.main, 0.1),
-          color: "primary.main",
-          width: 40,
-          height: 40,
-          fontSize: "0.95rem",
-          fontWeight: 700,
-        }}
-      >
-        {(selectedConversation.externalDisplayName ?? "Guest").charAt(0).toUpperCase()}
-      </Avatar>
-      <Box sx={{ flex: 1, minWidth: 0 }}>
-        <Typography sx={{ fontSize: "0.9rem", fontWeight: 600 }}>
-          {selectedConversation.externalDisplayName ?? "Guest"}
-        </Typography>
-        <Stack direction="row" spacing={1} sx={{ alignItems: "center", mt: 0.25 }}>
-          {(() => {
-            const badge = channelBadge(selectedConversation.channel);
-            return badge.color ? (
-              <Chip
-                label={badge.label}
-                size="small"
-                sx={{
-                  height: 16,
-                  fontSize: "0.6rem",
-                  fontWeight: 600,
-                  bgcolor: alpha(badge.color, 0.1),
-                  color: badge.color,
-                  "& .MuiChip-label": { px: 0.5 },
-                }}
-              />
-            ) : (
-              <Typography sx={{ color: "text.secondary", fontSize: "0.7rem" }}>
-                {badge.label}
-              </Typography>
-            );
-          })()}
-          <Typography sx={{ color: "text.secondary", fontSize: "0.7rem" }}>Online</Typography>
-        </Stack>
-      </Box>
-      <IconButton size="small" onClick={(e) => setMoreAnchor(e.currentTarget)}>
-        <MoreIcon fontSize="small" />
-      </IconButton>
-      <Menu anchorEl={moreAnchor} open={Boolean(moreAnchor)} onClose={() => setMoreAnchor(null)}>
-        <MenuItem onClick={() => setMoreAnchor(null)}>
-          <ResolveIcon sx={{ mr: 1, fontSize: 16 }} /> Resolve
-        </MenuItem>
-      </Menu>
-    </Box>
-  ) : null;
-
-  const chatMessages = (
-    <Box
-      ref={messagesContainerRef}
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        flex: 1,
-        gap: 1,
-        overflowY: "auto",
-        px: 3,
-        py: 2,
-        background:
-          theme.palette.mode === "dark"
-            ? `linear-gradient(180deg, ${alpha("#0D1117", 0.95)} 0%, ${alpha("#161B22", 0.95)} 100%)`
-            : `linear-gradient(180deg, ${alpha("#F8F9FA", 0.8)} 0%, ${alpha("#FFFFFF", 0.95)} 100%)`,
-        "&::-webkit-scrollbar": { width: 5 },
-        "&::-webkit-scrollbar-track": { bgcolor: "transparent" },
-        "&::-webkit-scrollbar-thumb": {
-          bgcolor: alpha(theme.palette.text.primary, 0.1),
-          borderRadius: 4,
-          "&:hover": {
-            bgcolor: alpha(theme.palette.text.primary, 0.2),
-          },
-        },
-      }}
-    >
-      {messagesLoading ? (
-        <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
-          <CircularProgress size={20} />
-        </Box>
-      ) : messages.length === 0 ? (
-        <Box
-          sx={{
-            alignItems: "center",
-            display: "flex",
-            flex: 1,
-            justifyContent: "center",
-          }}
-        >
-          <Typography sx={{ color: "text.disabled", fontSize: "0.85rem" }}>
-            No messages yet
-          </Typography>
-        </Box>
-      ) : (
-        messages.map((msg) => (
-          <MessageBubble key={msg.id} message={msg} currentUserId={currentUser?.id} />
-        ))
-      )}
-      <div ref={messagesEndRef} />
-    </Box>
-  );
-
-  const chatInput = (
-    <Box
-      sx={{
-        borderTop: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
-        display: "flex",
-        alignItems: "flex-end",
-        gap: 1,
-        p: 1.5,
-        background: theme.palette.mode === "dark" ? alpha("#FFFFFF", 0.02) : alpha("#F5F5F5", 0.5),
-      }}
-    >
-      <Box
-        sx={{
-          bgcolor: alpha(theme.palette.action.hover, 0.4),
-          borderRadius: 2,
-          flex: 1,
-          display: "flex",
-          alignItems: "flex-end",
-        }}
-      >
-        <InputBase
-          disabled={sending}
-          multiline
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              handleSend();
-            }
-          }}
-          placeholder="Type a message..."
-          maxRows={4}
-          value={input}
-          sx={{
-            flex: 1,
-            fontSize: "0.9rem",
-            px: 1.5,
-            py: 1,
-          }}
-        />
-      </Box>
-      <IconButton
-        color="primary"
-        disabled={!input.trim() || sending}
-        onClick={handleSend}
-        size="medium"
-        sx={{
-          bgcolor: input.trim() ? "primary.main" : "transparent",
-          color: input.trim() ? "primary.contrastText" : "text.disabled",
-          width: 40,
-          height: 40,
-          transition: "all 0.2s",
-          "&:hover": {
-            bgcolor: input.trim() ? "primary.dark" : "transparent",
-          },
-        }}
-      >
-        <SendIcon sx={{ fontSize: 18 }} />
-      </IconButton>
-    </Box>
-  );
+  const headerActions = [
+    {
+      label: "Resolve",
+      icon: <ResolveIcon sx={{ fontSize: 16 }} />,
+      onClick: () => {},
+    },
+  ];
 
   if (isMobile) {
     return (
@@ -654,37 +149,120 @@ export default function EventSupportClientPage() {
           sx={{
             display: "flex",
             flexDirection: "column",
-            height: "calc(100dvh - 160px)",
+            height: "100dvh",
             width: "100%",
-            mx: "auto",
+            overflow: "hidden",
           }}
         >
+          <WorkspaceChannelTabs
+            title="Support Center"
+            subtitle="Guest support workspace"
+            value={channel}
+            onChange={setChannel}
+          />
+
           {selectedId ? (
-            <>
-              <Box sx={{ display: "flex", alignItems: "center", px: 1, py: 0.5 }}>
-                <IconButton onClick={() => setSelectedId(null)}>
-                  <Close />
-                </IconButton>
+            <Box sx={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  px: 1,
+                  py: 0.5,
+                  borderBottom: `1px solid ${tone.divider}`,
+                }}
+              >
+                <Box
+                  component="button"
+                  onClick={() => setSelectedId(null)}
+                  sx={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    display: "flex",
+                    p: 0.5,
+                    color: "text.primary",
+                  }}
+                >
+                  <CloseIcon />
+                </Box>
                 <Typography sx={{ fontWeight: 600, fontSize: "0.9rem" }}>
                   {selectedConversation?.externalDisplayName ?? "Conversation"}
                 </Typography>
               </Box>
-              {chatHeader}
-              {chatMessages}
-              {chatInput}
-            </>
-          ) : (
-            <>
-              <Box sx={{ px: 2, pt: 2, pb: 1 }}>
-                <Typography variant="h6" sx={{ fontWeight: 700, fontSize: "1.1rem" }}>
-                  Conversations
-                </Typography>
-                <Box sx={{ mt: 1 }}>
-                  <FilterChipGroup value={filter} onChange={setFilter} counts={filterCounts} />
-                </Box>
+              {selectedConversation && (
+                <WorkspaceChatHeader
+                  displayName={selectedConversation.externalDisplayName ?? "Guest"}
+                  channelLabel={getChannelLabel(selectedConversation.channel as WorkspaceChannel)}
+                  channelColor={getChannelColor(
+                    theme,
+                    selectedConversation.channel as WorkspaceChannel,
+                  )}
+                  actions={headerActions}
+                />
+              )}
+              <Box
+                ref={messagesContainerRef}
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  flex: 1,
+                  gap: 1,
+                  overflowY: "auto",
+                  px: { xs: 2, md: 3 },
+                  py: 2.5,
+                  backgroundColor: theme.palette.background.default,
+                }}
+              >
+                {messagesLoading ? (
+                  <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+                    <CircularProgress size={20} />
+                  </Box>
+                ) : messages.length === 0 ? (
+                  <Box
+                    sx={{
+                      alignItems: "center",
+                      display: "flex",
+                      flex: 1,
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Typography sx={{ color: "text.disabled", fontSize: "0.85rem" }}>
+                      No messages yet
+                    </Typography>
+                  </Box>
+                ) : (
+                  messages.map((msg) => (
+                    <WorkspaceMessageBubble
+                      key={msg.id}
+                      body={msg.body}
+                      createdAt={msg.createdAt}
+                      fromAgent={msg.senderId === currentUser?.id}
+                      deliveryStatus={msg.deliveryStatus}
+                    />
+                  ))
+                )}
+                <div ref={messagesEndRef} />
               </Box>
-              {conversationList}
-            </>
+              <WorkspaceChatInput
+                value={input}
+                onChange={setInput}
+                onSend={handleSend}
+                sending={sending}
+              />
+            </Box>
+          ) : (
+            <WorkspaceSidebar
+              channel={channel}
+              selectedId={selectedId}
+              conversations={mappedConversations}
+              unreadMap={unreadMap}
+              onSelect={setSelectedId}
+              onMarkAsRead={(id) => {
+                const count = unreadMap.get(id);
+                if (count && count > 0) markAsRead(id);
+              }}
+            />
           )}
         </Box>
       </RouteGuard>
@@ -696,70 +274,128 @@ export default function EventSupportClientPage() {
       <ConversationUnreadWatcher conversationId={selectedId} onUpdate={handleUnreadUpdate} />
       <Box
         sx={{
-          border: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
-          borderRadius: 3,
-          display: "flex",
-          height: "calc(100dvh - 180px)",
-          maxWidth: 1400,
-          mx: "auto",
+          minHeight: "100dvh",
+          height: "100dvh",
           overflow: "hidden",
-          width: "100%",
-          boxShadow:
-            theme.palette.mode === "dark"
-              ? `0 4px 24px ${alpha("#000000", 0.4)}`
-              : `0 2px 12px ${alpha("#000000", 0.06)}`,
+          backgroundColor: theme.palette.background.default,
+          px: { xs: 0, md: 1.5 },
+          py: { xs: 0, md: 1.5 },
         }}
       >
-        <Box
+        <MotionBox
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.22 }}
           sx={{
-            width: 300,
-            flexShrink: 0,
-            borderRight: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
-          }}
-        >
-          <SupportGuestSidebar eventId={eventId} selectedGuestId={null} onSelect={() => {}} />
-        </Box>
-        <Box
-          sx={{
+            height: "100%",
+            overflow: "hidden",
+            borderRadius: { xs: 0, md: 4 },
+            border: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
+            backgroundColor: alpha(theme.palette.background.paper, 0.72),
+            backdropFilter: "blur(20px) saturate(150%)",
             display: "flex",
             flexDirection: "column",
-            flex: 1,
-            minWidth: 0,
           }}
         >
+          <WorkspaceChannelTabs
+            title="Support Center"
+            subtitle="Guest support workspace"
+            value={channel}
+            onChange={setChannel}
+          />
+
           <Box
             sx={{
-              px: 2,
-              pt: 1.5,
-              pb: 1,
-              borderBottom: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+              display: "flex",
+              flexDirection: { xs: "column", md: "row" },
+              flex: 1,
+              minHeight: 0,
             }}
           >
-            <Stack
-              direction="row"
-              spacing={2}
-              sx={{ alignItems: "center", justifyContent: "space-between" }}
-            >
-              <Typography variant="h6" sx={{ fontWeight: 700, fontSize: "1.1rem" }}>
-                {selectedConversation
-                  ? `${selectedConversation.externalDisplayName ?? "Guest"}`
-                  : "Conversations"}
-              </Typography>
-              {!selectedConversation && (
-                <FilterChipGroup value={filter} onChange={setFilter} counts={filterCounts} />
+            <WorkspaceSidebar
+              channel={channel}
+              selectedId={selectedId}
+              conversations={mappedConversations}
+              unreadMap={unreadMap}
+              onSelect={setSelectedId}
+              onMarkAsRead={(id) => {
+                const count = unreadMap.get(id);
+                if (count && count > 0) markAsRead(id);
+              }}
+            />
+
+            <WorkspacePanel panelKey={`${channel}-${selectedId}`}>
+              {selectedId ? (
+                <>
+                  {selectedConversation && (
+                    <WorkspaceChatHeader
+                      displayName={selectedConversation.externalDisplayName ?? "Guest"}
+                      channelLabel={getChannelLabel(
+                        selectedConversation.channel as WorkspaceChannel,
+                      )}
+                      channelColor={getChannelColor(
+                        theme,
+                        selectedConversation.channel as WorkspaceChannel,
+                      )}
+                      actions={headerActions}
+                    />
+                  )}
+                  <Box
+                    ref={messagesContainerRef}
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      flex: 1,
+                      gap: 1,
+                      overflowY: "auto",
+                      px: { xs: 2, md: 3 },
+                      py: 2.5,
+                      backgroundColor: theme.palette.background.default,
+                    }}
+                  >
+                    {messagesLoading ? (
+                      <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+                        <CircularProgress size={20} />
+                      </Box>
+                    ) : messages.length === 0 ? (
+                      <Box
+                        sx={{
+                          alignItems: "center",
+                          display: "flex",
+                          flex: 1,
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Typography sx={{ color: "text.disabled", fontSize: "0.85rem" }}>
+                          No messages yet
+                        </Typography>
+                      </Box>
+                    ) : (
+                      messages.map((msg) => (
+                        <WorkspaceMessageBubble
+                          key={msg.id}
+                          body={msg.body}
+                          createdAt={msg.createdAt}
+                          fromAgent={msg.senderId === currentUser?.id}
+                          deliveryStatus={msg.deliveryStatus}
+                        />
+                      ))
+                    )}
+                    <div ref={messagesEndRef} />
+                  </Box>
+                  <WorkspaceChatInput
+                    value={input}
+                    onChange={setInput}
+                    onSend={handleSend}
+                    sending={sending}
+                  />
+                </>
+              ) : (
+                <WorkspaceEmptyState />
               )}
-            </Stack>
+            </WorkspacePanel>
           </Box>
-          {selectedConversation ? (
-            <>
-              {chatHeader}
-              {chatMessages}
-              {chatInput}
-            </>
-          ) : (
-            conversationList
-          )}
-        </Box>
+        </MotionBox>
       </Box>
     </RouteGuard>
   );

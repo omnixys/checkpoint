@@ -1,10 +1,11 @@
 "use client";
 
 import { useLazyQuery, useMutation, useQuery, useSubscription } from "@apollo/client/react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import {
   type Conversation,
   ConversationsDocument,
+  ConversationType,
   CreateWhatsappConversationDocument,
   type Message,
   MessageReceivedDocument,
@@ -15,8 +16,13 @@ import { appendMessageById, mergeMessagesById } from "@/checkpoint/hooks/interna
 
 export type { Conversation, Message };
 
+export type SupportChannel = "WHATSAPP" | "IN_APP" | "EMAIL";
+
 export function useEventSupport(_eventId?: string, _currentUserId?: string) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const selectedIdRef = useRef(selectedId);
+  selectedIdRef.current = selectedId;
+  const [channel, setChannel] = useState<SupportChannel>("WHATSAPP");
   const [realtimeByConversation, setRealtimeByConversation] = useState<Record<string, Message[]>>(
     {},
   );
@@ -30,7 +36,15 @@ export function useEventSupport(_eventId?: string, _currentUserId?: string) {
     fetchPolicy: "cache-and-network",
   });
 
-  const conversations = conversationsData?.conversations ?? [];
+  const allConversations = conversationsData?.conversations ?? [];
+
+  const conversations = useMemo(() => {
+    return allConversations.filter((c) => {
+      if (channel === "WHATSAPP") return c.channel === "WHATSAPP";
+      if (channel === "EMAIL") return c.channel === "EMAIL";
+      return c.channel === "IN_APP" && c.type === ConversationType.SUPPORT;
+    });
+  }, [allConversations, channel]);
 
   const [loadMessages] = useLazyQuery<{ messages: Message[] }>(MessagesDocument);
 
@@ -43,7 +57,8 @@ export function useEventSupport(_eventId?: string, _currentUserId?: string) {
     skip: !selectedId,
     onData: ({ data: result }) => {
       const message = result.data?.messageReceived;
-      if (message?.conversationId === selectedId) {
+      const currentSelectedId = selectedIdRef.current;
+      if (message?.conversationId === currentSelectedId) {
         setRealtimeByConversation((current) => ({
           ...current,
           [message.conversationId]: appendMessageById(
@@ -81,7 +96,14 @@ export function useEventSupport(_eventId?: string, _currentUserId?: string) {
       const result = await sendMessageMutation({
         variables: { conversationId, body },
       });
-      return result.data?.sendMessage ?? null;
+      const message = result.data?.sendMessage;
+      if (message) {
+        setRealtimeByConversation((current) => ({
+          ...current,
+          [conversationId]: appendMessageById(current[conversationId] ?? [], message),
+        }));
+      }
+      return message ?? null;
     },
     [sendMessageMutation],
   );
@@ -110,6 +132,8 @@ export function useEventSupport(_eventId?: string, _currentUserId?: string) {
     conversationsLoading,
     selectedId,
     setSelectedId,
+    channel,
+    setChannel,
     messages,
     messagesLoading: false,
     fetchMessages,
