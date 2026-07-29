@@ -5,6 +5,7 @@ import { AnalyticsProvider as SdkAnalyticsProvider } from "@omnixys/analytics-sd
 import { usePathname } from "next/navigation";
 import type React from "react";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { publicAnalyticsReference } from "@/checkpoint/lib/analytics/public-reference";
 import { AuthEventsBus } from "@/checkpoint/lib/auth/AuthManager";
 import { env } from "@/checkpoint/lib/env";
 import { useActiveEvent } from "./ActiveEventProvider";
@@ -32,11 +33,12 @@ export function CheckpointAnalyticsProvider({
       endpoint: env.ANALYTICS_GATEWAY_URL,
       flushAt: 10,
       tokenProvider: async () => {
+        const publicReference = publicAnalyticsReference(globalThis.location);
         const response = await fetch(`${env.ANALYTICS_GATEWAY_URL}/v1/analytics/token`, {
           method: "POST",
           credentials: "include",
           headers: { "content-type": "application/json" },
-          body: "{}",
+          body: JSON.stringify({ publicReference }),
         });
         if (!response.ok) {
           throw new Error(`Analytics token request failed with HTTP ${response.status}`);
