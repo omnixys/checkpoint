@@ -6,6 +6,7 @@ import {
   type ScanTokenMutation,
   type ScanTokenMutationVariables,
 } from "@/checkpoint/generated/graphql";
+import { useAnalytics } from "@/checkpoint/providers/AnalyticsProvider";
 
 interface QrPayload {
   token: string;
@@ -42,6 +43,7 @@ function parseQrPayload(qr: string): QrPayload | null {
 }
 
 export function useScanTicket() {
+  const analytics = useAnalytics();
   const [scanMutation] = useMutation<ScanTokenMutation, ScanTokenMutationVariables>(
     ScanTokenDocument,
   );
@@ -54,6 +56,7 @@ export function useScanTicket() {
         return null;
       }
 
+      analytics.track("QrScanStarted");
       const { data } = await scanMutation({
         variables: {
           input: {
@@ -67,6 +70,6 @@ export function useScanTicket() {
 
       return data?.scanToken ?? null;
     },
-    [scanMutation],
+    [analytics, scanMutation],
   );
 }

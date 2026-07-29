@@ -17,7 +17,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useSearchParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import RsvpSuccess from "@/checkpoint/app/rsvp/success/RSVPSuccess";
 import PhoneNumberDialog from "@/checkpoint/components/common/phoneNumber/PhoneNumberDialog";
@@ -38,6 +38,7 @@ import { usePlusOnes } from "@/checkpoint/hooks/invitation/usePlusOnes";
 import usePublicRsvpMutation from "@/checkpoint/hooks/invitation/usePublicRsvpMutation";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
+import { useAnalytics } from "@/checkpoint/providers/AnalyticsProvider";
 import ColorBubbleSwitcher from "../../components/ColorBubbleSwitcher";
 
 /* ------------------------------------------------------------------ */
@@ -154,9 +155,14 @@ export default function RsvpClient({
   callingCodeCountry: CallingCodeCountry[];
 }) {
   const t = useTypedTranslations("rsvp");
+  const analytics = useAnalytics();
 
   const searchParams = useSearchParams();
   const eventId = searchParams.get("eventId");
+
+  useEffect(() => {
+    if (eventId) analytics.track("InvitationOpened", { eventId });
+  }, [analytics, eventId]);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -272,6 +278,7 @@ export default function RsvpClient({
   }
 
   const handleSubmit = async () => {
+    analytics.track("RsvpStarted", eventId ? { eventId } : {});
     const validPhones = getValidPhones();
     const mappedPlusOnes = toGraphQL();
 

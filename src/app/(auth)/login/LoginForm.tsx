@@ -25,12 +25,14 @@ import { setCurrentUser } from "@/checkpoint/lib/apollo/auth-context";
 import { AuthManager } from "@/checkpoint/lib/auth/AuthManager";
 import { getCurrentUser } from "@/checkpoint/lib/auth/get-current-user";
 import { env } from "@/checkpoint/lib/env";
+import { useAnalytics } from "@/checkpoint/providers/AnalyticsProvider";
 
 export default function LoginForm(): JSX.Element {
   const router = useRouter();
   const searchParams = useSearchParams();
   const theme = useTheme();
   const t = useTypedTranslations("auth");
+  const analytics = useAnalytics();
 
   const redirect = searchParams.get("redirect") || env.CHECKPOINT_BASE_PATH;
 
@@ -52,6 +54,7 @@ export default function LoginForm(): JSX.Element {
     try {
       setLoading(true);
       setAppError(null);
+      analytics.track("LoginStarted");
 
       await AuthManager.login({ username, password });
       const user = await getCurrentUser();

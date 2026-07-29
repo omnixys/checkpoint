@@ -3,6 +3,7 @@
 // import AppShell from "@/components/layout/AppShell";
 import { usePathname } from "next/navigation";
 import type React from "react";
+import type { ConsentState } from "@omnixys/analytics-sdk/browser";
 import ErrorBoundary from "@/checkpoint/components/error/ErrorBoundary";
 import AppShell from "@/checkpoint/components/layout/AppShell";
 import { env } from "@/checkpoint/lib/env";
@@ -17,13 +18,22 @@ import { AuthProvider } from "./AuthProvider";
 import DateProvider from "./DateProvider";
 import { DeviceProvider } from "./DeviceProvider";
 import ThemeModeProvider, { type ThemeProfile } from "./ThemeModeProvider";
+import {
+  AnalyticsIdentityBridge,
+  CheckpointAnalyticsProvider,
+} from "./AnalyticsProvider";
 
 interface ProviderProps {
   children: React.ReactNode;
+  initialAnalyticsConsent: ConsentState;
   initialThemeProfile: ThemeProfile | null;
 }
 
-export default function Provider({ children, initialThemeProfile }: ProviderProps) {
+export default function Provider({
+  children,
+  initialAnalyticsConsent,
+  initialThemeProfile,
+}: ProviderProps) {
   const pathname = usePathname();
   const AuthRoutes = [
     `${env.CHECKPOINT_BASE_PATH}login`,
@@ -42,25 +52,28 @@ export default function Provider({ children, initialThemeProfile }: ProviderProp
         <ThemeRegistry>
           <ErrorProvider>
             <ErrorBoundary>
-              <ApolloRootProvider>
-                <AuthProvider>
-                  <ActiveEventProvider>
-                    <DateProvider>
-                      <TourProvider>
-                        <OnboardingProvider>
-                          {isAuthRoute ? (
-                            children
-                          ) : (
-                            <SwipeBackProvider>
-                              <AppShell>{children}</AppShell>
-                            </SwipeBackProvider>
-                          )}
-                        </OnboardingProvider>
-                      </TourProvider>
-                    </DateProvider>
-                  </ActiveEventProvider>
-                </AuthProvider>
-              </ApolloRootProvider>
+              <CheckpointAnalyticsProvider initialConsent={initialAnalyticsConsent}>
+                <ApolloRootProvider>
+                  <AuthProvider>
+                    <ActiveEventProvider>
+                      <AnalyticsIdentityBridge />
+                      <DateProvider>
+                        <TourProvider>
+                          <OnboardingProvider>
+                            {isAuthRoute ? (
+                              children
+                            ) : (
+                              <SwipeBackProvider>
+                                <AppShell>{children}</AppShell>
+                              </SwipeBackProvider>
+                            )}
+                          </OnboardingProvider>
+                        </TourProvider>
+                      </DateProvider>
+                    </ActiveEventProvider>
+                  </AuthProvider>
+                </ApolloRootProvider>
+              </CheckpointAnalyticsProvider>
             </ErrorBoundary>
           </ErrorProvider>
         </ThemeRegistry>

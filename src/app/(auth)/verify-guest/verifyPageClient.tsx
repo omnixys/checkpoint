@@ -27,6 +27,7 @@ import { setCurrentUser } from "@/checkpoint/lib/apollo/auth-context";
 import { AuthManager } from "@/checkpoint/lib/auth/AuthManager";
 import { getCurrentUser } from "@/checkpoint/lib/auth/get-current-user";
 import { env } from "@/checkpoint/lib/env";
+import { useAnalytics } from "@/checkpoint/providers/AnalyticsProvider";
 
 /* -------------------------------------------------------------------------- */
 /* Main Page                                                                  */
@@ -34,6 +35,7 @@ import { env } from "@/checkpoint/lib/env";
 
 export default function VerifyPageClient() {
   const router = useRouter();
+  const analytics = useAnalytics();
   const t = useTypedTranslations("auth");
   const handleVerifyError = useMutationError({ operationName: "VerifyGuestSignUp" });
   const handleLoginError = useMutationError({ operationName: "CredentialsLogin" });
@@ -76,6 +78,7 @@ export default function VerifyPageClient() {
       return;
     }
 
+    analytics.track("TicketDownloadStarted");
     const canvas = await html2canvas(pdfRef.current, {
       scale: 2,
       useCORS: true,
@@ -95,6 +98,7 @@ export default function VerifyPageClient() {
     pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
 
     pdf.save("guest-credentials.pdf");
+    analytics.track("TicketDownloaded");
   };
 
   const login = async (username: string, password: string) => {

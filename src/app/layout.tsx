@@ -6,8 +6,8 @@ import { getLocale, getMessages } from "next-intl/server";
 import { env } from "@/checkpoint/lib/env";
 import { baseMetadata } from "@/checkpoint/lib/metadata/base.metadata";
 import Provider from "@/checkpoint/providers/Provider";
+import { readAnalyticsConsent } from "@/checkpoint/lib/analytics/consent";
 import "./globals.css";
-import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import StartupVisionPro from "@/checkpoint/components/startup/StartupVisionPro";
 
@@ -135,6 +135,7 @@ export default async function RootLayout({
   const locale = await getLocale();
   const cookieStore = await cookies();
   const initialThemeProfile = cookieStore.get("theme")?.value === "wedding" ? "wedding" : null;
+  const initialAnalyticsConsent = readAnalyticsConsent(cookieStore);
 
   return (
     <html
@@ -143,9 +144,11 @@ export default async function RootLayout({
     >
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <SpeedInsights />
-        <Analytics />
         <NextIntlClientProvider messages={messages}>
-          <Provider initialThemeProfile={initialThemeProfile}>
+          <Provider
+            initialAnalyticsConsent={initialAnalyticsConsent}
+            initialThemeProfile={initialThemeProfile}
+          >
             <StartupVisionPro />
             {children}
           </Provider>

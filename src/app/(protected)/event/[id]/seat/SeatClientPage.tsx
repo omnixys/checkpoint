@@ -19,6 +19,7 @@ import { useSeats } from "@/checkpoint/hooks/seat/useSeats";
 import { env } from "@/checkpoint/lib/env";
 import { EventPermissionKey } from "@/checkpoint/lib/rbac/event-permissions";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
+import { useAnalytics } from "@/checkpoint/providers/AnalyticsProvider";
 import { getLogger } from "@/checkpoint/utils/logger";
 
 export default function SeatsClientPage() {
@@ -26,6 +27,7 @@ export default function SeatsClientPage() {
   const logger = getLogger("SeatsPage");
   const eventId = id as string;
   const { activeRole, can } = useActiveEvent();
+  const analytics = useAnalytics();
   const canManageSeats = can(EventPermissionKey.ManageSeats);
 
   const {
@@ -139,6 +141,7 @@ export default function SeatsClientPage() {
           guestList={guestList}
           onClose={drawer.stopEditing}
           onSave={async (input) => {
+            analytics.track("SeatChangeStarted", { eventId });
             await assignSeat({ variables: { input } });
 
             // 🔁 danach UI aktualisieren

@@ -27,8 +27,10 @@ function getClientEnv(key: string, fallback: string): string {
                 ? process.env.NEXT_PUBLIC_INVITATION_API
                 : key === "NEXT_PUBLIC_EVENT_API"
                   ? process.env.NEXT_PUBLIC_EVENT_API
-                  : key === "NEXT_PUBLIC_APP_URL"
-                    ? process.env.NEXT_PUBLIC_APP_URL
+        : key === "NEXT_PUBLIC_APP_URL"
+                  ? process.env.NEXT_PUBLIC_APP_URL
+                  : key === "NEXT_PUBLIC_ANALYTICS_GATEWAY_URL"
+                    ? process.env.NEXT_PUBLIC_ANALYTICS_GATEWAY_URL
                     : key === "NEXYS_HOME_LINK"
                       ? process.env.NEXYS_HOME_LINK
                       : undefined;
@@ -60,6 +62,11 @@ export const env = {
   EVENT_API: getClientEnv("NEXT_PUBLIC_EVENT_API", "http://localhost:7406/media"),
 
   APP_URL: getClientEnv("NEXT_PUBLIC_APP_URL", "http://localhost:3000"),
+
+  ANALYTICS_GATEWAY_URL: getClientEnv(
+    "NEXT_PUBLIC_ANALYTICS_GATEWAY_URL",
+    "http://localhost:8000",
+  ),
 
   NEXYS_HOME_LINK: getClientEnv("NEXYS_HOME_LINK", "https://nexys.omnixys.com"),
 } as const;

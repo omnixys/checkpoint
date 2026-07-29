@@ -12,12 +12,14 @@ import {
   MessagesDocument,
   SendMessageDocument,
 } from "@/checkpoint/generated/graphql";
+import { useAnalytics } from "@/checkpoint/providers/AnalyticsProvider";
 import { findDirectConversation } from "./conversation-selection";
 import { appendMessageById } from "./message-stream";
 
 export type { Conversation, Message };
 
 export function useInAppConversation(currentUserId?: string) {
+  const analytics = useAnalytics();
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [messagesLoading, setMessagesLoading] = useState(false);
@@ -92,6 +94,7 @@ export function useInAppConversation(currentUserId?: string) {
           targetUserId,
         );
         if (existing) {
+          analytics.track("ConversationOpened", { conversationId: existing.id });
           if (selectionRequestId === selectionRequestRef.current) {
             setMessages([]);
             setSelectedConversationId(existing.id);
@@ -106,6 +109,7 @@ export function useInAppConversation(currentUserId?: string) {
         });
         if (data && selectionRequestId === selectionRequestRef.current) {
           const conv = data.createInAppConversation;
+          analytics.track("ConversationOpened", { conversationId: conv.id });
           setMessages([]);
           setSelectedConversationId(conv.id);
           refetchConversations();
@@ -116,12 +120,13 @@ export function useInAppConversation(currentUserId?: string) {
       }
       return undefined;
     },
-    [createConversationMutation, currentUserId, refetchConversations],
+    [analytics, createConversationMutation, currentUserId, refetchConversations],
   );
 
   const sendMessage = useCallback(
     async (body: string) => {
       if (!selectedConversationId || !body.trim() || sendingRef.current) return null;
+      analytics.track("MessageSendStarted", { conversationId: selectedConversationId });
       sendingRef.current = true;
       try {
         const { data } = await sendMessageMutation({
@@ -138,7 +143,7 @@ export function useInAppConversation(currentUserId?: string) {
       }
       return null;
     },
-    [selectedConversationId, sendMessageMutation],
+    [analytics, selectedConversationId, sendMessageMutation],
   );
 
   const debouncedSend = useCallback(
