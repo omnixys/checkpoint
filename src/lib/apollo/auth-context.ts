@@ -1,6 +1,13 @@
 import type { CurrentUserQuery } from "@/checkpoint/generated/graphql";
 
 /**
+ * Canonical Omnixys tenant id (mirror of OMNIXYS_TENANT_ID in
+ * @omnixys/contracts-ts). Kept local: the published contracts package
+ * does not export it for the frontend build.
+ */
+const OMNIXYS_TENANT_ID = "6e788f7f-c233-4cb8-bbde-c0b855e564be";
+
+/**
  * Internal auth context used ONLY for Apollo header injection.
  *
  * This must remain minimal and stable.
@@ -19,7 +26,7 @@ interface InternalAuthContext {
  */
 let context: InternalAuthContext = {
   actorId: null,
-  tenantId: "omnixys",
+  tenantId: OMNIXYS_TENANT_ID,
 };
 
 /**
@@ -30,7 +37,7 @@ let context: InternalAuthContext = {
 export function setCurrentUser(user: Omit<CurrentUserQuery["me"], "__typename"> | null): void {
   context = {
     actorId: user?.id ?? null,
-    tenantId: "omnixys",
+    tenantId: OMNIXYS_TENANT_ID,
   };
 }
 
