@@ -1,4 +1,4 @@
-import type { ErrorCode } from "@omnixys/contracts/errors";
+import type { ErrorCode } from "@omnixys/contracts-ts/errors";
 
 interface UiActionBase {
   readonly code: ErrorCode;

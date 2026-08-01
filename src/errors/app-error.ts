@@ -4,7 +4,7 @@ import {
   ServerError,
   ServerParseError,
 } from "@apollo/client/errors";
-import { ErrorCode, isErrorCode } from "@omnixys/contracts/errors";
+import { ErrorCode, isErrorCode } from "@omnixys/contracts-ts/errors";
 
 export interface AppErrorContext {
   readonly operationName?: string | undefined;

@@ -27,10 +27,12 @@
     "until": "bis",
 
     "role": {
-      "ADMIN": "Admin",
-      "SECURITY": "Security",
+      "ADMIN": "Administrator",
+      "SECURITY": "Sicherheit",
       "GUEST": "Gast",
-      "SUPPORT": "Support"
+      "SUPPORT": "Support",
+      "DRIVER": "Chauffeur",
+      "USHER": "Einweiser"
     }
   },
 

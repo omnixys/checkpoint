@@ -1,4 +1,11 @@
-import * as Sentry from "@sentry/nextjs";
+/**
+ * Client instrumentation for @omnixys/observability-ts.
+ * Replaces the former @sentry/nextjs client init with OpenTelemetry browser tracing.
+ *
+ * initializeBrowserTracing is safe to call multiple times – subsequent calls
+ * are no-ops when already initialized.
+ */
+import { initializeBrowserTracing } from "@omnixys/observability-ts/browser";
 
 const sampleRate = (rate: string | undefined, fallback: number): number => {
   if (rate === undefined) return fallback;
@@ -6,39 +13,14 @@ const sampleRate = (rate: string | undefined, fallback: number): number => {
   return Number.isFinite(parsed) ? parsed : fallback;
 };
 
-Sentry.init({
-  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
-
+initializeBrowserTracing({
+  serviceName: process.env.NEXT_PUBLIC_OTEL_SERVICE_NAME ?? "checkpoint-web",
   environment: process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT || process.env.NODE_ENV,
-
-  tracesSampleRate: sampleRate(
+  sampleRate: sampleRate(
     process.env.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE,
     process.env.NODE_ENV === "production" ? 0.1 : 1.0,
   ),
-
-  replaysSessionSampleRate: sampleRate(
-    process.env.NEXT_PUBLIC_SENTRY_REPLAYS_SESSION_SAMPLE_RATE,
-    process.env.NODE_ENV === "production" ? 0.05 : 0.1,
-  ),
-
-  replaysOnErrorSampleRate: sampleRate(
-    process.env.NEXT_PUBLIC_SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE,
-    1.0,
-  ),
-
-  integrations: [Sentry.browserTracingIntegration(), Sentry.replayIntegration()],
-
-  beforeSend(event) {
-    if (event.request?.headers) {
-      delete event.request.headers.authorization;
-      delete event.request.headers.Authorization;
-      delete event.request.headers.cookie;
-      delete event.request.headers.Cookie;
-      delete event.request.headers["x-api-key"];
-      delete event.request.headers["X-Api-Key"];
-    }
-    return event;
-  },
+  otlpEndpoint: process.env.NEXT_PUBLIC_OTEL_ENDPOINT ?? "/otel/v1/traces",
+  instrumentations: ["fetch", "xhr", "document-load"],
+  enabled: process.env.NODE_ENV === "production",
 });
-
-export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;

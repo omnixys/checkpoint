@@ -1,9 +1,9 @@
 "use client";
 
 import { useApolloClient } from "@apollo/client/react";
-import * as Sentry from "@sentry/nextjs";
 import type React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
+import { useTelemetry } from "@omnixys/observability-ts/react";
 import type { CurrentUserQuery } from "@/checkpoint/generated/graphql";
 import useMeQuery from "@/checkpoint/hooks/user/useMeQuery";
 import { setCurrentUser } from "@/checkpoint/lib/apollo/auth-context";
@@ -54,6 +54,7 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
  */
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const client = useApolloClient();
+  const telemetry = useTelemetry();
   const [authUser, setAuthUser] = useState<CurrentUserQuery["me"] | null | undefined>(undefined);
 
   /**
@@ -96,7 +97,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
      * - audit logging
      */
     setCurrentUser(currentUser);
-    Sentry.logger.info("User triggered test log", { log_source: "sentry_test" });
+    telemetry.identifyUser(currentUser.id, {
+      email: currentUser.personalInfo?.email,
+      name: currentUser.personalInfo
+        ? `${currentUser.personalInfo.firstName} ${currentUser.personalInfo.lastName}`.trim()
+        : currentUser.username,
+    });
 
     setAuthUser(currentUser ?? null);
   }, [currentUser]);

@@ -1,9 +1,9 @@
 "use client";
 
-import * as Sentry from "@sentry/nextjs";
 import { useEffect } from "react";
 import RetryComponent from "@/checkpoint/components/error/RetryComponent";
 import { notificationService } from "@/checkpoint/errors/notification.service";
+import { useTelemetry } from "@omnixys/observability-ts/react";
 
 export default function ApplicationError({
   error,
@@ -12,13 +12,17 @@ export default function ApplicationError({
   readonly error: Error & { digest?: string };
   readonly reset: () => void;
 }) {
+  const telemetry = useTelemetry();
+
   useEffect(() => {
-    Sentry.captureException(error);
+    telemetry.recordException(error, {
+      route: typeof window !== "undefined" ? window.location.pathname : undefined,
+    });
     notificationService.capture(error, {
       scope: "all",
       ...(typeof window === "undefined" ? {} : { route: window.location.pathname }),
     });
-  }, [error]);
+  }, [error, telemetry]);
 
   return (
     <RetryComponent

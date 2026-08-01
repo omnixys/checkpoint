@@ -1,4 +1,4 @@
-import { ErrorCode } from "@omnixys/contracts/errors";
+import { ErrorCode } from "@omnixys/contracts-ts/errors";
 import type { AppError } from "./app-error";
 import type { UiAction } from "./ui-action";
 

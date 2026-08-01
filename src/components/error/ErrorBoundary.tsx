@@ -1,7 +1,7 @@
 "use client";
 
-import * as Sentry from "@sentry/nextjs";
 import React from "react";
+import { ObservabilityContext } from "@omnixys/observability-ts/react";
 import { notificationService } from "@/checkpoint/errors/notification.service";
 import { getLogger } from "@/checkpoint/utils/logger";
 import RetryComponent from "./RetryComponent";
@@ -17,6 +17,9 @@ interface ErrorBoundaryState {
 const logger = getLogger("ErrorBoundary");
 
 export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  declare context: React.ContextType<typeof ObservabilityContext>;
+  static override contextType = ObservabilityContext;
+
   override state: ErrorBoundaryState = { error: null };
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
@@ -24,7 +27,12 @@ export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, E
   }
 
   override componentDidCatch(error: Error, info: React.ErrorInfo): void {
-    Sentry.captureException(error);
+    try {
+      this.context?.recordException(error, { componentStack: info.componentStack });
+    } catch {
+      // Telemetry must never break the application
+    }
+
     const appError = notificationService.capture(error, {
       scope: "all",
       ...(typeof window === "undefined" ? {} : { route: window.location.pathname }),

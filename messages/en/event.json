@@ -30,7 +30,9 @@
       "ADMIN": "Admin",
       "SECURITY": "Security",
       "GUEST": "Guest",
-      "SUPPORT": "Support"
+      "SUPPORT": "Support",
+      "DRIVER": "Driver",
+      "USHER": "Usher"
     }
   },
 
