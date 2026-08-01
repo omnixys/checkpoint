@@ -96,6 +96,48 @@ export type AdminSignUpInput = {
   username: InputMaybe<Scalars['String']['input']>;
 };
 
+export type AnalyticsChartPointPayload = {
+  __typename: 'AnalyticsChartPointPayload';
+  time: Scalars['DateTime']['output'];
+  value: Scalars['Float']['output'];
+};
+
+export type AnalyticsPlatformInfo = {
+  __typename: 'AnalyticsPlatformInfo';
+  apiVersion: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  processingVersion: Scalars['String']['output'];
+};
+
+export type AnalyticsRulePayload = {
+  __typename: 'AnalyticsRulePayload';
+  activeVersion: Maybe<Scalars['Int']['output']>;
+  id: Scalars['ID']['output'];
+  lifecycle: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  versions: Array<Scalars['Int']['output']>;
+};
+
+export type AnalyticsSchedulePayload = {
+  __typename: 'AnalyticsSchedulePayload';
+  active: Scalars['Boolean']['output'];
+  concurrencyPolicy: Scalars['String']['output'];
+  cron: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  lastRunAt: Maybe<Scalars['DateTime']['output']>;
+  misfirePolicy: Scalars['String']['output'];
+  nextRunAt: Scalars['DateTime']['output'];
+  targetId: Scalars['ID']['output'];
+  targetType: Scalars['String']['output'];
+  timezone: Scalars['String']['output'];
+};
+
+export type AnalyticsSecurityChartsPayload = {
+  __typename: 'AnalyticsSecurityChartsPayload';
+  scans: Array<AnalyticsChartPointPayload>;
+  warnings: Array<AnalyticsChartPointPayload>;
+};
+
 export type ApproveInvitationDataInput = {
   /** ID of the invitation to approve/unapprove (cuid). */
   invitationId: Scalars['ID']['input'];
@@ -175,6 +217,15 @@ export type CallingCode = {
   code: Scalars['String']['output'];
   countries: Array<Country>;
   id: Scalars['ID']['output'];
+};
+
+export type CatalogSearchItemPayload = {
+  __typename: 'CatalogSearchItemPayload';
+  description: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  lifecycle: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  owner: Scalars['String']['output'];
 };
 
 export type ChangeMyPasswordInput = {
@@ -339,6 +390,20 @@ export type CountryFilterInput = {
   currencyCode: InputMaybe<Scalars['String']['input']>;
   name: InputMaybe<Scalars['String']['input']>;
   subregion: InputMaybe<Scalars['String']['input']>;
+};
+
+export type CreateAnalyticsScheduleInput = {
+  concurrencyPolicy: InputMaybe<Scalars['String']['input']>;
+  cron: Scalars['String']['input'];
+  endAt: InputMaybe<Scalars['DateTime']['input']>;
+  maxRetries: InputMaybe<Scalars['Int']['input']>;
+  misfirePolicy: InputMaybe<Scalars['String']['input']>;
+  retryBaseSeconds: InputMaybe<Scalars['Int']['input']>;
+  startAt: InputMaybe<Scalars['DateTime']['input']>;
+  targetId: Scalars['ID']['input'];
+  targetType: Scalars['String']['input'];
+  timezone: Scalars['String']['input'];
+  workspaceId: Scalars['ID']['input'];
 };
 
 export type CreateEventAddressInput = {
@@ -649,6 +714,14 @@ export type EventAddressPayload = {
   street: Maybe<Scalars['String']['output']>;
 };
 
+export type EventCatalogEntry = {
+  __typename: 'EventCatalogEntry';
+  id: Scalars['ID']['output'];
+  lifecycle: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  owner: Scalars['String']['output'];
+};
+
 export enum EventCategory {
   GENERAL = 'GENERAL',
   KONFERENZ = 'KONFERENZ',
@@ -707,6 +780,43 @@ export type EventRoleDefinitionPayload = {
   systemKey: Maybe<Scalars['String']['output']>;
 };
 
+export type EventSearchConnectionPayload = {
+  __typename: 'EventSearchConnectionPayload';
+  nodes: Array<EventSearchItemPayload>;
+  pageInfo: SearchPageInfoPayload;
+};
+
+export type EventSearchInput = {
+  cursor: InputMaybe<Scalars['String']['input']>;
+  environment: InputMaybe<Scalars['String']['input']>;
+  from: InputMaybe<Scalars['DateTime']['input']>;
+  limit: InputMaybe<Scalars['Int']['input']>;
+  name: InputMaybe<Scalars['String']['input']>;
+  sessionId: InputMaybe<Scalars['String']['input']>;
+  sourceId: InputMaybe<Scalars['ID']['input']>;
+  text: InputMaybe<Scalars['String']['input']>;
+  to: InputMaybe<Scalars['DateTime']['input']>;
+  userId: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EventSearchItemPayload = {
+  __typename: 'EventSearchItemPayload';
+  anonymousId: Maybe<Scalars['String']['output']>;
+  environment: Scalars['String']['output'];
+  eventId: Scalars['ID']['output'];
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  occurredAt: Scalars['DateTime']['output'];
+  propertiesJson: Scalars['String']['output'];
+  receivedAt: Scalars['DateTime']['output'];
+  sdkName: Scalars['String']['output'];
+  sdkVersion: Scalars['String']['output'];
+  sessionId: Maybe<Scalars['String']['output']>;
+  sourceId: Scalars['ID']['output'];
+  type: Scalars['String']['output'];
+  userId: Maybe<Scalars['String']['output']>;
+};
+
 export type EventStaffPayload = {
   __typename: 'EventStaffPayload';
   email: Maybe<Scalars['String']['output']>;
@@ -756,11 +866,13 @@ export enum EventVisibleTab {
   TIMELINE = 'TIMELINE'
 }
 
-export type GatewayHealth = {
-  __typename: 'GatewayHealth';
-  healthyProviders: Scalars['Int']['output'];
-  providerCount: Scalars['Int']['output'];
-  status: Scalars['String']['output'];
+export type FeatureFlagPayload = {
+  __typename: 'FeatureFlagPayload';
+  activeVersion: Maybe<Scalars['Int']['output']>;
+  id: Scalars['ID']['output'];
+  key: Scalars['String']['output'];
+  lifecycle: Scalars['String']['output'];
+  versions: Array<Scalars['Int']['output']>;
 };
 
 export enum GenderType {
@@ -989,6 +1101,16 @@ export type KcUser = {
   username: Scalars['String']['output'];
 };
 
+export type KpiValuePayload = {
+  __typename: 'KpiValuePayload';
+  format: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  key: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  unit: Maybe<Scalars['String']['output']>;
+  value: Scalars['Float']['output'];
+};
+
 export type Language = {
   __typename: 'Language';
   countries: Array<Country>;
@@ -1042,6 +1164,48 @@ export type LayoutVersionPayload = {
   label: Maybe<Scalars['String']['output']>;
   patch: Maybe<Scalars['JSON']['output']>;
   version: Scalars['Float']['output'];
+};
+
+export type LineageEdgePayload = {
+  __typename: 'LineageEdgePayload';
+  id: Scalars['ID']['output'];
+  inputVersionId: Scalars['ID']['output'];
+  outputVersionId: Scalars['ID']['output'];
+  transformationVersionId: Maybe<Scalars['ID']['output']>;
+};
+
+export type LineageGraphPayload = {
+  __typename: 'LineageGraphPayload';
+  edges: Array<LineageEdgePayload>;
+  metricId: Scalars['ID']['output'];
+  nodes: Array<LineageNodePayload>;
+  runs: Array<LineageRunPayload>;
+  version: Scalars['Int']['output'];
+};
+
+export type LineageNodePayload = {
+  __typename: 'LineageNodePayload';
+  assetId: Scalars['ID']['output'];
+  definitionJson: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  key: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+  version: Scalars['Int']['output'];
+};
+
+export type LineageRunPayload = {
+  __typename: 'LineageRunPayload';
+  definitionVersion: Maybe<Scalars['String']['output']>;
+  discardedCount: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  inputCount: Scalars['String']['output'];
+  inputVersionIds: Array<Scalars['ID']['output']>;
+  outputCount: Scalars['String']['output'];
+  outputVersionIds: Array<Scalars['ID']['output']>;
+  processingVersion: Scalars['String']['output'];
+  status: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+  watermark: Maybe<Scalars['DateTime']['output']>;
 };
 
 export type LogInInput = {
@@ -1109,6 +1273,24 @@ export enum MessageContentType {
   TEXT = 'TEXT'
 }
 
+export type MetricDefinitionPayload = {
+  __typename: 'MetricDefinitionPayload';
+  id: Scalars['ID']['output'];
+  key: Scalars['String']['output'];
+  lifecycle: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  version: Scalars['Int']['output'];
+};
+
+export type MetricPointPayload = {
+  __typename: 'MetricPointPayload';
+  bucketSize: Scalars['String']['output'];
+  bucketStart: Scalars['DateTime']['output'];
+  inputCount: Scalars['String']['output'];
+  value: Scalars['Float']['output'];
+  watermark: Scalars['DateTime']['output'];
+};
+
 export enum MfaPreference {
   BACKUP_CODES = 'BACKUP_CODES',
   NONE = 'NONE',
@@ -1139,9 +1321,14 @@ export type MoveTableInput = {
 export type Mutation = {
   __typename: 'Mutation';
   DEBUG_createSignupVerification: Scalars['String']['output'];
+  activateAnalyticsFeatureFlag: FeatureFlagPayload;
+  activateAnalyticsMetric: MetricDefinitionPayload;
+  activateAnalyticsRule: AnalyticsRulePayload;
   /** Bind a device to a ticket (first activation) */
   activateDevice: TicketPayload;
   activateEvent: Scalars['Boolean']['output'];
+  addAnalyticsFeatureFlagVersion: FeatureFlagPayload;
+  addAnalyticsRuleVersion: AnalyticsRulePayload;
   addContact: Scalars['Boolean']['output'];
   addPhoneNumbers: Scalars['Boolean']['output'];
   addTimeLines: EventPayload;
@@ -1149,6 +1336,7 @@ export type Mutation = {
   adminSignUp: TokenPayload;
   adminUpdateUser: Scalars['Boolean']['output'];
   approveInvitation: InvitationPayload;
+  archiveAnalyticsSavedSearch: SavedSearchPayload;
   archiveEventRole: EventRoleDefinitionPayload;
   archiveMyNotification: NotificationPayload;
   archiveNotification: NotificationPayload;
@@ -1166,6 +1354,11 @@ export type Mutation = {
   cloneSection: SectionPayload;
   completePasswordReset: Scalars['Boolean']['output'];
   confirmTotp: Scalars['Boolean']['output'];
+  createAnalyticsFeatureFlag: FeatureFlagPayload;
+  createAnalyticsKpi: KpiValuePayload;
+  createAnalyticsMetric: MetricDefinitionPayload;
+  createAnalyticsRule: AnalyticsRulePayload;
+  createAnalyticsSchedule: AnalyticsSchedulePayload;
   createEvent: EventPayload;
   createEventAddress: EventAddressPayload;
   createEventRole: EventRoleDefinitionPayload;
@@ -1231,18 +1424,22 @@ export type Mutation = {
   renameTable: RenamePayload;
   renameWebAuthnCredential: Scalars['Boolean']['output'];
   replyInvitation: InvitationPayload;
+  requestAnalyticsReplay: ReplayJobPayload;
   requestPasswordReset: Scalars['Boolean']['output'];
   /** Revoke a ticket (security or admin) */
   revokeTicket: TicketPayload;
   revokeWebAuthnCredential: Scalars['Boolean']['output'];
+  saveAnalyticsSearch: SavedSearchPayload;
   saveLayoutVersion: LayoutVersionPayload;
   scanToken: ScanPayload;
+  seedAll: SeedPayload;
   seedCountries: SeedPayload;
   seedPostalCodes: SeedPayload;
   seedStates: SeedPayload;
   sendInvitations: Scalars['Boolean']['output'];
   sendMagicLink: Scalars['Boolean']['output'];
   sendMessage: Message;
+  setAnalyticsScheduleActive: AnalyticsSchedulePayload;
   setEventRolePermissions: EventRoleDefinitionPayload;
   setMfaPreference: Scalars['Boolean']['output'];
   setTimelines: EventPayload;
@@ -1280,6 +1477,25 @@ export type MutationDebug_CreateSignupVerificationArgs = {
 };
 
 
+export type MutationActivateAnalyticsFeatureFlagArgs = {
+  flagId: Scalars['ID']['input'];
+  version: Scalars['Int']['input'];
+  workspaceId: Scalars['ID']['input'];
+};
+
+
+export type MutationActivateAnalyticsMetricArgs = {
+  metricId: Scalars['ID']['input'];
+};
+
+
+export type MutationActivateAnalyticsRuleArgs = {
+  ruleId: Scalars['ID']['input'];
+  version: Scalars['Int']['input'];
+  workspaceId: Scalars['ID']['input'];
+};
+
+
 export type MutationActivateDeviceArgs = {
   input: ActivateDeviceInput;
 };
@@ -1287,6 +1503,20 @@ export type MutationActivateDeviceArgs = {
 
 export type MutationActivateEventArgs = {
   eventId: Scalars['ID']['input'];
+};
+
+
+export type MutationAddAnalyticsFeatureFlagVersionArgs = {
+  definitionJson: Scalars['String']['input'];
+  flagId: Scalars['ID']['input'];
+  workspaceId: Scalars['ID']['input'];
+};
+
+
+export type MutationAddAnalyticsRuleVersionArgs = {
+  definitionJson: Scalars['String']['input'];
+  ruleId: Scalars['ID']['input'];
+  workspaceId: Scalars['ID']['input'];
 };
 
 
@@ -1324,6 +1554,11 @@ export type MutationAdminUpdateUserArgs = {
 
 export type MutationApproveInvitationArgs = {
   input: ApproveInvitationInput;
+};
+
+
+export type MutationArchiveAnalyticsSavedSearchArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -1410,6 +1645,41 @@ export type MutationCompletePasswordResetArgs = {
 
 export type MutationConfirmTotpArgs = {
   code: Scalars['String']['input'];
+};
+
+
+export type MutationCreateAnalyticsFeatureFlagArgs = {
+  definitionJson: Scalars['String']['input'];
+  key: Scalars['String']['input'];
+  workspaceId: Scalars['ID']['input'];
+};
+
+
+export type MutationCreateAnalyticsKpiArgs = {
+  definitionJson: Scalars['String']['input'];
+  key: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  workspaceId: Scalars['ID']['input'];
+};
+
+
+export type MutationCreateAnalyticsMetricArgs = {
+  definitionJson: Scalars['String']['input'];
+  key: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  workspaceId: Scalars['ID']['input'];
+};
+
+
+export type MutationCreateAnalyticsRuleArgs = {
+  definitionJson: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  workspaceId: Scalars['ID']['input'];
+};
+
+
+export type MutationCreateAnalyticsScheduleArgs = {
+  input: CreateAnalyticsScheduleInput;
 };
 
 
@@ -1693,6 +1963,13 @@ export type MutationReplyInvitationArgs = {
 };
 
 
+export type MutationRequestAnalyticsReplayArgs = {
+  dryRun?: Scalars['Boolean']['input'];
+  filter: ReplayFilterInput;
+  workspaceId: Scalars['ID']['input'];
+};
+
+
 export type MutationRequestPasswordResetArgs = {
   email: Scalars['String']['input'];
 };
@@ -1705,6 +1982,14 @@ export type MutationRevokeTicketArgs = {
 
 export type MutationRevokeWebAuthnCredentialArgs = {
   credentialId: Scalars['String']['input'];
+};
+
+
+export type MutationSaveAnalyticsSearchArgs = {
+  definitionJson: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  resourceType: Scalars['String']['input'];
+  workspaceId: Scalars['ID']['input'];
 };
 
 
@@ -1731,6 +2016,13 @@ export type MutationSendMagicLinkArgs = {
 export type MutationSendMessageArgs = {
   body: Scalars['String']['input'];
   conversationId: Scalars['ID']['input'];
+};
+
+
+export type MutationSetAnalyticsScheduleActiveArgs = {
+  active: Scalars['Boolean']['input'];
+  scheduleId: Scalars['ID']['input'];
+  workspaceId: Scalars['ID']['input'];
 };
 
 
@@ -2034,13 +2326,14 @@ export enum Priority {
   URGENT = 'URGENT'
 }
 
-export type ProviderStatus = {
-  __typename: 'ProviderStatus';
-  capabilities: Maybe<Array<Scalars['String']['output']>>;
-  connected: Scalars['Boolean']['output'];
-  health: Scalars['Boolean']['output'];
-  lastError: Maybe<Scalars['String']['output']>;
-  providerType: Scalars['String']['output'];
+export type ProcessingMetricsPayload = {
+  __typename: 'ProcessingMetricsPayload';
+  averageDurationMs: Scalars['Float']['output'];
+  duplicate: Scalars['Int']['output'];
+  failed: Scalars['Int']['output'];
+  processed: Scalars['Int']['output'];
+  quarantined: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
 };
 
 export type PublicPlusOneInput = {
@@ -2074,6 +2367,22 @@ export type Query = {
   addressAutocomplete: Array<AddressAutocompletePayload>;
   adminEvents: Array<EventPayload>;
   adminGetEvent: Maybe<EventPayload>;
+  analyticsCatalogSearch: Array<CatalogSearchItemPayload>;
+  analyticsEventCatalog: Array<EventCatalogEntry>;
+  analyticsEventSearch: EventSearchConnectionPayload;
+  analyticsFeatureFlags: Array<FeatureFlagPayload>;
+  analyticsKpiValue: KpiValuePayload;
+  analyticsMetricSeries: Array<MetricPointPayload>;
+  analyticsPlatformInfo: AnalyticsPlatformInfo;
+  analyticsProcessingMetrics: ProcessingMetricsPayload;
+  analyticsRealtimeMetric: Maybe<Scalars['Float']['output']>;
+  analyticsReplayJobs: Array<ReplayJobPayload>;
+  analyticsRules: Array<AnalyticsRulePayload>;
+  analyticsSavedSearches: Array<SavedSearchPayload>;
+  analyticsSchedules: Array<AnalyticsSchedulePayload>;
+  analyticsSecurityCharts: AnalyticsSecurityChartsPayload;
+  analyticsSessionSearch: SessionSearchConnectionPayload;
+  analyticsTrackingPlanSearch: Array<TrackingPlanSearchItemPayload>;
   checkEmail: Scalars['Boolean']['output'];
   checkUsername: Scalars['Boolean']['output'];
   conversation: Maybe<Conversation>;
@@ -2090,7 +2399,7 @@ export type Query = {
   eventStaff: Array<EventStaffPayload>;
   eventTables: Array<TablePayload>;
   eventTree: EventTreePayload;
-  gatewayHealth: GatewayHealth;
+  explainMetric: LineageGraphPayload;
   geocodeAddress: Maybe<GeocodeResultPayload>;
   getAllCountries: Array<Country>;
   getAllInterestCategories: Array<InterestCategoryPayload>;
@@ -2141,8 +2450,6 @@ export type Query = {
   notification: NotificationPayload;
   notifications: Array<NotificationPayload>;
   pnpm: UserPayload;
-  provider: Maybe<ProviderStatus>;
-  providers: Array<ProviderStatus>;
   publicEventTree: EventTreePayload;
   /** Load all security scan logs of a ticket */
   scanLogsByTicket: Array<ScanLogPayload>;
@@ -2158,7 +2465,6 @@ export type Query = {
   table: Array<TablePayload>;
   tablesBySection: Array<TablePayload>;
   templates: Array<TemplatePayload>;
-  test: Maybe<Scalars['String']['output']>;
   /** Fetch a single ticket by its cuid */
   ticketById: TicketPayload;
   /** Find the ticket created for a specific invitationId */
@@ -2191,6 +2497,93 @@ export type QueryAddressAutocompleteArgs = {
 
 export type QueryAdminGetEventArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QueryAnalyticsCatalogSearchArgs = {
+  lifecycle: InputMaybe<Scalars['String']['input']>;
+  text: InputMaybe<Scalars['String']['input']>;
+  workspaceId: Scalars['ID']['input'];
+};
+
+
+export type QueryAnalyticsEventCatalogArgs = {
+  workspaceId: Scalars['ID']['input'];
+};
+
+
+export type QueryAnalyticsEventSearchArgs = {
+  filter: EventSearchInput;
+  workspaceId: Scalars['ID']['input'];
+};
+
+
+export type QueryAnalyticsFeatureFlagsArgs = {
+  workspaceId: Scalars['ID']['input'];
+};
+
+
+export type QueryAnalyticsKpiValueArgs = {
+  from: Scalars['DateTime']['input'];
+  kpiId: Scalars['ID']['input'];
+  to: Scalars['DateTime']['input'];
+  workspaceId: Scalars['ID']['input'];
+};
+
+
+export type QueryAnalyticsMetricSeriesArgs = {
+  from: Scalars['DateTime']['input'];
+  metricId: Scalars['ID']['input'];
+  to: Scalars['DateTime']['input'];
+  workspaceId: Scalars['ID']['input'];
+};
+
+
+export type QueryAnalyticsRealtimeMetricArgs = {
+  metricVersionId: Scalars['ID']['input'];
+  windowMinutes: Scalars['Int']['input'];
+  workspaceId: Scalars['ID']['input'];
+};
+
+
+export type QueryAnalyticsReplayJobsArgs = {
+  workspaceId: Scalars['ID']['input'];
+};
+
+
+export type QueryAnalyticsRulesArgs = {
+  workspaceId: Scalars['ID']['input'];
+};
+
+
+export type QueryAnalyticsSavedSearchesArgs = {
+  resourceType: InputMaybe<Scalars['String']['input']>;
+  workspaceId: Scalars['ID']['input'];
+};
+
+
+export type QueryAnalyticsSchedulesArgs = {
+  workspaceId: Scalars['ID']['input'];
+};
+
+
+export type QueryAnalyticsSecurityChartsArgs = {
+  from: Scalars['DateTime']['input'];
+  to: Scalars['DateTime']['input'];
+  workspaceSlug: Scalars['String']['input'];
+};
+
+
+export type QueryAnalyticsSessionSearchArgs = {
+  filter: SessionSearchInput;
+  workspaceId: Scalars['ID']['input'];
+};
+
+
+export type QueryAnalyticsTrackingPlanSearchArgs = {
+  lifecycle: InputMaybe<Scalars['String']['input']>;
+  sourceId: InputMaybe<Scalars['ID']['input']>;
+  workspaceId: Scalars['ID']['input'];
 };
 
 
@@ -2263,6 +2656,15 @@ export type QueryEventTablesArgs = {
 
 export type QueryEventTreeArgs = {
   eventId: Scalars['ID']['input'];
+};
+
+
+export type QueryExplainMetricArgs = {
+  from: InputMaybe<Scalars['DateTime']['input']>;
+  metricId: Scalars['ID']['input'];
+  to: InputMaybe<Scalars['DateTime']['input']>;
+  version: InputMaybe<Scalars['Int']['input']>;
+  workspaceId: Scalars['ID']['input'];
 };
 
 
@@ -2443,11 +2845,6 @@ export type QueryNotificationsArgs = {
 
 export type QueryPnpmArgs = {
   id: Scalars['ID']['input'];
-};
-
-
-export type QueryProviderArgs = {
-  providerType: Scalars['String']['input'];
 };
 
 
@@ -2633,6 +3030,23 @@ export type RenameTableInput = {
   tableId: Scalars['ID']['input'];
 };
 
+export type ReplayFilterInput = {
+  eventName: InputMaybe<Scalars['String']['input']>;
+  from: InputMaybe<Scalars['String']['input']>;
+  sourceId: InputMaybe<Scalars['ID']['input']>;
+  to: InputMaybe<Scalars['String']['input']>;
+};
+
+export type ReplayJobPayload = {
+  __typename: 'ReplayJobPayload';
+  dryRun: Scalars['Boolean']['output'];
+  id: Scalars['ID']['output'];
+  inputCount: Scalars['String']['output'];
+  replayedCount: Scalars['String']['output'];
+  skippedCount: Scalars['String']['output'];
+  status: Scalars['String']['output'];
+};
+
 export type ResetVerificationPayload = {
   __typename: 'ResetVerificationPayload';
   mfaMethod: MfaPreference;
@@ -2655,6 +3069,15 @@ export type SaveLayoutVersionInput = {
   eventId: Scalars['ID']['input'];
   label: InputMaybe<Scalars['String']['input']>;
   version: Scalars['Int']['input'];
+};
+
+export type SavedSearchPayload = {
+  __typename: 'SavedSearchPayload';
+  definitionJson: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  lifecycle: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  resourceType: Scalars['String']['output'];
 };
 
 export type ScanInput = {
@@ -2697,6 +3120,12 @@ export enum ScanVerdict {
   REVOKED = 'REVOKED',
   UNKNOWN = 'UNKNOWN'
 }
+
+export type SearchPageInfoPayload = {
+  __typename: 'SearchPageInfoPayload';
+  endCursor: Maybe<Scalars['String']['output']>;
+  hasNextPage: Scalars['Boolean']['output'];
+};
 
 export enum SeatAssignmentAction {
   ASSIGNED = 'ASSIGNED',
@@ -2892,6 +3321,36 @@ export type SeedPayload = {
 export type SendInvitationsInput = {
   guests: Array<InvitationGuestInput>;
   hostName: InputMaybe<Scalars['String']['input']>;
+};
+
+export type SessionSearchConnectionPayload = {
+  __typename: 'SessionSearchConnectionPayload';
+  nodes: Array<SessionSearchItemPayload>;
+  pageInfo: SearchPageInfoPayload;
+};
+
+export type SessionSearchInput = {
+  anonymousId: InputMaybe<Scalars['String']['input']>;
+  cursor: InputMaybe<Scalars['String']['input']>;
+  environment: InputMaybe<Scalars['String']['input']>;
+  from: InputMaybe<Scalars['DateTime']['input']>;
+  limit: InputMaybe<Scalars['Int']['input']>;
+  sourceId: InputMaybe<Scalars['ID']['input']>;
+  to: InputMaybe<Scalars['DateTime']['input']>;
+  userId: InputMaybe<Scalars['String']['input']>;
+};
+
+export type SessionSearchItemPayload = {
+  __typename: 'SessionSearchItemPayload';
+  anonymousId: Maybe<Scalars['String']['output']>;
+  durationMs: Scalars['String']['output'];
+  environment: Scalars['String']['output'];
+  eventCount: Scalars['Int']['output'];
+  id: Scalars['ID']['output'];
+  lastSeenAt: Scalars['DateTime']['output'];
+  sourceId: Scalars['ID']['output'];
+  startedAt: Scalars['DateTime']['output'];
+  userId: Maybe<Scalars['String']['output']>;
 };
 
 export type SetEventRolePermissionsInput = {
@@ -3167,6 +3626,15 @@ export type TotpSetupPayload = {
   uri: Maybe<Scalars['String']['output']>;
 };
 
+export type TrackingPlanSearchItemPayload = {
+  __typename: 'TrackingPlanSearchItemPayload';
+  activeVersion: Maybe<Scalars['Int']['output']>;
+  environment: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  lifecycle: Scalars['String']['output'];
+  sourceId: Scalars['ID']['output'];
+};
+
 export type TransferInput = {
   eventId: Scalars['ID']['input'];
   newOwnerId: Scalars['ID']['input'];
@@ -3406,9 +3874,11 @@ export type UserRolePayload = {
 /** Role of a user inside an event */
 export enum UserRoleType {
   ADMIN = 'ADMIN',
+  DRIVER = 'DRIVER',
   GUEST = 'GUEST',
   SECURITY = 'SECURITY',
-  SUPPORT = 'SUPPORT'
+  SUPPORT = 'SUPPORT',
+  USHER = 'USHER'
 }
 
 export enum UserType {

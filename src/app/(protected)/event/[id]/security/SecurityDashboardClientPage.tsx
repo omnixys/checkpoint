@@ -10,17 +10,16 @@ import { mockEntries, mockExits } from "@/checkpoint/components/security/mock/mo
 import { mockFeed } from "@/checkpoint/components/security/mock/mockFeed";
 import { mockGates } from "@/checkpoint/components/security/mock/mockGates";
 import { mockGuestsInside } from "@/checkpoint/components/security/mock/mockGuestsInside";
-import { mockScanAnalytics } from "@/checkpoint/components/security/mock/mockScanAnalytics";
 import { mockStatus } from "@/checkpoint/components/security/mock/mockStatus";
 import { mockTools } from "@/checkpoint/components/security/mock/mockTools";
 import { mockVerifyTicket } from "@/checkpoint/components/security/mock/mockVerifyTicket";
-import { mockWarningAnalytics } from "@/checkpoint/components/security/mock/mockWarningAnalytics";
 import CenterPanel from "@/checkpoint/components/security/panels/CenterPanel";
 import LeftPanel from "@/checkpoint/components/security/panels/LeftPanel";
 import RightPanel from "@/checkpoint/components/security/panels/RightPanel";
 import SecurityTabs from "@/checkpoint/components/security/SecurityTabs";
 import VisionOsStickyHeader from "@/checkpoint/components/security/VisionOSStickyHeader";
 import { BackToEventDetailButton } from "@/checkpoint/components/utils/back-to-event-detail-button";
+import { useAnalyticsSecurityCharts } from "@/checkpoint/hooks/analytics/useAnalyticsSecurityCharts";
 import { useDevice } from "@/checkpoint/providers/DeviceProvider";
 
 /* ------------------------------------------------------------------
@@ -33,6 +32,7 @@ export default function SecurityDashboardClientPage(): JSX.Element {
   const _theme = useTheme();
   const { isTablet, isMobile, isDesktop } = useDevice();
   const [tab, setTab] = React.useState("overview");
+  const { scans, warnings } = useAnalyticsSecurityCharts();
 
   return (
     <RouteGuard featureId="security">
@@ -70,10 +70,7 @@ export default function SecurityDashboardClientPage(): JSX.Element {
                   guestsInside={mockGuestsInside}
                   entries={mockEntries}
                   exits={mockExits}
-                  analytics={{
-                    scans: mockScanAnalytics,
-                    warnings: mockWarningAnalytics,
-                  }}
+                  analytics={{ scans, warnings }}
                 />
               </Grid>
             </Grid>
@@ -105,10 +102,7 @@ export default function SecurityDashboardClientPage(): JSX.Element {
                 guestsInside={mockGuestsInside}
                 entries={mockEntries}
                 exits={mockExits}
-                analytics={{
-                  scans: mockScanAnalytics,
-                  warnings: mockWarningAnalytics,
-                }}
+                analytics={{ scans, warnings }}
               />
             )}
 
@@ -117,10 +111,7 @@ export default function SecurityDashboardClientPage(): JSX.Element {
                 guestsInside={[]}
                 entries={[]}
                 exits={[]}
-                analytics={{
-                  scans: mockScanAnalytics,
-                  warnings: mockWarningAnalytics,
-                }}
+                analytics={{ scans, warnings }}
               />
             )}
           </Box>

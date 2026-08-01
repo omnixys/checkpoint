@@ -1,0 +1,12 @@
+query AnalyticsSecurityCharts($workspaceSlug: String!, $from: DateTime!, $to: DateTime!) {
+  analyticsSecurityCharts(workspaceSlug: $workspaceSlug, from: $from, to: $to) {
+    scans {
+      time
+      value
+    }
+    warnings {
+      time
+      value
+    }
+  }
+}
