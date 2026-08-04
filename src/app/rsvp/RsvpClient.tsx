@@ -37,8 +37,8 @@ import useEventTreeQuery from "@/checkpoint/hooks/events/useEventTreeQuery";
 import { usePlusOnes } from "@/checkpoint/hooks/invitation/usePlusOnes";
 import usePublicRsvpMutation from "@/checkpoint/hooks/invitation/usePublicRsvpMutation";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
 import { useAnalytics } from "@/checkpoint/providers/AnalyticsProvider";
+import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
 import ColorBubbleSwitcher from "../../components/ColorBubbleSwitcher";
 
 /* ------------------------------------------------------------------ */
@@ -316,6 +316,7 @@ export default function RsvpClient({
     setValidationMessages(nextValidationMessages);
 
     if (nextValidationMessages.length > 0) {
+      analytics.track("RsvpFailed", { errorCode: "VALIDATION_FAILED", eventId });
       return;
     }
     const effectiveEventId = isRootSelected
@@ -325,27 +326,33 @@ export default function RsvpClient({
         : null;
 
     if (!effectiveEventId) {
+      analytics.track("RsvpFailed", { errorCode: "MULTI_EVENT_NOT_SUPPORTED", eventId });
       setValidationMessages([t("validation.multiEventNotSupported")]);
       return;
     }
 
-    await createPublicInvitation({
-      variables: {
-        input: {
-          eventId: effectiveEventId,
-          firstName: firstName.trim(),
-          lastName: lastName.trim(),
-          message: null,
-          email: email.trim() || null,
-          phoneNumbers: validPhones,
-          selectedInvitedBy,
-          guestNote: guestNote.trim() || null,
-          plusOnes: mappedPlusOnes,
+    try {
+      await createPublicInvitation({
+        variables: {
+          input: {
+            eventId: effectiveEventId,
+            firstName: firstName.trim(),
+            lastName: lastName.trim(),
+            message: null,
+            email: email.trim() || null,
+            phoneNumbers: validPhones,
+            selectedInvitedBy,
+            guestNote: guestNote.trim() || null,
+            plusOnes: mappedPlusOnes,
+          },
         },
-      },
-    });
-
-    setSubmitted(true);
+      });
+      analytics.track("RsvpCompleted", { eventId: effectiveEventId });
+      setSubmitted(true);
+    } catch (error) {
+      analytics.track("RsvpFailed", { errorCode: "SUBMISSION_FAILED", eventId: effectiveEventId });
+      throw error;
+    }
   };
 
   return (

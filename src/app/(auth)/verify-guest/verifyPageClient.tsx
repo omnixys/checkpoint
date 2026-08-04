@@ -79,26 +79,31 @@ export default function VerifyPageClient() {
     }
 
     analytics.track("TicketDownloadStarted");
-    const canvas = await html2canvas(pdfRef.current, {
-      scale: 2,
-      useCORS: true,
-    });
+    try {
+      const canvas = await html2canvas(pdfRef.current, {
+        scale: 2,
+        useCORS: true,
+      });
 
-    const imgData = canvas.toDataURL("image/png");
+      const imgData = canvas.toDataURL("image/png");
 
-    const pdf = new jsPdf({
-      orientation: "portrait",
-      unit: "mm",
-      format: "a4",
-    });
+      const pdf = new jsPdf({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      });
 
-    const imgWidth = 210;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const imgWidth = 210;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-    pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
 
-    pdf.save("guest-credentials.pdf");
-    analytics.track("TicketDownloaded");
+      pdf.save("guest-credentials.pdf");
+      analytics.track("TicketDownloaded");
+    } catch (error) {
+      analytics.track("TicketDownloadFailed", { errorCode: "PDF_GENERATION_FAILED" });
+      throw error;
+    }
   };
 
   const login = async (username: string, password: string) => {
@@ -108,11 +113,14 @@ export default function VerifyPageClient() {
 
     try {
       setIsLoggingIn(true);
+      analytics.track("LoginStarted");
       await AuthManager.login({ username, password });
       const user = await getCurrentUser();
       setCurrentUser(user);
+      analytics.track("LoginSucceeded");
       router.replace(env.CHECKPOINT_BASE_PATH);
     } catch (error) {
+      analytics.track("LoginFailed", { errorCode: "AUTHENTICATION_FAILED" });
       handleLoginError(error);
     } finally {
       setIsLoggingIn(false);

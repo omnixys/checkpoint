@@ -30,11 +30,11 @@ export function CheckpointAnalyticsProvider({
   const [client] = useState(() =>
     createAnalytics({
       consent: initialConsent,
-      endpoint: env.ANALYTICS_GATEWAY_URL,
+      endpoint: env.BACKEND_SERVER_URL,
       flushAt: 10,
       tokenProvider: async () => {
         const publicReference = publicAnalyticsReference(globalThis.location);
-        const response = await fetch(`${env.ANALYTICS_GATEWAY_URL}/v1/analytics/token`, {
+        const response = await fetch(`${env.BACKEND_SERVER_URL}/v1/analytics/token`, {
           method: "POST",
           credentials: "include",
           headers: { "content-type": "application/json" },

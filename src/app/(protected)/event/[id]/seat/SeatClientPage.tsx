@@ -142,11 +142,15 @@ export default function SeatsClientPage() {
           onClose={drawer.stopEditing}
           onSave={async (input) => {
             analytics.track("SeatChangeStarted", { eventId });
-            await assignSeat({ variables: { input } });
-
-            // 🔁 danach UI aktualisieren
-            await seatListRefetch(); // aus useSeats(eventId)
-            drawer.stopEditing();
+            try {
+              await assignSeat({ variables: { input } });
+              await seatListRefetch();
+              analytics.track("SeatChangeCompleted", { eventId });
+              drawer.stopEditing();
+            } catch (error) {
+              analytics.track("SeatChangeFailed", { errorCode: "ASSIGNMENT_FAILED", eventId });
+              throw error;
+            }
           }}
         />
       )}

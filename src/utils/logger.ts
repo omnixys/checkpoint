@@ -1,10 +1,10 @@
 // lib/logger.ts
 
-import process from "node:process";
 import chalk from "chalk";
 import { createConsola, type LogObject, type LogType } from "consola";
+import { env } from "@/checkpoint/lib/env";
 
-const isProd = process.env.NODE_ENV === "production";
+const isProd = env.IS_PRODUCTION;
 
 const icons: Record<LogType, string> = {
   info: "ℹ️",

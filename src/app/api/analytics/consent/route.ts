@@ -1,6 +1,7 @@
 import type { ConsentState } from "@omnixys/analytics-sdk/browser";
 import { cookies, headers } from "next/headers";
 import { NextResponse } from "next/server";
+import { env } from "@/checkpoint/config/env.server";
 import {
   ANALYTICS_CONSENT_COOKIE,
   ANALYTICS_CONSENT_MAX_AGE_SECONDS,
@@ -29,7 +30,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       maxAge: ANALYTICS_CONSENT_MAX_AGE_SECONDS,
       path: "/",
       sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
+      secure: env.IS_PRODUCTION,
     });
   }
 
@@ -42,7 +43,7 @@ async function isSameOrigin(): Promise<boolean> {
   const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host");
   const protocol =
     requestHeaders.get("x-forwarded-proto") ??
-    (process.env.NODE_ENV === "production" ? "https" : "http");
+    (env.IS_PRODUCTION ? "https" : "http");
   if (!origin || !host) return false;
   try {
     return new URL(origin).origin === `${protocol}://${host}`;

@@ -1,4 +1,5 @@
 import type { CodegenConfig } from "@graphql-codegen/cli";
+import { toolingEnv } from "./tooling/env";
 import {
   buildClientSchema,
   getIntrospectionQuery,
@@ -7,8 +8,7 @@ import {
   type DocumentNode,
   type IntrospectionQuery,
 } from "graphql";
-const schemaEndpoint =
-  process.env.NEXT_PUBLIC_BACKEND_SERVER_URL ?? "http://localhost:8000/graphql"
+const schemaEndpoint = toolingEnv.BACKEND_SERVER_URL;
 
 const generatedTypeConfig = {
   /**

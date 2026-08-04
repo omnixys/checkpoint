@@ -26,12 +26,12 @@ import {
 } from "./AnalyticsProvider";
 
 const browserConfig: BrowserObservabilityConfig = {
-  serviceName: "checkpoint-web",
-  environment: process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT || process.env.NODE_ENV,
-  sampleRate: Number(process.env.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE) || 0.1,
-  otlpEndpoint: process.env.NEXT_PUBLIC_OTEL_ENDPOINT || "/otel/v1/traces",
+  serviceName: env.OTEL_SERVICE_NAME,
+  environment: env.NODE_ENV,
+  sampleRate: env.OTEL_SAMPLE_RATE,
+  otlpEndpoint: env.OTEL_ENDPOINT,
   instrumentations: ["fetch", "xhr", "document-load"],
-  enabled: process.env.NODE_ENV === "production",
+  enabled: env.IS_PRODUCTION,
 };
 
 interface ProviderProps {

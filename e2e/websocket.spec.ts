@@ -1,21 +1,19 @@
 import { expect, test, type APIRequestContext } from "@playwright/test";
-import { config } from "dotenv";
-
-config({ path: "../../services/gateway/.env", override: false, quiet: true });
+import { e2eEnv } from "../tooling/e2e-env";
 
 const gatewayUrl = "http://localhost:8000";
 const websocketUrl = "ws://localhost:8000/ws";
 
 async function fetchAccessToken(request: APIRequestContext, username: string): Promise<string> {
   const tokenResponse = await request.post(
-    `${process.env.KC_URL}/realms/${process.env.KC_REALM}/protocol/openid-connect/token`,
+    `${e2eEnv.KC_URL}/realms/${e2eEnv.KC_REALM}/protocol/openid-connect/token`,
     {
       form: {
         grant_type: "password",
-        client_id: process.env.KC_CLIENT_ID ?? "",
-        client_secret: process.env.KC_CLIENT_SECRET ?? "",
+        client_id: e2eEnv.KC_CLIENT_ID,
+        client_secret: e2eEnv.KC_CLIENT_SECRET,
         username,
-        password: process.env.OMNIXYS_USER_PASSWORD ?? "",
+        password: e2eEnv.USER_PASSWORD,
       },
     },
   );
@@ -70,7 +68,7 @@ test("graphql-transport-ws answers wsPing and accepts an HttpOnly-cookie subscri
 }) => {
   const accessToken = await fetchAccessToken(
     request,
-    process.env.PLAYWRIGHT_USER_USERNAME ?? "caleb",
+    e2eEnv.USER_USERNAME,
   );
   const conversationId = await directConversationId(request, accessToken);
 

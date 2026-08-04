@@ -60,9 +60,11 @@ export default function LoginForm(): JSX.Element {
       const user = await getCurrentUser();
 
       setCurrentUser(user);
+      analytics.track("LoginSucceeded");
 
       router.replace(redirect);
     } catch (e) {
+      analytics.track("LoginFailed", { errorCode: "AUTHENTICATION_FAILED" });
       setAppError(handleMutationError(e));
     } finally {
       setLoading(false);

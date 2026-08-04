@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import type { ConsentState } from "@omnixys/analytics-sdk/browser";
+import { env } from "@/checkpoint/config/env.server";
 
 export const ANALYTICS_CONSENT_COOKIE = "omnixys.analytics.consent";
 export const ANALYTICS_CONSENT_MAX_AGE_SECONDS = 60 * 60 * 24 * 180;
@@ -47,12 +48,7 @@ function sign(value: string): string {
 }
 
 function consentSecret(): string {
-  const secret = process.env.ANALYTICS_CONSENT_SECRET;
-  if (secret) return secret;
-  if (process.env.NODE_ENV === "production") {
-    throw new Error("ANALYTICS_CONSENT_SECRET is required in production");
-  }
-  return "checkpoint-development-analytics-consent-secret";
+  return env.ANALYTICS_CONSENT_SECRET;
 }
 
 function safeEqual(left: string, right: string): boolean {

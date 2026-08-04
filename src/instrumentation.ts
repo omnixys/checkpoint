@@ -1,3 +1,5 @@
+import { env } from "@/checkpoint/config/env.server";
+
 /**
  * Next.js instrumentation hook.
  *
@@ -10,13 +12,13 @@
  * server module is imported.
  */
 export async function register() {
-  if (process.env.NEXT_RUNTIME === "nodejs") {
+  if (env.NEXT_RUNTIME === "nodejs") {
     // Future: initialize server-side OTel SDK here
     // const { initServerTracing } = await import("@omnixys/observability-ts/server");
     // initServerTracing({ serviceName: "checkpoint-server", ... });
   }
 
-  if (process.env.NEXT_RUNTIME === "edge") {
+  if (env.NEXT_RUNTIME === "edge") {
     // Edge runtime – no OTel SDK support yet
   }
 }
@@ -27,11 +29,8 @@ export async function register() {
  * Previously re-exported from @sentry/nextjs. Now a noop – the
  * ObservabilityErrorBoundary + error.tsx pages capture errors client-side.
  */
-export function onRequestError(
-  error: Error,
-  request: { path: string; method: string },
-): void {
-  if (process.env.NODE_ENV === "development") {
+export function onRequestError(error: Error, request: { path: string; method: string }): void {
+  if (env.NODE_ENV === "development") {
     console.error("[observability] request error", request.path, error.message);
   }
 }

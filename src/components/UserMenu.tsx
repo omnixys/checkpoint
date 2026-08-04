@@ -154,7 +154,7 @@ export default function UserMenu() {
           Abmelden
         </MenuItem>
 
-        <Link href={`${env.NEXYS_HOME_LINK}/home`}>
+        <Link href={`${env.NEXYS_HOME_URL}/home`}>
           <MenuItem>
             <ListItemIcon>
               <LogoutIcon fontSize="small" />

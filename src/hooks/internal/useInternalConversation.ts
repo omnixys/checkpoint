@@ -133,10 +133,15 @@ export function useInAppConversation(currentUserId?: string) {
           variables: { conversationId: selectedConversationId, body },
         });
         if (data) {
+          analytics.track("MessageSent", { conversationId: selectedConversationId });
           setMessages((previous) => appendMessageById(previous, data.sendMessage));
           return data.sendMessage;
         }
       } catch (err) {
+        analytics.track("MessageSendFailed", {
+          conversationId: selectedConversationId,
+          errorCode: "SEND_FAILED",
+        });
         console.error("Failed to send message", err);
       } finally {
         sendingRef.current = false;
