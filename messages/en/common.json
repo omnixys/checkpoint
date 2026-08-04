@@ -4,6 +4,14 @@
   "all": "All",
   "cancel": "Cancel",
 
+  "analyticsConsent": {
+    "label": "Analytics consent",
+    "question": "Help improve Checkpoint with privacy-safe analytics?",
+    "allow": "Allow",
+    "decline": "Decline"
+  },
+
+
   "done": "Done",
   "apply": "Apply",
 

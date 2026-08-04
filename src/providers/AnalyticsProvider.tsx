@@ -1,10 +1,12 @@
 "use client";
 
+import { Box, Button, Paper, Typography } from "@mui/material";
 import { type ConsentState, createAnalytics } from "@omnixys/analytics-sdk/browser";
 import { AnalyticsProvider as SdkAnalyticsProvider } from "@omnixys/analytics-sdk/react";
 import { usePathname } from "next/navigation";
 import type React from "react";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { publicAnalyticsReference } from "@/checkpoint/lib/analytics/public-reference";
 import { AuthEventsBus } from "@/checkpoint/lib/auth/AuthManager";
 import { env } from "@/checkpoint/lib/env";
@@ -100,39 +102,40 @@ export function CheckpointAnalyticsProvider({
 
 function AnalyticsConsentBanner() {
   const { consent, updateConsent } = useAnalyticsConsent();
+  const t = useTypedTranslations("common");
   if (consent !== "unknown") return null;
 
   return (
-    <aside
-      aria-label="Analytics consent"
-      style={{
+    <Paper
+      component="aside"
+      aria-label={t("analyticsConsent.label")}
+      elevation={0}
+      sx={{
         alignItems: "center",
-        background: "var(--mui-palette-background-paper, #fff)",
-        border: "1px solid rgba(127, 127, 127, 0.3)",
-        borderRadius: 16,
         bottom: 16,
-        boxShadow: "0 12px 40px rgba(0, 0, 0, 0.2)",
         display: "flex",
         flexWrap: "wrap",
-        gap: 12,
+        gap: 1.5,
         left: 16,
         maxWidth: 560,
-        padding: 16,
+        padding: 2,
         position: "fixed",
         right: 16,
         zIndex: 2000,
       }}
     >
-      <span style={{ flex: "1 1 280px" }}>
-        Allow privacy-safe product analytics to help improve Checkpoint?
-      </span>
-      <button type="button" onClick={() => void updateConsent("denied")}>
-        Decline
-      </button>
-      <button type="button" onClick={() => void updateConsent("granted")}>
-        Allow
-      </button>
-    </aside>
+      <Typography variant="body2" sx={{ flex: "1 1 280px" }}>
+        {t("analyticsConsent.question")}
+      </Typography>
+      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+        <Button variant="outlined" onClick={() => void updateConsent("denied")}>
+          {t("analyticsConsent.decline")}
+        </Button>
+        <Button variant="contained" onClick={() => void updateConsent("granted")}>
+          {t("analyticsConsent.allow")}
+        </Button>
+      </Box>
+    </Paper>
   );
 }
 

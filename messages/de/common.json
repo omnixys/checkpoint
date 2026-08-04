@@ -4,6 +4,13 @@
   "all": "Alle",
   "cancel": "Abbrechen",
 
+  "analyticsConsent": {
+    "label": "Analytics-Zustimmung",
+    "question": "Hilf uns, Checkpoint mit datenschutzfreundlichen Analysen zu verbessern?",
+    "allow": "Erlauben",
+    "decline": "Ablehnen"
+  },
+
     "done": "Fertig",
   "apply": "Anwenden",
 
