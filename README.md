@@ -1,5 +1,42 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Private packages (`@omnixys/*`)
+
+This project depends on private packages served from the GitHub Packages registry. They require authentication. **A `.npmrc` is never committed to this repository.** Instead, a temporary `.npmrc` is generated at install/build time from the `OMNIXYS_TOKEN` environment variable.
+
+> Why not `preinstall`? pnpm runs the root project's `preinstall` script only *after* dependency resolution, so it is too late to authenticate private packages on a fresh install (fails with `401`). The `.npmrc` must exist before `pnpm install` starts, which is why generation happens in the install command itself.
+
+### Local development
+
+1. Export the token (needs `read:packages` on GitHub Packages):
+   ```bash
+   export OMNIXYS_TOKEN=<your-token>
+   ```
+2. Generate the temporary `.npmrc` (one time after cloning):
+   ```bash
+   pnpm registry:setup
+   ```
+3. Install as usual:
+   ```bash
+   pnpm install
+   ```
+
+To remove the temporary `.npmrc` again:
+
+```bash
+pnpm registry:cleanup
+```
+
+### Vercel
+
+`vercel.json` sets `installCommand` so the `.npmrc` is generated *before* `pnpm install --frozen-lockfile` runs. You only need to configure the env var once in the Vercel project:
+
+- Project → Settings → Environment Variables
+- Name: `OMNIXYS_TOKEN`
+- Add it for **Production** and **Preview** (and Development if needed).
+
+The `.npmrc` exists only inside the ephemeral build sandbox and is never committed.
+
 ## Getting Started
 
 First, run the development server:

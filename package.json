@@ -14,11 +14,12 @@
     "test:components": "vitest run src/components/error src/hooks/error",
     "test:types": "tsc --noEmit",
     "release": "semantic-release",
+    "registry:setup": "node scripts/setup-npmrc.js",
+    "registry:cleanup": "node scripts/setup-npmrc.js --remove",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:chromium": "playwright test --project=chromium",
-    "test:e2e:debug": "playwright test --debug",
-    "preinstall": "node scripts/setup-npmrc.js"
+    "test:e2e:debug": "playwright test --debug"
   },
   "packageManager": "pnpm@10.33.0",
   "main": "src/index.ts",

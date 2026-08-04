@@ -1,0 +1,4 @@
+{
+  "installCommand": "node scripts/setup-npmrc.js && pnpm install --frozen-lockfile",
+  "buildCommand": "next build"
+}
