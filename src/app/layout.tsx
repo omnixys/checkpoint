@@ -3,10 +3,10 @@ import { Geist, Geist_Mono, Inter, Lato, Playfair_Display } from "next/font/goog
 import { cookies } from "next/headers";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
+import { readAnalyticsConsent } from "@/checkpoint/lib/analytics/consent";
 import { env } from "@/checkpoint/lib/env";
 import { baseMetadata } from "@/checkpoint/lib/metadata/base.metadata";
 import Provider from "@/checkpoint/providers/Provider";
-import { readAnalyticsConsent } from "@/checkpoint/lib/analytics/consent";
 import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import StartupVisionPro from "@/checkpoint/components/startup/StartupVisionPro";

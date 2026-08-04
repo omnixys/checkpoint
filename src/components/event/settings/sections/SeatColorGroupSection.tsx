@@ -65,15 +65,87 @@ const DEFAULT_STYLE: StyleInput = {
 
 const STYLE_PRESETS: { name: string; style: StyleInput }[] = [
   { name: "Red", style: DEFAULT_STYLE },
-  { name: "Blue", style: { background: "#1E88E5", foreground: "#FFFFFF", border: "#1565C0", legendIcon: "#1E88E5" } },
-  { name: "Green", style: { background: "#43A047", foreground: "#FFFFFF", border: "#2E7D32", legendIcon: "#43A047" } },
-  { name: "Orange", style: { background: "#FB8C00", foreground: "#FFFFFF", border: "#EF6C00", legendIcon: "#FB8C00" } },
-  { name: "Purple", style: { background: "#8E24AA", foreground: "#FFFFFF", border: "#6A1B9A", legendIcon: "#8E24AA" } },
-  { name: "Teal", style: { background: "#00897B", foreground: "#FFFFFF", border: "#00695C", legendIcon: "#00897B" } },
-  { name: "Pink", style: { background: "#D81B60", foreground: "#FFFFFF", border: "#C2185B", legendIcon: "#D81B60" } },
-  { name: "Indigo", style: { background: "#3949AB", foreground: "#FFFFFF", border: "#283593", legendIcon: "#3949AB" } },
-  { name: "Amber", style: { background: "#FFB300", foreground: "#1A1A1A", border: "#FF8F00", legendIcon: "#FFB300" } },
-  { name: "Cyan", style: { background: "#00ACC1", foreground: "#FFFFFF", border: "#00838F", legendIcon: "#00ACC1" } },
+  {
+    name: "Blue",
+    style: {
+      background: "#1E88E5",
+      foreground: "#FFFFFF",
+      border: "#1565C0",
+      legendIcon: "#1E88E5",
+    },
+  },
+  {
+    name: "Green",
+    style: {
+      background: "#43A047",
+      foreground: "#FFFFFF",
+      border: "#2E7D32",
+      legendIcon: "#43A047",
+    },
+  },
+  {
+    name: "Orange",
+    style: {
+      background: "#FB8C00",
+      foreground: "#FFFFFF",
+      border: "#EF6C00",
+      legendIcon: "#FB8C00",
+    },
+  },
+  {
+    name: "Purple",
+    style: {
+      background: "#8E24AA",
+      foreground: "#FFFFFF",
+      border: "#6A1B9A",
+      legendIcon: "#8E24AA",
+    },
+  },
+  {
+    name: "Teal",
+    style: {
+      background: "#00897B",
+      foreground: "#FFFFFF",
+      border: "#00695C",
+      legendIcon: "#00897B",
+    },
+  },
+  {
+    name: "Pink",
+    style: {
+      background: "#D81B60",
+      foreground: "#FFFFFF",
+      border: "#C2185B",
+      legendIcon: "#D81B60",
+    },
+  },
+  {
+    name: "Indigo",
+    style: {
+      background: "#3949AB",
+      foreground: "#FFFFFF",
+      border: "#283593",
+      legendIcon: "#3949AB",
+    },
+  },
+  {
+    name: "Amber",
+    style: {
+      background: "#FFB300",
+      foreground: "#1A1A1A",
+      border: "#FF8F00",
+      legendIcon: "#FFB300",
+    },
+  },
+  {
+    name: "Cyan",
+    style: {
+      background: "#00ACC1",
+      foreground: "#FFFFFF",
+      border: "#00838F",
+      legendIcon: "#00ACC1",
+    },
+  },
 ];
 
 function getLegendColor(style: StylePayload | StyleInput | null): string {
@@ -81,7 +153,9 @@ function getLegendColor(style: StylePayload | StyleInput | null): string {
     return DEFAULT_STYLE.legendIcon;
   }
 
-  return style.legendIcon?.startsWith("#") ? style.legendIcon : (style.background ?? DEFAULT_STYLE.legendIcon);
+  return style.legendIcon?.startsWith("#")
+    ? style.legendIcon
+    : (style.background ?? DEFAULT_STYLE.legendIcon);
 }
 
 function sanitizeInvitedByValues(values: string[], invitedByOptions: string[]): string[] {
@@ -301,8 +375,8 @@ export default function SeatColorGroupSection({ settings, actions }: Props) {
 
           {localGroups.length === 0 && (
             <Typography variant="body2" color="text.secondary">
-              No color groups defined yet. Default groups will be created automatically when you save
-              with invitedByOptions set.
+              No color groups defined yet. Default groups will be created automatically when you
+              save with invitedByOptions set.
             </Typography>
           )}
 
@@ -359,7 +433,9 @@ export default function SeatColorGroupSection({ settings, actions }: Props) {
               fullWidth
               sx={inputSx}
             >
-              <MenuItem value={SeatColorGroupMatchType.NONE}>NONE - No invitedBy selection</MenuItem>
+              <MenuItem value={SeatColorGroupMatchType.NONE}>
+                NONE - No invitedBy selection
+              </MenuItem>
               <MenuItem value={SeatColorGroupMatchType.SINGLE}>
                 SINGLE - First selected value matches
               </MenuItem>
@@ -376,7 +452,9 @@ export default function SeatColorGroupSection({ settings, actions }: Props) {
                 multiple
                 options={invitedByOptions}
                 value={editValues}
-                onChange={(_, newVal) => setEditValues(sanitizeInvitedByValues(newVal, invitedByOptions))}
+                onChange={(_, newVal) =>
+                  setEditValues(sanitizeInvitedByValues(newVal, invitedByOptions))
+                }
                 disableCloseOnSelect
                 freeSolo={false}
                 getOptionLabel={(option) => option}

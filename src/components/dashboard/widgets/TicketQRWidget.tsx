@@ -20,7 +20,9 @@ export default function TicketQRWidget() {
       <CardContent>
         <Stack spacing={1.5} sx={{ alignItems: "center", textAlign: "center" }}>
           <QrCodeIcon sx={{ fontSize: 40, color: theme.palette.primary.main }} />
-          <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>My Ticket</Typography>
+          <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+            My Ticket
+          </Typography>
           <Typography variant="body2" color="text.secondary">
             Show your QR code for event check-in
           </Typography>

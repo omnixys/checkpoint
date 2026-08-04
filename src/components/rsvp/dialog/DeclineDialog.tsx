@@ -7,8 +7,8 @@ import {
   ReplyInvitationDocument,
   type ReplyInvitationMutation,
   type ReplyInvitationMutationVariables,
+  RsvpChoice,
 } from "@/checkpoint/generated/graphql";
-import { RsvpChoice } from "@/checkpoint/generated/graphql";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 /**

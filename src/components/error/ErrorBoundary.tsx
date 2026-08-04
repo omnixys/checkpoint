@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
 import { ObservabilityContext } from "@omnixys/observability-ts/react";
+import React from "react";
 import { notificationService } from "@/checkpoint/errors/notification.service";
 import { getLogger } from "@/checkpoint/utils/logger";
 import RetryComponent from "./RetryComponent";

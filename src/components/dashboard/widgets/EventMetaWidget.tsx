@@ -27,7 +27,11 @@ export default function EventMetaWidget() {
         <Stack spacing={1}>
           <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
             <InfoIcon sx={{ fontSize: 20, color: theme.palette.text.secondary }} />
-            <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}
+            >
               Event
             </Typography>
           </Stack>

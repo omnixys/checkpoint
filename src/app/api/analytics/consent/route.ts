@@ -13,9 +13,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     return NextResponse.json({ code: "INVALID_ORIGIN" }, { status: 403 });
   }
 
-  const body = (await request.json().catch(() => null)) as
-    | { state?: ConsentState }
-    | null;
+  const body = (await request.json().catch(() => null)) as { state?: ConsentState } | null;
   const state = body?.state;
   if (state !== "granted" && state !== "denied" && state !== "unknown") {
     return NextResponse.json({ code: "INVALID_CONSENT" }, { status: 400 });
@@ -42,8 +40,7 @@ async function isSameOrigin(): Promise<boolean> {
   const origin = requestHeaders.get("origin");
   const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host");
   const protocol =
-    requestHeaders.get("x-forwarded-proto") ??
-    (env.IS_PRODUCTION ? "https" : "http");
+    requestHeaders.get("x-forwarded-proto") ?? (env.IS_PRODUCTION ? "https" : "http");
   if (!origin || !host) return false;
   try {
     return new URL(origin).origin === `${protocol}://${host}`;

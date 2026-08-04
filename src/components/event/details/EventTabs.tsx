@@ -28,8 +28,14 @@ interface Props {
 export default function EventTabs({ active, onChange, visibleTabs }: Props) {
   const theme = useTheme();
   const t = useTypedTranslations("event");
-  const visibleTabSet = useMemo(() => new Set(visibleTabs?.length ? visibleTabs : TABS.map((tab) => tab.visibleTab)), [visibleTabs]);
-  const tabs = useMemo(() => TABS.filter((tab) => visibleTabSet.has(tab.visibleTab)), [visibleTabSet]);
+  const visibleTabSet = useMemo(
+    () => new Set(visibleTabs?.length ? visibleTabs : TABS.map((tab) => tab.visibleTab)),
+    [visibleTabs],
+  );
+  const tabs = useMemo(
+    () => TABS.filter((tab) => visibleTabSet.has(tab.visibleTab)),
+    [visibleTabSet],
+  );
 
   useEffect(() => {
     if (tabs.length > 0 && !tabs.some((tab) => tab.key === active)) {

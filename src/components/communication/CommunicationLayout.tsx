@@ -10,14 +10,9 @@ const Container = styled(Box)(({ theme }) => ({
   borderRadius: 16,
   overflow: "hidden",
   border: `1px solid ${
-    theme.palette.mode === "dark"
-      ? alpha("#FFFFFF", 0.08)
-      : alpha("#000000", 0.08)
+    theme.palette.mode === "dark" ? alpha("#FFFFFF", 0.08) : alpha("#000000", 0.08)
   }`,
-  background:
-    theme.palette.mode === "dark"
-      ? alpha("#000000", 0.2)
-      : alpha("#FFFFFF", 0.5),
+  background: theme.palette.mode === "dark" ? alpha("#000000", 0.2) : alpha("#FFFFFF", 0.5),
   backdropFilter: "blur(20px)",
 }));
 
@@ -28,9 +23,7 @@ const Panel = styled(Box)<{ width?: number; hidden?: boolean }>(
     width,
     flexShrink: 0,
     borderRight: `1px solid ${
-      theme.palette.mode === "dark"
-        ? alpha("#FFFFFF", 0.06)
-        : alpha("#000000", 0.06)
+      theme.palette.mode === "dark" ? alpha("#FFFFFF", 0.06) : alpha("#000000", 0.06)
     }`,
     overflow: "hidden",
     [theme.breakpoints.down("md")]: {

@@ -13,8 +13,11 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
+import type {
+  SectionShape as SectionShapeT,
+  TableShape as TableShapeT,
+} from "@/checkpoint/generated/schema";
 import { SectionShape, TableShape } from "@/checkpoint/generated/schema";
-import type { SectionShape as SectionShapeT, TableShape as TableShapeT } from "@/checkpoint/generated/schema";
 
 interface Props {
   open: boolean;

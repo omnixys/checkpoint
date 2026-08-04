@@ -150,7 +150,13 @@ export default function NavigationDesktop(): JSX.Element | null {
                   <Box key={group.groupId} sx={{ mb: 0.5 }}>
                     <List disablePadding>
                       {group.items.map((item) => (
-                        <NavigationItem key={item.path} item={item} items={flatItems} collapsed role={activeRole} />
+                        <NavigationItem
+                          key={item.path}
+                          item={item}
+                          items={flatItems}
+                          collapsed
+                          role={activeRole}
+                        />
                       ))}
                     </List>
                   </Box>
@@ -198,7 +204,12 @@ export default function NavigationDesktop(): JSX.Element | null {
                   {!isCollapsed && (
                     <List disablePadding>
                       {group.items.map((item) => (
-                        <NavigationItem key={item.path} item={item} items={flatItems} role={activeRole} />
+                        <NavigationItem
+                          key={item.path}
+                          item={item}
+                          items={flatItems}
+                          role={activeRole}
+                        />
                       ))}
                     </List>
                   )}

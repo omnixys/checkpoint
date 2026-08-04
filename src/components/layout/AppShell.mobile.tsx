@@ -3,9 +3,9 @@
 import { Box } from "@mui/material";
 import { useState } from "react";
 import { AppleNavBar } from "@/checkpoint/components/apple/AppleNavBar";
-import AppShellSupportChat from "@/checkpoint/components/support/chat/AppShellSupportChat";
 import EventSelectorActionSheet from "@/checkpoint/components/Selectors/EventSelectorActionSheet";
 import EventSelectorMobileButton from "@/checkpoint/components/Selectors/EventSelectorMobileButton";
+import AppShellSupportChat from "@/checkpoint/components/support/chat/AppShellSupportChat";
 import UserMenu from "@/checkpoint/components/UserMenu";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import NavigationMobile from "./navigation/Navigation.mobile";

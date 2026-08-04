@@ -1,6 +1,6 @@
 "use client";
 
-import { alpha, Avatar, Badge, Box, Chip, Typography } from "@mui/material";
+import { Avatar, alpha, Badge, Box, Chip, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useCallback } from "react";
 
@@ -21,10 +21,7 @@ const ItemButton = styled("button")<{ selected: boolean }>(({ theme, selected })
   textAlign: "left",
   transition: "background 0.15s",
   "&:hover": {
-    background:
-      theme.palette.mode === "dark"
-        ? alpha("#FFFFFF", 0.06)
-        : alpha("#000000", 0.04),
+    background: theme.palette.mode === "dark" ? alpha("#FFFFFF", 0.06) : alpha("#000000", 0.04),
   },
 }));
 
@@ -130,9 +127,7 @@ export function PersonListItem({ person, selected, onClick }: Props) {
             />
           ))}
         </Box>
-        {person.lastMessage && (
-          <PreviewText>{person.lastMessage}</PreviewText>
-        )}
+        {person.lastMessage && <PreviewText>{person.lastMessage}</PreviewText>}
       </Box>
     </ItemButton>
   );

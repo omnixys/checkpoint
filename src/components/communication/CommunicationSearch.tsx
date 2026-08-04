@@ -8,15 +8,10 @@ const SearchContainer = styled("div")(({ theme }) => ({
   alignItems: "center",
   padding: "8px 12px",
   borderRadius: 12,
-  backgroundColor:
-    theme.palette.mode === "dark"
-      ? alpha("#FFFFFF", 0.06)
-      : alpha("#000000", 0.04),
+  backgroundColor: theme.palette.mode === "dark" ? alpha("#FFFFFF", 0.06) : alpha("#000000", 0.04),
   backdropFilter: "blur(8px)",
   border: `1px solid ${
-    theme.palette.mode === "dark"
-      ? alpha("#FFFFFF", 0.08)
-      : alpha("#000000", 0.08)
+    theme.palette.mode === "dark" ? alpha("#FFFFFF", 0.08) : alpha("#000000", 0.08)
   }`,
   transition: "border-color 0.2s",
   "&:focus-within": {
@@ -67,12 +62,7 @@ export function CommunicationSearch({
 
   return (
     <SearchContainer>
-      <StyledInput
-        placeholder={placeholder}
-        value={local}
-        onChange={handleChange}
-        fullWidth
-      />
+      <StyledInput placeholder={placeholder} value={local} onChange={handleChange} fullWidth />
     </SearchContainer>
   );
 }

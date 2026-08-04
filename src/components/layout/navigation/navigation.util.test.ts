@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { getActiveNavPath, isActiveNavItem, normalizeNavPath } from "./navigation.util";
-import { resolveExperience } from "@/checkpoint/lib/experience/resolver";
 import { buildNavigation } from "@/checkpoint/lib/experience/navigation-builder";
+import { resolveExperience } from "@/checkpoint/lib/experience/resolver";
 import { permissionsForLegacyRole } from "@/checkpoint/lib/rbac/event-permissions";
+import { getActiveNavPath, isActiveNavItem, normalizeNavPath } from "./navigation.util";
 
 const adminPaths = [
   "/",

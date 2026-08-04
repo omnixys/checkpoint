@@ -28,8 +28,8 @@ import type {
   PlusOneItem,
   UpdatePlusOneInput,
 } from "@/checkpoint/app/(protected)/me/my-plus-ones/types/plusOne.types";
-import { PhoneNumberType, PlusOneAgeCategory } from "@/checkpoint/generated/graphql";
 import type { CreatePlusOneInput } from "@/checkpoint/generated/graphql";
+import { PhoneNumberType, type PlusOneAgeCategory } from "@/checkpoint/generated/graphql";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
 
@@ -335,9 +335,7 @@ export default function PlusOneDialog({
                         select={true}
                         label={tInvitation("plusOnes.fields.phoneType")}
                         value={phoneType}
-                        onChange={(event) =>
-                          setPhoneType(event.target.value as PhoneNumberType)
-                        }
+                        onChange={(event) => setPhoneType(event.target.value as PhoneNumberType)}
                         fullWidth={true}
                         sx={glassInputSx(theme)}
                       >

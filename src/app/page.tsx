@@ -3,10 +3,19 @@
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import EventIcon from "@mui/icons-material/Event";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
-import { Box, Button, Card, CardActionArea, Stack, Tooltip, Typography, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  CardActionArea,
+  Stack,
+  Tooltip,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import type { JSX } from "react";
+import { useEffect, useState } from "react";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
 import { EventPermissionKey } from "@/checkpoint/lib/rbac/event-permissions";
@@ -93,14 +102,13 @@ export default function HomePage(): JSX.Element {
     icon: <EventIcon sx={{ fontSize: 44 }} />,
   };
 
-  const secondaryAction =
-    can(EventPermissionKey.ScanTickets)
-      ? {
-          label: t("actions.scan"),
-          href: `${basePath}scan`,
-          icon: <QrCodeScannerIcon />,
-        }
-      : can(EventPermissionKey.ViewSelfTicket)
+  const secondaryAction = can(EventPermissionKey.ScanTickets)
+    ? {
+        label: t("actions.scan"),
+        href: `${basePath}scan`,
+        icon: <QrCodeScannerIcon />,
+      }
+    : can(EventPermissionKey.ViewSelfTicket)
       ? {
           label: t("actions.tickets"),
           href: `${basePath}me/my-qr`,

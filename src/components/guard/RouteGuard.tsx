@@ -1,11 +1,11 @@
 "use client";
 
-import { CircularProgress, Box } from "@mui/material";
-import { useMemo, type ReactNode } from "react";
+import { Box, CircularProgress } from "@mui/material";
+import { type ReactNode, useMemo } from "react";
 import { resolveExperience } from "@/checkpoint/lib/experience/resolver";
+import type { FeatureId } from "@/checkpoint/lib/experience/types";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import ForbiddenPage from "./ForbiddenPage";
-import type { FeatureId } from "@/checkpoint/lib/experience/types";
 
 interface Props {
   featureId: FeatureId;
@@ -26,7 +26,9 @@ export default function RouteGuard({ featureId, fallback, children }: Props) {
 
   if (loading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "40vh" }}>
+      <Box
+        sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "40vh" }}
+      >
         <CircularProgress />
       </Box>
     );

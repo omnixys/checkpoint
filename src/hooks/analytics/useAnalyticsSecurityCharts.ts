@@ -34,7 +34,9 @@ function formatTime(iso: string): string {
  * Resolves the checkpoint security charts (scans + warnings per minute)
  * for the active tenant through the gateway subgraph.
  */
-export function useAnalyticsSecurityCharts(workspaceSlug = "checkpoint"): AnalyticsSecurityChartsResult {
+export function useAnalyticsSecurityCharts(
+  workspaceSlug = "checkpoint",
+): AnalyticsSecurityChartsResult {
   const { to, from } = useMemo(() => {
     const to = new Date();
     const from = new Date(to.getTime() - 24 * 60 * 60 * 1000);

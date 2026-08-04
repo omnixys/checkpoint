@@ -1,9 +1,9 @@
 "use client";
 
+import { useTelemetry } from "@omnixys/observability-ts/react";
 import { useEffect } from "react";
 import RetryComponent from "@/checkpoint/components/error/RetryComponent";
 import { notificationService } from "@/checkpoint/errors/notification.service";
-import { useTelemetry } from "@omnixys/observability-ts/react";
 
 export default function ApplicationError({
   error,

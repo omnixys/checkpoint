@@ -2,11 +2,11 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import OnboardingModal from "@/checkpoint/components/onboarding/OnboardingModal";
+import { UserRoleType } from "@/checkpoint/generated/graphql";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { useTour } from "@/checkpoint/providers/TourProvider";
 import { buildTour } from "@/checkpoint/utils/layout/build-tour.util";
-import { UserRoleType } from "@/checkpoint/generated/graphql";
 
 const ONBOARDING_KEY = "checkpoint.onboardingDone";
 

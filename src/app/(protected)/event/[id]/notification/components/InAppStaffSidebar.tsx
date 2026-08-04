@@ -17,6 +17,8 @@ const CHANNELS = [
   { key: "EMAIL", label: "Mail" },
 ];
 
+const SKELETON_PLACEHOLDERS = [0, 1, 2, 3, 4];
+
 interface Props {
   eventId?: string;
   selectedStaffId: string | null;
@@ -93,8 +95,8 @@ export function InAppStaffSidebar({ eventId, selectedStaffId, onSelect }: Props)
 
       <Box sx={{ flex: 1, overflow: "auto", px: 1, pb: 1 }}>
         {loading ? (
-          Array.from({ length: 5 }).map((_, i) => (
-            <Box key={i} sx={{ display: "flex", alignItems: "center", gap: 1.5, p: 1.5 }}>
+          SKELETON_PLACEHOLDERS.map((id) => (
+            <Box key={id} sx={{ display: "flex", alignItems: "center", gap: 1.5, p: 1.5 }}>
               <Box
                 sx={{
                   width: 36,

@@ -9,8 +9,7 @@ import { motion } from "framer-motion";
 
 import { useCreateEvent } from "@/checkpoint/app/(protected)/event/new/context/CreateEventContext";
 import { useField } from "@/checkpoint/app/(protected)/event/new/hooks/useField";
-import { MediaType } from "@/checkpoint/generated/graphql";
-import type { MediaType as MediaTypeT } from "@/checkpoint/generated/graphql";
+import type { MediaType, MediaType as MediaTypeT } from "@/checkpoint/generated/graphql";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 /**

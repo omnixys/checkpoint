@@ -176,7 +176,8 @@ export default function NavigationTablet(): JSX.Element {
                                 position: "relative",
                                 borderRadius: 2,
                                 pl: 2.5,
-                                transition: "background-color 0.2s ease, box-shadow 0.2s ease, border 0.2s ease",
+                                transition:
+                                  "background-color 0.2s ease, box-shadow 0.2s ease, border 0.2s ease",
 
                                 "&::before": {
                                   content: '""',

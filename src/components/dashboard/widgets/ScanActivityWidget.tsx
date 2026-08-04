@@ -2,8 +2,7 @@
 
 import HistoryIcon from "@mui/icons-material/History";
 import { alpha, Card, CardContent, Stack, Typography, useTheme } from "@mui/material";
-import { useRouter } from "next/navigation";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 export default function ScanActivityWidget() {
   const theme = useTheme();
@@ -25,7 +24,9 @@ export default function ScanActivityWidget() {
         <Stack spacing={1.5}>
           <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
             <HistoryIcon sx={{ color: theme.palette.info.main }} />
-            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Scan Activity</Typography>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+              Scan Activity
+            </Typography>
           </Stack>
           <Typography variant="body2" color="text.secondary">
             View recent check-in and scan history

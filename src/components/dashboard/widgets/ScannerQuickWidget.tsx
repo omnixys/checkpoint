@@ -2,8 +2,7 @@
 
 import QrCodeIcon from "@mui/icons-material/QrCode";
 import { alpha, Button, Card, CardContent, Stack, Typography, useTheme } from "@mui/material";
-import { useRouter } from "next/navigation";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 export default function ScannerQuickWidget() {
   const theme = useTheme();
@@ -22,7 +21,9 @@ export default function ScannerQuickWidget() {
       <CardContent>
         <Stack spacing={1.5} sx={{ alignItems: "center", textAlign: "center" }}>
           <QrCodeIcon sx={{ fontSize: 40, color: theme.palette.primary.main }} />
-          <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Scanner</Typography>
+          <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+            Scanner
+          </Typography>
           <Typography variant="body2" color="text.secondary">
             Scan QR codes for quick check-in
           </Typography>

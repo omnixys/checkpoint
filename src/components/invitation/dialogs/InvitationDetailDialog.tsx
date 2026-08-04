@@ -211,7 +211,6 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
               </Stack>
             </Box>
 
-
             {hasRsvpDetails && (
               <>
                 <Divider />

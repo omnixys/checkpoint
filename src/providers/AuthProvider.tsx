@@ -1,9 +1,9 @@
 "use client";
 
 import { useApolloClient } from "@apollo/client/react";
+import { useTelemetry } from "@omnixys/observability-ts/react";
 import type React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
-import { useTelemetry } from "@omnixys/observability-ts/react";
 import type { CurrentUserQuery } from "@/checkpoint/generated/graphql";
 import useMeQuery from "@/checkpoint/hooks/user/useMeQuery";
 import { setCurrentUser } from "@/checkpoint/lib/apollo/auth-context";
@@ -105,7 +105,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     setAuthUser(currentUser ?? null);
-  }, [currentUser]);
+  }, [currentUser, telemetry.identifyUser]);
 
   /* ------------------------------------------------------------------------ */
   /* Auth event handling                                                      */

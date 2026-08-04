@@ -1,4 +1,7 @@
-import type { PhoneNumberType, PlusOneAgeCategory as PlusOneAgeCategoryGenerated } from "@/checkpoint/generated/graphql";
+import type {
+  PhoneNumberType,
+  PlusOneAgeCategory as PlusOneAgeCategoryGenerated,
+} from "@/checkpoint/generated/graphql";
 
 export type PlusOnePhoneNumberType = PhoneNumberType;
 export type PlusOneAgeCategory = PlusOneAgeCategoryGenerated;

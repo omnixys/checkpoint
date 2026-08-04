@@ -3,7 +3,6 @@
 import { useMutation } from "@apollo/client/react";
 import { useMemo, useState } from "react";
 import {
-  RsvpChoice,
   type GetInvitationQuery,
   type InvitationPayload,
   PhoneNumberType,
@@ -11,6 +10,7 @@ import {
   ReplyInvitationDocument,
   type ReplyInvitationMutation,
   type ReplyInvitationMutationVariables,
+  RsvpChoice,
 } from "@/checkpoint/generated/graphql";
 import type { NormalizedPlusOne } from "@/checkpoint/types/event.type";
 

@@ -89,41 +89,46 @@ export default function TicketClientPage() {
    * --------------------------------------------------------- */
   return (
     <RouteGuard featureId="tickets">
-    <Box
-      component={motion.div}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.35 }}
-      sx={{
-        px: { xs: 2, md: 4 },
-        py: 3,
-      }}
-    >
-      {/* ---------------- HEADER ---------------- */}
-      <TicketHeader
-        total={ticketPage.length}
-        onCreate={() => setOpenCreate(true)}
-        onFilter={() => logger.debug("filter logic")}
-      />
+      <Box
+        component={motion.div}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.35 }}
+        sx={{
+          px: { xs: 2, md: 4 },
+          py: 3,
+        }}
+      >
+        {/* ---------------- HEADER ---------------- */}
+        <TicketHeader
+          total={ticketPage.length}
+          onCreate={() => setOpenCreate(true)}
+          onFilter={() => logger.debug("filter logic")}
+        />
 
-      {/* ---------------- LISTE ---------------- */}
-      <TicketList
-        tickets={ticketPage} //TODO Request optimieren!!
-        onOpen={(id) => logger.debug("open ticket", id)}
-        onDelete={(id) => setDeleteId(id)}
-        onFilter={() => logger.debug("filter logic")}
-      />
+        {/* ---------------- LISTE ---------------- */}
+        <TicketList
+          tickets={ticketPage} //TODO Request optimieren!!
+          onOpen={(id) => logger.debug("open ticket", id)}
+          onDelete={(id) => setDeleteId(id)}
+          onFilter={() => logger.debug("filter logic")}
+        />
 
-      {/* ---------------- DIALOG: DELETE/REVOKE ---------------- */}
-      <Dialog open={!!deleteId} onClose={() => setDeleteId(null)} fullWidth={true} maxWidth="xs">
-        <DeleteTicketDialog onCancel={() => setDeleteId(null)} onConfirm={handleDelete} />
-      </Dialog>
+        {/* ---------------- DIALOG: DELETE/REVOKE ---------------- */}
+        <Dialog open={!!deleteId} onClose={() => setDeleteId(null)} fullWidth={true} maxWidth="xs">
+          <DeleteTicketDialog onCancel={() => setDeleteId(null)} onConfirm={handleDelete} />
+        </Dialog>
 
-      {/* ---------------- DIALOG: CREATE ---------------- */}
-      <Dialog open={openCreate} onClose={() => setOpenCreate(false)} fullWidth={true} maxWidth="sm">
-        <CreateTicketDialog onCancel={() => setOpenCreate(false)} onConfirm={() => {}} />
-      </Dialog>
-    </Box>
+        {/* ---------------- DIALOG: CREATE ---------------- */}
+        <Dialog
+          open={openCreate}
+          onClose={() => setOpenCreate(false)}
+          fullWidth={true}
+          maxWidth="sm"
+        >
+          <CreateTicketDialog onCancel={() => setOpenCreate(false)} onConfirm={() => {}} />
+        </Dialog>
+      </Box>
     </RouteGuard>
   );
 }

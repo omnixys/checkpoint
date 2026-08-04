@@ -1,8 +1,8 @@
 "use client";
 
+import { initializeBrowserTracing } from "@omnixys/observability-ts/browser";
 import NextError from "next/error";
 import { useEffect } from "react";
-import { initializeBrowserTracing } from "@omnixys/observability-ts/browser";
 import { env } from "@/checkpoint/lib/env";
 
 // Bootstrap OTel for the fallback error page so we can capture the crash

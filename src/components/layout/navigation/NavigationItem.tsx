@@ -1,13 +1,21 @@
 "use client";
 
-import { alpha, Box, ListItemButton, ListItemIcon, ListItemText, Tooltip, useTheme } from "@mui/material";
+import {
+  alpha,
+  Box,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Tooltip,
+  useTheme,
+} from "@mui/material";
 import { motion } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
-import { getRoleColor, isActiveNavItem } from "./navigation.util";
 import type { UserRoleType } from "@/checkpoint/generated/graphql";
 import { useTourAnchor } from "@/checkpoint/hooks/core/useTourAnchor";
-import { useTour } from "@/checkpoint/providers/TourProvider";
 import type { NavItem } from "@/checkpoint/lib/experience/navigation-builder";
+import { useTour } from "@/checkpoint/providers/TourProvider";
+import { getRoleColor, isActiveNavItem } from "./navigation.util";
 
 interface Props {
   item: NavItem;

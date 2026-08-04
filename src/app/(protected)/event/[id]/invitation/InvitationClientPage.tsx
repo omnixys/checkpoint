@@ -41,41 +41,41 @@ export default function InvitationClientPage({ countries }: { countries: Calling
 
   return (
     <RouteGuard featureId="invitations">
-    <Box
-      ref={scrollRef}
-      sx={{
-        height: "100dvh",
-        overflowY: "auto",
-        position: "relative",
-        width: "100%",
-        background: theme.palette.background.default,
-      }}
-    >
-      {/* HEADER */}
-      <InvitationHeader logic={logic} scroll={scroll} />
+      <Box
+        ref={scrollRef}
+        sx={{
+          height: "100dvh",
+          overflowY: "auto",
+          position: "relative",
+          width: "100%",
+          background: theme.palette.background.default,
+        }}
+      >
+        {/* HEADER */}
+        <InvitationHeader logic={logic} scroll={scroll} />
 
-      {/* CONTENT */}
-      {/* <PullToRefresh onReload={logic.reload}> */}
-      <Box sx={{ px: { xs: 1.5, md: 3 }, pb: 12, pt: isMobile ? 3 : 0, minWidth: 0 }}>
-        <InvitationContent logic={logic} isMobile={isMobile} />
+        {/* CONTENT */}
+        {/* <PullToRefresh onReload={logic.reload}> */}
+        <Box sx={{ px: { xs: 1.5, md: 3 }, pb: 12, pt: isMobile ? 3 : 0, minWidth: 0 }}>
+          <InvitationContent logic={logic} isMobile={isMobile} />
+        </Box>
+        {/* </PullToRefresh> */}
+
+        {/* FLOATING ELEMENTS */}
+        <BackToTopButton visible={visible} />
+
+        {/* DIALOGS */}
+        <InvitationCreateDialog logic={logic} callingCodeCountries={countries} />
+        <InvitationImportDialog logic={logic} />
+        <InvitationBulkSendDialog logic={logic} />
+        <InvitationBulkApproveDialog logic={logic} />
+
+        {logic.activeInvitation && isMobile ? (
+          <InvitationDetailMobileDialog logic={logic} />
+        ) : (
+          <InvitationDetailDialog logic={logic} />
+        )}
       </Box>
-      {/* </PullToRefresh> */}
-
-      {/* FLOATING ELEMENTS */}
-      <BackToTopButton visible={visible} />
-
-      {/* DIALOGS */}
-      <InvitationCreateDialog logic={logic} callingCodeCountries={countries} />
-      <InvitationImportDialog logic={logic} />
-      <InvitationBulkSendDialog logic={logic} />
-      <InvitationBulkApproveDialog logic={logic} />
-
-      {logic.activeInvitation && isMobile ? (
-        <InvitationDetailMobileDialog logic={logic} />
-      ) : (
-        <InvitationDetailDialog logic={logic} />
-      )}
-    </Box>
     </RouteGuard>
   );
 }

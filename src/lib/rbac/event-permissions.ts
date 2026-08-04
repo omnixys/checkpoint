@@ -39,8 +39,7 @@ export const EventPermissionKey = {
   ViewAuditLog: "audit.view",
 } as const;
 
-export type EventPermissionKey =
-  (typeof EventPermissionKey)[keyof typeof EventPermissionKey];
+export type EventPermissionKey = (typeof EventPermissionKey)[keyof typeof EventPermissionKey];
 
 export const EVENT_PERMISSION_KEYS = Object.values(EventPermissionKey);
 
@@ -52,10 +51,7 @@ const staffViewPermissions = [
   EventPermissionKey.ViewTimeline,
 ] as const;
 
-const securityPermissions = [
-  ...staffViewPermissions,
-  EventPermissionKey.ScanTickets,
-] as const;
+const securityPermissions = [...staffViewPermissions, EventPermissionKey.ScanTickets] as const;
 
 const guestPermissions = [
   EventPermissionKey.ViewEvent,

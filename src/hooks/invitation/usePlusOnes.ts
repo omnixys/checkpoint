@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import { PhoneNumberType } from "@/checkpoint/generated/graphql";
 import type { PhoneNumberInput, PublicPlusOneInput } from "@/checkpoint/generated/graphql";
+import { PhoneNumberType } from "@/checkpoint/generated/graphql";
 import type { NormalizedPlusOne } from "@/checkpoint/types/event.type";
 
 type CompleteNormalizedPlusOne = NormalizedPlusOne & {

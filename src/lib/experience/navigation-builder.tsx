@@ -1,6 +1,6 @@
 import type { JSX } from "react";
-import type { FeatureDefinition, ResolvedExperience } from "./types";
 import { NAVIGATION_GROUPS } from "./groups";
+import type { FeatureDefinition, ResolvedExperience } from "./types";
 
 export interface NavItem {
   label: string;
@@ -25,10 +25,7 @@ function buildPath(feature: FeatureDefinition, activeEventId?: string): string {
   return `/${path}`;
 }
 
-export function buildNavigation(
-  experience: ResolvedExperience,
-  activeEventId?: string,
-): NavItem[] {
+export function buildNavigation(experience: ResolvedExperience, activeEventId?: string): NavItem[] {
   const hasEvent = Boolean(activeEventId);
 
   return experience.features.map((feature) => {

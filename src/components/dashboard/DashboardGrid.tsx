@@ -1,18 +1,19 @@
 "use client";
 
 import { Box, Typography } from "@mui/material";
-import React, { useMemo } from "react";
-import { getWidgets } from "@/checkpoint/lib/experience/widget-registry";
+import type React from "react";
+import { useMemo } from "react";
 import { resolveExperience } from "@/checkpoint/lib/experience/resolver";
+import { getWidgets } from "@/checkpoint/lib/experience/widget-registry";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
-import TicketQRWidget from "./widgets/TicketQRWidget";
+import EventMetaWidget from "./widgets/EventMetaWidget";
 import GuestStatsWidget from "./widgets/GuestStatsWidget";
+import QuickActionsWidget from "./widgets/QuickActionsWidget";
+import ScanActivityWidget from "./widgets/ScanActivityWidget";
 import ScannerQuickWidget from "./widgets/ScannerQuickWidget";
 import SecurityStatusWidget from "./widgets/SecurityStatusWidget";
 import SupportQueueWidget from "./widgets/SupportQueueWidget";
-import QuickActionsWidget from "./widgets/QuickActionsWidget";
-import EventMetaWidget from "./widgets/EventMetaWidget";
-import ScanActivityWidget from "./widgets/ScanActivityWidget";
+import TicketQRWidget from "./widgets/TicketQRWidget";
 
 const WIDGET_MAP: Record<string, () => React.ReactElement | null> = {
   "ticket-qr": TicketQRWidget,
@@ -52,10 +53,7 @@ export default function DashboardGrid() {
           const Widget = WIDGET_MAP[def.id];
           if (!Widget) return null;
           return (
-            <Box
-              key={def.id}
-              sx={{ gridColumn: `span ${def.width}` }}
-            >
+            <Box key={def.id} sx={{ gridColumn: `span ${def.width}` }}>
               <Widget />
             </Box>
           );

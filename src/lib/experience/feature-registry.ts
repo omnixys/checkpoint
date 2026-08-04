@@ -1,6 +1,7 @@
 import {
   AccountCircle as AccountCircleIcon,
   AddCircleOutlineRounded as AddCircleOutlineIcon,
+  AdminPanelSettings as AdminPanelSettingsIcon,
   Badge as BadgeIcon,
   CalendarMonth as CalendarMonthIcon,
   Chat as ChatIcon,
@@ -21,7 +22,6 @@ import {
   Security as SecurityIcon,
   Settings as SettingsIcon,
   SupportAgent as SupportAgentIcon,
-  AdminPanelSettings as AdminPanelSettingsIcon,
 } from "@mui/icons-material";
 import { EventPermissionKey } from "@/checkpoint/lib/rbac/event-permissions";
 import type { FeatureDefinition, FeatureId } from "./types";
@@ -349,18 +349,17 @@ export function getFeatures(): FeatureDefinition[] {
 }
 
 export function getFeaturesByCategory(category: string): FeatureDefinition[] {
-  return Array.from(FEATURE_REGISTRY.values()).filter(
-    (f) => f.category === category,
-  );
+  return Array.from(FEATURE_REGISTRY.values()).filter((f) => f.category === category);
 }
 
 export function getFeaturesByPermissions(
   permissions: readonly EventPermissionKey[],
 ): FeatureDefinition[] {
   const permissionSet = new Set(permissions);
-  return Array.from(FEATURE_REGISTRY.values()).filter((f) =>
-    f.requiredPermissions.length === 0 ||
-    f.requiredPermissions.every((p) => permissionSet.has(p)),
+  return Array.from(FEATURE_REGISTRY.values()).filter(
+    (f) =>
+      f.requiredPermissions.length === 0 ||
+      f.requiredPermissions.every((p) => permissionSet.has(p)),
   );
 }
 

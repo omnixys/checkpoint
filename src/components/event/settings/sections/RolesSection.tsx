@@ -8,8 +8,8 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SaveIcon from "@mui/icons-material/Save";
 import {
   Alert,
-  alpha,
   Autocomplete,
+  alpha,
   Box,
   Button,
   Chip,
@@ -26,13 +26,13 @@ import {
   useTheme,
 } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
+import { useMutationHandler } from "@/checkpoint/hooks/core/useMutationHandler";
 import type { EventRoleDefinition } from "@/checkpoint/hooks/events/useEventRbac";
 import { useEventRbac } from "@/checkpoint/hooks/events/useEventRbac";
-import { useEventStaff, type EventStaffMember } from "@/checkpoint/hooks/events/useEventStaff";
-import { useMutationHandler } from "@/checkpoint/hooks/core/useMutationHandler";
-import { EventPermissionKey } from "@/checkpoint/lib/rbac/event-permissions";
+import { type EventStaffMember, useEventStaff } from "@/checkpoint/hooks/events/useEventStaff";
 import { getFeatures } from "@/checkpoint/lib/experience/feature-registry";
 import type { FeatureDefinition } from "@/checkpoint/lib/experience/types";
+import { EventPermissionKey } from "@/checkpoint/lib/rbac/event-permissions";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
@@ -233,7 +233,9 @@ function FeatureToggleCard({
         cursor: disabled ? "default" : "pointer",
         userSelect: "none",
         border: `1px solid ${enabled ? alpha(theme.palette.primary.main, 0.3) : theme.palette.divider}`,
-        backgroundColor: enabled ? alpha(theme.palette.primary.main, 0.08) : theme.palette.background.paper,
+        backgroundColor: enabled
+          ? alpha(theme.palette.primary.main, 0.08)
+          : theme.palette.background.paper,
         transition: "all 0.2s ease",
         "&:hover": disabled
           ? {}
@@ -243,7 +245,14 @@ function FeatureToggleCard({
             },
       }}
     >
-      <Box sx={{ color: enabled ? "primary.main" : "text.secondary", display: "flex", alignItems: "center", fontSize: 20 }}>
+      <Box
+        sx={{
+          color: enabled ? "primary.main" : "text.secondary",
+          display: "flex",
+          alignItems: "center",
+          fontSize: 20,
+        }}
+      >
         <Icon />
       </Box>
       <Typography
@@ -309,7 +318,9 @@ function RoleDefinitionCard({
   });
   const [selectedPermissions, setSelectedPermissions] = useState<string[]>(role.permissions);
   const [userId, setUserId] = useState("");
-  const [autocompleteValue, setAutocompleteValue] = useState<EventStaffMember | string | null>(null);
+  const [autocompleteValue, setAutocompleteValue] = useState<EventStaffMember | string | null>(
+    null,
+  );
 
   useEffect(() => {
     setDraft({
@@ -423,9 +434,7 @@ function RoleDefinitionCard({
         <TextField
           label="Description"
           value={draft.description}
-          onChange={(event) =>
-            setDraft((value) => ({ ...value, description: event.target.value }))
-          }
+          onChange={(event) => setDraft((value) => ({ ...value, description: event.target.value }))}
           disabled={!canManage}
           fullWidth={true}
           sx={glassInputSx(theme)}
@@ -506,7 +515,11 @@ function RoleDefinitionCard({
           <Typography variant="subtitle2" color="text.secondary">
             Assign user
           </Typography>
-          <Stack direction={{ xs: "column", md: "row" }} spacing={1.5} sx={{ alignItems: { xs: "stretch", md: "center" } }}>
+          <Stack
+            direction={{ xs: "column", md: "row" }}
+            spacing={1.5}
+            sx={{ alignItems: { xs: "stretch", md: "center" } }}
+          >
             <Autocomplete
               freeSolo
               options={staff}
@@ -596,9 +609,7 @@ function RoleDefinitionCard({
                       key={member.userId}
                       label={name || member.userId}
                       onDelete={
-                        canManage && !isArchived
-                          ? () => onRemove(member.userId)
-                          : undefined
+                        canManage && !isArchived ? () => onRemove(member.userId) : undefined
                       }
                       size="small"
                       sx={{

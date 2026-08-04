@@ -4,9 +4,11 @@ import { Box, Skeleton, Typography } from "@mui/material";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { List as VList } from "react-window";
 import { CommunicationSearch } from "./CommunicationSearch";
-import { PersonListItem, type PersonData } from "./PersonListItem";
+import { type PersonData, PersonListItem } from "./PersonListItem";
 
 const ITEM_HEIGHT = 64;
+
+const SKELETON_PLACEHOLDERS = [0, 1, 2, 3, 4, 5];
 
 interface Props {
   title?: string;
@@ -48,9 +50,7 @@ export function PersonList({
     if (!search.trim()) return persons;
     const q = search.toLowerCase().trim();
     return persons.filter(
-      (p) =>
-        p.name.toLowerCase().includes(q) ||
-        p.roles?.some((r) => r.toLowerCase().includes(q)),
+      (p) => p.name.toLowerCase().includes(q) || p.roles?.some((r) => r.toLowerCase().includes(q)),
     );
   }, [persons, search]);
 
@@ -83,8 +83,8 @@ export function PersonList({
 
       <Box ref={listRef} sx={{ flex: 1, overflow: "hidden", px: 1 }}>
         {loading ? (
-          Array.from({ length: 6 }).map((_, i) => (
-            <Box key={i} sx={{ display: "flex", alignItems: "center", gap: 1.5, p: 1.5 }}>
+          SKELETON_PLACEHOLDERS.map((id) => (
+            <Box key={id} sx={{ display: "flex", alignItems: "center", gap: 1.5, p: 1.5 }}>
               <Skeleton variant="circular" width={36} height={36} />
               <Box sx={{ flex: 1 }}>
                 <Skeleton variant="text" width="60%" height={16} />
@@ -93,10 +93,7 @@ export function PersonList({
             </Box>
           ))
         ) : filtered.length === 0 ? (
-          <Typography
-            variant="body2"
-            sx={{ color: "text.secondary", textAlign: "center", py: 4 }}
-          >
+          <Typography variant="body2" sx={{ color: "text.secondary", textAlign: "center", py: 4 }}>
             {emptyMessage}
           </Typography>
         ) : (

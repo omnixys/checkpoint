@@ -2,8 +2,7 @@
 
 import HeadsetMicIcon from "@mui/icons-material/HeadsetMic";
 import { alpha, Card, CardContent, Chip, Stack, Typography, useTheme } from "@mui/material";
-import { useRouter } from "next/navigation";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 export default function SupportQueueWidget() {
   const theme = useTheme();
@@ -24,7 +23,9 @@ export default function SupportQueueWidget() {
       <CardContent>
         <Stack spacing={1.5} sx={{ alignItems: "center", textAlign: "center" }}>
           <HeadsetMicIcon sx={{ fontSize: 36, color: theme.palette.primary.main }} />
-          <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Support Queue</Typography>
+          <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+            Support Queue
+          </Typography>
           <Typography variant="body2" color="text.secondary">
             Manage guest conversations
           </Typography>

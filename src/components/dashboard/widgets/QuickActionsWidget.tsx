@@ -34,7 +34,9 @@ export default function QuickActionsWidget() {
         <Stack spacing={2}>
           <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
             <FlashOnIcon sx={{ color: theme.palette.warning.main }} />
-            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Quick Actions</Typography>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+              Quick Actions
+            </Typography>
           </Stack>
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
             {actions.map((f) => (

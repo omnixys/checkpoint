@@ -1,6 +1,7 @@
 "use client";
 
 import DeleteIcon from "@mui/icons-material/Delete";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   Accordion,
   AccordionDetails,
@@ -23,7 +24,6 @@ import { PhoneNumberType } from "@/checkpoint/generated/graphql";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
 import type { NormalizedPlusOne } from "@/checkpoint/types/event.type";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 interface Props {
   value: NormalizedPlusOne;

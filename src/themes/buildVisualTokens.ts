@@ -8,7 +8,7 @@ function hexToRgb(hex: string): RGB {
 
   const parts = cleaned.match(/.{1,2}/g);
 
-  if (!parts || parts.length !== 3) {
+  if (parts?.length !== 3) {
     throw new Error(`Invalid hex color: ${hex}`);
   }
 

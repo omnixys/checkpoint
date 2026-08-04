@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { resolveExperience } from "../resolver";
 import { EventPermissionKey } from "@/checkpoint/lib/rbac/event-permissions";
-import { getFeatures } from "../feature-registry";
 import { ROLE_PROFILES } from "../experience-profiles";
+import { getFeatures } from "../feature-registry";
+import { resolveExperience } from "../resolver";
 
 const allPermissions = Object.values(EventPermissionKey);
 
@@ -11,18 +11,14 @@ describe("resolveExperience", () => {
     it("returns all features for ADMIN", () => {
       const result = resolveExperience(["ADMIN"], allPermissions);
       expect(result.primaryRole).toBe("ADMIN");
-      expect(result.allowedFeatureIds).toEqual(
-        ROLE_PROFILES["ADMIN"]!.allowedFeatureIds,
-      );
-      expect(result.features.length).toBe(
-        ROLE_PROFILES["ADMIN"]!.allowedFeatureIds.length,
-      );
+      expect(result.allowedFeatureIds).toEqual(ROLE_PROFILES.ADMIN!.allowedFeatureIds);
+      expect(result.features.length).toBe(ROLE_PROFILES.ADMIN!.allowedFeatureIds.length);
       expect(result.navigationGroupOrder).toEqual(["main", "event", "tools", "personal", "admin"]);
     });
 
     it("returns only self-service features for GUEST", () => {
       const result = resolveExperience(["GUEST"], []);
-      const profile = ROLE_PROFILES["GUEST"]!;
+      const profile = ROLE_PROFILES.GUEST!;
       expect(result.primaryRole).toBe("GUEST");
       expect(result.allowedFeatureIds).toEqual(profile.allowedFeatureIds);
       expect(result.features.every((f) => f.category === "personal")).toBe(true);
@@ -31,7 +27,7 @@ describe("resolveExperience", () => {
 
     it("returns security-relevant features for SECURITY", () => {
       const result = resolveExperience(["SECURITY"], allPermissions);
-      const profile = ROLE_PROFILES["SECURITY"]!;
+      const profile = ROLE_PROFILES.SECURITY!;
       expect(result.primaryRole).toBe("SECURITY");
       expect(result.allowedFeatureIds).toEqual(profile.allowedFeatureIds);
       expect(result.allowedFeatureIds).toContain("scanner");
@@ -43,7 +39,7 @@ describe("resolveExperience", () => {
 
     it("returns support and notification features for SUPPORT", () => {
       const result = resolveExperience(["SUPPORT"], allPermissions);
-      const profile = ROLE_PROFILES["SUPPORT"]!;
+      const profile = ROLE_PROFILES.SUPPORT!;
       expect(result.primaryRole).toBe("SUPPORT");
       expect(result.allowedFeatureIds).toEqual(profile.allowedFeatureIds);
       expect(result.allowedFeatureIds).toContain("support");
@@ -92,11 +88,7 @@ describe("resolveExperience", () => {
     it("returns minimal personal features when no profile or permissions exist", () => {
       const result = resolveExperience(["CUSTOM_ROLE"], []);
       expect(result.primaryRole).toBe("CUSTOM_ROLE");
-      expect(result.allowedFeatureIds).toEqual([
-        "my-dashboard",
-        "my-profile",
-        "my-security",
-      ]);
+      expect(result.allowedFeatureIds).toEqual(["my-dashboard", "my-profile", "my-security"]);
     });
   });
 
@@ -104,11 +96,7 @@ describe("resolveExperience", () => {
     it("returns only basic personal features when no profile or permissions exist", () => {
       const result = resolveExperience([], []);
       expect(result.primaryRole).toBe("UNKNOWN");
-      expect(result.allowedFeatureIds).toEqual([
-        "my-dashboard",
-        "my-profile",
-        "my-security",
-      ]);
+      expect(result.allowedFeatureIds).toEqual(["my-dashboard", "my-profile", "my-security"]);
       expect(result.navigationGroupOrder).toEqual(["personal"]);
     });
   });

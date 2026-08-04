@@ -1,7 +1,6 @@
 "use client";
 
 import { Box, Chip, Typography } from "@mui/material";
-import React from "react";
 
 import { SeatColorGroupMatchType } from "@/checkpoint/generated/graphql";
 

@@ -1,11 +1,11 @@
 "use client";
 
+import type { ConsentState } from "@omnixys/analytics-sdk/browser";
+import type { BrowserObservabilityConfig } from "@omnixys/observability-ts/browser";
+import { ObservabilityProvider } from "@omnixys/observability-ts/react";
 // import AppShell from "@/components/layout/AppShell";
 import { usePathname } from "next/navigation";
 import type React from "react";
-import type { ConsentState } from "@omnixys/analytics-sdk/browser";
-import { ObservabilityProvider } from "@omnixys/observability-ts/react";
-import type { BrowserObservabilityConfig } from "@omnixys/observability-ts/browser";
 import ErrorBoundary from "@/checkpoint/components/error/ErrorBoundary";
 import AppShell from "@/checkpoint/components/layout/AppShell";
 import { env } from "@/checkpoint/lib/env";
@@ -16,14 +16,11 @@ import OnboardingProvider from "@/checkpoint/providers/OnboardingProvider";
 import SwipeBackProvider from "@/checkpoint/providers/SwipeBackProvider";
 import TourProvider from "@/checkpoint/providers/TourProvider";
 import { ActiveEventProvider } from "./ActiveEventProvider";
+import { AnalyticsIdentityBridge, CheckpointAnalyticsProvider } from "./AnalyticsProvider";
 import { AuthProvider } from "./AuthProvider";
 import DateProvider from "./DateProvider";
 import { DeviceProvider } from "./DeviceProvider";
 import ThemeModeProvider, { type ThemeProfile } from "./ThemeModeProvider";
-import {
-  AnalyticsIdentityBridge,
-  CheckpointAnalyticsProvider,
-} from "./AnalyticsProvider";
 
 const browserConfig: BrowserObservabilityConfig = {
   serviceName: env.OTEL_SERVICE_NAME,

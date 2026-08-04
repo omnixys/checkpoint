@@ -57,113 +57,113 @@ export default function SeatsClientPage() {
 
   return (
     <RouteGuard featureId="seats">
-    <Stack spacing={3} sx={{ px: { xs: 1.5, md: 3 }, py: 2, minWidth: 0 }}>
-      <Box
-        sx={{
-          position: "sticky",
-          top: -35,
-          zIndex: 50,
-          pb: 1,
-          bgcolor: (theme) => alpha(theme.palette.background.default, 0.7),
-          backdropFilter: "blur(16px)",
-          borderBottom: (theme) => `1px solid ${alpha(theme.palette.divider, 0.12)}`,
-        }}
-      >
-        {/* Back Button */}
-        <Stack
-          direction={{ xs: "column", sm: "row" }}
-          spacing={1}
+      <Stack spacing={3} sx={{ px: { xs: 1.5, md: 3 }, py: 2, minWidth: 0 }}>
+        <Box
           sx={{
-            alignItems: { xs: "stretch", sm: "center" },
+            position: "sticky",
+            top: -35,
+            zIndex: 50,
+            pb: 1,
+            bgcolor: (theme) => alpha(theme.palette.background.default, 0.7),
+            backdropFilter: "blur(16px)",
+            borderBottom: (theme) => `1px solid ${alpha(theme.palette.divider, 0.12)}`,
           }}
         >
-          <BackToEventDetailButton />
+          {/* Back Button */}
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={1}
+            sx={{
+              alignItems: { xs: "stretch", sm: "center" },
+            }}
+          >
+            <BackToEventDetailButton />
 
-          {canManageSeats && (
+            {canManageSeats && (
+              <Button
+                size="small"
+                variant="outlined"
+                startIcon={<EditOutlined />}
+                onClick={() => router.push(`${env.CHECKPOINT_BASE_PATH}event/${eventId}/seat/edit`)}
+                sx={{ alignSelf: { xs: "stretch", sm: "center" } }}
+              >
+                Sitzstruktur
+              </Button>
+            )}
+
             <Button
               size="small"
               variant="outlined"
-              startIcon={<EditOutlined />}
-              onClick={() => router.push(`${env.CHECKPOINT_BASE_PATH}event/${eventId}/seat/edit`)}
+              startIcon={<MapOutlined />}
+              onClick={() => router.push(`${env.CHECKPOINT_BASE_PATH}event/${eventId}/seat/map`)}
               sx={{ alignSelf: { xs: "stretch", sm: "center" } }}
             >
-              Sitzstruktur
+              Karte
             </Button>
-          )}
+          </Stack>
 
-          <Button
-            size="small"
-            variant="outlined"
-            startIcon={<MapOutlined />}
-            onClick={() => router.push(`${env.CHECKPOINT_BASE_PATH}event/${eventId}/seat/map`)}
-            sx={{ alignSelf: { xs: "stretch", sm: "center" } }}
-          >
-            Karte
-          </Button>
-        </Stack>
+          <CollapsingSeatHeader />
 
-        <CollapsingSeatHeader />
+          <SeatFilters filter={filter} onChange={setFilter} />
+        </Box>
 
-        <SeatFilters filter={filter} onChange={setFilter} />
-      </Box>
+        {canManageSeats && <SeatImportButton onOpen={() => setImportOpen(true)} />}
 
-      {canManageSeats && <SeatImportButton onOpen={() => setImportOpen(true)} />}
+        <MapManager
+          seats={seats}
+          grouped={grouped}
+          seatsLoading={seatListLoading}
+          occupiedSeatIds={occupiedSeatIds}
+          seatGuestMap={seatGuestMap}
+          getSeatHolderLabel={getSeatHolderLabel}
+          seatLabel={seatLabel}
+          eventId={eventId}
+          onSelect={(seat) => {
+            drawer.show(seat); // 🔥 IMMER
+          }}
+          refetch={seatListRefetch}
+        />
 
-      <MapManager
-        seats={seats}
-        grouped={grouped}
-        seatsLoading={seatListLoading}
-        occupiedSeatIds={occupiedSeatIds}
-        seatGuestMap={seatGuestMap}
-        getSeatHolderLabel={getSeatHolderLabel}
-        seatLabel={seatLabel}
-        eventId={eventId}
-        onSelect={(seat) => {
-          drawer.show(seat); // 🔥 IMMER
-        }}
-        refetch={seatListRefetch}
-      />
+        <SeatDetailDrawer
+          open={drawer.open}
+          seat={selectedSeat}
+          onClose={drawer.close}
+          onEdit={drawer.edit}
+          getSeatHolderLabel={getSeatHolderLabel}
+          role={activeRole}
+        />
 
-      <SeatDetailDrawer
-        open={drawer.open}
-        seat={selectedSeat}
-        onClose={drawer.close}
-        onEdit={drawer.edit}
-        getSeatHolderLabel={getSeatHolderLabel}
-        role={activeRole}
-      />
+        {drawer.editing && drawer.seatId && guestList && (
+          <SeatEditDialog
+            open={drawer.editing}
+            seat={selectedSeat as SeatPayload}
+            invitationList={invitationList as InvitationPayload[]}
+            guestList={guestList}
+            onClose={drawer.stopEditing}
+            onSave={async (input) => {
+              analytics.track("SeatChangeStarted", { eventId });
+              try {
+                await assignSeat({ variables: { input } });
+                await seatListRefetch();
+                analytics.track("SeatChangeCompleted", { eventId });
+                drawer.stopEditing();
+              } catch (error) {
+                analytics.track("SeatChangeFailed", { errorCode: "ASSIGNMENT_FAILED", eventId });
+                throw error;
+              }
+            }}
+          />
+        )}
 
-      {drawer.editing && drawer.seatId && guestList && (
-        <SeatEditDialog
-          open={drawer.editing}
-          seat={selectedSeat as SeatPayload}
-          invitationList={invitationList as InvitationPayload[]}
-          guestList={guestList}
-          onClose={drawer.stopEditing}
-          onSave={async (input) => {
-            analytics.track("SeatChangeStarted", { eventId });
-            try {
-              await assignSeat({ variables: { input } });
-              await seatListRefetch();
-              analytics.track("SeatChangeCompleted", { eventId });
-              drawer.stopEditing();
-            } catch (error) {
-              analytics.track("SeatChangeFailed", { errorCode: "ASSIGNMENT_FAILED", eventId });
-              throw error;
-            }
+        <SeatImportDialog
+          open={importOpen}
+          onClose={() => setImportOpen(false)}
+          onImport={(rows) => {
+            logger.debug("IMPORT CSV →", rows);
+            setImportOpen(false);
           }}
         />
-      )}
-
-      <SeatImportDialog
-        open={importOpen}
-        onClose={() => setImportOpen(false)}
-        onImport={(rows) => {
-          logger.debug("IMPORT CSV →", rows);
-          setImportOpen(false);
-        }}
-      />
-    </Stack>
+      </Stack>
     </RouteGuard>
   );
 }

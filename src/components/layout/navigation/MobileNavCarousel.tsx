@@ -5,8 +5,8 @@ import useEmblaCarousel from "embla-carousel-react";
 import { motion } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { useThemeMode } from "@/checkpoint/providers/ThemeModeProvider";
 import type { NavItem } from "@/checkpoint/lib/experience/navigation-builder";
+import { useThemeMode } from "@/checkpoint/providers/ThemeModeProvider";
 import { isActiveNavItem } from "./navigation.util";
 
 interface Props {

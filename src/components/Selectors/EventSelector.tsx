@@ -37,8 +37,8 @@ export default function EventSelector(): JSX.Element {
     );
   }
 
-   console.log("myEventList: ")
-  console.log(myEventList)
+  console.log("myEventList: ");
+  console.log(myEventList);
 
   if (!myEventList || myEventList.length === 0) {
     return (
