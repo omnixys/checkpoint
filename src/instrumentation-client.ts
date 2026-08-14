@@ -14,8 +14,5 @@ initializeBrowserTracing({
   sampleRate: env.OTEL_SAMPLE_RATE,
   otlpEndpoint: env.OTEL_ENDPOINT,
   instrumentations: ["fetch", "xhr", "document-load"],
-  // Only inject traceparent/tracestate into requests to the gateway; other
-  // cross-origin hosts are not configured to allow these headers.
-  propagateTraceHeaderCorsUrls: /^https:\/\/api\.omnixys\.com/,
   enabled: env.IS_PRODUCTION,
 });

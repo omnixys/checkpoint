@@ -54,8 +54,8 @@ importers:
         specifier: 3.3.0
         version: 3.3.0(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2))
       '@omnixys/observability-ts':
-        specifier: 3.3.0
-        version: 3.3.0(c2dc8df6152fb0f554fa54cc34c5da70)
+        specifier: 3.2.3
+        version: 3.2.3(c2dc8df6152fb0f554fa54cc34c5da70)
       '@react-hook/window-size':
         specifier: ^3.1.1
         version: 3.1.1(react@19.2.4)
@@ -1762,8 +1762,8 @@ packages:
     peerDependencies:
       '@nestjs/common': ^11.1.27
 
-  '@omnixys/observability-ts@3.3.0':
-    resolution: {integrity: sha512-MRpdD9jDM1Tguaa11TRqLPtFslQHKlH33/dDPPOz66Azhz5fnHliYlfvJDQ0C+6SIKXA2upQ49b5OUb7RTHEkw==, tarball: https://npm.pkg.github.com/download/@omnixys/observability-ts/3.3.0/a00c8f74d7a2b38c15ace5bf5d450d348d3e5761}
+  '@omnixys/observability-ts@3.2.3':
+    resolution: {integrity: sha512-/7HGbi4fGRDy/7IrbMdZJL81tYVLQU8MCf8s5Y6j9f6EWRyDroJXnN7LN+Ff6FbmHQMfaaP8wLJgn9lk5DRxRA==, tarball: https://npm.pkg.github.com/download/@omnixys/observability-ts/3.2.3/6b8d205be971fa9af738f01ea6efee2bf8c0bdd2}
     peerDependencies:
       '@nestjs/common': ^11.0.0
       '@nestjs/core': ^11.1.17
@@ -2728,13 +2728,6 @@ packages:
     engines: {node: '>=10'}
     cpu: [arm]
     os: [linux]
-
-  '@swc/core-linux-arm64-gnu@1.16.0':
-    resolution: {integrity: sha512-t21IUztHQ/COucy7Kk9eIlehmq08H/hYq7aRA6fZox3S5ddi6TxWPK6e5S/+aTCf6+Od9qQ+LIpjHMiTy737vA==}
-    engines: {node: '>=10'}
-    cpu: [arm64]
-    os: [linux]
-    libc: [glibc]
 
   '@swc/core-linux-arm64-musl@1.16.0':
     resolution: {integrity: sha512-d9+iajbMB87b0umgbP+Gy3yBDSDgty4Q6H5pZ8fgTb/dOoKIwwynP4L4kvWCOFg2i49kxmAAUs1uJZh9s0E+RQ==}
@@ -8266,7 +8259,7 @@ snapshots:
       '@nestjs/common': 11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2)
       zod: 4.4.3
 
-  '@omnixys/observability-ts@3.3.0(c2dc8df6152fb0f554fa54cc34c5da70)':
+  '@omnixys/observability-ts@3.2.3(c2dc8df6152fb0f554fa54cc34c5da70)':
     dependencies:
       '@nestjs/common': 11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/core': 11.1.28(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -9454,9 +9447,6 @@ snapshots:
   '@swc/core-linux-arm-gnueabihf@1.16.0':
     optional: true
 
-  '@swc/core-linux-arm64-gnu@1.16.0':
-    optional: true
-
   '@swc/core-linux-arm64-musl@1.16.0':
     optional: true
 
@@ -9489,7 +9479,6 @@ snapshots:
       '@swc/core-darwin-arm64': 1.16.0
       '@swc/core-darwin-x64': 1.16.0
       '@swc/core-linux-arm-gnueabihf': 1.16.0
-      '@swc/core-linux-arm64-gnu': 1.16.0
       '@swc/core-linux-arm64-musl': 1.16.0
       '@swc/core-linux-ppc64-gnu': 1.16.0
       '@swc/core-linux-s390x-gnu': 1.16.0
