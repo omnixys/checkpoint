@@ -48,7 +48,7 @@
     "@mui/x-date-pickers": "^9.11.0",
     "@omnixys/analytics-sdk": "1.0.0",
     "@omnixys/contracts-ts": "3.3.0",
-    "@omnixys/observability-ts": "3.2.2",
+    "@omnixys/observability-ts": "3.2.3",
     "@react-hook/window-size": "^3.1.1",
     "@react-spring/web": "^10.1.2",
     "@vercel/speed-insights": "^2.0.0",
