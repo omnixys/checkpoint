@@ -54,8 +54,8 @@ importers:
         specifier: 3.3.0
         version: 3.3.0(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2))
       '@omnixys/observability-ts':
-        specifier: 3.2.3
-        version: 3.2.3(c2dc8df6152fb0f554fa54cc34c5da70)
+        specifier: 3.2.2
+        version: 3.2.2(c2dc8df6152fb0f554fa54cc34c5da70)
       '@react-hook/window-size':
         specifier: ^3.1.1
         version: 3.1.1(react@19.2.4)
@@ -1762,8 +1762,8 @@ packages:
     peerDependencies:
       '@nestjs/common': ^11.1.27
 
-  '@omnixys/observability-ts@3.2.3':
-    resolution: {integrity: sha512-/7HGbi4fGRDy/7IrbMdZJL81tYVLQU8MCf8s5Y6j9f6EWRyDroJXnN7LN+Ff6FbmHQMfaaP8wLJgn9lk5DRxRA==, tarball: https://npm.pkg.github.com/download/@omnixys/observability-ts/3.2.3/6b8d205be971fa9af738f01ea6efee2bf8c0bdd2}
+  '@omnixys/observability-ts@3.2.2':
+    resolution: {integrity: sha512-uRzGI+djeWY8pdm5ONB1MPHGAyCXbJ8zYZ6itfggwKmhjGN5WP9wLh5baoHvcuGxFkF6AEkvZdWXtIqC30HYpA==, tarball: https://npm.pkg.github.com/download/@omnixys/observability-ts/3.2.2/66125d267226e2a46d67c0157ead810da2f24228}
     peerDependencies:
       '@nestjs/common': ^11.0.0
       '@nestjs/core': ^11.1.17
@@ -2722,12 +2722,6 @@ packages:
     engines: {node: '>=10'}
     cpu: [x64]
     os: [darwin]
-
-  '@swc/core-linux-arm-gnueabihf@1.16.0':
-    resolution: {integrity: sha512-PcdDBaRbe39y37h1rXVkhNy7mEU7f8b34KD761C68R23EsfMsj5oDPVddRzGdSRAvwwSfH0WSNEHgYmc/AJipg==}
-    engines: {node: '>=10'}
-    cpu: [arm]
-    os: [linux]
 
   '@swc/core-linux-arm64-musl@1.16.0':
     resolution: {integrity: sha512-d9+iajbMB87b0umgbP+Gy3yBDSDgty4Q6H5pZ8fgTb/dOoKIwwynP4L4kvWCOFg2i49kxmAAUs1uJZh9s0E+RQ==}
@@ -7500,7 +7494,7 @@ snapshots:
 
   '@graphql-tools/merge@9.1.9(graphql@16.14.2)':
     dependencies:
-      '@graphql-tools/utils': 11.2.2(graphql@16.14.2)
+      '@graphql-tools/utils': 11.1.0(graphql@16.14.2)
       graphql: 16.14.2
       tslib: 2.8.1
 
@@ -7524,8 +7518,8 @@ snapshots:
 
   '@graphql-tools/schema@10.0.33(graphql@16.14.2)':
     dependencies:
-      '@graphql-tools/merge': 9.2.3(graphql@16.14.2)
-      '@graphql-tools/utils': 11.2.2(graphql@16.14.2)
+      '@graphql-tools/merge': 9.1.9(graphql@16.14.2)
+      '@graphql-tools/utils': 11.1.0(graphql@16.14.2)
       graphql: 16.14.2
       tslib: 2.8.1
 
@@ -8259,7 +8253,7 @@ snapshots:
       '@nestjs/common': 11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2)
       zod: 4.4.3
 
-  '@omnixys/observability-ts@3.2.3(c2dc8df6152fb0f554fa54cc34c5da70)':
+  '@omnixys/observability-ts@3.2.2(c2dc8df6152fb0f554fa54cc34c5da70)':
     dependencies:
       '@nestjs/common': 11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/core': 11.1.28(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -9444,9 +9438,6 @@ snapshots:
   '@swc/core-darwin-x64@1.16.0':
     optional: true
 
-  '@swc/core-linux-arm-gnueabihf@1.16.0':
-    optional: true
-
   '@swc/core-linux-arm64-musl@1.16.0':
     optional: true
 
@@ -9478,7 +9469,6 @@ snapshots:
     optionalDependencies:
       '@swc/core-darwin-arm64': 1.16.0
       '@swc/core-darwin-x64': 1.16.0
-      '@swc/core-linux-arm-gnueabihf': 1.16.0
       '@swc/core-linux-arm64-musl': 1.16.0
       '@swc/core-linux-ppc64-gnu': 1.16.0
       '@swc/core-linux-s390x-gnu': 1.16.0
