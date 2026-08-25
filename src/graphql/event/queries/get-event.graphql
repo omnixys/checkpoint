@@ -1,5 +1,5 @@
-query Event($id: ID!) {
-  event(id: $id) {
+query Event($eventId: ID!) {
+  event(id: $eventId) {
     ...EventFull
   }
 }

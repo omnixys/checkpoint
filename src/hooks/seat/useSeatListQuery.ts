@@ -12,7 +12,7 @@ interface Props {
 
 export default function useSeatListQuery({ eventId, loadSeatList }: Props) {
   const getSeatLisQueryResult = useQuery<SeatListQuery, SeatListQueryVariables>(SeatListDocument, {
-    variables: { id: eventId ?? "" },
+    variables: { eventId: eventId ?? "" },
     fetchPolicy: "cache-and-network",
     skip: !eventId || !loadSeatList,
   });

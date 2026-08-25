@@ -1,5 +1,5 @@
-query EventChildren($id: ID!) {
-  eventChildren(eventId: $id) {
+query EventChildren($eventId: ID!) {
+  eventChildren(eventId: $eventId) {
     ...EventBase
   }
 }

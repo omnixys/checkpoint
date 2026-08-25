@@ -1,7 +1,7 @@
 # import EventFull from "../fragments/event.fragment.graphql"
 
-query AdminGetEvent($id: ID!) {
-  adminGetEvent(id: $id) {
+query AdminGetEvent($eventId: ID!) {
+  adminGetEvent(id: $eventId) {
     ...EventFull
   }
 }

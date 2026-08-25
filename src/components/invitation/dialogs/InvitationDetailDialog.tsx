@@ -63,7 +63,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
       return;
     }
 
-    loadSeats({ variables: { id: inv.eventId } });
+    loadSeats({ variables: { eventId: inv.eventId } });
 
     if (inv.guestProfileId) {
       loadGuestSeat({

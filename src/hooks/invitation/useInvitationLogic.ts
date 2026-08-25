@@ -267,7 +267,7 @@ export function useInvitationLogic(eventId: string) {
 
     const result = await loadSeatList({
       variables: {
-        id: targetEventId,
+        eventId: targetEventId,
       },
     });
 

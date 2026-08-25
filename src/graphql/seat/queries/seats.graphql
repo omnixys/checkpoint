@@ -1,11 +1,11 @@
-query Seats($id: ID!) {
-  seats(eventId: $id) {
+query Seats($eventId: ID!) {
+  seats(eventId: $eventId) {
     ...SeatFull
   }
 }
 
-query SeatList($id: ID!) {
-  seats(eventId: $id) {
+query SeatList($eventId: ID!) {
+  seats(eventId: $eventId) {
     id
     eventId
     label

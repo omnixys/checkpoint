@@ -49,7 +49,7 @@ export default function InvitationDetailMobileDialog({ logic }: { logic: Invitat
       return;
     }
 
-    loadSeats({ variables: { id: inv.eventId } });
+    loadSeats({ variables: { eventId: inv.eventId } });
 
     if (inv.guestProfileId) {
       loadGuestSeat({
