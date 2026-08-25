@@ -29,7 +29,27 @@ import { getCookie } from "@/checkpoint/lib/apollo/cookie.utils";
  */
 
 import type { ApolloClient } from "@apollo/client";
-import { AppError, ErrorCode } from "@/checkpoint/errors/app-error";
+import { AppError, ErrorCode, normalizeApolloError } from "@/checkpoint/errors/app-error";
+import { env } from "@/checkpoint/lib/env";
+import { getLogger } from "@/checkpoint/utils/logger";
+
+const logger = getLogger("AuthManager");
+
+/**
+ * Auth failure codes that cannot be recovered by retrying the refresh.
+ */
+const DEFINITIVE_AUTH_CODES = new Set<ErrorCode>([
+  ErrorCode.UNAUTHORIZED,
+  ErrorCode.SESSION_EXPIRED,
+  ErrorCode.REFRESH_TOKEN_EXPIRED,
+  ErrorCode.FORBIDDEN,
+  ErrorCode.UNAUTHORIZED_TENANT,
+  ErrorCode.TENANT_MEMBERSHIP_NOT_FOUND,
+]);
+
+export function isDefinitiveAuthFailure(error: AppError): boolean {
+  return DEFINITIVE_AUTH_CODES.has(error.code) || error.status === 401 || error.status === 403;
+}
 
 /**
  * Typed Event Bus
@@ -65,7 +85,22 @@ class AuthEventEmitter {
 
   emit(name: AuthEvent, payload?: unknown) {
     this.listeners.get(name)?.forEach((fn) => {
-      fn(payload);
+      try {
+        const result = fn(payload) as unknown;
+        /**
+         * Listener failures must never break the emitting code path.
+         * Apollo errors are already captured by the app error link.
+         */
+        void Promise.resolve(result).catch((error) => {
+          logger.warn(`Auth event listener rejected (${name})`, {
+            message: error instanceof Error ? error.message : String(error),
+          });
+        });
+      } catch (error) {
+        logger.warn(`Auth event listener failed (${name})`, {
+          message: error instanceof Error ? error.message : String(error),
+        });
+      }
     });
   }
 }
@@ -124,10 +159,46 @@ class AuthManagerClass {
 
       try {
         await this.forceRefresh();
+      } catch (error) {
+        await this.handleRecoveryFailure(error);
       } finally {
         this.isRefreshing = false;
       }
     }
+  }
+
+  /**
+   * Handle a failed periodic refresh.
+   *
+   * Definitive auth failures (expired session, revoked membership, ...)
+   * cannot recover by retrying: sign out and return to the login page.
+   * Transient failures are logged and retried on the next tick.
+   */
+  private async handleRecoveryFailure(error: unknown): Promise<void> {
+    const appError = normalizeApolloError(error, { operationName: "Refresh" });
+
+    if (!isDefinitiveAuthFailure(appError)) {
+      logger.warn("Token refresh failed; retrying on next tick", appError.toLogContext());
+      return;
+    }
+
+    logger.error("Session is unrecoverable; signing out", appError.toLogContext());
+
+    try {
+      await this.logout();
+    } catch (logoutError) {
+      const logoutAppError = normalizeApolloError(logoutError, { operationName: "Logout" });
+      logger.warn("Logout during session recovery failed", logoutAppError.toLogContext());
+    } finally {
+      this.redirectToLogin();
+    }
+  }
+
+  private redirectToLogin(): void {
+    if (typeof window === "undefined") {
+      return;
+    }
+    window.location.assign(`${env.CHECKPOINT_BASE_PATH}login`);
   }
 
   /**

@@ -18,6 +18,8 @@ export default defineConfig({
       NEXT_PUBLIC_EVENT_API: "http://localhost:7406/media",
       NEXT_PUBLIC_NEXYS_HOME_URL: "http://localhost:3000/nexys",
       ANALYTICS_CONSENT_SECRET: "checkpoint-test-consent-secret-not-production",
+      ANALYTICS_API_URL: "http://localhost:7303",
+      ANALYTICS_INTERNAL_TOKEN: "checkpoint-test-internal-token",
     },
     setupFiles: ["./src/test/setup.ts"],
     include: ["src/**/*.test.{ts,tsx}"],

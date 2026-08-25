@@ -5,7 +5,7 @@ import type { CurrentUserQuery } from "@/checkpoint/generated/graphql";
  * @omnixys/contracts-ts). Kept local: the published contracts package
  * does not export it for the frontend build.
  */
-const OMNIXYS_TENANT_ID = "6e788f7f-c233-4cb8-bbde-c0b855e564be";
+export const OMNIXYS_TENANT_ID = "6e788f7f-c233-4cb8-bbde-c0b855e564be";
 
 /**
  * Internal auth context used ONLY for Apollo header injection.

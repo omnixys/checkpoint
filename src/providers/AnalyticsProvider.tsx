@@ -7,11 +7,14 @@ import { usePathname } from "next/navigation";
 import type React from "react";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { publicAnalyticsReference } from "@/checkpoint/lib/analytics/public-reference";
+import { fetchAnalyticsToken } from "@/checkpoint/lib/analytics/browser-token-provider";
 import { AuthEventsBus } from "@/checkpoint/lib/auth/AuthManager";
 import { env } from "@/checkpoint/lib/env";
+import { getLogger } from "@/checkpoint/utils/logger";
 import { useActiveEvent } from "./ActiveEventProvider";
 import { useAuth } from "./AuthProvider";
+
+const logger = getLogger("Analytics");
 
 interface AnalyticsConsentContextValue {
   consent: ConsentState;
@@ -34,23 +37,7 @@ export function CheckpointAnalyticsProvider({
       consent: initialConsent,
       endpoint: env.BACKEND_SERVER_URL,
       flushAt: 10,
-      tokenProvider: async () => {
-        const publicReference = publicAnalyticsReference(globalThis.location);
-        const response = await fetch(`${env.BACKEND_SERVER_URL}/v1/analytics/token`, {
-          method: "POST",
-          credentials: "include",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ publicReference }),
-        });
-        if (!response.ok) {
-          throw new Error(`Analytics token request failed with HTTP ${response.status}`);
-        }
-        const payload = (await response.json()) as { token?: unknown };
-        if (typeof payload.token !== "string" || !payload.token) {
-          throw new Error("Analytics token response did not contain a token");
-        }
-        return payload.token;
-      },
+      tokenProvider: fetchAnalyticsToken,
       context: () => ({
         application: "checkpoint",
         path: globalThis.location?.pathname,
@@ -81,7 +68,14 @@ export function CheckpointAnalyticsProvider({
 
   useEffect(() => {
     const reset = () => {
-      void client.flush().finally(() => client.reset());
+      client
+        .flush()
+        .catch((error) => {
+          logger.warn("Analytics flush before logout failed", {
+            message: error instanceof Error ? error.message : String(error),
+          });
+        })
+        .then(() => client.reset());
     };
     AuthEventsBus.on("auth:logout", reset);
     return () => AuthEventsBus.off("auth:logout", reset);
