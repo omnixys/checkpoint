@@ -74,6 +74,5 @@ export const env = {
   OMNIXYS_TENANT_ID: getEnv(
     "OMNIXYS_TENANT_ID",
     process.env.OMNIXYS_TENANT_ID,
-    { fallback: "6e788f7f-c233-4cb8-bbde-c0b855e564be" },
   ),
 } as const;
