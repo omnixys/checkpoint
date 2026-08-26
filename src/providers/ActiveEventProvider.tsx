@@ -4,8 +4,8 @@ import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
 import type React from "react";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { UserRoleType } from "@/checkpoint/generated/graphql";
 import type { GetActiveEventQuery, MyEventsQuery } from "@/checkpoint/generated/graphql";
+import { UserRoleType } from "@/checkpoint/generated/graphql";
 import useEventQuery from "@/checkpoint/hooks/events/useEventQuery";
 import {
   type EventPermissionKey,

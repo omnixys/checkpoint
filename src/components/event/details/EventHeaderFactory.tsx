@@ -25,8 +25,7 @@ export default function EventHeaderFactory({ ev, variant }: Props) {
   const { activeEventId, activeRole } = useActiveEvent();
   const eventPageData = {
     ...ev,
-    myRole:
-      ev.myRole ?? (activeEventId === ev.id ? activeRole : undefined) ?? UserRoleType.GUEST,
+    myRole: ev.myRole ?? (activeEventId === ev.id ? activeRole : undefined) ?? UserRoleType.GUEST,
   };
 
   switch (variant) {
