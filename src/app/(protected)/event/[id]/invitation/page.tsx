@@ -29,19 +29,29 @@ export const metadata: Metadata = buildMetadata({
 
 export default async function RsvpPage(): Promise<JSX.Element> {
   const client = await createServerClient();
+  let countries: CallingCodeCountry[] = [];
 
-  const res = await client.query<GetAllCallingCodesQuery, GetAllCallingCodesQueryVariables>({
-    query: GetAllCallingCodesDocument,
-    fetchPolicy: "cache-first",
-  });
+  try {
+    const res = await client.query<GetAllCallingCodesQuery, GetAllCallingCodesQueryVariables>({
+      query: GetAllCallingCodesDocument,
+      fetchPolicy: "cache-first",
+      context: {
+        fetchOptions: {
+          signal: AbortSignal.timeout(5_000),
+        },
+      },
+    });
 
-  const countries: CallingCodeCountry[] =
-    res?.data?.getAllCountries.map((c) => ({
-      iso2: c.iso2,
-      name: c.name,
-      flagSvg: c.flagSvg,
-      callingCode: c.callingCode?.code ?? null,
-    })) ?? [];
+    countries =
+      res.data?.getAllCountries.map((c) => ({
+        iso2: c.iso2,
+        name: c.name,
+        flagSvg: c.flagSvg,
+        callingCode: c.callingCode?.code ?? null,
+      })) ?? [];
+  } catch {
+    // The invitation list must remain available while optional calling-code data is unavailable.
+  }
 
   return (
     <Suspense fallback={<RsvpLoading />}>
