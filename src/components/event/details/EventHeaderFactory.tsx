@@ -4,7 +4,9 @@ import EventHeaderA from "@/checkpoint/components/event/details/header/EventHead
 import EventHeaderB from "@/checkpoint/components/event/details/header/EventHeaderB";
 import EventHeaderC from "@/checkpoint/components/event/details/header/EventHeaderC";
 import EventHeaderD from "@/checkpoint/components/event/details/header/EventHeaderD";
+import { UserRoleType } from "@/checkpoint/generated/graphql";
 import type { EventVariant } from "@/checkpoint/hooks/events/useEventVariant";
+import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 
 /**
  * Factory for rendering event headers.
@@ -20,16 +22,23 @@ interface Props {
 }
 
 export default function EventHeaderFactory({ ev, variant }: Props) {
+  const { activeEventId, activeRole } = useActiveEvent();
+  const eventPageData = {
+    ...ev,
+    myRole:
+      ev.myRole ?? (activeEventId === ev.id ? activeRole : undefined) ?? UserRoleType.GUEST,
+  };
+
   switch (variant) {
     case "A":
-      return <EventHeaderA ev={ev} />;
+      return <EventHeaderA ev={eventPageData} />;
     case "B":
-      return <EventHeaderB eventPageData={ev} />;
+      return <EventHeaderB eventPageData={eventPageData} />;
     case "C":
-      return <EventHeaderC eventPageData={ev} />;
+      return <EventHeaderC eventPageData={eventPageData} />;
     case "D":
-      return <EventHeaderD eventPageData={ev} />;
+      return <EventHeaderD eventPageData={eventPageData} />;
     default:
-      return <EventHeaderC eventPageData={ev} />;
+      return <EventHeaderC eventPageData={eventPageData} />;
   }
 }

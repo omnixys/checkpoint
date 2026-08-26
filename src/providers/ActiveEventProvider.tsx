@@ -4,11 +4,8 @@ import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
 import type React from "react";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import type {
-  GetActiveEventQuery,
-  MyEventsQuery,
-  UserRoleType,
-} from "@/checkpoint/generated/graphql";
+import { UserRoleType } from "@/checkpoint/generated/graphql";
+import type { GetActiveEventQuery, MyEventsQuery } from "@/checkpoint/generated/graphql";
 import useEventQuery from "@/checkpoint/hooks/events/useEventQuery";
 import {
   type EventPermissionKey,
@@ -188,14 +185,30 @@ export function ActiveEventProvider({ children }: { children: React.ReactNode })
   }, [myEventList, isAuthenticated, activeEventId, selectEvent]);
 
   /* -------------------------------------------------
-   * Derived role
+   * Derived access and role
    * ------------------------------------------------- */
-  const activeRole = activeEvent?.myRole ?? undefined;
   const activeEventWithAccess = activeEvent as EventWithAccess | undefined;
   const myRoles = useMemo(
     () => accessData?.myEventAccess.roles ?? activeEventWithAccess?.myAccess?.roles ?? [],
     [accessData, activeEventWithAccess],
   );
+  const activeRole = useMemo(() => {
+    if (activeEvent?.myRole) {
+      return activeEvent.myRole;
+    }
+
+    const roleKeys = new Set(myRoles.map((role) => role.key));
+    const highestPriorityRole = [
+      UserRoleType.ADMIN,
+      UserRoleType.SECURITY,
+      UserRoleType.SUPPORT,
+      UserRoleType.DRIVER,
+      UserRoleType.USHER,
+      UserRoleType.GUEST,
+    ].find((role) => roleKeys.has(role));
+
+    return highestPriorityRole;
+  }, [activeEvent?.myRole, myRoles]);
   const myPermissions = useMemo(
     () =>
       uniquePermissions(

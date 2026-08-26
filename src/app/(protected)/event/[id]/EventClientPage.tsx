@@ -2,6 +2,7 @@
 
 import { Box, Stack } from "@mui/material";
 import { useParams } from "next/navigation";
+import { useEffect } from "react";
 import DashboardGrid from "@/checkpoint/components/dashboard/DashboardGrid";
 import EventActions from "@/checkpoint/components/event/details/EventActions";
 import EventHeaderFactory from "@/checkpoint/components/event/details/EventHeaderFactory";
@@ -12,6 +13,7 @@ import RouteGuard from "@/checkpoint/components/guard/RouteGuard";
 import { useEventPage } from "@/checkpoint/hooks/events/useEventPage";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
+import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 
 export default function EventPage() {
   const tCommon = useTypedTranslations("common");
@@ -19,6 +21,13 @@ export default function EventPage() {
 
   const { id } = useParams<{ id: string }>();
   const { isAuthenticated } = useAuth();
+  const { activeEventId, selectEvent } = useActiveEvent();
+
+  useEffect(() => {
+    if (id && id !== activeEventId) {
+      selectEvent(id);
+    }
+  }, [activeEventId, id, selectEvent]);
 
   const {
     activeTab,
