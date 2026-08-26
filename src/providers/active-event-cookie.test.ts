@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   ACTIVE_EVENT_COOKIE_NAME,
   clearActiveEventCookie,
+  readActiveEventCookie,
   serializeActiveEventCookie,
   writeActiveEventCookie,
 } from "./active-event-cookie";
@@ -26,5 +27,17 @@ describe("active-event cookie", () => {
 
     clearActiveEventCookie();
     expect(document.cookie).not.toContain(`${ACTIVE_EVENT_COOKIE_NAME}=`);
+  });
+
+  it("reads the active event ID from the browser cookie", () => {
+    writeActiveEventCookie("evt_1");
+
+    expect(readActiveEventCookie()).toBe("evt_1");
+  });
+
+  it("returns null for an invalid active event cookie", () => {
+    document.cookie = `${ACTIVE_EVENT_COOKIE_NAME}=invalid-json; Path=/`;
+
+    expect(readActiveEventCookie()).toBeNull();
   });
 });

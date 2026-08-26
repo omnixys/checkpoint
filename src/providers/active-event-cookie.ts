@@ -23,6 +23,24 @@ export function writeActiveEventCookie(eventId: string) {
   document.cookie = serializeActiveEventCookie(eventId);
 }
 
+export function readActiveEventCookie(): string | null {
+  if (typeof document === "undefined") {
+    return null;
+  }
+
+  const match = document.cookie.match(new RegExp(`(?:^|; )${ACTIVE_EVENT_COOKIE_NAME}=([^;]*)`));
+  if (!match?.[1]) {
+    return null;
+  }
+
+  try {
+    const value = JSON.parse(decodeURIComponent(match[1])) as { id?: unknown };
+    return typeof value.id === "string" && value.id.trim() ? value.id : null;
+  } catch {
+    return null;
+  }
+}
+
 export function clearActiveEventCookie() {
   if (typeof document === "undefined") {
     return;

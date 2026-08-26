@@ -1,6 +1,7 @@
 import { ApolloLink, HttpLink, Observable } from "@apollo/client";
 import { getAuthContext } from "@/checkpoint/lib/apollo/auth-context";
 import { env } from "@/checkpoint/lib/env";
+import { readActiveEventCookie } from "@/checkpoint/providers/active-event-cookie";
 import { getLogger } from "@/checkpoint/utils/logger";
 import { generateUUID } from "@/checkpoint/utils/ticket/device-utils";
 import { createAppErrorLink } from "./error-link";
@@ -24,6 +25,7 @@ export function createHttpLinkWithMiddleware(getToken: () => string | null): Apo
   const authLink = new ApolloLink((operation, forward) => {
     const token = getToken();
     const context = getAuthContext();
+    const activeEventId = readActiveEventCookie();
     const prevContext = operation.getContext();
 
     const requestId = generateUUID();
@@ -31,6 +33,7 @@ export function createHttpLinkWithMiddleware(getToken: () => string | null): Apo
       ...(prevContext.headers || {}),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       "x-tenant-id": context.tenantId,
+      ...(activeEventId ? { "x-active-event-id": activeEventId } : {}),
       ...(context.actorId ? { "x-actor-id": context.actorId } : {}),
       "x-request-id": requestId,
       "x-correlation-id": requestId,
