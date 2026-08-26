@@ -3,16 +3,16 @@ import { getLogger } from "@/checkpoint/utils/logger";
 const logger = getLogger("Analytics");
 
 /**
- * Fetch a browser analytics token from the same-origin proxy.
- *
- * Telemetry must never break the application: any failure resolves with an
- * empty token, which makes the SDK skip the flush and retry queued events.
+ * Token provider compatible with the @omnixys/analytics-sdk AnalyticsTokenProvider type.
+ * Analytics must not surface token failures as application runtime errors.
  */
-export async function fetchAnalyticsToken(): Promise<string> {
+export async function fetchAnalyticsToken(_request?: { forceRefresh: boolean }): Promise<string> {
   try {
     const response = await fetch("/api/analytics/token", {
       method: "POST",
       credentials: "same-origin",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ publicReference: publicReference() }),
     });
     if (!response.ok) {
       throw new Error(`Analytics token request failed with HTTP ${response.status}`);
@@ -28,4 +28,12 @@ export async function fetchAnalyticsToken(): Promise<string> {
     });
     return "";
   }
+}
+
+function publicReference(): { type: "event"; id: string } | undefined {
+  const location = globalThis.location;
+  if (!location?.pathname.endsWith("/rsvp")) return undefined;
+
+  const eventId = new URLSearchParams(location.search).get("eventId");
+  return eventId ? { type: "event", id: eventId } : undefined;
 }

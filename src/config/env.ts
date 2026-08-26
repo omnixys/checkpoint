@@ -25,6 +25,10 @@ export const env = {
     process.env.NEXT_PUBLIC_BACKEND_SERVER_URL,
     { required: true, transform: toHttpUrl },
   ),
+  ANALYTICS_URL: getEnv("NEXT_PUBLIC_ANALYTICS_URL", process.env.NEXT_PUBLIC_ANALYTICS_URL, {
+    fallback: "http://localhost:8000",
+    transform: toHttpUrl,
+  }),
   BACKEND_WS_URL: getEnv("NEXT_PUBLIC_GRAPHQL_WS_URL", process.env.NEXT_PUBLIC_GRAPHQL_WS_URL, {
     required: true,
     transform: toWsUrl,

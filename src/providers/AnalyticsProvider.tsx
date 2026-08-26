@@ -1,6 +1,7 @@
 "use client";
 
 import { Box, Button, Paper, Typography } from "@mui/material";
+import { AnalyticsTokenManager, FetchAnalyticsTransport } from "@omnixys/analytics-sdk";
 import { type ConsentState, createAnalytics } from "@omnixys/analytics-sdk/browser";
 import { AnalyticsProvider as SdkAnalyticsProvider } from "@omnixys/analytics-sdk/react";
 import { usePathname } from "next/navigation";
@@ -32,18 +33,21 @@ export function CheckpointAnalyticsProvider({
   initialConsent: ConsentState;
 }) {
   const [consent, setConsent] = useState(initialConsent);
-  const [client] = useState(() =>
-    createAnalytics({
+  const [client] = useState(() => {
+    const tokens = new AnalyticsTokenManager(undefined, fetchAnalyticsToken);
+    const boundFetch = fetch.bind(globalThis);
+    return createAnalytics({
       consent: initialConsent,
-      endpoint: env.BACKEND_SERVER_URL,
+      endpoint: env.ANALYTICS_URL,
       flushAt: 10,
       tokenProvider: fetchAnalyticsToken,
+      transport: new FetchAnalyticsTransport(env.ANALYTICS_URL, tokens, boundFetch),
       context: () => ({
         application: "checkpoint",
         path: globalThis.location?.pathname,
       }),
-    }),
-  );
+    });
+  });
 
   const updateConsent = useCallback(
     async (state: ConsentState) => {

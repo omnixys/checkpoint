@@ -11,8 +11,7 @@ vi.mock("next/headers", () => ({
 vi.mock("@/checkpoint/config/env.server", () => ({
   env: {
     IS_PRODUCTION: false,
-    ANALYTICS_API_URL: "http://analytics.local",
-    ANALYTICS_INTERNAL_TOKEN: "test-internal-token",
+    ANALYTICS_URL: "http://gateway.local",
   },
 }));
 
@@ -41,7 +40,7 @@ describe("POST /api/analytics/token", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it("forwards an internal token request and returns the token", async () => {
+  it("forwards authenticated context to the Gateway and returns the token", async () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValue(Response.json({ token: "browser-token", expiresIn: 3600 }));
@@ -55,24 +54,59 @@ describe("POST /api/analytics/token", () => {
     expect(payload).toEqual({ token: "browser-token", expiresIn: 3600 });
 
     expect(fetchMock).toHaveBeenCalledWith(
-      "http://analytics.local/v1/analytics/tokens",
+      "http://gateway.local/v1/analytics/token",
       expect.objectContaining({
         method: "POST",
         headers: expect.objectContaining({
-          "x-internal-token": "test-internal-token",
-          "x-tenant-id": "6e788f7f-c233-4cb8-bbde-c0b855e564be",
+          origin: "http://localhost:3000",
         }),
       }),
     );
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    const body = JSON.parse(
-      (fetchMock.mock.calls[0]![1] as RequestInit).body as string,
-    ) as Record<string, unknown>;
-    expect(body.application).toBe("checkpoint");
-    expect(body.origin).toBe("http://localhost:3000");
-    expect(body.environment).toBe("DEVELOPMENT");
-    expect(body.events).toContain("$pageview");
+    const body = JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string) as Record<
+      string,
+      unknown
+    >;
+    expect(body).toEqual({});
+  });
+
+  it("forwards browser authentication headers to the Gateway", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(Response.json({ token: "browser-token" }));
+    vi.stubGlobal("fetch", fetchMock);
+    headerMap.set("authorization", "Bearer browser-session");
+    headerMap.set("cookie", "checkpoint_session=session-value");
+
+    const response = await POST();
+
+    expect(response.status).toBe(200);
+    expect(fetchMock).toHaveBeenCalledWith(
+      "http://gateway.local/v1/analytics/token",
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          authorization: "Bearer browser-session",
+          cookie: "checkpoint_session=session-value",
+        }),
+      }),
+    );
+  });
+
+  it("forwards a public RSVP event reference", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(Response.json({ token: "browser-token" }));
+    vi.stubGlobal("fetch", fetchMock);
+    const request = new Request("http://localhost:3000/api/analytics/token", {
+      method: "POST",
+      body: JSON.stringify({
+        publicReference: { type: "event", id: "00000000-0000-0000-0000-000000000001" },
+      }),
+    });
+
+    const response = await POST(request);
+
+    expect(response.status).toBe(200);
+    expect(JSON.parse((fetchMock.mock.calls[0]![1] as RequestInit).body as string)).toEqual({
+      publicReference: { type: "event", id: "00000000-0000-0000-0000-000000000001" },
+    });
   });
 
   it("maps upstream failures to a generic 502", async () => {
