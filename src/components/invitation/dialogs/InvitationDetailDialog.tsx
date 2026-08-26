@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useEffect, useState } from "react";
+import InvitationDeleteConfirmDialog from "@/checkpoint/components/invitation/dialogs/InvitationDeleteConfirmDialog";
 import { MotionDialogTransition } from "@/checkpoint/components/motion/MotionDialogTransition";
 import {
   AssignSeatDocument,
@@ -43,6 +44,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
   const [approveSeatOpen, setApproveSeatOpen] = useState(false);
   const [approveSeatId, setApproveSeatId] = useState<string>();
   const [seatQuery, setSeatQuery] = useState("");
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   const [_assignSeat] = useMutation<AssignSeatMutation, AssignSeatMutationVariables>(
     AssignSeatDocument,
@@ -307,16 +309,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                 {tCommon("management")}
               </Typography>
               <Stack direction="row" spacing={2}>
-                <Button
-                  variant="outlined"
-                  color="error"
-                  onClick={() =>
-                    logic
-                      .deleteInvitationMutation({ variables: { id: inv.id } })
-                      .then(() => logic.reload())
-                      .then(() => logic.closeInvitation())
-                  }
-                >
+                <Button variant="outlined" color="error" onClick={() => setDeleteConfirmOpen(true)}>
                   {tCommon("delete")}
                 </Button>
               </Stack>
@@ -491,6 +484,18 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
           </Stack>
         </DialogContent>
       </Dialog>
+
+      <InvitationDeleteConfirmDialog
+        open={deleteConfirmOpen}
+        name={`${inv.firstName ?? ""} ${inv.lastName ?? ""}`.trim()}
+        onCancel={() => setDeleteConfirmOpen(false)}
+        onConfirm={() =>
+          logic
+            .deleteInvitationMutation({ variables: { id: inv.id } })
+            .then(() => logic.reload())
+            .then(() => logic.closeInvitation())
+        }
+      />
     </>
   );
 }

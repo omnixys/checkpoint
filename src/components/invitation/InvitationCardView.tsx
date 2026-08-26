@@ -15,6 +15,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { useState } from "react";
+import InvitationDeleteConfirmDialog from "@/checkpoint/components/invitation/dialogs/InvitationDeleteConfirmDialog";
 import type { InvitationPayload } from "@/checkpoint/generated/graphql";
 import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
@@ -24,6 +25,7 @@ import InvitationStatusChip from "./InvitationStatusChip";
 export default function InvitationCardView({ logic }: { logic: InvitationLogic }) {
   const theme = useTheme();
   const [copiedMap, setCopiedMap] = useState<Record<string, boolean>>({});
+  const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; name: string } | null>(null);
 
   const tInvitation = useTypedTranslations("invitation");
   const tCommon = useTypedTranslations("common");
@@ -165,11 +167,10 @@ export default function InvitationCardView({ logic }: { logic: InvitationLogic }
                   color="error"
                   onClick={(e) => {
                     e.stopPropagation();
-                    logic
-                      .deleteInvitationMutation({
-                        variables: { id: inv.id },
-                      })
-                      .then(() => logic.reload());
+                    setDeleteConfirm({
+                      id: inv.id,
+                      name: `${inv.firstName ?? ""} ${inv.lastName ?? ""}`.trim(),
+                    });
                   }}
                 >
                   <DeleteForeverRoundedIcon />
@@ -179,6 +180,19 @@ export default function InvitationCardView({ logic }: { logic: InvitationLogic }
           </Paper>
         );
       })}
+
+      <InvitationDeleteConfirmDialog
+        open={deleteConfirm !== null}
+        name={deleteConfirm?.name ?? ""}
+        onCancel={() => setDeleteConfirm(null)}
+        onConfirm={() => {
+          if (!deleteConfirm) return;
+          logic
+            .deleteInvitationMutation({ variables: { id: deleteConfirm.id } })
+            .then(() => logic.reload())
+            .then(() => setDeleteConfirm(null));
+        }}
+      />
     </Stack>
   );
 }

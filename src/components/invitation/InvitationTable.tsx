@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useMemo, useState } from "react";
+import InvitationDeleteConfirmDialog from "@/checkpoint/components/invitation/dialogs/InvitationDeleteConfirmDialog";
 import InvitationStatusChip from "@/checkpoint/components/invitation/InvitationStatusChip";
 import type { InvitationPayload } from "@/checkpoint/generated/graphql";
 import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
@@ -44,6 +45,7 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
   const theme = useTheme();
 
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   /** Parent invitations */
   const parents = useMemo(
@@ -101,12 +103,23 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
   };
 
   const handleDelete = async (invitationId: string) => {
-    await logic.deleteInvitationMutation({
-      variables: { id: invitationId },
-    });
+    setDeleteConfirmId(invitationId);
+  };
 
+  const confirmDelete = async () => {
+    if (!deleteConfirmId) return;
+    await logic.deleteInvitationMutation({
+      variables: { id: deleteConfirmId },
+    });
+    setDeleteConfirmId(null);
     await logic.reload();
   };
+
+  const deleteConfirmName = useMemo(() => {
+    if (!deleteConfirmId) return "";
+    const row = invitations.find((inv) => inv.id === deleteConfirmId);
+    return row ? `${row.firstName ?? ""} ${row.lastName ?? ""}`.trim() : "";
+  }, [deleteConfirmId, invitations]);
 
   return (
     <Box sx={{ width: "100%", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
@@ -350,6 +363,13 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
           })}
         </TableBody>
       </Table>
+
+      <InvitationDeleteConfirmDialog
+        open={deleteConfirmId !== null}
+        name={deleteConfirmName}
+        onCancel={() => setDeleteConfirmId(null)}
+        onConfirm={confirmDelete}
+      />
     </Box>
   );
 }

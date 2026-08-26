@@ -78,6 +78,13 @@
     "other": "Andere"
   },
 
+  "deleteConfirm": {
+    "title": "Einladung löschen?",
+    "message": "Möchtest du die Einladung von {name} wirklich dauerhaft löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.",
+    "confirm": "Ja, löschen",
+    "cancel": "Abbrechen"
+  },
+
   "bulk": {
     "approve": "Alle genehmigen ({count})",
     "approve_one": "1 Einladung genehmigen",

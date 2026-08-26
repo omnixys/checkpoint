@@ -55,6 +55,13 @@
   "decline": "Decline",
   "rsvpPath": "/rsvp/{id}",
 
+  "deleteConfirm": {
+    "title": "Delete invitation?",
+    "message": "Are you sure you want to permanently delete the invitation for {name}? This action cannot be undone.",
+    "confirm": "Yes, delete",
+    "cancel": "Cancel"
+  },
+
   "bulk": {
     "approve": "Approve all ({count})",
     "approve_one": "Approve 1 invitation",
