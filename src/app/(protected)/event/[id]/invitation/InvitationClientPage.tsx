@@ -2,7 +2,7 @@
 
 import { Box, useMediaQuery, useTheme } from "@mui/material";
 import { useParams } from "next/navigation";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import RouteGuard from "@/checkpoint/components/guard/RouteGuard";
 import InvitationBulkApproveDialog from "@/checkpoint/components/invitation/dialogs/InvitationBulkApproveDialog";
 import InvitationBulkSendDialog from "@/checkpoint/components/invitation/dialogs/InvitationBulkSendDialog";
@@ -19,6 +19,7 @@ import {
 } from "@/checkpoint/hooks/invitation/useInvitationLogic";
 import { useScrollTopButton } from "@/checkpoint/hooks/invitation/useScrollTopButton";
 import { useScrollHeader } from "@/checkpoint/hooks/useScrollHeader";
+import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
 
 /* ---------------------------------------------------------------------------
@@ -31,8 +32,16 @@ export default function InvitationClientPage({ countries }: { countries: Calling
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
+  const { activeEventId, selectEvent } = useActiveEvent();
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (id && id !== activeEventId) {
+      selectEvent(id);
+    }
+  }, [activeEventId, id, selectEvent]);
+
   const logic: InvitationLogic = useInvitationLogic(id as string);
   const scroll = useScrollHeader({
     scrollRef,
