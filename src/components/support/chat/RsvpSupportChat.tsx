@@ -42,6 +42,7 @@ export default function RsvpSupportChat({ guestName, invitationId }: RsvpSupport
       pendingMessages={pendingMessages}
       sending={sending}
       isCreating={isCreating}
+      currentUserId="guest"
       onSend={sendMessage}
       onRetry={retryMessage}
       messagesLoading={messagesLoading}

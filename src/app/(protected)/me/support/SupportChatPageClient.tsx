@@ -4,9 +4,11 @@ import { alpha, Box, Stack, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
 import SupportChatWidget from "@/checkpoint/components/support/chat/SupportChatWidget";
 import { useSupportChat } from "@/checkpoint/hooks/support/useSupportChat";
+import { useAuth } from "@/checkpoint/providers/AuthProvider";
 
 export default function SupportChatPage() {
   const theme = useTheme();
+  const { currentUser } = useAuth();
   const {
     messages,
     pendingMessages,
@@ -50,6 +52,7 @@ export default function SupportChatPage() {
           pendingMessages={pendingMessages}
           sending={sending}
           isCreating={isCreating}
+          currentUserId={currentUser?.id}
           onSend={sendMessage}
           onRetry={retryMessage}
           messagesLoading={messagesLoading}

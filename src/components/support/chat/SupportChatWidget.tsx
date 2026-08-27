@@ -33,7 +33,7 @@ interface SupportChatWidgetProps {
   sending: boolean;
   isCreating?: boolean;
   guestName?: string;
-  currentUserId?: string;
+  currentUserId?: string | undefined;
   messagesLoading?: boolean;
 }
 

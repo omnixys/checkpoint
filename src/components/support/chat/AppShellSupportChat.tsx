@@ -37,6 +37,7 @@ export default function AppShellSupportChat() {
       pendingMessages={pendingMessages}
       sending={sending}
       isCreating={isCreating}
+      currentUserId={currentUser?.id}
       onSend={sendMessage}
       onRetry={retryMessage}
       messagesLoading={messagesLoading}

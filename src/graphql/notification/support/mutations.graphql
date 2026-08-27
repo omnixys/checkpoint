@@ -1,0 +1,33 @@
+mutation CreateSupportConversation(
+  $eventId: String!
+  $guestName: String!
+  $firstMessage: String!
+  $channel: ConversationChannel!
+  $invitationId: String
+  $guestContact: String
+  $subject: String
+) {
+  createSupportConversation(
+    eventId: $eventId
+    guestName: $guestName
+    firstMessage: $firstMessage
+    channel: $channel
+    invitationId: $invitationId
+    guestContact: $guestContact
+    subject: $subject
+  ) {
+    ...SupportConversationFields
+  }
+}
+
+mutation SendSupportMessage($conversationId: String!, $body: String, $mediaUrl: String) {
+  sendSupportMessage(conversationId: $conversationId, body: $body, mediaUrl: $mediaUrl) {
+    ...SupportMessageFields
+  }
+}
+
+mutation MarkConversationAsRead($conversationId: String!) {
+  markConversationAsRead(conversationId: $conversationId) {
+    ...SupportConversationFields
+  }
+}

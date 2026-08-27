@@ -1,0 +1,51 @@
+fragment SupportConversationFields on SupportConversation {
+  id
+  channel
+  eventId
+  guestName
+  guestContact
+  guestUserId
+  invitationId
+  lastMessageAt
+  lastMessagePreview
+  priority
+  status
+  subject
+  unreadCount
+  assignedTo
+  createdAt
+  updatedAt
+}
+
+fragment SupportMessageFields on SupportMessage {
+  id
+  conversationId
+  fromGuest
+  fromUserId
+  direction
+  body
+  mediaUrl
+  mimeType
+  status
+  channel
+  createdAt
+  readAt
+}
+
+query MySupportConversations {
+  mySupportConversations {
+    ...SupportConversationFields
+  }
+}
+
+query SupportConversationsByEvent($eventId: String!) {
+  supportConversationsByEvent(eventId: $eventId) {
+    ...SupportConversationFields
+  }
+}
+
+query SupportMessages($conversationId: String!, $limit: Float) {
+  supportMessages(conversationId: $conversationId, limit: $limit) {
+    ...SupportMessageFields
+  }
+}
