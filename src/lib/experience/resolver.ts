@@ -21,14 +21,11 @@ export function resolveExperience(
         ? profile.mobileNavigationGroupOrder
         : profile.navigationGroupOrder;
 
-    const permittedFeatures = getFeaturesByPermissions(permissions);
-    const permittedIds = new Set(permittedFeatures.map((f) => f.id));
-    const filteredIds = profileFeatureIds.filter((id) => permittedIds.has(id));
-    const features = getFeaturesByIds(filteredIds);
+    const features = getFeaturesByIds(profileFeatureIds);
 
     return {
       primaryRole: profile.roleId,
-      allowedFeatureIds: filteredIds,
+      allowedFeatureIds: profileFeatureIds,
       navigationGroupOrder,
       dashboardWidgetIds: profile.dashboardWidgetIds ?? [],
       quickActionIds: profile.quickActionIds ?? [],
@@ -48,10 +45,10 @@ export function resolveExperience(
     };
   }
 
-  const minimalFeatures = getFeaturesByIds(["my-dashboard", "my-profile"]);
+  const minimalFeatures = getFeaturesByIds(["my-dashboard", "my-profile", "my-security"]);
   return {
     primaryRole: roleIds[0] ?? "UNKNOWN",
-    allowedFeatureIds: ["my-dashboard", "my-profile"],
+    allowedFeatureIds: ["my-dashboard", "my-profile", "my-security"],
     navigationGroupOrder: ["personal"],
     dashboardWidgetIds: [],
     quickActionIds: [],

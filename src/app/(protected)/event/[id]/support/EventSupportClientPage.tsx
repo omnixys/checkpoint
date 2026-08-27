@@ -61,7 +61,7 @@ export default function EventSupportClientPage() {
     messagesLoading,
     fetchMessages,
     sendMessage,
-  } = useEventSupport(eventId, currentUser?.id);
+  } = useEventSupport(eventId);
 
   const { conversations: unreadConversations, markAsRead } = useConversationUnread(eventId);
 

@@ -16,13 +16,13 @@ import {
   useTheme,
 } from "@mui/material";
 import { motion } from "framer-motion";
-import type { Conversation, SupportChannel } from "@/checkpoint/hooks/support/useEventSupport";
+import type { ConversationView, SupportChannel } from "@/checkpoint/hooks/support/useEventSupport";
 import { getSupportTone } from "../supportTheme";
 
 interface Props {
   channel: SupportChannel;
   selectedId: string | null;
-  conversations: Conversation[];
+  conversations: ConversationView[];
   unreadMap: Map<string, number>;
   onSelect: (id: string) => void;
   onMarkAsRead?: (id: string) => void;
