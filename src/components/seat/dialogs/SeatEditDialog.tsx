@@ -1,13 +1,15 @@
 "use client";
 
 import {
+  Autocomplete,
   Button,
   Dialog,
+  DialogActions,
   DialogContent,
   DialogTitle,
-  MenuItem,
   Stack,
   TextField,
+  Typography,
 } from "@mui/material";
 import React from "react";
 import type {
@@ -15,7 +17,13 @@ import type {
   InvitationPayload,
   SeatPayload,
 } from "@/checkpoint/generated/graphql";
+import { InvitationStatus } from "@/checkpoint/generated/graphql";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import type { GuestType } from "@/checkpoint/types/event.type";
+import {
+  buildSeatAssignmentInput,
+  type SeatAssignmentChoice,
+} from "@/checkpoint/utils/seat/assignment-input";
 
 export default function SeatEditDialog({
   open,
@@ -30,96 +38,122 @@ export default function SeatEditDialog({
   invitationList: InvitationPayload[];
   guestList: GuestType[];
   onClose: () => void;
-  onSave: (input: AssignSeatInput) => void;
+  onSave: (input: AssignSeatInput) => Promise<void>;
 }) {
-  const [invitationId, setInvitationId] = React.useState<string>("");
-  const [guestId, setGuestId] = React.useState<string>("");
-  const [note, setNote] = React.useState<string>("");
+  const t = useTypedTranslations("invitation");
+  const ticketGuestsLabel = t("seatAssignment.ticketGuests");
+  const stagedInvitationsLabel = t("seatAssignment.stagedInvitations");
+  const openInvitationsLabel = t("seatAssignment.openInvitations");
+  type AssignmentOption = {
+    id: string;
+    kind: "guest" | "staged" | "invitation";
+    label: string;
+    group: string;
+  };
 
-  const safeInvitationId =
-    invitationId && invitationList.some((i) => i.id === invitationId) ? invitationId : "";
+  const [assignment, setAssignment] = React.useState<AssignmentOption | null>(null);
+  const [note, setNote] = React.useState<string>("");
+  const [saving, setSaving] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+
+  const options = React.useMemo<AssignmentOption[]>(() => {
+    const guests = guestList.map((guest) => ({
+      id: guest.id,
+      kind: "guest" as const,
+      label:
+        `${guest.personalInfo?.firstName ?? ""} ${guest.personalInfo?.lastName ?? ""}`.trim() ||
+        guest.username,
+      group: ticketGuestsLabel,
+    }));
+    const invitations = invitationList
+      .filter(
+        (invitation) =>
+          invitation.status === InvitationStatus.APPROVAL_STAGED ||
+          invitation.status === InvitationStatus.ACCEPTED ||
+          invitation.status === InvitationStatus.PENDING,
+      )
+      .map((invitation) => {
+        const staged = invitation.status === InvitationStatus.APPROVAL_STAGED;
+        return {
+          id: invitation.id,
+          kind: staged ? ("staged" as const) : ("invitation" as const),
+          label:
+            `${invitation.firstName ?? ""} ${invitation.lastName ?? ""}`.trim() ||
+            invitation.email ||
+            invitation.id,
+          group: staged ? stagedInvitationsLabel : openInvitationsLabel,
+        };
+      });
+    return [...guests, ...invitations];
+  }, [guestList, invitationList, openInvitationsLabel, stagedInvitationsLabel, ticketGuestsLabel]);
 
   React.useEffect(() => {
-    setInvitationId(seat?.invitationId ?? "");
-    setGuestId(seat?.guestId ?? "");
+    const assignedId = seat?.guestId ?? seat?.invitationId;
+    setAssignment(options.find((option) => option.id === assignedId) ?? null);
     setNote(seat?.note ?? "");
-  }, [seat]);
+    setError(null);
+  }, [options, seat]);
+
+  const save = async (clearAssignment = false) => {
+    if (!seat || saving) return;
+    setSaving(true);
+    setError(null);
+    try {
+      const next = clearAssignment ? null : assignment;
+      await onSave(buildSeatAssignmentInput(seat.id, next as SeatAssignmentChoice, note));
+    } catch {
+      setError(t("seatAssignment.conflictError"));
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth={true} maxWidth="sm">
-      <DialogTitle>Gast zuweisen</DialogTitle>
+      <DialogTitle>{t("seatAssignment.title")}</DialogTitle>
 
       <DialogContent>
         {seat ? (
           <Stack spacing={2} sx={{ mt: 1 }}>
             {/* FIXED INFO */}
             <TextField
-              label="Sitzplatz"
-              value={`Section ${seat.section.name} • Tisch ${
-                seat.table?.name
-              } • Sitz ${seat.number ?? "—"}`}
+              label={t("seatAssignment.seat")}
+              value={t("seatAssignment.seatValue", {
+                section: seat.section.name,
+                table: seat.table?.name ?? t("seatAssignment.noTable"),
+                seat: seat.number ?? "—",
+              })}
               disabled={true}
             />
 
-            {/* INVITATION SELECT */}
-            <TextField
-              select={true}
-              label="Einladung"
-              value={safeInvitationId}
-              onChange={(e) => {
-                setInvitationId(e.target.value);
-                setGuestId("");
-              }}
-            >
-              <MenuItem value="">— Keine Einladung —</MenuItem>
-              {invitationList.map((inv) => (
-                <MenuItem key={inv.id} value={inv.id}>
-                  {inv.firstName} {inv.lastName}
-                </MenuItem>
-              ))}
-            </TextField>
-
-            {/* GUEST SELECT */}
-            <TextField
-              select={true}
-              label="Eigener Gast (User)"
-              value={guestId}
-              // disabled={disableGuest}
-              onChange={(e) => {
-                setGuestId(e.target.value);
-                setInvitationId("");
-              }}
-            >
-              <MenuItem value="">— Kein Gast —</MenuItem>
-              {guestList.map((g) => (
-                <MenuItem key={g.id} value={g.id}>
-                  {g.personalInfo?.firstName} {g.personalInfo?.lastName}
-                </MenuItem>
-              ))}
-            </TextField>
+            <Autocomplete
+              options={options}
+              value={assignment}
+              onChange={(_, value) => setAssignment(value)}
+              groupBy={(option) => option.group}
+              getOptionLabel={(option) => option.label}
+              isOptionEqualToValue={(option, value) =>
+                option.id === value.id && option.kind === value.kind
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label={t("seatAssignment.holder")}
+                  placeholder={t("seatAssignment.search")}
+                />
+              )}
+            />
 
             {/* OPTIONAL NOTE */}
             <TextField
-              label="Notiz (optional)"
+              label={t("seatAssignment.note")}
               value={note}
               onChange={(e) => setNote(e.target.value)}
               multiline={true}
               minRows={2}
             />
 
-            <Button
-              variant="contained"
-              onClick={() =>
-                onSave({
-                  seatId: seat.id,
-                  invitationId: invitationId.trim() || null,
-                  guestId: guestId.trim() || null,
-                  note: note.trim() || null,
-                })
-              }
-            >
-              Speichern
-            </Button>
+            {error && <Typography color="error">{error}</Typography>}
           </Stack>
         ) : (
           <Stack
@@ -128,10 +162,25 @@ export default function SeatEditDialog({
               py: 4,
             }}
           >
-            Lade Sitzdaten…
+            {t("seatAssignment.loading")}
           </Stack>
         )}
       </DialogContent>
+      {seat && (
+        <DialogActions>
+          {(seat.guestId || seat.invitationId) && (
+            <Button color="warning" onClick={() => void save(true)} disabled={saving}>
+              {t("seatAssignment.remove")}
+            </Button>
+          )}
+          <Button onClick={onClose} disabled={saving}>
+            {t("seatAssignment.cancel")}
+          </Button>
+          <Button variant="contained" onClick={() => void save()} disabled={saving}>
+            {saving ? t("seatAssignment.saving") : t("seatAssignment.save")}
+          </Button>
+        </DialogActions>
+      )}
     </Dialog>
   );
 }

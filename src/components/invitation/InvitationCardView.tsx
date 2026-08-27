@@ -16,7 +16,8 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import InvitationDeleteConfirmDialog from "@/checkpoint/components/invitation/dialogs/InvitationDeleteConfirmDialog";
-import type { InvitationPayload } from "@/checkpoint/generated/graphql";
+import InvitationSelectionCheckbox from "@/checkpoint/components/invitation/InvitationSelectionCheckbox";
+import { type InvitationPayload, InvitationStatus } from "@/checkpoint/generated/graphql";
 import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
@@ -44,6 +45,7 @@ export default function InvitationCardView({ logic }: { logic: InvitationLogic }
     <Stack spacing={2}>
       {logic.invitations.map((inv) => {
         const copied = copiedMap[inv.id] ?? false;
+        const selected = logic.selected.includes(inv.id);
 
         return (
           <Paper
@@ -53,7 +55,12 @@ export default function InvitationCardView({ logic }: { logic: InvitationLogic }
               p: 2,
               borderRadius: "20px",
               backdropFilter: "blur(16px)",
-              background: alpha(theme.palette.background.paper, 0.8),
+              background: selected
+                ? alpha(theme.palette.primary.main, 0.14)
+                : alpha(theme.palette.background.paper, 0.8),
+              border: `1px solid ${
+                selected ? alpha(theme.palette.primary.main, 0.6) : theme.palette.divider
+              }`,
               boxShadow: theme.shadows[4],
             }}
           >
@@ -66,29 +73,40 @@ export default function InvitationCardView({ logic }: { logic: InvitationLogic }
                   alignItems: { xs: "flex-start", sm: "center" },
                 }}
               >
-                <Stack spacing={0.5}>
-                  <Typography
-                    sx={{
-                      fontWeight: 600,
-                      overflowWrap: "anywhere",
+                <Stack direction="row" spacing={1} sx={{ alignItems: "flex-start" }}>
+                  <InvitationSelectionCheckbox
+                    checked={selected}
+                    onClick={(event) => event.stopPropagation()}
+                    onChange={() => logic.toggleSelect(inv.id)}
+                    slotProps={{
+                      input: { "aria-label": `${inv.firstName} ${inv.lastName} auswählen` },
                     }}
-                  >
-                    {inv.firstName} {inv.lastName}
-                  </Typography>
+                  />
 
-                  {(inv.selectedInvitedBy?.length ?? 0) > 0 && (
-                    <Stack direction="row" spacing={0.5} sx={{ flexWrap: "wrap" }}>
-                      {inv.selectedInvitedBy.map((item) => (
-                        <Chip
-                          key={item}
-                          label={item}
-                          size="small"
-                          variant="outlined"
-                          sx={{ height: 20, fontSize: 11 }}
-                        />
-                      ))}
-                    </Stack>
-                  )}
+                  <Stack spacing={0.5}>
+                    <Typography
+                      sx={{
+                        fontWeight: 600,
+                        overflowWrap: "anywhere",
+                      }}
+                    >
+                      {inv.firstName} {inv.lastName}
+                    </Typography>
+
+                    {(inv.selectedInvitedBy?.length ?? 0) > 0 && (
+                      <Stack direction="row" spacing={0.5} sx={{ flexWrap: "wrap" }}>
+                        {inv.selectedInvitedBy.map((item) => (
+                          <Chip
+                            key={item}
+                            label={item}
+                            size="small"
+                            variant="outlined"
+                            sx={{ height: 20, fontSize: 11 }}
+                          />
+                        ))}
+                      </Stack>
+                    )}
+                  </Stack>
                 </Stack>
 
                 <InvitationStatusChip status={inv.status} rsvp={inv.rsvpChoice ?? undefined} />
@@ -141,27 +159,20 @@ export default function InvitationCardView({ logic }: { logic: InvitationLogic }
 
               {/* ACTIONS */}
               <Stack direction="row" spacing={1}>
-                <IconButton
-                  color="success"
-                  onClick={(e) => {
-                    e.stopPropagation();
-
-                    logic
-                      .approveInvitationMutation({
-                        variables: {
-                          input: {
-                            eventId: inv.eventId,
-                            invitationId: inv.id,
-                            approved: true,
-                            seatId: "",
-                          },
-                        },
-                      })
-                      .then(() => logic.reload());
-                  }}
-                >
-                  <CheckCircleRoundedIcon />
-                </IconButton>
+                {logic.canApprove &&
+                  (inv.status === InvitationStatus.PENDING ||
+                    inv.status === InvitationStatus.ACCEPTED) && (
+                    <IconButton
+                      color="primary"
+                      aria-label={tInvitation("approvalWorkflow.stageOne")}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        void logic.openBulkApproveDialog([inv.id], "stage");
+                      }}
+                    >
+                      <CheckCircleRoundedIcon />
+                    </IconButton>
+                  )}
 
                 <IconButton
                   color="error"

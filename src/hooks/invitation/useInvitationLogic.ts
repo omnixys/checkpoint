@@ -2,16 +2,29 @@
 
 // TODO kein any
 
+import { useMutation } from "@apollo/client/react";
 import { useMemo, useState } from "react";
 import type {
+  AssignSeatMutation,
+  AssignSeatMutationVariables,
   GetGlobalEventInvitationListQuery,
   InvitationPayload,
+  SeatListQuery,
 } from "@/checkpoint/generated/graphql";
+import { AssignSeatDocument } from "@/checkpoint/generated/graphql";
 import useEventTreeQuery from "@/checkpoint/hooks/events/useEventTreeQuery";
 import useInvitationListQuery from "@/checkpoint/hooks/invitation/useInvitationListQuery";
 import useInvitationMutation from "@/checkpoint/hooks/invitation/useInvitationMutation";
 import useSeatListQuery from "@/checkpoint/hooks/seat/useSeatListQuery";
 import { env } from "@/checkpoint/lib/env";
+import { EventPermissionKey } from "@/checkpoint/lib/rbac/event-permissions";
+import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
+import {
+  dispatchApprovalMutation,
+  isFinalizableInvitationStatus,
+  isStageableInvitationStatus,
+  toggleInvitationSelection,
+} from "@/checkpoint/utils/invitation/approval-workflow";
 import { getLogger } from "@/checkpoint/utils/logger";
 import { mapPhoneNumbersToInput } from "@/checkpoint/utils/mapPhoneNumbersToInput";
 
@@ -29,10 +42,13 @@ export interface UserCreatedEntry {
 
 export interface BulkApproveEntry {
   invitationId: string;
-  locale: string;
   eventId: string;
   seatId: string | null;
+  originalSeatId: string | null;
 }
+
+type ApprovalDialogMode = "stage" | "finalize";
+type SeatOption = SeatListQuery["seats"][number] & { label: string };
 
 /* ---------------------------------------------------------------------------
  * Types
@@ -52,6 +68,8 @@ export interface PreviewResponse {
  * ------------------------------------------------------------------------- */
 export function useInvitationLogic(eventId: string) {
   const logger = getLogger("useInvitationLogic");
+  const { can } = useActiveEvent();
+  const canApprove = can(EventPermissionKey.ApproveGuests);
 
   /* -----------------------------------------------------------------------
    * Filters
@@ -70,6 +88,7 @@ export function useInvitationLogic(eventId: string) {
   const [sendOpen, setSendOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
   const [approveOpen, setApproveOpen] = useState(false);
+  const [approvalDialogMode, setApprovalDialogMode] = useState<ApprovalDialogMode>("stage");
   const [activeInvitation, setActiveInvitation] = useState<InvitationPayload | null>(null);
 
   /* -----------------------------------------------------------------------
@@ -85,7 +104,9 @@ export function useInvitationLogic(eventId: string) {
   const [bulkApproveEntries, setBulkApproveEntries] = useState<Record<string, BulkApproveEntry>>(
     {},
   );
-  const [seatOptionsByEventId, setSeatOptionsByEventId] = useState<Record<string, any[]>>({});
+  const [seatOptionsByEventId, setSeatOptionsByEventId] = useState<Record<string, SeatOption[]>>(
+    {},
+  );
 
   /* -----------------------------------------------------------------------
    * Inbox
@@ -117,10 +138,15 @@ export function useInvitationLogic(eventId: string) {
     sendBulkInvitationsMutation,
     bulkApproveMutation,
     bulkApproveMutationLoading,
+    bulkStageMutation,
+    bulkStageMutationLoading,
     createInvitationMutation,
   } = useInvitationMutation();
+  const [assignSeatMutation] = useMutation<AssignSeatMutation, AssignSeatMutationVariables>(
+    AssignSeatDocument,
+  );
 
-  const { getSeatList: loadSeatList } = useSeatListQuery({});
+  const { getSeatList: loadSeatList, seatListRefetch: refetchSeatList } = useSeatListQuery({});
 
   const eventIds = fullEventTree
     ? [fullEventTree.rootEvent.id, ...(fullEventTree.subEvents?.map((s) => s.id) ?? [])]
@@ -203,6 +229,25 @@ export function useInvitationLogic(eventId: string) {
       .filter((invitation): invitation is NonNullable<typeof invitation> => Boolean(invitation));
   }, [bulkApproveIds, invitationById]);
 
+  const selectedInvitations = useMemo(
+    () => selected.map((id) => invitationById.get(id)).filter((invitation) => invitation != null),
+    [invitationById, selected],
+  );
+  const stageableSelectedIds = useMemo(
+    () =>
+      selectedInvitations
+        .filter((invitation) => isStageableInvitationStatus(invitation.status))
+        .map((invitation) => invitation.id),
+    [selectedInvitations],
+  );
+  const finalizableSelectedIds = useMemo(
+    () =>
+      selectedInvitations
+        .filter((invitation) => isFinalizableInvitationStatus(invitation.status))
+        .map((invitation) => invitation.id),
+    [selectedInvitations],
+  );
+
   /* -----------------------------------------------------------------------
    * Filtering
    * --------------------------------------------------------------------- */
@@ -260,9 +305,17 @@ export function useInvitationLogic(eventId: string) {
   /* -----------------------------------------------------------------------
    * Internal Seat Loader
    * --------------------------------------------------------------------- */
-  async function ensureSeatsLoaded(targetEventId: string): Promise<void> {
+  function mapSeatOptions(seats: SeatListQuery["seats"]): SeatOption[] {
+    return seats.map((seat) => ({
+      ...seat,
+      id: seat.id,
+      label: `${seat.section.name} • ${seat.table?.name ?? "—"} • ${seat.number ?? "—"}`,
+    }));
+  }
+
+  async function ensureSeatsLoaded(targetEventId: string): Promise<SeatOption[]> {
     if (seatOptionsByEventId[targetEventId]) {
-      return;
+      return seatOptionsByEventId[targetEventId];
     }
 
     const result = await loadSeatList({
@@ -273,28 +326,33 @@ export function useInvitationLogic(eventId: string) {
 
     const seats = result.data?.seats ?? [];
 
-    const mapped = seats.map((seat) => ({
-      id: seat.id,
-      eventId: seat.eventId,
-      label: seat.label,
-      status: seat.status,
-      note: seat.note,
-      guestId: seat.guestId,
-    }));
+    const mapped = mapSeatOptions(seats);
 
     setSeatOptionsByEventId((prev) => ({
       ...prev,
       [targetEventId]: mapped,
     }));
+
+    return mapped;
+  }
+
+  async function refreshSeats(targetEventIds: string[]) {
+    await Promise.all(
+      [...new Set(targetEventIds)].map(async (targetEventId) => {
+        const result = await refetchSeatList({ eventId: targetEventId });
+        setSeatOptionsByEventId((prev) => ({
+          ...prev,
+          [targetEventId]: mapSeatOptions(result.data?.seats ?? []),
+        }));
+      }),
+    );
   }
 
   /* -----------------------------------------------------------------------
    * General Actions
    * --------------------------------------------------------------------- */
   function toggleSelect(id: string) {
-    setSelected((prev) =>
-      prev.includes(id) ? prev.filter((value) => value !== id) : [...prev, id],
-    );
+    setSelected((prev) => toggleInvitationSelection(prev, id));
   }
 
   function clearSelection() {
@@ -394,7 +452,7 @@ export function useInvitationLogic(eventId: string) {
   /* -----------------------------------------------------------------------
    * Bulk Approve Dialog Actions
    * --------------------------------------------------------------------- */
-  async function openBulkApproveDialog(ids: string[]) {
+  async function openBulkApproveDialog(ids: string[], mode: ApprovalDialogMode = "stage") {
     const selectedInvitations = globalEventInvitationList?.filter((invitation) =>
       ids.includes(invitation.id),
     );
@@ -403,75 +461,35 @@ export function useInvitationLogic(eventId: string) {
       throw new Error("No invitations selected");
     }
 
-    const defaults: Record<string, BulkApproveEntry> = {};
-
-    for (const invitation of selectedInvitations) {
-      defaults[invitation.id] = {
-        invitationId: invitation.id,
-        locale: "en-US",
-        eventId: invitation.eventId,
-        seatId: null,
-      };
-    }
-
-    setBulkApproveIds(ids);
-    setBulkApproveEntries(defaults);
-    setApproveOpen(true);
-
     const uniqueEventIds = Array.from(
       new Set(selectedInvitations.map((invitation) => invitation.eventId)),
     );
-
-    await Promise.all(
-      uniqueEventIds.map(async (targetEventId) => {
-        await ensureSeatsLoaded(targetEventId);
-      }),
+    const loadedSeats = await Promise.all(
+      uniqueEventIds.map((targetEventId) => ensureSeatsLoaded(targetEventId)),
     );
+    const seats = loadedSeats.flat();
+    const defaults: Record<string, BulkApproveEntry> = {};
+
+    for (const invitation of selectedInvitations) {
+      const currentSeatId = seats.find((seat) => seat.invitationId === invitation.id)?.id ?? null;
+      defaults[invitation.id] = {
+        invitationId: invitation.id,
+        eventId: invitation.eventId,
+        seatId: currentSeatId,
+        originalSeatId: currentSeatId,
+      };
+    }
+
+    setApprovalDialogMode(mode);
+    setBulkApproveIds(ids);
+    setBulkApproveEntries(defaults);
+    setApproveOpen(true);
   }
 
   function closeBulkApproveDialog() {
     setApproveOpen(false);
     setBulkApproveIds(null);
     setBulkApproveEntries({});
-  }
-
-  function setBulkApproveLocale(invitationId: string, locale: string) {
-    setBulkApproveEntries((prev) => {
-      const existing = prev[invitationId];
-
-      if (!existing) {
-        return prev;
-      }
-
-      return {
-        ...prev,
-        [invitationId]: {
-          ...existing,
-          locale,
-        },
-      };
-    });
-  }
-
-  async function setBulkApproveEvent(invitationId: string, selectedEventId: string) {
-    await ensureSeatsLoaded(selectedEventId);
-
-    setBulkApproveEntries((prev) => {
-      const existing = prev[invitationId];
-
-      if (!existing) {
-        return prev;
-      }
-
-      return {
-        ...prev,
-        [invitationId]: {
-          ...existing,
-          eventId: selectedEventId,
-          seatId: null,
-        },
-      };
-    });
   }
 
   function setBulkApproveSeat(invitationId: string, seatId: string | null) {
@@ -492,47 +510,59 @@ export function useInvitationLogic(eventId: string) {
     });
   }
 
-  async function bulkApprove(ids?: string[]) {
+  async function persistSeatChoices(effectiveIds: string[]) {
+    for (const invitationId of effectiveIds) {
+      const entry = bulkApproveEntries[invitationId];
+      if (!entry || entry.seatId === entry.originalSeatId) continue;
+
+      if (!entry.seatId && entry.originalSeatId) {
+        await assignSeatMutation({
+          variables: {
+            input: { seatId: entry.originalSeatId, guestId: null, invitationId: null, note: null },
+          },
+        });
+      }
+      if (entry.seatId) {
+        await assignSeatMutation({
+          variables: {
+            input: { seatId: entry.seatId, guestId: null, invitationId, note: null },
+          },
+        });
+      }
+    }
+  }
+
+  async function submitApprovalDialog(ids?: string[]) {
+    const effectiveIds = ids ?? bulkApproveIds ?? [];
+    const affectedEventIds = effectiveIds
+      .map((invitationId) => bulkApproveEntries[invitationId]?.eventId)
+      .filter((targetEventId): targetEventId is string => Boolean(targetEventId));
+
     try {
-      const effectiveIds = ids ?? bulkApproveIds ?? [];
-
-      logger.debug("Bulk approve start", { ids: effectiveIds });
-
       if (effectiveIds.length === 0) {
         throw new Error("No invitations selected");
       }
 
-      const payload = effectiveIds.map((invitationId) => {
-        const entry = bulkApproveEntries[invitationId];
+      await persistSeatChoices(effectiveIds);
 
-        if (!entry) {
-          throw new Error(`Missing bulk approve entry for ${invitationId}`);
-        }
-
-        return {
-          invitationId: entry.invitationId,
-          seatId: entry.seatId ?? null,
-        };
+      await dispatchApprovalMutation(approvalDialogMode, effectiveIds, bulkApproveEntries, {
+        stage: (input) => bulkStageMutation({ variables: { input } }),
+        approve: (input) => bulkApproveMutation({ variables: { input } }),
       });
 
-      await bulkApproveMutation({
-        variables: {
-          input: {
-            invitationIds: payload,
-            approved: true,
-          },
-        },
-      });
-
-      // TODO optimieren
-      // await refetch();
+      await globalEventInvitationListRefetch();
+      await refreshSeats(affectedEventIds);
 
       setApproveOpen(false);
       setBulkApproveIds(null);
       setBulkApproveEntries({});
       setSelected([]);
     } catch (err) {
-      logger.error("Bulk approve failed", err);
+      await Promise.allSettled([
+        globalEventInvitationListRefetch(),
+        refreshSeats(affectedEventIds),
+      ]);
+      logger.error("Approval workflow failed", err);
       throw err;
     }
   }
@@ -680,6 +710,7 @@ export function useInvitationLogic(eventId: string) {
     events: subEvents,
     invitations: filteredInvitations,
     loading: globalEventInvitationListLoading || fullEventTreeLoading,
+    canApprove,
 
     /* filters */
     search,
@@ -703,6 +734,8 @@ export function useInvitationLogic(eventId: string) {
 
     /* selection */
     selected,
+    stageableSelectedIds,
+    finalizableSelectedIds,
     toggleSelect,
     clearSelection,
 
@@ -751,16 +784,15 @@ export function useInvitationLogic(eventId: string) {
 
     /* bulk approve */
     bulkApproveIds,
+    approvalDialogMode,
     bulkApproveEntries,
     bulkApproveInvitationList,
     seatOptionsByEventId,
     openBulkApproveDialog,
     closeBulkApproveDialog,
-    setBulkApproveLocale,
-    setBulkApproveEvent,
     setBulkApproveSeat,
-    bulkApprove,
-    bulkApproveMutationLoading,
+    submitApprovalDialog,
+    approvalMutationLoading: bulkApproveMutationLoading || bulkStageMutationLoading,
 
     /* data */
     reload,

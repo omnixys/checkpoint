@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Button, Stack, useTheme } from "@mui/material";
+import { Box, Button, Stack, Typography, useTheme } from "@mui/material";
 import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
@@ -16,6 +16,10 @@ export default function InvitationBulkBar({ logic }: InvitationBulkBarProps) {
 
   const theme = useTheme();
   const selected = logic.selected;
+  const excludedCount = Math.max(
+    0,
+    selected.length - logic.stageableSelectedIds.length - logic.finalizableSelectedIds.length,
+  );
 
   if (selected.length === 0) {
     return null;
@@ -39,30 +43,57 @@ export default function InvitationBulkBar({ logic }: InvitationBulkBarProps) {
         zIndex: theme.zIndex.modal - 1,
       }}
     >
-      <Stack
-        direction="row"
-        spacing={{ xs: 1, sm: 2 }}
-        sx={{
-          flexWrap: "wrap",
-          justifyContent: "center",
-        }}
-      >
-        <Button
-          variant="contained"
-          onClick={() => {
-            void logic.openBulkApproveDialog(selected);
+      <Stack spacing={1.25} sx={{ alignItems: "center" }}>
+        <Typography variant="caption" color="text.secondary" sx={{ textAlign: "center" }}>
+          {t("approvalWorkflow.selectionSummary", {
+            selected: selected.length,
+            stageable: logic.stageableSelectedIds.length,
+            finalizable: logic.finalizableSelectedIds.length,
+            excluded: excludedCount,
+          })}
+        </Typography>
+
+        <Stack
+          direction="row"
+          spacing={{ xs: 1, sm: 2 }}
+          sx={{
+            flexWrap: "wrap",
+            justifyContent: "center",
           }}
         >
-          {t("bulk.approve", { count: selected.length })}
-        </Button>
+          {logic.canApprove && (
+            <Button
+              variant="contained"
+              disabled={logic.stageableSelectedIds.length === 0}
+              onClick={() => {
+                void logic.openBulkApproveDialog(logic.stageableSelectedIds, "stage");
+              }}
+            >
+              {t("approvalWorkflow.stage", { count: logic.stageableSelectedIds.length })}
+            </Button>
+          )}
 
-        <Button variant="outlined" onClick={() => logic.openBulkSendDialog(selected)}>
-          {t("bulk.send")}
-        </Button>
+          {logic.canApprove && (
+            <Button
+              variant="contained"
+              color="success"
+              disabled={logic.finalizableSelectedIds.length === 0}
+              onClick={() => {
+                void logic.openBulkApproveDialog(logic.finalizableSelectedIds, "finalize");
+              }}
+            >
+              {t("approvalWorkflow.finalize", { count: logic.finalizableSelectedIds.length })}
+            </Button>
+          )}
 
-        <Button variant="outlined" onClick={logic.clearSelection}>
-          {t("bulk.clear")}
-        </Button>
+          <Button variant="outlined" onClick={() => logic.openBulkSendDialog(selected)}>
+            {t("bulk.send")}
+          </Button>
+
+          <Button variant="outlined" onClick={logic.clearSelection}>
+            {t("bulk.clear")}
+          </Button>
+        </Stack>
       </Stack>
     </Box>
   );

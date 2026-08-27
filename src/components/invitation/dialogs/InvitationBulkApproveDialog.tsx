@@ -27,11 +27,7 @@ export default function InvitationBulkApproveDialog({ logic }: InvitationBulkApp
   const theme = useTheme();
   const tInvitation = useTypedTranslations("invitation");
   const tCommon = useTypedTranslations("common");
-
-  const LocaleOptions = [
-    { value: "en-US", label: tCommon("language.en-US") },
-    { value: "de-DE", label: tCommon("language.de-DE") },
-  ];
+  const finalizing = logic.approvalDialogMode === "finalize";
 
   return (
     <Dialog
@@ -40,13 +36,28 @@ export default function InvitationBulkApproveDialog({ logic }: InvitationBulkApp
       fullWidth={true}
       maxWidth="md"
     >
-      <DialogTitle> {tInvitation("bulkApprove.title")}</DialogTitle>
+      <DialogTitle>
+        {finalizing
+          ? tInvitation("approvalWorkflow.finalizeTitle")
+          : tInvitation("approvalWorkflow.stageTitle")}
+      </DialogTitle>
 
       <DialogContent>
         <Stack spacing={2.5} sx={{ pt: 1 }}>
           {logic.bulkApproveInvitationList.map((invitation) => {
             const entry = logic.bulkApproveEntries[invitation.id];
-            const seatOptions = entry ? (logic.seatOptionsByEventId[entry.eventId] ?? []) : [];
+            const seatOptions = entry
+              ? (logic.seatOptionsByEventId[entry.eventId] ?? []).filter(
+                  (seat) =>
+                    ((!seat.guestId && !seat.invitationId) ||
+                      seat.invitationId === invitation.id) &&
+                    !Object.values(logic.bulkApproveEntries).some(
+                      (otherEntry) =>
+                        otherEntry.invitationId !== invitation.id && otherEntry.seatId === seat.id,
+                    ),
+                )
+              : [];
+            const selectedSeat = seatOptions.find((seat) => seat.id === entry?.seatId);
 
             return (
               <Box
@@ -89,50 +100,12 @@ export default function InvitationBulkApproveDialog({ logic }: InvitationBulkApp
                     </Typography> */}
                   </Box>
 
-                  <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
-                    <FormControl fullWidth={true}>
-                      <InputLabel id={`bulk-approve-locale-${invitation.id}`}>
-                        {tInvitation("bulkApprove.locale")}
-                      </InputLabel>
-                      <Select
-                        labelId={`bulk-approve-locale-${invitation.id}`}
-                        label={tInvitation("bulkApprove.locale")}
-                        value={entry?.locale ?? "en-US"}
-                        onChange={(event) =>
-                          logic.setBulkApproveLocale(invitation.id, event.target.value)
-                        }
-                      >
-                        {LocaleOptions.map((locale) => (
-                          <MenuItem key={locale.value} value={locale.value}>
-                            {locale.label}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-
-                    {/* EVENT */}
-                    <FormControl fullWidth={true}>
-                      <InputLabel id={`bulk-approve-event-${invitation.id}`}>
-                        {tInvitation("bulkApprove.event")}
-                      </InputLabel>
-                      <Select
-                        labelId={`bulk-approve-event-${invitation.id}`}
-                        label={tInvitation("bulkApprove.event")}
-                        value={entry?.eventId ?? invitation.eventId}
-                        onChange={async (event) => {
-                          await logic.setBulkApproveEvent(invitation.id, event.target.value);
-                        }}
-                      >
-                        {logic.allEventOptions.map((eventOption) => (
-                          <MenuItem key={eventOption.id} value={eventOption.id}>
-                            {eventOption.name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
+                  <Stack spacing={1.5}>
+                    <Typography variant="body2" color="text.secondary">
+                      {logic.eventNameById[invitation.eventId] ?? invitation.eventName}
+                    </Typography>
 
                     {/* SEAT */}
-                    {/* TODO SELECT optimieren! mit Group und autocomplete */}
                     <FormControl fullWidth={true}>
                       <InputLabel id={`bulk-approve-seat-${invitation.id}`}>
                         {tInvitation("bulkApprove.seat")}
@@ -161,7 +134,7 @@ export default function InvitationBulkApproveDialog({ logic }: InvitationBulkApp
 
                   <Typography variant="caption" color="text.secondary">
                     {tInvitation("bulkApprove.selectedSeat", {
-                      seat: entry?.seatId ?? tCommon("empty"),
+                      seat: selectedSeat?.label ?? tInvitation("bulkApprove.noSeat"),
                     })}
                   </Typography>
                 </Stack>
@@ -182,16 +155,18 @@ export default function InvitationBulkApproveDialog({ logic }: InvitationBulkApp
 
         <Button
           variant="contained"
-          onClick={() => logic.bulkApprove()}
-          disabled={
-            logic.bulkApproveMutationLoading || logic.bulkApproveInvitationList.length === 0
-          }
+          onClick={() => logic.submitApprovalDialog()}
+          disabled={logic.approvalMutationLoading || logic.bulkApproveInvitationList.length === 0}
         >
-          {logic.bulkApproveMutationLoading
-            ? tInvitation("bulkApprove.loading")
-            : tInvitation("bulkApprove.submit", {
-                count: logic.bulkApproveInvitationList.length,
-              })}
+          {logic.approvalMutationLoading
+            ? tInvitation("approvalWorkflow.saving")
+            : finalizing
+              ? tInvitation("approvalWorkflow.finalizeSubmit", {
+                  count: logic.bulkApproveInvitationList.length,
+                })
+              : tInvitation("approvalWorkflow.stageSubmit", {
+                  count: logic.bulkApproveInvitationList.length,
+                })}
         </Button>
       </DialogActions>
     </Dialog>

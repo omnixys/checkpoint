@@ -15,7 +15,6 @@ import RefreshArcButton from "@/checkpoint/components/RefreshArcButton";
 import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
-import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { useDevice } from "@/checkpoint/providers/DeviceProvider";
 import { copyToClipboard } from "@/checkpoint/utils/invitation/link";
 
@@ -31,8 +30,6 @@ export function InvitationHeaderBar({ collapsed, onToggle, logic }: Props) {
   const params = useParams();
   const id = params?.id;
   const eventId = Array.isArray(id) ? id[0] : id;
-  const { currentUser } = useAuth();
-
   const { isMobile } = useDevice();
 
   const copyInvitationLink = async () => {
@@ -255,7 +252,7 @@ export function InvitationHeaderBar({ collapsed, onToggle, logic }: Props) {
               <RefreshArcButton onReload={logic.reload} />
             </Box>
 
-            {currentUser?.role === "ADMIN" && (
+            {logic.canApprove && (
               <Box>
                 <UserCreationInbox logic={logic} />
               </Box>

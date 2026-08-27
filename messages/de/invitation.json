@@ -12,6 +12,7 @@
 
   "statusType": {
     "PENDING": "Ausstehend",
+    "APPROVAL_STAGED": "Vorgemerkt",
     "APPROVED": "Genehmigt",
     "REJECTED": "Abgelehnt",
     "DECLINED": "Abgesagt",
@@ -93,6 +94,38 @@
     "clear": "Auswahl löschen"
   },
 
+  "approvalWorkflow": {
+    "stage": "Vormerken ({count})",
+    "stageOne": "Zur Genehmigung vormerken",
+    "stageTitle": "Genehmigungen vormerken",
+    "stageSubmit": "{count} vormerken",
+    "finalize": "Tickets freigeben ({count})",
+    "finalizeOne": "Genehmigen und Ticket erstellen",
+    "finalizeTitle": "Genehmigungen und Tickets freigeben",
+    "finalizeSubmit": "{count} Tickets erstellen",
+    "selectionSummary": "{selected} ausgewählt · {stageable} vormerkbar · {finalizable} ticketbereit · {excluded} ausgeschlossen",
+    "saving": "Speichere…"
+  },
+
+  "seatAssignment": {
+    "title": "Sitzplatz zuweisen",
+    "seat": "Sitzplatz",
+    "seatValue": "Bereich {section} · Tisch {table} · Sitz {seat}",
+    "noTable": "ohne Tisch",
+    "holder": "Gast oder Einladung",
+    "search": "Namen suchen",
+    "ticketGuests": "Ticket-Gäste",
+    "stagedInvitations": "Vorgemerkte Einladungen",
+    "openInvitations": "Offene Einladungen",
+    "note": "Notiz (optional)",
+    "loading": "Lade Sitzdaten…",
+    "remove": "Zuweisung entfernen",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "saving": "Speichere…",
+    "conflictError": "Der Sitz wurde zwischenzeitlich geändert oder konnte nicht gespeichert werden. Die Sitzdaten wurden neu geladen; bitte Auswahl prüfen und erneut versuchen."
+  },
+
   "createInv": {
     "title": "Neue Einladung",
     "subtitle": "Erstelle einen neuen Gast und verwalte seine Einladung",
@@ -138,6 +171,25 @@
 
     "loading": "Genehmige...",
     "submit": "Alle genehmigen ({count})"
+  },
+
+  "errors": {
+    "RSVP_NOT_SUBMITTED": {
+      "title": "RSVP wurde noch nicht abgegeben",
+      "message": "Dieser Gast hat noch kein RSVP abgegeben. Bitte zuerst das RSVP abgeben lassen, bevor du genehmigst."
+    },
+    "RSVP_NOT_ACCEPTED": {
+      "title": "RSVP nicht angenommen",
+      "message": "Der Gast muss das RSVP annehmen, bevor diese Einladung genehmigt werden kann."
+    },
+    "INVITATION_PREVIEW_FAILED": {
+      "title": "Vorschau der Einladung fehlgeschlagen",
+      "message": "Die Vorschau der Einladung konnte nicht erstellt werden."
+    },
+    "SEAT_ALLOCATION_EXCEEDED": {
+      "title": "Sitzplatzkontingent überschritten",
+      "message": "Die Sitzplatzkapazität für diese Zuordnung ist überschritten."
+    }
   },
 
   "filters": {

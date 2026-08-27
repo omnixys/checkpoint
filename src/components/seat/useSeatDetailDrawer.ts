@@ -25,15 +25,26 @@ export function useSeatDetailDrawer() {
 
     show: (seat: SeatListType) => {
       setSeatId(seat.id);
+      setEditing(false);
       setOpen(true);
+    },
+
+    editSeat: (seat: SeatListType) => {
+      setSeatId(seat.id);
+      setOpen(false);
+      setEditing(true);
     },
 
     close: () => {
       setOpen(false);
       setSeatId(null);
+      setEditing(false);
     },
 
     edit: () => setEditing(true),
-    stopEditing: () => setEditing(false),
+    stopEditing: () => {
+      setEditing(false);
+      setSeatId(null);
+    },
   };
 }

@@ -3,7 +3,6 @@
 import { alpha, Button, Divider, Drawer, Stack, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import type { UserRoleType } from "@/checkpoint/generated/graphql";
 import type { SeatListType } from "@/checkpoint/types/seat.type";
 
 export default function SeatDetailDrawer({
@@ -12,14 +11,14 @@ export default function SeatDetailDrawer({
   onClose,
   onEdit,
   getSeatHolderLabel,
-  role,
+  canEdit,
 }: {
   open: boolean;
   seat: SeatListType | undefined;
   onClose: () => void;
   onEdit: () => void;
   getSeatHolderLabel: (SeatPayload: SeatListType) => string;
-  role: UserRoleType | undefined;
+  canEdit: boolean;
 }) {
   const theme = useTheme();
   const [_seatId, _setSeatId] = useState<string | null>(null);
@@ -62,7 +61,7 @@ export default function SeatDetailDrawer({
 
           <Typography>Bereich: {seat.section?.name ?? "–"}</Typography>
           <Typography>Tisch: {seat.table?.name ?? "–"}</Typography>
-          <Typography>Status: {seat.guestId ? "Besetzt" : "Frei"}</Typography>
+          <Typography>Status: {seat.guestId || seat.invitationId ? "Besetzt" : "Frei"}</Typography>
           {seat.guestId && <Typography>Gast: {fullName(seat)}</Typography>}
 
           {seat.invitationId && <Typography>Einladung: {fullName(seat)}</Typography>}
@@ -71,7 +70,7 @@ export default function SeatDetailDrawer({
 
           <Divider />
 
-          {role && role === "ADMIN" && (
+          {canEdit && (
             <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
               <Button variant="contained" onClick={onEdit}>
                 Bearbeiten

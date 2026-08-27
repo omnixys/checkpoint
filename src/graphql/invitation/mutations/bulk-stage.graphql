@@ -1,0 +1,7 @@
+mutation BulkStageInvitations($input: BulkStageInvitationInput!) {
+  bulkStageInvitations(input: $input) {
+    id
+    status
+    approvedAt
+  }
+}

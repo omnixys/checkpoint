@@ -5,7 +5,6 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   Box,
-  Checkbox,
   Chip,
   IconButton,
   Stack,
@@ -18,9 +17,11 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useMemo, useState } from "react";
 import InvitationDeleteConfirmDialog from "@/checkpoint/components/invitation/dialogs/InvitationDeleteConfirmDialog";
+import InvitationSelectionCheckbox from "@/checkpoint/components/invitation/InvitationSelectionCheckbox";
 import InvitationStatusChip from "@/checkpoint/components/invitation/InvitationStatusChip";
 import type { InvitationPayload } from "@/checkpoint/generated/graphql";
 import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
@@ -37,7 +38,7 @@ type RsvpType = "PRIVATE" | "PUBLIC";
  * Desktop Table view for Invitations
  * - Expand button is isolated from row click
  * - VisionOS-style spring accordion
- * - Bulk select cascades to plus-ones
+ * - Parent and plus-one selection remain independent
  * ------------------------------------------------------------------------- */
 export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
   const t = useTypedTranslations("invitation");
@@ -75,24 +76,6 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
       ...prev,
       [parentId]: !prev[parentId],
     }));
-  };
-
-  /** Bulk select parent + children */
-  const toggleParentWithChildren = (parent: InvitationRow) => {
-    const children = plusOnesByParent[parent.id] ?? [];
-    const ids = [parent.id, ...children.map((child) => child.id)];
-
-    const allSelected = ids.every((id) => selected.includes(id));
-
-    ids.forEach((id) => {
-      if (allSelected && selected.includes(id)) {
-        toggleSelect(id);
-      }
-
-      if (!allSelected && !selected.includes(id)) {
-        toggleSelect(id);
-      }
-    });
   };
 
   const handleCopyLink = async (invitationId: string) => {
@@ -157,6 +140,9 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
                   onClick={() => logic.openInvitation(parent as InvitationPayload)}
                   sx={{
                     cursor: "pointer",
+                    backgroundColor: selected.includes(parent.id)
+                      ? alpha(theme.palette.primary.main, 0.1)
+                      : undefined,
                     transition: "transform .25s ease, box-shadow .25s ease",
                     "&:hover": {
                       transform: "translateY(-2px)",
@@ -166,16 +152,14 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
                 >
                   {/* CHECKBOX */}
                   <TableCell onClick={(event) => event.stopPropagation()}>
-                    <Checkbox
-                      checked={
-                        selected.includes(parent.id) &&
-                        children.every((child) => selected.includes(child.id))
-                      }
-                      indeterminate={
-                        selected.includes(parent.id) &&
-                        children.some((child) => !selected.includes(child.id))
-                      }
-                      onChange={() => toggleParentWithChildren(parent)}
+                    <InvitationSelectionCheckbox
+                      checked={selected.includes(parent.id)}
+                      onChange={() => toggleSelect(parent.id)}
+                      slotProps={{
+                        input: {
+                          "aria-label": `${parent.firstName} ${parent.lastName} auswählen`,
+                        },
+                      }}
                     />
                   </TableCell>
 
@@ -316,6 +300,14 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
                                   cursor: "pointer",
                                   backdropFilter: "blur(8px)",
                                   background: theme.palette.action.hover,
+                                  border: `1px solid ${
+                                    selected.includes(plusOne.id)
+                                      ? alpha(theme.palette.primary.main, 0.55)
+                                      : "transparent"
+                                  }`,
+                                  ...(selected.includes(plusOne.id) && {
+                                    backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                                  }),
                                   "&:hover": {
                                     background: theme.palette.action.selected,
                                   },
@@ -329,10 +321,15 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
                                   }}
                                 >
                                   <Stack direction="row" spacing={1}>
-                                    <Checkbox
+                                    <InvitationSelectionCheckbox
                                       checked={selected.includes(plusOne.id)}
                                       onClick={(event) => event.stopPropagation()}
                                       onChange={() => toggleSelect(plusOne.id)}
+                                      slotProps={{
+                                        input: {
+                                          "aria-label": `${plusOne.firstName} ${plusOne.lastName} auswählen`,
+                                        },
+                                      }}
                                     />
 
                                     <Typography

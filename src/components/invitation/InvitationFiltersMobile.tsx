@@ -18,7 +18,7 @@ import { useMemo, useState } from "react";
 import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
-type StatusType = "PENDING" | "APPROVED" | "REJECTED" | "DECLINED" | "ACCEPTED";
+type StatusType = "PENDING" | "APPROVAL_STAGED" | "APPROVED" | "REJECTED" | "DECLINED" | "ACCEPTED";
 
 export default function InvitationFiltersMobile({ logic }: { logic: InvitationLogic }) {
   const theme = useTheme();
@@ -27,7 +27,14 @@ export default function InvitationFiltersMobile({ logic }: { logic: InvitationLo
 
   const [open, setOpen] = useState(false);
 
-  const statuses: StatusType[] = ["PENDING", "APPROVED", "REJECTED", "DECLINED", "ACCEPTED"];
+  const statuses: StatusType[] = [
+    "PENDING",
+    "APPROVAL_STAGED",
+    "APPROVED",
+    "REJECTED",
+    "DECLINED",
+    "ACCEPTED",
+  ];
 
   const subEvents = logic.subEvents?.filter((child) => logic.rootEventId !== child.id);
 

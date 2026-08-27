@@ -26,7 +26,7 @@ export default function SeatsClientPage() {
   const { id } = useParams();
   const logger = getLogger("SeatsPage");
   const eventId = id as string;
-  const { activeRole, can } = useActiveEvent();
+  const { can } = useActiveEvent();
   const analytics = useAnalytics();
   const canManageSeats = can(EventPermissionKey.ManageSeats);
 
@@ -119,7 +119,11 @@ export default function SeatsClientPage() {
           seatLabel={seatLabel}
           eventId={eventId}
           onSelect={(seat) => {
-            drawer.show(seat); // 🔥 IMMER
+            if (canManageSeats) {
+              drawer.editSeat(seat);
+            } else {
+              drawer.show(seat);
+            }
           }}
           refetch={seatListRefetch}
         />
@@ -130,7 +134,7 @@ export default function SeatsClientPage() {
           onClose={drawer.close}
           onEdit={drawer.edit}
           getSeatHolderLabel={getSeatHolderLabel}
-          role={activeRole}
+          canEdit={canManageSeats}
         />
 
         {drawer.editing && drawer.seatId && guestList && (
@@ -148,6 +152,7 @@ export default function SeatsClientPage() {
                 analytics.track("SeatChangeCompleted", { eventId });
                 drawer.stopEditing();
               } catch (error) {
+                await seatListRefetch();
                 analytics.track("SeatChangeFailed", { errorCode: "ASSIGNMENT_FAILED", eventId });
                 throw error;
               }

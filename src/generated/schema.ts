@@ -7,7 +7,9 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
   DateTime: { input: string; output: string; }
+  /** JSON custom scalar type */
   JSON: { input: unknown; output: unknown; }
 };
 
@@ -208,6 +210,13 @@ export type BulkRenamePayload = {
   affectedTables: Maybe<Scalars['Float']['output']>;
   conflicts: Array<RenameConflict>;
   success: Scalars['Boolean']['output'];
+};
+
+export type BulkStageInvitationInput = {
+  /** Invitations to stage or return to their RSVP-derived status. */
+  invitationIds: Array<StageInvitationDataInput>;
+  /** True stages approval without creating a guest or ticket. */
+  staged: Scalars['Boolean']['input'];
 };
 
 export type CallingCode = {
@@ -1077,6 +1086,7 @@ export type InvitationPayload = {
 
 export enum InvitationStatus {
   ACCEPTED = 'ACCEPTED',
+  APPROVAL_STAGED = 'APPROVAL_STAGED',
   APPROVED = 'APPROVED',
   CANCELED = 'CANCELED',
   DECLINED = 'DECLINED',
@@ -1347,6 +1357,8 @@ export type Mutation = {
   bulkApproveInvitations: Array<InvitationPayload>;
   bulkRenameSections: BulkRenamePayload;
   bulkRenameTables: BulkRenamePayload;
+  /** Stages invitations without creating guests, tickets, or notifications. */
+  bulkStageInvitations: Array<InvitationPayload>;
   cancelNotification: NotificationPayload;
   changeMyPassword: SuccessPayload;
   cloneSection: SectionPayload;
@@ -1618,6 +1630,11 @@ export type MutationBulkRenameSectionsArgs = {
 
 export type MutationBulkRenameTablesArgs = {
   inputs: Array<RenameTableInput>;
+};
+
+
+export type MutationBulkStageInvitationsArgs = {
+  input: BulkStageInvitationInput;
 };
 
 
@@ -3411,6 +3428,10 @@ export type SignUpResultsPayload = {
   password: Scalars['String']['output'];
   userId: Scalars['String']['output'];
   username: Scalars['String']['output'];
+};
+
+export type StageInvitationDataInput = {
+  invitationId: Scalars['ID']['input'];
 };
 
 /**

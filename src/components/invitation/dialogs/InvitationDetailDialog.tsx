@@ -26,6 +26,7 @@ import {
   GetSeatByGuestAndEventDocument,
   type GetSeatByGuestAndEventQuery,
   type GetSeatByGuestAndEventQueryVariables,
+  InvitationStatus,
   SeatsDocument,
   type SeatsQuery,
   type SeatsQueryVariables,
@@ -89,7 +90,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
 
   const freeSeats = allSeats.filter((s) => !s.guestId && !s.note) ?? [];
 
-  const preselectedSeatId = currentSeat?.id ?? allSeats.find((s) => s.invitationId === inv.id)?.id;
+  const _preselectedSeatId = currentSeat?.id ?? allSeats.find((s) => s.invitationId === inv.id)?.id;
 
   const filteredSeats = freeSeats.filter((s) => {
     const q = seatQuery.toLowerCase();
@@ -122,7 +123,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
     await logic.approveInvitationMutation({
       variables: {
         input: {
-          seatId: seatId ?? "",
+          seatId: seatId ?? null,
           eventId: inv.eventId,
           invitationId: inv.id,
           approved,
@@ -131,6 +132,11 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
     });
 
     await logic.reload();
+    logic.closeInvitation();
+  };
+
+  const openApprovalWorkflow = async (mode: "stage" | "finalize") => {
+    await logic.openBulkApproveDialog([inv.id], mode);
     logic.closeInvitation();
   };
 
@@ -187,29 +193,38 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                   flexWrap: "wrap",
                 }}
               >
-                <Button
-                  autoFocus={true}
-                  variant="contained"
-                  onClick={() => approveInvitation(true)}
-                >
-                  {tInvitation("approve")}
-                </Button>
+                {logic.canApprove &&
+                  (inv.status === InvitationStatus.APPROVAL_STAGED ? (
+                    <Button
+                      autoFocus={true}
+                      variant="contained"
+                      color="success"
+                      onClick={() => void openApprovalWorkflow("finalize")}
+                    >
+                      {tInvitation("approvalWorkflow.finalizeOne")}
+                    </Button>
+                  ) : (
+                    (inv.status === InvitationStatus.PENDING ||
+                      inv.status === InvitationStatus.ACCEPTED) && (
+                      <Button
+                        autoFocus={true}
+                        variant="contained"
+                        onClick={() => void openApprovalWorkflow("stage")}
+                      >
+                        {tInvitation("approvalWorkflow.stageOne")}
+                      </Button>
+                    )
+                  ))}
 
-                <Button
-                  variant="contained"
-                  color="success"
-                  disabled={freeSeats.length === 0}
-                  onClick={() => {
-                    setApproveSeatId(preselectedSeatId);
-                    setApproveSeatOpen(true);
-                  }}
-                >
-                  {tInvitation("approveAndSeat")}
-                </Button>
-
-                <Button variant="outlined" color="warning" onClick={() => approveInvitation(false)}>
-                  {tInvitation("decline")}
-                </Button>
+                {logic.canApprove && (
+                  <Button
+                    variant="outlined"
+                    color="warning"
+                    onClick={() => approveInvitation(false)}
+                  >
+                    {tInvitation("decline")}
+                  </Button>
+                )}
               </Stack>
             </Box>
 

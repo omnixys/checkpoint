@@ -9,6 +9,9 @@ import {
   BulkApproveInvitationsDocument,
   type BulkApproveInvitationsMutation,
   type BulkApproveInvitationsMutationVariables,
+  BulkStageInvitationsDocument,
+  type BulkStageInvitationsMutation,
+  type BulkStageInvitationsMutationVariables,
   CreateInvitationDocument,
   type CreateInvitationMutation,
   type CreateInvitationMutationVariables,
@@ -95,6 +98,11 @@ export default function useInvitationMutation() {
     BulkApproveInvitationsMutationVariables
   >(BulkApproveInvitationsDocument);
 
+  const [bulkStageMutation, bulkStageMutationResult] = useMutation<
+    BulkStageInvitationsMutation,
+    BulkStageInvitationsMutationVariables
+  >(BulkStageInvitationsDocument);
+
   return {
     createPlusOneMutation,
     addPlusOnePayload,
@@ -124,5 +132,7 @@ export default function useInvitationMutation() {
 
     bulkApproveMutation,
     bulkApproveMutationLoading: bulkApproveMutationMutationResult.loading,
+    bulkStageMutation,
+    bulkStageMutationLoading: bulkStageMutationResult.loading,
   };
 }

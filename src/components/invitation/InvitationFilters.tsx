@@ -22,14 +22,21 @@ interface InvitationEventFilterOption {
   label: string;
 }
 
-type StatusType = "PENDING" | "APPROVED" | "REJECTED" | "DECLINED" | "ACCEPTED";
+type StatusType = "PENDING" | "APPROVAL_STAGED" | "APPROVED" | "REJECTED" | "DECLINED" | "ACCEPTED";
 
 export default function InvitationFilters({ logic }: { logic: InvitationLogic }) {
   const theme = useTheme();
   const tInvitation = useTypedTranslations("invitation");
   const tCommon = useTypedTranslations("common");
 
-  const statuses: StatusType[] = ["PENDING", "APPROVED", "REJECTED", "DECLINED", "ACCEPTED"];
+  const statuses: StatusType[] = [
+    "PENDING",
+    "APPROVAL_STAGED",
+    "APPROVED",
+    "REJECTED",
+    "DECLINED",
+    "ACCEPTED",
+  ];
 
   const subEvents = logic.subEvents?.filter((child) => logic.rootEventId !== child.id);
 

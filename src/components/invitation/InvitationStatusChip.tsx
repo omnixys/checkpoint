@@ -49,6 +49,16 @@ export default function InvitationStatusChip({
       };
       break;
 
+    case "APPROVAL_STAGED":
+      config = {
+        label: t("statusType.APPROVAL_STAGED"),
+        icon: <CheckRoundedIcon />,
+        color: "info",
+        bg: "rgba(120,90,255,0.18)",
+        border: "1.5px solid rgba(145,110,255,0.58)",
+      };
+      break;
+
     case "ACCEPTED":
       config = {
         label: t("statusType.ACCEPTED"),
