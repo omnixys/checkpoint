@@ -1,22 +1,3 @@
-query RsvpSupportConversation(
-  $invitationId: String!
-  $firstMessage: String!
-  $channel: ConversationChannel!
-) {
-  rsvpSupportConversation(
-    invitationId: $invitationId
-    firstMessage: $firstMessage
-    channel: $channel
-  ) {
-    conversation {
-      ...SupportConversationFields
-    }
-    messages {
-      ...SupportMessageFields
-    }
-  }
-}
-
 query RsvpSupportMessages($invitationId: String!, $limit: Float) {
   rsvpSupportMessages(invitationId: $invitationId, limit: $limit) {
     ...SupportMessageFields

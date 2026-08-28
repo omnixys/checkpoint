@@ -12,6 +12,7 @@ fragment SupportConversationFields on SupportConversation {
   status
   subject
   unreadCount
+  guestUnreadCount
   assignedTo
   createdAt
   updatedAt

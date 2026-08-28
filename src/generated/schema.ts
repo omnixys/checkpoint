@@ -378,6 +378,14 @@ export enum ConversationType {
   SUPPORT = 'SUPPORT'
 }
 
+export type ConversationUnread = {
+  __typename: 'ConversationUnread';
+  conversationId: Scalars['ID']['output'];
+  eventId: Scalars['String']['output'];
+  guestUnreadCount: Scalars['Int']['output'];
+  unreadCount: Scalars['Int']['output'];
+};
+
 /**
  * =====================================================
  * COUNTRY
@@ -768,6 +776,19 @@ export enum EventCategory {
   SPORTS = 'SPORTS',
   WORKSHOP = 'WORKSHOP'
 }
+
+export type EventConversationsUpdate = {
+  __typename: 'EventConversationsUpdate';
+  assignedTo: Maybe<Scalars['String']['output']>;
+  channel: Maybe<Scalars['String']['output']>;
+  conversationId: Scalars['ID']['output'];
+  eventId: Scalars['ID']['output'];
+  guestName: Maybe<Scalars['String']['output']>;
+  guestUnreadCount: Maybe<Scalars['Float']['output']>;
+  kind: Scalars['String']['output'];
+  status: Maybe<Scalars['String']['output']>;
+  unreadCount: Maybe<Scalars['Float']['output']>;
+};
 
 export type EventPayload = {
   __typename: 'EventPayload';
@@ -3040,8 +3061,6 @@ export type QueryQuickReplyArgs = {
 
 
 export type QueryRsvpSupportConversationArgs = {
-  channel: ConversationChannel;
-  firstMessage: Scalars['String']['input'];
   invitationId: Scalars['String']['input'];
 };
 
@@ -3318,7 +3337,7 @@ export enum RsvpChoice {
 
 export type RsvpSupportConversationResult = {
   __typename: 'RsvpSupportConversationResult';
-  conversation: SupportConversation;
+  conversation: Maybe<SupportConversation>;
   messages: Array<SupportMessage>;
 };
 
@@ -3759,13 +3778,37 @@ export type Subregion = {
 
 export type Subscription = {
   __typename: 'Subscription';
+  conversationUnreadUpdated: ConversationUnread;
   conversationUpdated: Conversation;
+  eventConversationsChanged: EventConversationsUpdate;
   messageReceived: Message;
+  rsvpSupportMessageReceived: SupportMessage;
+  supportMessageReceived: SupportMessage;
+};
+
+
+export type SubscriptionConversationUnreadUpdatedArgs = {
+  conversationId: Scalars['String']['input'];
+};
+
+
+export type SubscriptionEventConversationsChangedArgs = {
+  eventId: Scalars['String']['input'];
 };
 
 
 export type SubscriptionMessageReceivedArgs = {
   conversationId: Scalars['ID']['input'];
+};
+
+
+export type SubscriptionRsvpSupportMessageReceivedArgs = {
+  invitationId: Scalars['String']['input'];
+};
+
+
+export type SubscriptionSupportMessageReceivedArgs = {
+  conversationId: Scalars['String']['input'];
 };
 
 /** Generic success response payload used across mutations. Includes a boolean status flag and an optional human-readable message. */
@@ -3786,6 +3829,7 @@ export type SupportConversation = {
   eventId: Scalars['String']['output'];
   guestContact: Maybe<Scalars['String']['output']>;
   guestName: Scalars['String']['output'];
+  guestUnreadCount: Maybe<Scalars['Int']['output']>;
   guestUserId: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   invitationId: Maybe<Scalars['String']['output']>;

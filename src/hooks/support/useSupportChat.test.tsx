@@ -22,10 +22,9 @@ const apollo = vi.hoisted(() => {
   return {
     myConversations: [] as SupportConversation[],
     messages: [] as SupportMessage[],
-    rsvpConversation: null as {
-      conversation: SupportConversation;
-      messages: SupportMessage[];
-    } | null,
+    rsvpMessages: [] as SupportMessage[],
+    authenticatedRealtime: undefined as SupportMessage | undefined,
+    rsvpRealtime: undefined as SupportMessage | undefined,
     currentUser: null as { id: string; username?: string; personalInfo?: unknown } | null,
     activeEventId: undefined as string | undefined,
 
@@ -57,11 +56,9 @@ vi.mock("@apollo/client/react", () => ({
     if (op === "SupportMessages") {
       return { data: { supportMessages: apollo.messages }, loading: false, error: undefined };
     }
-    if (op === "RsvpSupportConversation") {
+    if (op === "RsvpSupportMessages") {
       return {
-        data: apollo.rsvpConversation
-          ? { rsvpSupportConversation: apollo.rsvpConversation }
-          : undefined,
+        data: { rsvpSupportMessages: apollo.rsvpMessages },
         loading: false,
         error: undefined,
       };
@@ -76,6 +73,22 @@ vi.mock("@apollo/client/react", () => ({
     if (op === "MarkConversationAsRead") return [apollo.markReadFn, { loading: false }];
     if (op === "RsvpMarkConversationAsRead") return [apollo.rsvpMarkReadFn, { loading: false }];
     return [vi.fn(), { loading: false }];
+  },
+  useSubscription: (document: { definitions?: Array<{ name?: { value?: string } }> }) => {
+    const op = document.definitions?.[0]?.name?.value;
+    if (op === "SupportMessageReceived") {
+      return {
+        data: apollo.authenticatedRealtime
+          ? { supportMessageReceived: apollo.authenticatedRealtime }
+          : undefined,
+      };
+    }
+    if (op === "RsvpSupportMessageReceived") {
+      return {
+        data: apollo.rsvpRealtime ? { rsvpSupportMessageReceived: apollo.rsvpRealtime } : undefined,
+      };
+    }
+    return { data: undefined };
   },
 }));
 
@@ -98,6 +111,7 @@ function supportConversation(
     status: ConversationStatus.OPEN,
     subject: null,
     unreadCount: 0,
+    guestUnreadCount: 0,
     assignedTo: null,
     closedAt: null,
     createdAt: "2026-01-01T00:00:00Z",
@@ -186,7 +200,9 @@ describe("useSupportChat – authenticated guest flow", () => {
     apollo.activeEventId = "evt-1";
     apollo.myConversations = [];
     apollo.messages = [];
-    apollo.rsvpConversation = null;
+    apollo.rsvpMessages = [];
+    apollo.authenticatedRealtime = undefined;
+    apollo.rsvpRealtime = undefined;
     apollo.createFn.mockReset();
     apollo.sendFn.mockReset();
     apollo.rsvpSendFn.mockReset();
@@ -202,6 +218,8 @@ describe("useSupportChat – authenticated guest flow", () => {
 
     const { result } = renderHook(() => useSupportChat());
 
+    expect(result.current.conversationId).toBe("open-1");
+
     await act(async () => {
       await result.current.sendMessage("afternoon");
     });
@@ -212,6 +230,21 @@ describe("useSupportChat – authenticated guest flow", () => {
         variables: expect.objectContaining({ conversationId: "open-1", body: "afternoon" }),
       }),
     );
+  });
+
+  it("switches to the open conversation of the selected event", () => {
+    apollo.myConversations = [
+      supportConversation("event-1", { eventId: "evt-1" }),
+      supportConversation("event-2", { eventId: "evt-2" }),
+    ];
+
+    const { result, rerender } = renderHook(() => useSupportChat());
+    expect(result.current.conversationId).toBe("event-1");
+
+    apollo.activeEventId = "evt-2";
+    rerender();
+
+    expect(result.current.conversationId).toBe("event-2");
   });
 
   it("creates a new conversation when no open one exists and does not duplicate the first message", async () => {
@@ -278,6 +311,20 @@ describe("useSupportChat – authenticated guest flow", () => {
       await sendPromise!;
     });
   });
+
+  it("shows a support reply from the subscription without reloading", async () => {
+    const { result, rerender } = renderHook(() => useSupportChat({ conversationId: "open-1" }));
+
+    apollo.authenticatedRealtime = supportMessage("live-1", "open-1", {
+      fromGuest: false,
+      body: "Live answer",
+    });
+    rerender();
+
+    expect(result.current.messages.find((message) => message.id === "live-1")?.body).toBe(
+      "Live answer",
+    );
+  });
 });
 
 describe("useSupportChat – RSVP flow", () => {
@@ -286,10 +333,7 @@ describe("useSupportChat – RSVP flow", () => {
     apollo.activeEventId = undefined;
     apollo.myConversations = [];
     apollo.messages = [];
-    apollo.rsvpConversation = {
-      conversation: supportConversation("rsvp-1", { invitationId: "inv-1" }),
-      messages: [supportMessage("m0", "rsvp-1", { fromGuest: true, body: "howdy" })],
-    };
+    apollo.rsvpMessages = [supportMessage("m0", "rsvp-1", { fromGuest: true, body: "howdy" })];
     apollo.rsvpSendFn.mockReset();
     apollo.rsvpSendFn.mockResolvedValue({
       data: { rsvpSendSupportMessage: supportMessage("m1", "rsvp-1", { fromGuest: true }) },
@@ -324,5 +368,18 @@ describe("useSupportChat – RSVP flow", () => {
     );
     expect(apollo.createFn).not.toHaveBeenCalled();
     expect(apollo.sendFn).not.toHaveBeenCalled();
+    expect(result.current.conversationId).toBe("rsvp-1");
+  });
+
+  it("marks RSVP messages with the invitation capability, never the conversation id", async () => {
+    renderHook(() => useSupportChat({ invitationId: "inv-1" }));
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(apollo.rsvpMarkReadFn).toHaveBeenCalledWith({
+      variables: { invitationId: "inv-1" },
+    });
   });
 });

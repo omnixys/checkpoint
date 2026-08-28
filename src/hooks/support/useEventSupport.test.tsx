@@ -15,9 +15,9 @@ const apollo = vi.hoisted(() => ({
   conversations: [] as SupportConversation[],
   messages: [] as SupportMessage[],
   sendMessageResult: undefined as SupportMessage | undefined,
-  createResult: undefined as SupportConversation | undefined,
   refetchConversations: vi.fn(),
-  createdVariables: [] as unknown[],
+  subscriptionMessage: undefined as SupportMessage | undefined,
+  eventChange: undefined as { conversationId: string } | undefined,
 }));
 
 vi.mock("@apollo/client/react", () => ({
@@ -43,15 +43,26 @@ vi.mock("@apollo/client/react", () => ({
         vi.fn().mockResolvedValue({ data: { sendSupportMessage: apollo.sendMessageResult } }),
       ];
     }
-    if (op === "CreateSupportConversation") {
-      return [
-        vi.fn().mockImplementation((options: unknown) => {
-          apollo.createdVariables.push(options);
-          return Promise.resolve({ data: { createSupportConversation: apollo.createResult } });
-        }),
-      ];
+    if (op === "MarkConversationAsRead") {
+      return [vi.fn().mockResolvedValue({ data: { markConversationAsRead: undefined } })];
     }
     return [vi.fn()];
+  },
+  useSubscription: (document: { definitions?: Array<{ name?: { value?: string } }> }) => {
+    const op = document.definitions?.[0]?.name?.value;
+    if (op === "SupportMessageReceived") {
+      return {
+        data: apollo.subscriptionMessage
+          ? { supportMessageReceived: apollo.subscriptionMessage }
+          : undefined,
+      };
+    }
+    if (op === "EventSupportConversationsChanged") {
+      return {
+        data: apollo.eventChange ? { eventConversationsChanged: apollo.eventChange } : undefined,
+      };
+    }
+    return { data: undefined };
   },
 }));
 
@@ -71,6 +82,7 @@ function supportConversation(id: string, channel: ConversationChannel): SupportC
     status: ConversationStatus.OPEN,
     subject: null,
     unreadCount: 0,
+    guestUnreadCount: 0,
     assignedTo: null,
     closedAt: null,
     createdAt: "2026-01-01T00:00:00Z",
@@ -108,9 +120,9 @@ describe("useEventSupport – channel filtering from support domain", () => {
     ];
   });
 
-  it("filters to WHATSAPP conversations by default", () => {
+  it("opens WEBCHAT conversations in the IN_APP tab by default", () => {
     const { result } = renderHook(() => useEventSupport("evt"));
-    expect(result.current.conversations.map((c) => c.id)).toEqual(["wa-1"]);
+    expect(result.current.conversations.map((c) => c.id)).toEqual(["webchat-1"]);
   });
 
   it("maps WEBCHAT conversations to the IN_APP tab", () => {
@@ -132,6 +144,8 @@ describe("useEventSupport – message fetching and sending", () => {
     apollo.conversations = [supportConversation("wa-1", ConversationChannel.WHATSAPP)];
     apollo.messages = [];
     apollo.sendMessageResult = undefined;
+    apollo.subscriptionMessage = undefined;
+    apollo.eventChange = undefined;
     apollo.refetchConversations.mockReset();
     apollo.refetchConversations.mockResolvedValue(undefined);
   });
@@ -163,44 +177,30 @@ describe("useEventSupport – message fetching and sending", () => {
 
     expect(result.current.messages.find((m) => m.id === "sent-1")).toBeDefined();
   });
-});
 
-describe("useEventSupport – createConversation", () => {
-  beforeEach(() => {
-    apollo.conversations = [];
-    apollo.createResult = supportConversation("new", ConversationChannel.WHATSAPP);
-    apollo.createdVariables = [];
-    apollo.refetchConversations.mockReset();
-    apollo.refetchConversations.mockResolvedValue(undefined);
-  });
-
-  it("creates a WhatsApp support conversation and returns its view", async () => {
-    const { result } = renderHook(() => useEventSupport("evt"));
+  it("adds an authorized realtime message without reloading", async () => {
+    const { result, rerender } = renderHook(() => useEventSupport("evt"));
 
     await act(async () => {
-      const conv = await result.current.createConversation("John", "Hi", "WHATSAPP", "+1234");
-      expect(conv?.id).toBe("new");
+      await result.current.fetchMessages("wa-1");
     });
 
-    expect(apollo.createdVariables).toHaveLength(1);
-    const vars = (apollo.createdVariables[0] as { variables?: Record<string, unknown> }).variables;
-    expect(vars).toMatchObject({
-      eventId: "evt",
-      guestName: "John",
-      firstMessage: "Hi",
-      guestContact: "+1234",
+    apollo.subscriptionMessage = supportMessage("realtime-1", "wa-1", "Live guest message");
+    rerender();
+
+    expect(result.current.messages.find((message) => message.id === "realtime-1")?.body).toBe(
+      "Live guest message",
+    );
+  });
+
+  it("refetches the event inbox after an event conversation change", async () => {
+    apollo.eventChange = { conversationId: "new-conversation" };
+    renderHook(() => useEventSupport("evt"));
+
+    await act(async () => {
+      await Promise.resolve();
     });
+
     expect(apollo.refetchConversations).toHaveBeenCalled();
-  });
-
-  it("returns null for non-WhatsApp channels", async () => {
-    const { result } = renderHook(() => useEventSupport("evt"));
-
-    await act(async () => {
-      const conv = await result.current.createConversation("John", "Hi", "EMAIL");
-      expect(conv).toBeNull();
-    });
-
-    expect(apollo.createdVariables).toHaveLength(0);
   });
 });

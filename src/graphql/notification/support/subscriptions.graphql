@@ -1,0 +1,34 @@
+subscription SupportMessageReceived($conversationId: String!) {
+  supportMessageReceived(conversationId: $conversationId) {
+    ...SupportMessageFields
+  }
+}
+
+subscription RsvpSupportMessageReceived($invitationId: String!) {
+  rsvpSupportMessageReceived(invitationId: $invitationId) {
+    ...SupportMessageFields
+  }
+}
+
+subscription SupportConversationUnreadUpdated($conversationId: String!) {
+  conversationUnreadUpdated(conversationId: $conversationId) {
+    conversationId
+    eventId
+    unreadCount
+    guestUnreadCount
+  }
+}
+
+subscription EventSupportConversationsChanged($eventId: String!) {
+  eventConversationsChanged(eventId: $eventId) {
+    eventId
+    conversationId
+    kind
+    status
+    channel
+    guestName
+    unreadCount
+    guestUnreadCount
+    assignedTo
+  }
+}

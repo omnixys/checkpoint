@@ -7,12 +7,10 @@ import { motion } from "framer-motion";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import RouteGuard from "@/checkpoint/components/guard/RouteGuard";
-import { useConversationUnread } from "@/checkpoint/hooks/support/useConversationUnread";
 import { useEventSupport } from "@/checkpoint/hooks/support/useEventSupport";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import type { WorkspaceChannel } from "../_shared";
 import {
-  ConversationUnreadWatcher,
   getChannelColor,
   getChannelLabel,
   getWorkspaceTone,
@@ -61,23 +59,16 @@ export default function EventSupportClientPage() {
     messagesLoading,
     fetchMessages,
     sendMessage,
+    markAsRead,
   } = useEventSupport(eventId);
 
-  const { conversations: unreadConversations, markAsRead } = useConversationUnread(eventId);
-
-  const [unreadMap, setUnreadMap] = useState<Map<string, number>>(new Map());
-
-  useEffect(() => {
-    setUnreadMap(new Map(unreadConversations.map((c) => [c.id, c.unreadCount ?? 0])));
-  }, [unreadConversations]);
-
-  const handleUnreadUpdate = useCallback((conversationId: string, unreadCount: number) => {
-    setUnreadMap((prev) => {
-      const next = new Map(prev);
-      next.set(conversationId, unreadCount);
-      return next;
-    });
-  }, []);
+  const unreadMap = useMemo(
+    () =>
+      new Map(
+        conversations.map((conversation) => [conversation.id, conversation.unreadCount ?? 0]),
+      ),
+    [conversations],
+  );
 
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
@@ -144,7 +135,6 @@ export default function EventSupportClientPage() {
   if (isMobile) {
     return (
       <RouteGuard featureId="support">
-        <ConversationUnreadWatcher conversationId={selectedId} onUpdate={handleUnreadUpdate} />
         <Box
           sx={{
             display: "flex",
@@ -271,7 +261,6 @@ export default function EventSupportClientPage() {
 
   return (
     <RouteGuard featureId="support">
-      <ConversationUnreadWatcher conversationId={selectedId} onUpdate={handleUnreadUpdate} />
       <Box
         sx={{
           minHeight: "100dvh",

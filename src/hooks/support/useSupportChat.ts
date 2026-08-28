@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation, useQuery } from "@apollo/client/react";
+import { useMutation, useQuery, useSubscription } from "@apollo/client/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   type ChannelType,
@@ -15,10 +15,12 @@ import {
   MySupportConversationsDocument,
   RsvpMarkConversationAsReadDocument,
   RsvpSendSupportMessageDocument,
-  RsvpSupportConversationDocument,
+  RsvpSupportMessageReceivedDocument,
+  RsvpSupportMessagesDocument,
   SendSupportMessageDocument,
   type SupportConversation,
   type SupportMessageFieldsFragment,
+  SupportMessageReceivedDocument,
   type SupportMessageStatus,
   SupportMessagesDocument,
 } from "@/checkpoint/generated/graphql";
@@ -113,6 +115,7 @@ export function useSupportChat({
   const [isCreating, setIsCreating] = useState(false);
   const [creationError, setCreationError] = useState<string | null>(null);
   const creatingRef = useRef(false);
+  const lastRealtimeMessageIdRef = useRef<string | null>(null);
 
   const guestName = explicitGuestName ?? currentUserName ?? "Guest";
 
@@ -130,6 +133,22 @@ export function useSupportChat({
     () => (myConversationsData?.mySupportConversations ?? []) as SupportConversation[],
     [myConversationsData],
   );
+  const eventScope = explicitEventId ?? activeEventId;
+
+  useEffect(() => {
+    if (isRsvp || initialConversationId) return;
+    if (!eventScope) {
+      setConversationId(null);
+      return;
+    }
+    const existing = activeConversations.find(
+      (conversation) =>
+        conversation.eventId === eventScope &&
+        conversation.status !== "CLOSED" &&
+        conversation.channel === SUPPORT_CHANNEL,
+    );
+    setConversationId(existing?.id ?? null);
+  }, [activeConversations, eventScope, initialConversationId, isRsvp]);
 
   const messagesQuery = useQuery(SupportMessagesDocument, {
     variables: { conversationId: conversationId ?? "", limit: 100 },
@@ -139,29 +158,29 @@ export function useSupportChat({
   // ------------------------------------------------------------------
   // RSVP flow
   // ------------------------------------------------------------------
-  const rsvpConversationQuery = useQuery(RsvpSupportConversationDocument, {
-    variables: {
-      invitationId: invitationId ?? "",
-      firstMessage: "",
-      channel: SUPPORT_CHANNEL,
-    },
+  const rsvpMessagesQuery = useQuery(RsvpSupportMessagesDocument, {
+    variables: { invitationId: invitationId ?? "", limit: 100 },
     skip: !isRsvp,
   });
   const rsvpMessages = useMemo(
-    () =>
-      (rsvpConversationQuery.data?.rsvpSupportConversation.messages ??
-        []) as SupportMessageFieldsFragment[],
-    [rsvpConversationQuery.data],
-  );
-  const rsvpConversation = useMemo(
-    () => rsvpConversationQuery.data?.rsvpSupportConversation.conversation ?? null,
-    [rsvpConversationQuery.data],
+    () => (rsvpMessagesQuery.data?.rsvpSupportMessages ?? []) as SupportMessageFieldsFragment[],
+    [rsvpMessagesQuery.data],
   );
 
   useEffect(() => {
-    if (!isRsvp || !rsvpConversation) return;
-    setConversationId(rsvpConversation.id);
-  }, [isRsvp, rsvpConversation]);
+    if (!isRsvp || conversationId) return;
+    const existingMessage = rsvpMessages[0];
+    if (existingMessage) setConversationId(existingMessage.conversationId);
+  }, [isRsvp, conversationId, rsvpMessages]);
+
+  const authenticatedRealtime = useSubscription(SupportMessageReceivedDocument, {
+    variables: { conversationId: conversationId ?? "" },
+    skip: isRsvp || !conversationId,
+  });
+  const rsvpRealtime = useSubscription(RsvpSupportMessageReceivedDocument, {
+    variables: { invitationId: invitationId ?? "" },
+    skip: !isRsvp || !invitationId,
+  });
 
   // ------------------------------------------------------------------
   // Mutations
@@ -177,13 +196,35 @@ export function useSupportChat({
   const markAsRead = useCallback(
     (conversationIdToMark: string) => {
       if (isRsvp) {
-        void rsvpMarkMutation[0]({ variables: { invitationId: conversationIdToMark } });
+        if (invitationId) {
+          void rsvpMarkMutation[0]({ variables: { invitationId } });
+        }
       } else {
         void markAsReadMutation({ variables: { conversationId: conversationIdToMark } });
       }
     },
-    [isRsvp, rsvpMarkMutation, markAsReadMutation],
+    [isRsvp, invitationId, rsvpMarkMutation, markAsReadMutation],
   );
+
+  useEffect(() => {
+    const message = isRsvp
+      ? rsvpRealtime.data?.rsvpSupportMessageReceived
+      : authenticatedRealtime.data?.supportMessageReceived;
+    if (!message) return;
+    if (lastRealtimeMessageIdRef.current === message.id) return;
+    lastRealtimeMessageIdRef.current = message.id;
+    setConversationId((current) => current ?? message.conversationId);
+    setRealtimeByConversation((current) => ({
+      ...current,
+      [message.conversationId]: appendMessageById<SupportMessageFieldsFragment>(
+        current[message.conversationId] ?? [],
+        message,
+      ),
+    }));
+    if (!message.fromGuest) {
+      markAsRead(message.conversationId);
+    }
+  }, [isRsvp, rsvpRealtime.data, authenticatedRealtime.data, markAsRead]);
 
   const sendMessage = useCallback(
     async (body: string) => {
@@ -222,6 +263,7 @@ export function useSupportChat({
             return;
           }
           markSent();
+          setConversationId((current) => current ?? message.conversationId);
           setRealtimeByConversation((current) => ({
             ...current,
             [message.conversationId]: appendMessageById<SupportMessageFieldsFragment>(
@@ -238,7 +280,6 @@ export function useSupportChat({
         let creationPersistedFirstMessage = false;
 
         if (!activeConversationId) {
-          const eventScope = explicitEventId ?? activeEventId;
           if (!eventScope) {
             markFailed();
             return;
@@ -327,8 +368,7 @@ export function useSupportChat({
       rsvpSendMutation,
       invitationId,
       conversationId,
-      explicitEventId,
-      activeEventId,
+      eventScope,
       activeConversations,
       guestName,
       createSupportConversationMutation,
@@ -375,8 +415,8 @@ export function useSupportChat({
     sending,
     isCreating,
     creationError,
-    messagesLoading: isRsvp ? rsvpConversationQuery.loading : messagesQuery.loading,
-    messagesError: isRsvp ? rsvpConversationQuery.error : messagesQuery.error,
+    messagesLoading: isRsvp ? rsvpMessagesQuery.loading : messagesQuery.loading,
+    messagesError: isRsvp ? rsvpMessagesQuery.error : messagesQuery.error,
     conversationsLoading,
     myConversations: activeConversations,
     loadMore: () => {},

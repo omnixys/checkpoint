@@ -8,6 +8,7 @@ import {
   type DocumentNode,
   type IntrospectionQuery,
 } from "graphql";
+import { readFile } from "node:fs/promises";
 const schemaEndpoint = toolingEnv.BACKEND_SERVER_URL;
 
 const generatedTypeConfig = {
@@ -128,6 +129,12 @@ async function sanitizeIntrospectionFetch(
 }
 
 async function loadSanitizedSchemaDocument(pointer: string): Promise<DocumentNode> {
+  if (process.env.CODEGEN_OFFLINE === "true") {
+    const cached = JSON.parse(
+      await readFile(new URL("./src/generated/introspection.json", import.meta.url), "utf8"),
+    ) as IntrospectionQuery;
+    return parse(printSchema(buildClientSchema(cached)));
+  }
   const response = await sanitizeIntrospectionFetch(pointer, {
     body: JSON.stringify({ query: getIntrospectionQuery() }),
     headers: {
@@ -177,6 +184,7 @@ const config: CodegenConfig = {
         customFetch: sanitizeIntrospectionFetch,
       },
     },
+    "src/graphql/support-subscriptions.schema.graphql",
   ],
 
   /**
@@ -185,7 +193,7 @@ const config: CodegenConfig = {
    * This enforces a clean architecture where:
    * - Queries, mutations, subscriptions are decoupled from UI
    */
-  documents: ["src/**/*.graphql"],
+  documents: ["src/**/*.graphql", "!src/**/*.schema.graphql"],
 
   generates: {
     /**

@@ -1,0 +1,25 @@
+type ConversationUnread {
+  conversationId: ID!
+  eventId: String!
+  unreadCount: Int!
+  guestUnreadCount: Int!
+}
+
+type EventConversationsUpdate {
+  eventId: ID!
+  conversationId: ID!
+  kind: String!
+  status: String
+  channel: String
+  guestName: String
+  unreadCount: Float
+  guestUnreadCount: Float
+  assignedTo: String
+}
+
+extend type Subscription {
+  supportMessageReceived(conversationId: String!): SupportMessage!
+  rsvpSupportMessageReceived(invitationId: String!): SupportMessage!
+  conversationUnreadUpdated(conversationId: String!): ConversationUnread!
+  eventConversationsChanged(eventId: String!): EventConversationsUpdate!
+}

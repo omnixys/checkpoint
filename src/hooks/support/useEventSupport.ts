@@ -1,16 +1,18 @@
 "use client";
 
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client/react";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useLazyQuery, useMutation, useQuery, useSubscription } from "@apollo/client/react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   type ConversationChannel,
   ConversationChannel as ConversationChannelValue,
-  CreateSupportConversationDocument,
+  EventSupportConversationsChangedDocument,
+  MarkConversationAsReadDocument,
   type Message,
   SendSupportMessageDocument,
   type SupportConversation,
   SupportConversationsByEventDocument,
   type SupportMessageFieldsFragment,
+  SupportMessageReceivedDocument,
   SupportMessagesDocument,
 } from "@/checkpoint/generated/graphql";
 import { appendMessageById, mergeMessagesById } from "@/checkpoint/hooks/internal/message-stream";
@@ -50,13 +52,15 @@ export function useEventSupport(eventId?: string) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const selectedIdRef = useRef(selectedId);
   selectedIdRef.current = selectedId;
-  const [channel, setChannel] = useState<SupportChannel>("WHATSAPP");
+  const [channel, setChannel] = useState<SupportChannel>("IN_APP");
   const [realtimeByConversation, setRealtimeByConversation] = useState<
     Record<string, SupportMessageFieldsFragment[]>
   >({});
   const [fetchedMessages, setFetchedMessages] = useState<
     Record<string, SupportMessageFieldsFragment[]>
   >({});
+  const lastEventChangeRef = useRef<string | null>(null);
+  const lastRealtimeMessageIdRef = useRef<string | null>(null);
 
   const {
     data: conversationsData,
@@ -66,6 +70,15 @@ export function useEventSupport(eventId?: string) {
     variables: { eventId: eventId ?? "" },
     skip: !eventId,
     fetchPolicy: "cache-and-network",
+  });
+
+  const eventChanges = useSubscription(EventSupportConversationsChangedDocument, {
+    variables: { eventId: eventId ?? "" },
+    skip: !eventId,
+  });
+  const selectedMessages = useSubscription(SupportMessageReceivedDocument, {
+    variables: { conversationId: selectedId ?? "" },
+    skip: !selectedId,
   });
 
   const allConversations = (conversationsData?.supportConversationsByEvent ??
@@ -89,7 +102,39 @@ export function useEventSupport(eventId?: string) {
   const [loadMessages, { loading: messagesLoading }] = useLazyQuery(SupportMessagesDocument);
 
   const [sendMessageMutation] = useMutation(SendSupportMessageDocument);
-  const [createSupportConversationMutation] = useMutation(CreateSupportConversationDocument);
+  const [markAsReadMutation] = useMutation(MarkConversationAsReadDocument);
+
+  useEffect(() => {
+    const change = eventChanges.data?.eventConversationsChanged;
+    if (!change) return;
+    const changeKey = `${change.kind}:${change.conversationId}:${change.status}:${change.unreadCount}:${change.guestUnreadCount}:${change.assignedTo}`;
+    if (lastEventChangeRef.current === changeKey) return;
+    lastEventChangeRef.current = changeKey;
+    void refetchConversations();
+  }, [eventChanges.data, refetchConversations]);
+
+  useEffect(() => {
+    const message = selectedMessages.data?.supportMessageReceived;
+    if (!message) return;
+    if (lastRealtimeMessageIdRef.current === message.id) return;
+    lastRealtimeMessageIdRef.current = message.id;
+    setRealtimeByConversation((current) => ({
+      ...current,
+      [message.conversationId]: appendMessageById<SupportMessageFieldsFragment>(
+        current[message.conversationId] ?? [],
+        message,
+      ),
+    }));
+  }, [selectedMessages.data]);
+
+  const markAsRead = useCallback(
+    async (conversationId: string) => {
+      const result = await markAsReadMutation({ variables: { conversationId } });
+      await refetchConversations();
+      return result.data?.markConversationAsRead ?? null;
+    },
+    [markAsReadMutation, refetchConversations],
+  );
 
   const fetchMessages = useCallback(
     async (conversationId: string) => {
@@ -99,9 +144,10 @@ export function useEventSupport(eventId?: string) {
       });
       const msgs = (result.data?.supportMessages ?? []) as SupportMessageFieldsFragment[];
       setFetchedMessages((prev) => ({ ...prev, [conversationId]: msgs }));
+      await markAsRead(conversationId);
       return msgs;
     },
-    [loadMessages],
+    [loadMessages, markAsRead],
   );
 
   const messages = useMemo<Message[]>(() => {
@@ -132,42 +178,6 @@ export function useEventSupport(eventId?: string) {
     [sendMessageMutation],
   );
 
-  const createConversation = useCallback(
-    async (
-      guestName: string,
-      firstMessage: string,
-      createChannel = "WHATSAPP",
-      phoneNumber?: string,
-    ) => {
-      if (createChannel !== "WHATSAPP") return null;
-      const result = await createSupportConversationMutation({
-        variables: {
-          eventId: eventId ?? "",
-          guestName,
-          firstMessage,
-          channel: ConversationChannelValue.WHATSAPP,
-          invitationId: null,
-          guestContact: phoneNumber ?? null,
-          subject: undefined,
-        },
-      });
-      const conv = result.data?.createSupportConversation;
-      await refetchConversations();
-      if (!conv) return null;
-      return {
-        id: conv.id,
-        externalDisplayName: conv.guestName,
-        channel: toWorkspaceChannel(conv.channel),
-        lastMessage: conv.lastMessagePreview ?? null,
-        lastMessageAt: conv.lastMessageAt ?? null,
-        externalAddress: conv.guestContact ?? null,
-        unreadCount: conv.unreadCount ?? 0,
-        status: conv.status,
-      } satisfies ConversationView;
-    },
-    [eventId, createSupportConversationMutation, refetchConversations],
-  );
-
   return {
     conversations,
     conversationsLoading,
@@ -179,8 +189,8 @@ export function useEventSupport(eventId?: string) {
     messagesLoading,
     fetchMessages,
     sendMessage,
+    markAsRead,
     close: async () => null,
-    createConversation,
     refetchAll: useCallback(() => {
       refetchConversations();
     }, [refetchConversations]),
