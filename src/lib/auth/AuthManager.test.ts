@@ -4,6 +4,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AppError, ErrorCode } from "@/checkpoint/errors/app-error";
 import { AuthEventsBus, AuthManager, isDefinitiveAuthFailure } from "./AuthManager";
 
+const realtime = vi.hoisted(() => ({ restart: vi.fn() }));
+
+vi.mock("@/checkpoint/lib/apollo/ws-link", () => ({
+  restartWebSocketTransport: realtime.restart,
+}));
+
 function definitiveMembershipError(): CombinedGraphQLErrors {
   return new CombinedGraphQLErrors({
     errors: [
@@ -124,5 +130,18 @@ describe("AuthManager recovery", () => {
     ).handleRecoveryFailure(definitiveMembershipError());
 
     expect(assign).toHaveBeenCalledWith("/login");
+  });
+
+  it("reconnects subscriptions after login, refresh, and logout cookie changes", async () => {
+    mutate
+      .mockResolvedValueOnce({ data: { credentialsLogin: { success: true } } })
+      .mockResolvedValueOnce({ data: { refresh: { success: true } } })
+      .mockResolvedValueOnce({ data: { logout: true } });
+
+    await AuthManager.login({ username: "guest", password: "secret" });
+    await AuthManager.forceRefresh();
+    await AuthManager.logout();
+
+    expect(realtime.restart).toHaveBeenCalledTimes(3);
   });
 });

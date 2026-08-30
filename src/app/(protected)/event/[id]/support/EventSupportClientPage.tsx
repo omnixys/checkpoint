@@ -8,6 +8,10 @@ import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import RouteGuard from "@/checkpoint/components/guard/RouteGuard";
 import { useEventSupport } from "@/checkpoint/hooks/support/useEventSupport";
+import {
+  realtimeStatusLabel,
+  useRealtimeStatus,
+} from "@/checkpoint/hooks/support/useRealtimeStatus";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import type { WorkspaceChannel } from "../_shared";
 import {
@@ -48,6 +52,8 @@ export default function EventSupportClientPage() {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { id: eventId } = useParams<{ id: string }>();
   const { currentUser } = useAuth();
+  const realtimeStatus = useRealtimeStatus();
+  const realtimeSubtitle = `Guest support workspace · ${realtimeStatusLabel(realtimeStatus)}`;
 
   const {
     conversations,
@@ -146,7 +152,7 @@ export default function EventSupportClientPage() {
         >
           <WorkspaceChannelTabs
             title="Support Center"
-            subtitle="Guest support workspace"
+            subtitle={realtimeSubtitle}
             value={channel}
             onChange={setChannel}
           />
@@ -288,7 +294,7 @@ export default function EventSupportClientPage() {
         >
           <WorkspaceChannelTabs
             title="Support Center"
-            subtitle="Guest support workspace"
+            subtitle={realtimeSubtitle}
             value={channel}
             onChange={setChannel}
           />

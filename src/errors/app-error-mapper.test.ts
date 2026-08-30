@@ -71,4 +71,17 @@ describe("AppErrorMapper", () => {
       { type: "redirect", to: "/error/forbidden" },
     ]);
   });
+
+  it("surfaces RSVP, preview and seat business errors as a dialog", () => {
+    const cases: Array<ErrorCode> = [
+      ErrorCode.RSVP_NOT_SUBMITTED,
+      ErrorCode.RSVP_NOT_ACCEPTED,
+      ErrorCode.INVITATION_PREVIEW_FAILED,
+      ErrorCode.SEAT_ALLOCATION_EXCEEDED,
+    ];
+    for (const code of cases) {
+      const error = new AppError({ code, message: "backend text" });
+      expect(AppErrorMapper.map(error)).toMatchObject([{ type: "dialog", dialog: "error", code }]);
+    }
+  });
 });

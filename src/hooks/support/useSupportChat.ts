@@ -27,6 +27,9 @@ import {
 import { appendMessageById, mergeMessagesById } from "@/checkpoint/hooks/internal/message-stream";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
+import { getLogger } from "@/checkpoint/utils/logger";
+
+const logger = getLogger("SupportChat");
 
 export type { SupportConversation, SupportMessageFieldsFragment as SupportMessage };
 
@@ -181,6 +184,11 @@ export function useSupportChat({
     variables: { invitationId: invitationId ?? "" },
     skip: !isRsvp || !invitationId,
   });
+
+  useEffect(() => {
+    const error = isRsvp ? rsvpRealtime.error : authenticatedRealtime.error;
+    if (error) logger.error("Support subscription failed", error);
+  }, [authenticatedRealtime.error, isRsvp, rsvpRealtime.error]);
 
   // ------------------------------------------------------------------
   // Mutations

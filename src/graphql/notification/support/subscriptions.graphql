@@ -10,15 +10,6 @@ subscription RsvpSupportMessageReceived($invitationId: String!) {
   }
 }
 
-subscription SupportConversationUnreadUpdated($conversationId: String!) {
-  conversationUnreadUpdated(conversationId: $conversationId) {
-    conversationId
-    eventId
-    unreadCount
-    guestUnreadCount
-  }
-}
-
 subscription EventSupportConversationsChanged($eventId: String!) {
   eventConversationsChanged(eventId: $eventId) {
     eventId

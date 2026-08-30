@@ -17,6 +17,9 @@ import {
 } from "@/checkpoint/generated/graphql";
 import { appendMessageById, mergeMessagesById } from "@/checkpoint/hooks/internal/message-stream";
 import { toChatMessage } from "@/checkpoint/hooks/support/useSupportChat";
+import { getLogger } from "@/checkpoint/utils/logger";
+
+const logger = getLogger("EventSupport");
 
 export type { Message, SupportConversation };
 
@@ -80,6 +83,14 @@ export function useEventSupport(eventId?: string) {
     variables: { conversationId: selectedId ?? "" },
     skip: !selectedId,
   });
+
+  useEffect(() => {
+    if (eventChanges.error) logger.error("Conversation subscription failed", eventChanges.error);
+  }, [eventChanges.error]);
+
+  useEffect(() => {
+    if (selectedMessages.error) logger.error("Message subscription failed", selectedMessages.error);
+  }, [selectedMessages.error]);
 
   const allConversations = (conversationsData?.supportConversationsByEvent ??
     []) as SupportConversation[];

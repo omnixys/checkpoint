@@ -1,10 +1,3 @@
-type ConversationUnread {
-  conversationId: ID!
-  eventId: String!
-  unreadCount: Int!
-  guestUnreadCount: Int!
-}
-
 type EventConversationsUpdate {
   eventId: ID!
   conversationId: ID!
@@ -20,6 +13,5 @@ type EventConversationsUpdate {
 extend type Subscription {
   supportMessageReceived(conversationId: String!): SupportMessage!
   rsvpSupportMessageReceived(invitationId: String!): SupportMessage!
-  conversationUnreadUpdated(conversationId: String!): ConversationUnread!
   eventConversationsChanged(eventId: String!): EventConversationsUpdate!
 }

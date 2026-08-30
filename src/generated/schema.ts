@@ -378,14 +378,6 @@ export enum ConversationType {
   SUPPORT = 'SUPPORT'
 }
 
-export type ConversationUnread = {
-  __typename: 'ConversationUnread';
-  conversationId: Scalars['ID']['output'];
-  eventId: Scalars['String']['output'];
-  guestUnreadCount: Scalars['Int']['output'];
-  unreadCount: Scalars['Int']['output'];
-};
-
 /**
  * =====================================================
  * COUNTRY
@@ -3778,17 +3770,11 @@ export type Subregion = {
 
 export type Subscription = {
   __typename: 'Subscription';
-  conversationUnreadUpdated: ConversationUnread;
   conversationUpdated: Conversation;
   eventConversationsChanged: EventConversationsUpdate;
   messageReceived: Message;
   rsvpSupportMessageReceived: SupportMessage;
   supportMessageReceived: SupportMessage;
-};
-
-
-export type SubscriptionConversationUnreadUpdatedArgs = {
-  conversationId: Scalars['String']['input'];
 };
 
 

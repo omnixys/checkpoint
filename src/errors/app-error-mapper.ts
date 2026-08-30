@@ -22,6 +22,11 @@ export class AppErrorMapper {
       }) as UiAction;
 
     switch (error.code) {
+      case ErrorCode.RSVP_NOT_SUBMITTED:
+      case ErrorCode.RSVP_NOT_ACCEPTED:
+      case ErrorCode.INVITATION_PREVIEW_FAILED:
+      case ErrorCode.SEAT_ALLOCATION_EXCEEDED:
+        return [action({ type: "dialog", dialog: "error", message: error.message })];
       case ErrorCode.USER_ALREADY_EXISTS:
       case ErrorCode.USER_EMAIL_ALREADY_EXISTS:
         return [

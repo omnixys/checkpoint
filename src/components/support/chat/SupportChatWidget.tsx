@@ -23,6 +23,10 @@ import {
 } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  realtimeStatusLabel,
+  useRealtimeStatus,
+} from "@/checkpoint/hooks/support/useRealtimeStatus";
 
 interface SupportChatWidgetProps {
   messages: SupportMessage[];
@@ -250,6 +254,7 @@ export default function SupportChatWidget({
   messagesLoading = false,
 }: SupportChatWidgetProps) {
   const theme = useTheme();
+  const realtimeStatus = useRealtimeStatus();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
@@ -403,7 +408,7 @@ export default function SupportChatWidget({
                     fontSize: "0.7rem",
                   }}
                 >
-                  {guestName ?? "Guest"} · Online
+                  {guestName ?? "Guest"} · {realtimeStatusLabel(realtimeStatus)}
                 </Typography>
               </Box>
             </Box>

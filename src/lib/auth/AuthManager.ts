@@ -31,6 +31,7 @@ import { getCookie } from "@/checkpoint/lib/apollo/cookie.utils";
 import type { ApolloClient } from "@apollo/client";
 import { AppError, ErrorCode, normalizeApolloError } from "@/checkpoint/errors/app-error";
 import { env } from "@/checkpoint/lib/env";
+import { restartWebSocketTransport } from "@/checkpoint/lib/apollo/ws-link";
 import { getLogger } from "@/checkpoint/utils/logger";
 
 const logger = getLogger("AuthManager");
@@ -226,6 +227,7 @@ class AuthManagerClass {
      * Emit identity event
      */
     AuthEventsBus.emit("auth:login");
+    restartWebSocketTransport();
   }
 
   /**
@@ -256,6 +258,7 @@ class AuthManagerClass {
      * Session-level event only
      */
     AuthEventsBus.emit("session:refreshed");
+    restartWebSocketTransport();
   }
 
   /**
@@ -282,6 +285,7 @@ class AuthManagerClass {
      * Emit identity event
      */
     AuthEventsBus.emit("auth:logout");
+    restartWebSocketTransport();
   }
 
   /**

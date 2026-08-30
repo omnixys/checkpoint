@@ -382,4 +382,21 @@ describe("useSupportChat – RSVP flow", () => {
       variables: { invitationId: "inv-1" },
     });
   });
+
+  it("shows a support reply received through the RSVP subscription without reloading", async () => {
+    const { result, rerender } = renderHook(() => useSupportChat({ invitationId: "inv-1" }));
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    apollo.rsvpRealtime = supportMessage("agent-reply", "rsvp-1", {
+      fromGuest: false,
+      fromUserId: "support-1",
+      body: "Guten Tag",
+    });
+    rerender();
+
+    expect(result.current.messages.map((message) => message.body)).toEqual(["howdy", "Guten Tag"]);
+  });
 });

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { SnackbarProvider, useSnackbar } from "notistack";
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
+import ErrorCodeDialog from "@/checkpoint/components/error/ErrorCodeDialog";
 import OfflineComponent from "@/checkpoint/components/error/OfflineComponent";
 import RetryComponent from "@/checkpoint/components/error/RetryComponent";
 import SessionExpiredDialog from "@/checkpoint/components/error/SessionExpiredDialog";
@@ -105,14 +106,7 @@ function NotificationRuntime({ children, onError }: NotificationProviderProps) {
         onContinue={continueToLogin}
       />
       {dialog?.action.dialog === "error" && (
-        <RetryComponent
-          open={true}
-          title="Request failed"
-          message={dialog.action.message}
-          requestId={dialog.error.requestId}
-          onRetry={closeDialog}
-          onDismiss={closeDialog}
-        />
+        <ErrorCodeDialog open={true} error={dialog.error} onClose={closeDialog} />
       )}
       {retry?.action.mode === "offline" && (
         <OfflineComponent

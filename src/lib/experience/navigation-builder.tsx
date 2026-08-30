@@ -1,3 +1,4 @@
+import { Badge } from "@mui/material";
 import type { JSX } from "react";
 import { NAVIGATION_GROUPS } from "./groups";
 import type { FeatureDefinition, ResolvedExperience } from "./types";
@@ -15,6 +16,40 @@ export interface GroupedNavItems {
   groupId: string;
   groupLabel: string;
   items: NavItem[];
+}
+
+export function withNavigationBadge(
+  items: NavItem[],
+  tourId: string,
+  badgeCount: number,
+): NavItem[] {
+  if (badgeCount <= 0) return items;
+
+  return items.map((item) =>
+    item.tourId === tourId
+      ? {
+          ...item,
+          icon: (
+            <Badge
+              badgeContent={badgeCount}
+              max={99}
+              overlap="circular"
+              sx={{
+                "& .MuiBadge-badge": {
+                  backgroundColor: "primary.main",
+                  border: "2px solid",
+                  borderColor: "background.paper",
+                  color: "primary.contrastText",
+                  fontWeight: 700,
+                },
+              }}
+            >
+              {item.icon}
+            </Badge>
+          ),
+        }
+      : item,
+  );
 }
 
 function buildPath(feature: FeatureDefinition, activeEventId?: string): string {
