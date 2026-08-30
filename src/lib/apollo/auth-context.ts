@@ -6,7 +6,7 @@ import { env } from "../env";
  * @omnixys/contracts-ts). Kept local: the published contracts package
  * does not export it for the frontend build.
  */
-export const OMNIXYS_TENANT_ID = env.OMNIXYS_TENANT_ID
+export const OMNIXYS_TENANT_ID = env.OMNIXYS_TENANT_ID;
 /**
  * Internal auth context used ONLY for Apollo header injection.
  *
