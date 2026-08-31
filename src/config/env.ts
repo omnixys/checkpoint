@@ -71,5 +71,5 @@ export const env = {
     process.env.NEXT_PUBLIC_OTEL_SAMPLE_RATE,
     { fallback: NODE_ENV === "production" ? "0.1" : "1", transform: toSampleRate },
   ),
-  OMNIXYS_TENANT_ID: getEnv("OMNIXYS_TENANT_ID", process.env.OMNIXYS_TENANT_ID),
+  OMNIXYS_TENANT_ID: getEnv("NEXT_PUBLIC_OMNIXYS_TENANT_ID", process.env.NEXT_PUBLIC_OMNIXYS_TENANT_ID),
 } as const;
