@@ -21,6 +21,7 @@ import { alpha } from "@mui/material/styles";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useMemo, useState } from "react";
 import InvitationDeleteConfirmDialog from "@/checkpoint/components/invitation/dialogs/InvitationDeleteConfirmDialog";
+import InvitationDeliveryChip from "@/checkpoint/components/invitation/InvitationDeliveryChip";
 import InvitationSelectionCheckbox from "@/checkpoint/components/invitation/InvitationSelectionCheckbox";
 import InvitationStatusChip from "@/checkpoint/components/invitation/InvitationStatusChip";
 import type { InvitationPayload } from "@/checkpoint/generated/graphql";
@@ -225,10 +226,16 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
 
                   {/* Status */}
                   <TableCell>
-                    <InvitationStatusChip
-                      status={parent.status}
-                      rsvp={parent.rsvpChoice ?? undefined}
-                    />
+                    <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                      <InvitationStatusChip
+                        status={parent.status}
+                        rsvp={parent.rsvpChoice ?? undefined}
+                      />
+                      <InvitationDeliveryChip
+                        guestProfileId={parent.guestProfileId}
+                        confirmationSentAt={parent.confirmationSentAt}
+                      />
+                    </Stack>
                   </TableCell>
 
                   {/* Link */}

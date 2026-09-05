@@ -3,14 +3,10 @@
   "event": "Event",
   "type": "Type",
   "status": "Status",
-
   "mainEvent": "{name} (Main event)",
-
   "typePrivate": "Private",
   "typePublic": "Public",
-
   "copyRsvp": "Copy RSVP Link",
-
   "statusType": {
     "PENDING": "pending",
     "APPROVAL_STAGED": "Staged",
@@ -20,16 +16,12 @@
     "ACCEPTED": "Accepted",
     "CANCELED": "Canceled"
   },
-
   "title": "Invitations",
   "subtitle": "Manage guests, statuses and invitations",
-
   "backToEvent": "Back to event",
   "create": "Create invitation",
-
   "showFilters": "Show filters",
   "hideFilters": "Hide filters",
-
   "table": {
     "type": "Type",
     "name": "Name",
@@ -39,30 +31,24 @@
     "link": "Link",
     "actions": "Actions"
   },
-
   "copyLink": "Copy link",
   "delete": "Delete invitation",
-
   "rsvpType": {
     "PRIVATE": "Private",
     "PUBLIC": "Public"
   },
-
   "noPhone": "No phone number",
   "noEmail": "No email",
-
   "approve": "Approve",
   "approveAndSeat": "Approve & assign seat",
   "decline": "Decline",
   "rsvpPath": "/rsvp/{id}",
-
   "deleteConfirm": {
     "title": "Delete invitation?",
     "message": "Are you sure you want to permanently delete the invitation for {name}? This action cannot be undone.",
     "confirm": "Yes, delete",
     "cancel": "Cancel"
   },
-
   "bulk": {
     "approve": "Approve all ({count})",
     "approve_one": "Approve 1 invitation",
@@ -70,7 +56,6 @@
     "send": "Send invitations",
     "clear": "Clear selection"
   },
-
   "approvalWorkflow": {
     "stage": "Stage ({count})",
     "stageOne": "Stage for approval",
@@ -83,7 +68,6 @@
     "selectionSummary": "{selected} selected · {stageable} stageable · {finalizable} ticket-ready · {excluded} excluded",
     "saving": "Saving…"
   },
-
   "seatAssignment": {
     "title": "Assign seat",
     "seat": "Seat",
@@ -102,13 +86,10 @@
     "saving": "Saving…",
     "conflictError": "The seat changed in the meantime or could not be saved. Seat data was reloaded; check the selection and try again."
   },
-
   "detail": {
     "title": "{firstName}'s Invitation",
     "shareAndContact": "Share & Contact",
-
     "whatsappMessage": "Hello {firstName}, ich melde mich wegen deiner Einladung.",
-
     "sendWhatsappMessage": "Send WhatsApp message",
     "whatsappInvitation": "Send WhatsApp invitation",
     "rsvpDetails": "RSVP details",
@@ -128,54 +109,38 @@
     "seat": "Seat",
     "other": "Other"
   },
-
   "createInv": {
     "title": "New invitation",
     "subtitle": "Create a new guest and manage their invitation",
-
     "person": "Person",
     "invitation": "Invitation",
-
     "firstName": "First name",
     "lastName": "Last name",
     "email": "Email",
-
     "maxInvitees": "Max. guests",
-
     "invitedBy": "Invited by (optional)",
     "invitedByHelp": "Optional: Who invited this person?",
-
     "noAssignment": "No assignment",
     "unknown": "Unknown",
-
     "creating": "Creating...",
     "submit": "Create invitation"
   },
-
   "bulkSend": {
     "title": "Send invitations",
     "send": "Send"
   },
-
   "bulkApprove": {
     "title": "Approve invitations",
-
     "invitationId": "Invitation ID: {id}",
-
     "locale": "Language",
     "event": "Event",
     "seat": "Seat",
-
     "noSeat": "No seat",
-
     "selectedSeat": "Selected seat label: {seat}",
-
     "empty": "No invitations selected.",
-
     "loading": "Approving...",
     "submit": "Approve all ({count})"
   },
-
   "errors": {
     "RSVP_NOT_SUBMITTED": {
       "title": "RSVP not submitted yet",
@@ -194,7 +159,6 @@
       "message": "The seating capacity for this allocation has been exceeded."
     }
   },
-
   "filters": {
     "title": "Filters",
     "open": "Open filters",
@@ -202,7 +166,6 @@
     "apply": "Apply filters",
     "reset": "Reset filters"
   },
-
   "plusOnes": {
     "title": "Your Plus Ones",
     "subtitle": "Manage all plus-ones for your invitation here. You can add, edit, remove them and optionally see their assigned seat.",
@@ -267,5 +230,21 @@
       "APPROVED": "Approved",
       "UNKNOWN": "Unknown"
     }
+  },
+  "delivery": {
+    "sent": "Sent",
+    "accepted": "Accepted",
+    "notSent": "Not sent"
+  },
+  "resend": {
+    "button": "Resend",
+    "title": "Resend confirmation",
+    "message": "Resend the confirmation request to {count} guest(s)?",
+    "confirm": "Send again ({count})",
+    "cancel": "Cancel",
+    "close": "Close",
+    "completed": "Completed",
+    "summary": "{resent} of {total} sent, {skipped} skipped.",
+    "batch": "Resend ({count})"
   }
 }

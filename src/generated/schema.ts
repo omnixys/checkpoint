@@ -537,6 +537,9 @@ export type CreateSettingsInput = {
   description: InputMaybe<Scalars['String']['input']>;
   dressCode: InputMaybe<Scalars['String']['input']>;
   endsAt: InputMaybe<Scalars['DateTime']['input']>;
+  guestConfirmationMaxResends: InputMaybe<Scalars['Int']['input']>;
+  guestConfirmationReminderEnabled: InputMaybe<Scalars['Boolean']['input']>;
+  guestConfirmationReminderPresets: InputMaybe<Array<GuestReminderPreset>>;
   invitedByOptions: Array<Scalars['String']['input']>;
   isActive: Scalars['Boolean']['input'];
   isPublic: Scalars['Boolean']['input'];
@@ -978,6 +981,12 @@ export type GuestEventSeatInput = {
   guestId: Scalars['ID']['input'];
 };
 
+export enum GuestReminderPreset {
+  HOURS_24_BEFORE = 'HOURS_24_BEFORE',
+  THREE_DAYS_BEFORE = 'THREE_DAYS_BEFORE',
+  WEEK_BEFORE = 'WEEK_BEFORE'
+}
+
 export type GuestSignUpPayload = {
   __typename: 'GuestSignUpPayload';
   message: Maybe<Scalars['String']['output']>;
@@ -1101,6 +1110,8 @@ export type InvitationPayload = {
   approvedAt: Maybe<Scalars['DateTime']['output']>;
   approvedByUserId: Maybe<Scalars['ID']['output']>;
   autoApproveOnAccept: Scalars['Boolean']['output'];
+  confirmationResendCount: Scalars['Int']['output'];
+  confirmationSentAt: Maybe<Scalars['DateTime']['output']>;
   createdAt: Scalars['DateTime']['output'];
   email: Maybe<Scalars['String']['output']>;
   eventEndsAt: Maybe<Scalars['DateTime']['output']>;
@@ -1489,6 +1500,7 @@ export type Mutation = {
   replyInvitation: InvitationPayload;
   requestAnalyticsReplay: ReplayJobPayload;
   requestPasswordReset: Scalars['Boolean']['output'];
+  resendGuestConfirmations: ResendGuestConfirmationsPayload;
   /** Revoke a ticket (security or admin) */
   revokeTicket: TicketPayload;
   revokeWebAuthnCredential: Scalars['Boolean']['output'];
@@ -2101,6 +2113,11 @@ export type MutationRequestAnalyticsReplayArgs = {
 
 export type MutationRequestPasswordResetArgs = {
   email: Scalars['String']['input'];
+};
+
+
+export type MutationResendGuestConfirmationsArgs = {
+  invitationIds: Array<Scalars['ID']['input']>;
 };
 
 
@@ -3310,6 +3327,21 @@ export type ReplayJobPayload = {
   status: Scalars['String']['output'];
 };
 
+export type ResendGuestConfirmationItem = {
+  __typename: 'ResendGuestConfirmationItem';
+  invitationId: Scalars['ID']['output'];
+  reason: Maybe<Scalars['String']['output']>;
+  resent: Scalars['Boolean']['output'];
+};
+
+export type ResendGuestConfirmationsPayload = {
+  __typename: 'ResendGuestConfirmationsPayload';
+  resent: Scalars['Int']['output'];
+  results: Array<ResendGuestConfirmationItem>;
+  skipped: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
+};
+
 export type ResetVerificationPayload = {
   __typename: 'ResetVerificationPayload';
   mfaMethod: MfaPreference;
@@ -3648,6 +3680,9 @@ export type SettingsPayload = {
   description: Maybe<Scalars['String']['output']>;
   dressCode: Maybe<Scalars['String']['output']>;
   endsAt: Scalars['DateTime']['output'];
+  guestConfirmationMaxResends: Maybe<Scalars['Int']['output']>;
+  guestConfirmationReminderEnabled: Scalars['Boolean']['output'];
+  guestConfirmationReminderPresets: Array<GuestReminderPreset>;
   id: Scalars['ID']['output'];
   invitedByOptions: Array<Scalars['String']['output']>;
   isActive: Scalars['Boolean']['output'];
@@ -4087,6 +4122,9 @@ export type UpdateSettingsInput = {
   description: InputMaybe<Scalars['String']['input']>;
   dressCode: InputMaybe<Scalars['String']['input']>;
   endsAt: InputMaybe<Scalars['DateTime']['input']>;
+  guestConfirmationMaxResends: InputMaybe<Scalars['Int']['input']>;
+  guestConfirmationReminderEnabled: InputMaybe<Scalars['Boolean']['input']>;
+  guestConfirmationReminderPresets: InputMaybe<Array<GuestReminderPreset>>;
   invitedByOptions: InputMaybe<Array<Scalars['String']['input']>>;
   isActive: InputMaybe<Scalars['Boolean']['input']>;
   isPublic: InputMaybe<Scalars['Boolean']['input']>;

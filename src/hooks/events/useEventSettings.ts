@@ -84,6 +84,9 @@ const DEFAULT_SETTINGS: CreateSettingsInput = {
   ticketReleaseAt: null,
   visibleTabs: [EventVisibleTab.TIMELINE, EventVisibleTab.DETAILS, EventVisibleTab.MAP],
   seatColorGroups: null,
+  guestConfirmationReminderEnabled: true,
+  guestConfirmationReminderPresets: null,
+  guestConfirmationMaxResends: null,
 };
 
 /**

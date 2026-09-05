@@ -7,7 +7,15 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 
-type TabKey = "meta" | "settings" | "timeline" | "roles" | "tabs" | "address" | "seatColors";
+type TabKey =
+  | "meta"
+  | "settings"
+  | "timeline"
+  | "roles"
+  | "tabs"
+  | "seatColors"
+  | "address"
+  | "reminder";
 
 /**
  * Layout wrapper using tabs
@@ -78,6 +86,7 @@ export default function EventSettingsLayout({
           <Tab value="tabs" label="Tabs" />
           <Tab value="seatColors" label="Seat Colors" />
           <Tab value="address" label="Address" />
+          <Tab value="reminder" label="Confirmation Reminder" />
         </Tabs>
       </Stack>
 

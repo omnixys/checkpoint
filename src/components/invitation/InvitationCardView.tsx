@@ -21,6 +21,7 @@ import { type InvitationPayload, InvitationStatus } from "@/checkpoint/generated
 import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
+import InvitationDeliveryChip from "./InvitationDeliveryChip";
 import InvitationStatusChip from "./InvitationStatusChip";
 
 export default function InvitationCardView({ logic }: { logic: InvitationLogic }) {
@@ -109,7 +110,13 @@ export default function InvitationCardView({ logic }: { logic: InvitationLogic }
                   </Stack>
                 </Stack>
 
-                <InvitationStatusChip status={inv.status} rsvp={inv.rsvpChoice ?? undefined} />
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                  <InvitationStatusChip status={inv.status} rsvp={inv.rsvpChoice ?? undefined} />
+                  <InvitationDeliveryChip
+                    guestProfileId={inv.guestProfileId}
+                    confirmationSentAt={inv.confirmationSentAt}
+                  />
+                </Stack>
               </Stack>
 
               {/* CONTACT */}

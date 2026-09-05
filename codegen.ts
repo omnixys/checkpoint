@@ -185,6 +185,9 @@ const config: CodegenConfig = {
       },
     },
     "src/graphql/support-subscriptions.schema.graphql",
+    ...(process.env.CODEGEN_OFFLINE === "true"
+      ? ["src/graphql/guest-confirmation.overlay.schema.graphql"]
+      : []),
   ],
 
   /**

@@ -109,6 +109,16 @@ export function useInvitationLogic(eventId: string) {
   );
 
   /* -----------------------------------------------------------------------
+   * Bulk Resend State
+   * --------------------------------------------------------------------- */
+  const [resendIds, setResendIds] = useState<string[] | null>(null);
+  const [resendResult, setResendResult] = useState<{
+    total: number;
+    resent: number;
+    skipped: number;
+  } | null>(null);
+
+  /* -----------------------------------------------------------------------
    * Inbox
    * --------------------------------------------------------------------- */
   const [createdUsers, setCreatedUsers] = useState<UserCreatedEntry[]>([]);
@@ -141,6 +151,8 @@ export function useInvitationLogic(eventId: string) {
     bulkStageMutation,
     bulkStageMutationLoading,
     createInvitationMutation,
+    resendGuestConfirmationsMutation,
+    resendGuestConfirmationsLoading,
   } = useInvitationMutation();
   const [assignSeatMutation] = useMutation<AssignSeatMutation, AssignSeatMutationVariables>(
     AssignSeatDocument,
@@ -244,6 +256,18 @@ export function useInvitationLogic(eventId: string) {
     () =>
       selectedInvitations
         .filter((invitation) => isFinalizableInvitationStatus(invitation.status))
+        .map((invitation) => invitation.id),
+    [selectedInvitations],
+  );
+
+  const resendableSelectedIds = useMemo(
+    () =>
+      selectedInvitations
+        .filter(
+          (invitation) =>
+            !invitation.guestProfileId &&
+            (invitation.status === "APPROVED" || invitation.status === "ACCEPTED"),
+        )
         .map((invitation) => invitation.id),
     [selectedInvitations],
   );
@@ -568,6 +592,37 @@ export function useInvitationLogic(eventId: string) {
   }
 
   /* -----------------------------------------------------------------------
+   * Bulk Resend Actions
+   * --------------------------------------------------------------------- */
+  function openBulkResendDialog(ids: string[]) {
+    setResendResult(null);
+    setResendIds(ids);
+  }
+
+  function closeBulkResendDialog() {
+    setResendIds(null);
+    setResendResult(null);
+  }
+
+  async function resendConfirmations(ids: string[]) {
+    const result = await resendGuestConfirmationsMutation({
+      variables: { invitationIds: ids },
+    });
+
+    const payload = result.data?.resendGuestConfirmations;
+    if (payload) {
+      setResendResult({
+        total: payload.total,
+        resent: payload.resent,
+        skipped: payload.skipped,
+      });
+    }
+
+    await globalEventInvitationListRefetch();
+    setSelected([]);
+  }
+
+  /* -----------------------------------------------------------------------
    * Generic Helpers
    * --------------------------------------------------------------------- */
   async function reload() {
@@ -736,6 +791,7 @@ export function useInvitationLogic(eventId: string) {
     selected,
     stageableSelectedIds,
     finalizableSelectedIds,
+    resendableSelectedIds,
     toggleSelect,
     clearSelection,
 
@@ -793,6 +849,14 @@ export function useInvitationLogic(eventId: string) {
     setBulkApproveSeat,
     submitApprovalDialog,
     approvalMutationLoading: bulkApproveMutationLoading || bulkStageMutationLoading,
+
+    /* bulk resend */
+    resendIds,
+    resendResult,
+    resendGuestConfirmationsLoading,
+    openBulkResendDialog,
+    closeBulkResendDialog,
+    resendConfirmations,
 
     /* data */
     reload,

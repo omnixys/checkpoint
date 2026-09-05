@@ -27,6 +27,9 @@ import {
   RemovePlusOneDocument,
   type RemovePlusOneMutation,
   type RemovePlusOneMutationVariables,
+  ResendGuestConfirmationsDocument,
+  type ResendGuestConfirmationsMutation,
+  type ResendGuestConfirmationsMutationVariables,
   SendBulkInvitationsDocument,
   type SendBulkInvitationsMutation,
   type SendBulkInvitationsMutationVariables,
@@ -103,6 +106,11 @@ export default function useInvitationMutation() {
     BulkStageInvitationsMutationVariables
   >(BulkStageInvitationsDocument);
 
+  const [resendGuestConfirmationsMutation, resendGuestConfirmationsMutationResult] = useMutation<
+    ResendGuestConfirmationsMutation,
+    ResendGuestConfirmationsMutationVariables
+  >(ResendGuestConfirmationsDocument);
+
   return {
     createPlusOneMutation,
     addPlusOnePayload,
@@ -134,5 +142,9 @@ export default function useInvitationMutation() {
     bulkApproveMutationLoading: bulkApproveMutationMutationResult.loading,
     bulkStageMutation,
     bulkStageMutationLoading: bulkStageMutationResult.loading,
+
+    resendGuestConfirmationsMutation,
+    resendGuestConfirmationsLoading: resendGuestConfirmationsMutationResult.loading,
+    resendGuestConfirmationsError: resendGuestConfirmationsMutationResult.error,
   };
 }

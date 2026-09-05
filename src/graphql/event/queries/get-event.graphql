@@ -144,6 +144,9 @@ query GetEventSettings($eventId: ID!) {
       updatedAt
       scheduleTicketRelease
       ticketReleaseAt
+      guestConfirmationReminderEnabled
+      guestConfirmationReminderPresets
+      guestConfirmationMaxResends
       seatColorGroups {
         id
         name

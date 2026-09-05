@@ -1,0 +1,12 @@
+mutation ResendGuestConfirmations($invitationIds: [ID!]!) {
+  resendGuestConfirmations(invitationIds: $invitationIds) {
+    total
+    resent
+    skipped
+    results {
+      invitationId
+      resent
+      reason
+    }
+  }
+}

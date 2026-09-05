@@ -306,6 +306,12 @@ export default function InvitationDetailMobileDialog({ logic }: { logic: Invitat
                   {tInvitation("decline")}
                 </Button>
               )}
+
+              {logic.canApprove && !inv.guestProfileId && (
+                <Button variant="outlined" onClick={() => logic.openBulkResendDialog([inv.id])}>
+                  {tInvitation("resend.button")}
+                </Button>
+              )}
             </Stack>
 
             {inv.guestNote?.trim() && (

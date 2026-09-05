@@ -14,6 +14,7 @@
 import type {
   EventCategory,
   EventVisibleTab,
+  GuestReminderPreset,
   SettingsPayload,
   UpdateSettingsInput,
 } from "@/checkpoint/generated/graphql";
@@ -37,6 +38,9 @@ type FullSettingsPatch = Partial<SettingsPayload> & {
   visibleTabs?: EventVisibleTab[];
   isPublic?: boolean;
   category?: EventCategory;
+  guestConfirmationReminderEnabled?: boolean;
+  guestConfirmationReminderPresets?: GuestReminderPreset[];
+  guestConfirmationMaxResends?: number | null;
 };
 
 /**
@@ -80,6 +84,9 @@ export function mapSettingsToUpdateInput(
     seatColorGroups: payload.seatColorGroups ?? null,
     isPublic: payload.isPublic ?? null,
     category: payload.category ?? null,
+    guestConfirmationReminderEnabled: payload.guestConfirmationReminderEnabled ?? null,
+    guestConfirmationReminderPresets: payload.guestConfirmationReminderPresets ?? null,
+    guestConfirmationMaxResends: payload.guestConfirmationMaxResends ?? null,
   };
 }
 

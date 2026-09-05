@@ -1,5 +1,6 @@
 "use client";
 
+import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import { Box, Button, Stack, Typography, useTheme } from "@mui/material";
 import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
@@ -89,6 +90,17 @@ export default function InvitationBulkBar({ logic }: InvitationBulkBarProps) {
           <Button variant="outlined" onClick={() => logic.openBulkSendDialog(selected)}>
             {t("bulk.send")}
           </Button>
+
+          {logic.canApprove && (
+            <Button
+              variant="outlined"
+              startIcon={<SendRoundedIcon />}
+              disabled={logic.resendableSelectedIds.length === 0}
+              onClick={() => logic.openBulkResendDialog(logic.resendableSelectedIds)}
+            >
+              {t("resend.batch", { count: logic.resendableSelectedIds.length })}
+            </Button>
+          )}
 
           <Button variant="outlined" onClick={logic.clearSelection}>
             {t("bulk.clear")}

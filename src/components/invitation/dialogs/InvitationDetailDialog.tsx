@@ -2,6 +2,7 @@
 
 import { useLazyQuery, useMutation } from "@apollo/client/react";
 import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
+import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import {
   Box,
@@ -223,6 +224,18 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                     onClick={() => approveInvitation(false)}
                   >
                     {tInvitation("decline")}
+                  </Button>
+                )}
+
+                {logic.canApprove && !inv.guestProfileId && (
+                  <Button
+                    variant="outlined"
+                    startIcon={<SendRoundedIcon />}
+                    onClick={() => {
+                      logic.openBulkResendDialog([inv.id]);
+                    }}
+                  >
+                    {tInvitation("resend.button")}
                   </Button>
                 )}
               </Stack>

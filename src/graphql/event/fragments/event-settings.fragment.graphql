@@ -25,6 +25,9 @@ fragment EventSettings on SettingsPayload {
   category
   scheduleTicketRelease
   ticketReleaseAt
+  guestConfirmationReminderEnabled
+  guestConfirmationReminderPresets
+  guestConfirmationMaxResends
   createdAt
   updatedAt
   seatColorGroups {

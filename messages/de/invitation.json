@@ -3,13 +3,10 @@
   "event": "Event",
   "type": "Typ",
   "status": "Status",
-
   "mainEvent": "{name} (Hauptevent)",
-
   "typePrivate": "Privat",
   "typePublic": "Öffentlich",
   "copyRsvp": "RSVP-Link kopieren",
-
   "statusType": {
     "PENDING": "Ausstehend",
     "APPROVAL_STAGED": "Vorgemerkt",
@@ -19,16 +16,12 @@
     "ACCEPTED": "Zugesagt",
     "CANCELED": "Stoniert"
   },
-
   "title": "Einladungen",
   "subtitle": "Verwalte Gäste, Status und Einladungen",
-
   "backToEvent": "Zurück zum Event",
   "create": "Einladung erstellen",
-
   "showFilters": "Filter anzeigen",
   "hideFilters": "Filter ausblenden",
-
   "table": {
     "type": "Typ",
     "name": "Name",
@@ -38,23 +31,18 @@
     "link": "Link",
     "actions": "Aktionen"
   },
-
   "copyLink": "Link kopieren",
   "delete": "Einladung löschen",
-
   "rsvpType": {
     "PRIVATE": "Privat",
     "PUBLIC": "Öffentlich"
   },
-
   "noPhone": "Keine Telefonnummer",
   "noEmail": "Keine E-Mail",
-
   "approve": "Genehmigen",
   "approveAndSeat": "Genehmigen und Sitz zuweisen",
   "decline": "Ablehnen",
   "rsvpPath": "/rsvp/{id}",
-
   "detail": {
     "title": "{firstName}'s  Einladung",
     "shareAndContact": "Teilen & Kontakt",
@@ -78,14 +66,12 @@
     "seat": "Platz",
     "other": "Andere"
   },
-
   "deleteConfirm": {
     "title": "Einladung löschen?",
     "message": "Möchtest du die Einladung von {name} wirklich dauerhaft löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.",
     "confirm": "Ja, löschen",
     "cancel": "Abbrechen"
   },
-
   "bulk": {
     "approve": "Alle genehmigen ({count})",
     "approve_one": "1 Einladung genehmigen",
@@ -93,7 +79,6 @@
     "send": "Einladungen verschicken",
     "clear": "Auswahl löschen"
   },
-
   "approvalWorkflow": {
     "stage": "Vormerken ({count})",
     "stageOne": "Zur Genehmigung vormerken",
@@ -106,7 +91,6 @@
     "selectionSummary": "{selected} ausgewählt · {stageable} vormerkbar · {finalizable} ticketbereit · {excluded} ausgeschlossen",
     "saving": "Speichere…"
   },
-
   "seatAssignment": {
     "title": "Sitzplatz zuweisen",
     "seat": "Sitzplatz",
@@ -125,54 +109,38 @@
     "saving": "Speichere…",
     "conflictError": "Der Sitz wurde zwischenzeitlich geändert oder konnte nicht gespeichert werden. Die Sitzdaten wurden neu geladen; bitte Auswahl prüfen und erneut versuchen."
   },
-
   "createInv": {
     "title": "Neue Einladung",
     "subtitle": "Erstelle einen neuen Gast und verwalte seine Einladung",
-
     "person": "Person",
     "invitation": "Einladung",
-
     "firstName": "Vorname",
     "lastName": "Nachname",
     "email": "E-Mail",
-
     "maxInvitees": "Max. Begleitpersonen",
-
     "invitedBy": "Eingeladen von (optional)",
     "invitedByHelp": "Optional: Wer hat diese Person eingeladen?",
-
     "noAssignment": "Keine Zuordnung",
     "unknown": "Unbekannt",
-
     "creating": "Erstellen...",
     "submit": "Einladung erstellen"
   },
-
   "bulkSend": {
     "title": "Einladungen verschicken",
     "send": "Senden"
   },
-
   "bulkApprove": {
     "title": "Einladungen genehmigen",
-
     "invitationId": "Einladung-ID: {id}",
-
     "locale": "Sprache",
     "event": "Event",
     "seat": "Sitzplatz",
-
     "noSeat": "Kein Sitzplatz",
-
     "selectedSeat": "Gewählte Seat-Beschriftung: {seat}",
-
     "empty": "Keine Einladungen ausgewählt.",
-
     "loading": "Genehmige...",
     "submit": "Alle genehmigen ({count})"
   },
-
   "errors": {
     "RSVP_NOT_SUBMITTED": {
       "title": "RSVP wurde noch nicht abgegeben",
@@ -191,7 +159,6 @@
       "message": "Die Sitzplatzkapazität für diese Zuordnung ist überschritten."
     }
   },
-
   "filters": {
     "title": "Filter",
     "open": "Filter öffnen",
@@ -199,7 +166,6 @@
     "apply": "Filter anwenden",
     "reset": "Filter zurücksetzen"
   },
-
   "plusOnes": {
     "title": "Deine Begleitpersonen",
     "subtitle": "Verwalte hier alle Plus-Ones deiner Einladung. Du kannst sie hinzufügen, bearbeiten, entfernen und – falls vorhanden – auch ihren Sitzplatz sehen.",
@@ -264,5 +230,21 @@
       "APPROVED": "Freigegeben",
       "UNKNOWN": "Unbekannt"
     }
+  },
+  "delivery": {
+    "sent": "Gesendet",
+    "accepted": "Angenommen",
+    "notSent": "Nicht versendet"
+  },
+  "resend": {
+    "button": "Erneut senden",
+    "title": "Bestätigung erneut senden",
+    "message": "Soll die Bestätigungsanfrage an {count} Gast/Gäste erneut gesendet werden?",
+    "confirm": "Erneut senden ({count})",
+    "cancel": "Abbrechen",
+    "close": "Schließen",
+    "completed": "Erledigt",
+    "summary": "{resent} von {total} gesendet, {skipped} übersprungen.",
+    "batch": "Erneut senden ({count})"
   }
 }

@@ -16,6 +16,8 @@ query GetGlobalEventInvitationList($eventIds: [ID!]!) {
     lastName
     email
     phoneNumber
+    guestProfileId
+    confirmationSentAt
     phoneNumbers {
       countryCode
       number

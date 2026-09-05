@@ -4,6 +4,7 @@ import { Box, CircularProgress, Stack } from "@mui/material";
 import { useParams } from "next/navigation";
 import EventAddressSection from "@/checkpoint/components/event/settings/address/EventAddressSection";
 import EventSettingsLayout from "@/checkpoint/components/event/settings/EventSettingsLayout";
+import EventGuestReminderSection from "@/checkpoint/components/event/settings/sections/EventGuestReminderSection";
 import EventMetaSection from "@/checkpoint/components/event/settings/sections/EventMetaSection";
 import EventSettingsSection from "@/checkpoint/components/event/settings/sections/EventSettingsSection";
 import EventTabsVisibilitySection from "@/checkpoint/components/event/settings/sections/EventTabsVisibilitySection";
@@ -76,6 +77,7 @@ export default function EventSettingsClientPage() {
               />
             ),
             address: <EventAddressSection eventId={meta.id} />,
+            reminder: <EventGuestReminderSection settings={settings} actions={actions} />,
           }}
         />
       </Stack>

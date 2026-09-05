@@ -1,0 +1,45 @@
+enum GuestReminderPreset {
+  WEEK_BEFORE
+  THREE_DAYS_BEFORE
+  HOURS_24_BEFORE
+}
+
+extend type SettingsPayload {
+  guestConfirmationReminderEnabled: Boolean!
+  guestConfirmationReminderPresets: [GuestReminderPreset!]!
+  guestConfirmationMaxResends: Int
+}
+
+extend input UpdateSettingsInput {
+  guestConfirmationReminderEnabled: Boolean
+  guestConfirmationReminderPresets: [GuestReminderPreset!]
+  guestConfirmationMaxResends: Int
+}
+
+extend input CreateSettingsInput {
+  guestConfirmationReminderEnabled: Boolean
+  guestConfirmationReminderPresets: [GuestReminderPreset!]
+  guestConfirmationMaxResends: Int
+}
+
+extend type InvitationPayload {
+  confirmationSentAt: DateTime
+  confirmationResendCount: Int!
+}
+
+extend type Mutation {
+  resendGuestConfirmations(invitationIds: [ID!]!): ResendGuestConfirmationsPayload!
+}
+
+type ResendGuestConfirmationItem {
+  invitationId: ID!
+  resent: Boolean!
+  reason: String
+}
+
+type ResendGuestConfirmationsPayload {
+  total: Int!
+  resent: Int!
+  skipped: Int!
+  results: [ResendGuestConfirmationItem!]!
+}
