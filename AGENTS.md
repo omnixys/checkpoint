@@ -101,6 +101,50 @@ Keep the generated `<!-- BEGIN:nextjs-agent-rules -->` block in AGENTS.md intact
 This repository ships `SKILL.md` — the development workflow skill. Read and follow it
 before starting work; it captures the repository's step-by-step workflow.
 
+## UI Design Workflow
+
+This repository follows a mandatory UI design workflow for all UI work. The master
+source of truth for visual identity is `DESIGN.md` (Google Stitch / awesome-design-md
+format) in this repository.
+
+### Before UI Work
+
+- Read `DESIGN.md` completely. Do not invent a new design system or copy an external
+  design system; follow the tokens and rules already defined for checkpoint.
+- Follow the `design-taste-frontend` skill (anti-slop guidance) and the
+  `web-design-guidelines` skill (UX/accessibility review) whenever UI is changed.
+- Confirm the MUI version in use (MUI 9) and code against its available component
+  and token surface.
+- Plan changes against DESIGN.md tokens: prefer theme tokens, never hardcoded
+  colors, spacing, or radii.
+
+### During UI Work
+
+- Use the MUI theme tokens (`theme.palette`, `theme.shape`, `theme.spacing`,
+  `theme.typography`) plus the extended tokens in `theme.palette.extended`
+  (`surface.level1..3`, `border.subtle` / `border.strong`).
+- No hardcoded colors, spacing units, or radii in components.
+- Preserve checkpoint's dense, operational Apple-inspired aesthetic; the seven
+  color schemes (`theme.omnixys.scheme`) are intentional — keep scheme fluidity.
+- Do not add backdrop-blur or decorative gradients over data views (see DESIGN.md).
+
+### After UI Work (Mandatory Browser Validation)
+
+Before UI work is considered complete, run actual browser validation:
+
+```bash
+npx playwright test e2e/ui-smoke.spec.ts --project=chromium   # infra-free public routes
+```
+
+- The public-route smoke spec (`e2e/ui-smoke.spec.ts`) checks the browser console
+  and page errors on `/` and the 404 boundary without backend/seed — keep it green.
+- The full Playwright suite is infrastructure-dependent (backend + seed via
+  `pnpm --dir ../../seed seed`) and can be run when infra is available.
+- Validate the DESIGN.md / config viewports if infra is running (chromium, webkit,
+  tablet, mobile).
+- Review a screenshot of the changed UI in the Playwright report
+  (`playwright-report/index.html`): readability, spacing, no overflow.
+
 ## Tests Are Part of the Implementation
 
 Tests are not optional follow-up work. Whenever production behavior is added or changed, determine which tests must be added or updated in the same task.
