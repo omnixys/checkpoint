@@ -1,5 +1,6 @@
-import { Skeleton } from "@mui/material";
+import { Box, Skeleton } from "@mui/material";
 import { type JSX, Suspense } from "react";
+import LegalFooter from "@/checkpoint/components/layout/LegalFooter";
 import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
 import LoginForm from "./LoginForm";
 
@@ -19,10 +20,29 @@ export const metadata = buildMetadata({
     description: "Secure access to your event dashboard.",
   },
 });
+
 export default function LoginPage(): JSX.Element {
   return (
-    <Suspense fallback={<Skeleton variant="rectangular" width="100%" height="100vh" />}>
-      <LoginForm />
-    </Suspense>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100svh",
+      }}
+    >
+      <Box
+        sx={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Suspense fallback={<Skeleton variant="rectangular" width="100%" height="100vh" />}>
+          <LoginForm />
+        </Suspense>
+      </Box>
+      <LegalFooter />
+    </Box>
   );
 }

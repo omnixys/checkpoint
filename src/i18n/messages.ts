@@ -13,6 +13,7 @@ import invitation from "../../messages/en/invitation.json";
 // import notification from "../../messages/en/notification.json";
 // import user from "../../messages/en/user.json";
 import layout from "../../messages/en/layout.json";
+import legal from "../../messages/en/legal.json";
 import onboarding from "../../messages/en/onboarding.json";
 import qr from "../../messages/en/qr.json";
 import rsvp from "../../messages/en/rsvp.json";
@@ -35,6 +36,7 @@ export const messages = {
   error,
   rsvp,
   common,
+  legal,
   create,
   onboarding,
   scanner,

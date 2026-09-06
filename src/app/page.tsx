@@ -16,6 +16,7 @@ import {
 import Link from "next/link";
 import type { JSX } from "react";
 import { useEffect, useState } from "react";
+import LegalFooter from "@/checkpoint/components/layout/LegalFooter";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
 import { EventPermissionKey } from "@/checkpoint/lib/rbac/event-permissions";
@@ -46,49 +47,52 @@ export default function HomePage(): JSX.Element {
    * ------------------------------------------------------------------ */
   if (!isAuthenticated) {
     return (
-      <Stack
-        spacing={4}
-        sx={{
-          px: 3,
-          py: 10,
-          mt: 30,
-          maxWidth: 420,
-          mx: "auto",
-          textAlign: "center",
-        }}
-      >
-        <Typography
-          variant="h2"
+      <Box>
+        <Stack
+          spacing={4}
           sx={{
-            fontWeight: 700,
-            color: theme.palette.text.primary,
+            px: 3,
+            py: 10,
+            mt: 30,
+            maxWidth: 420,
+            mx: "auto",
+            textAlign: "center",
           }}
         >
-          {t("brand.title")}
-        </Typography>
+          <Typography
+            variant="h2"
+            sx={{
+              fontWeight: 700,
+              color: theme.palette.text.primary,
+            }}
+          >
+            {t("brand.title")}
+          </Typography>
 
-        <Typography variant="body1" sx={{ color: theme.palette.text.secondary }}>
-          {t("brand.subtitle")}
-        </Typography>
+          <Typography variant="body1" sx={{ color: theme.palette.text.secondary }}>
+            {t("brand.subtitle")}
+          </Typography>
 
-        <Stack spacing={2}>
-          <Link href={`${basePath}login`}>
-            <Button size="large" variant="contained" fullWidth={true}>
-              {t("auth.login")}
-            </Button>
-          </Link>
+          <Stack spacing={2}>
+            <Link href={`${basePath}login`}>
+              <Button size="large" variant="contained" fullWidth={true}>
+                {t("auth.login")}
+              </Button>
+            </Link>
 
-          <Tooltip title={!hasEventId ? t("auth.selectEventFirst") : ""}>
-            <span>
-              <Link href={rsvpUrl}>
-                <Button size="large" variant="text" fullWidth={true} disabled={!hasEventId}>
-                  {t("auth.redeem")}
-                </Button>
-              </Link>
-            </span>
-          </Tooltip>
+            <Tooltip title={!hasEventId ? t("auth.selectEventFirst") : ""}>
+              <span>
+                <Link href={rsvpUrl}>
+                  <Button size="large" variant="text" fullWidth={true} disabled={!hasEventId}>
+                    {t("auth.redeem")}
+                  </Button>
+                </Link>
+              </span>
+            </Tooltip>
+          </Stack>
         </Stack>
-      </Stack>
+        <LegalFooter />
+      </Box>
     );
   }
 

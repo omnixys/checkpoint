@@ -1,0 +1,69 @@
+{
+  "nav": {
+    "privacy": "Privacy Policy",
+    "imprint": "Imprint"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "intro": "This Privacy Policy explains how Checkpoint (a service by [Firma]) handles personal data when you use the platform.",
+    "lastUpdated": "Last updated: [Datum]",
+    "sections": {
+      "controller": {
+        "title": "1. Controller",
+        "text": "The controller responsible for data processing is [Firma], [Adresse], [E-Mail]. For any questions regarding data protection you may contact us at any time using these contact details."
+      },
+      "collected": {
+        "title": "2. Data We Collect",
+        "text": "When you log in and use the platform we process the personal data required for your account and for the events you organise or attend, such as name, email address, phone number and, where applicable, additional guest data. Usage data required to provide and secure the service is also processed."
+      },
+      "analytics": {
+        "title": "3. Analytics",
+        "text": "With your consent we use an analytics service to measure page views and usage patterns, so that we can improve the product. This only processes anonymous usage data, such as the pages opened and technical device characteristics. It is not used to identify individual users."
+      },
+      "cookies": {
+        "title": "4. Cookies and Local Storage",
+        "text": "We use cookies and browser storage for essential functions: a language cookie (locale) remembers your selected language, authentication cookies manage your session, and a consent cookie records your analytics decision. For security purposes a device key and technical data such as your IP address may be processed. In addition, your browser stores technical data such as secure device credentials and your theme setting."
+      },
+      "legalBasis": {
+        "title": "5. Legal Basis",
+        "text": "We process personal data on the following legal bases: for the performance of a contract and provision of the requested service (Art. 6 para. 1 lit. b GDPR), based on your consent (Art. 6 para. 1 lit. a GDPR), and based on our legitimate interest in operating and securing the service (Art. 6 para. 1 lit. f GDPR)."
+      },
+      "rights": {
+        "title": "6. Your Rights",
+        "text": "You have the right to request access to, rectification of, erasure of, restriction of processing of, and portability of your personal data. You may also object to processing and withdraw your consent at any time with effect for the future. You may lodge a complaint with a supervisory authority."
+      },
+      "contact": {
+        "title": "7. Contact",
+        "text": "To exercise your rights or for any questions about this Privacy Policy, please contact us at [E-Mail]."
+      }
+    }
+  },
+  "imprint": {
+    "title": "Imprint",
+    "intro": "Information pursuant to § 5 of the German Digital Services Act (DDG).",
+    "lastUpdated": "Last updated: [Datum]",
+    "sections": {
+      "serviceProvider": {
+        "title": "Service Provider",
+        "text": "[Firma], [Adresse]"
+      },
+      "contact": {
+        "title": "Contact",
+        "emailLine": "Email: [E-Mail]",
+        "phoneLine": "Telephone: [Telefon]"
+      },
+      "registry": {
+        "title": "Commercial Register",
+        "text": "[Registereintrag (optional)]"
+      },
+      "management": {
+        "title": "Management",
+        "text": "[Geschäftsführung]"
+      },
+      "responsible": {
+        "title": "Responsible for content",
+        "text": "[Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV: Firma, Adresse]"
+      }
+    }
+  }
+}
