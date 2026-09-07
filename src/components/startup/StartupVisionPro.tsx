@@ -6,14 +6,13 @@ import { type JSX, type MutableRefObject, useCallback, useRef, useState } from "
 import { StartupLogo } from "@/checkpoint/components/startup/elements/StartupLogo";
 import { StartupOrb } from "@/checkpoint/components/startup/elements/StartupOrb";
 import { useSpaceWarpShader } from "@/checkpoint/components/startup/hooks/useSpaceWarpShader";
+import { WEDDING_BRANDING } from "@/checkpoint/config/wedding-branding";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { useThemeMode } from "@/checkpoint/providers/ThemeModeProvider";
 import { omnixysPresets } from "@/checkpoint/themes/colors/omnixysPresets";
 import { useCanvasSize } from "./hooks/useCanvasSize";
 import { useParallax } from "./hooks/useParallax";
 import { useStartupEffects } from "./hooks/useStartupEffects";
-
-const WEDDING_MONOGRAM = "C·R";
 
 /**
  * StartupVisionPro
@@ -132,7 +131,7 @@ export default function StartupVisionPro(): JSX.Element | null {
                 zIndex: 50,
               }}
             >
-              {WEDDING_MONOGRAM}
+              {WEDDING_BRANDING.monogramCompact}
             </Typography>
 
             {/* <Typography             
@@ -173,7 +172,7 @@ export default function StartupVisionPro(): JSX.Element | null {
           {scheme === "wedding" ? (
             <Stack direction="column">
               {t("public.preparing")}
-              <Typography>#CALEBGETSRICH #HAPPELYEVERGYAMFI</Typography>
+              <Typography>{WEDDING_BRANDING.hashtagLine}</Typography>
             </Stack>
           ) : (
             <>

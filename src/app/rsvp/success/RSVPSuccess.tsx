@@ -8,10 +8,9 @@ import Link from "next/link";
 import { useEffect } from "react";
 import Confetti from "react-confetti";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { WEDDING_BRANDING } from "@/checkpoint/config/wedding-branding";
 import { env } from "@/checkpoint/lib/env";
 import { triggerAccentPulse } from "@/checkpoint/themes/accent-animation";
-
-const WEDDING_MONOGRAM = "C · R";
 
 export default function RSVPSuccessPage() {
   const t = useTypedTranslations("rsvp");
@@ -86,7 +85,7 @@ export default function RSVPSuccessPage() {
                   letterSpacing: "0.28em",
                 }}
               >
-                {WEDDING_MONOGRAM}
+                {WEDDING_BRANDING.monogram}
               </Typography>
 
               <Typography
@@ -114,7 +113,7 @@ export default function RSVPSuccessPage() {
                   color: "primary.main",
                 }}
               >
-                #CALEBGETSRICH <br /> #HAPPELYEVERGYAMFI
+                {WEDDING_BRANDING.hashtags[0]} <br /> {WEDDING_BRANDING.hashtags[1]}
               </Typography>
 
               <Box

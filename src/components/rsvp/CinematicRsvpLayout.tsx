@@ -3,9 +3,9 @@
 import { alpha, Box, Container, Paper, Stack, Typography, useTheme } from "@mui/material";
 import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
+import { WEDDING_BRANDING } from "@/checkpoint/config/wedding-branding";
 
 const CINEMATIC_EASE = [0.16, 1, 0.3, 1] as const;
-const WEDDING_MONOGRAM = "C · R";
 
 interface CinematicRsvpLayoutProps {
   children: ReactNode;
@@ -97,8 +97,8 @@ export function CinematicRsvpLayout({
                 textTransform: "uppercase",
               }}
             >
-              {WEDDING_MONOGRAM}
-              <Typography component="span">#CALEBGETSRICH #HAPPELYEVERGYAMFI</Typography>
+              {WEDDING_BRANDING.monogram}
+              <Typography component="span">{WEDDING_BRANDING.hashtagLine}</Typography>
             </Typography>
 
             <Typography

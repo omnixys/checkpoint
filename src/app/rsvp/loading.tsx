@@ -1,8 +1,7 @@
 import { CircularProgress, Stack, Typography } from "@mui/material";
 import { getTranslations } from "next-intl/server";
 import type { JSX } from "react";
-
-const WEDDING_MONOGRAM = "C · R";
+import { WEDDING_BRANDING } from "@/checkpoint/config/wedding-branding";
 
 export default async function RsvpLoading(): Promise<JSX.Element> {
   const t = await getTranslations("rsvp");
@@ -27,7 +26,7 @@ export default async function RsvpLoading(): Promise<JSX.Element> {
           letterSpacing: 0,
         }}
       >
-        {WEDDING_MONOGRAM}
+        {WEDDING_BRANDING.monogram}
       </Typography>
       <CircularProgress color="inherit" size={34} thickness={2} />
       <Typography variant="body2">{t("public.preparing")}</Typography>
