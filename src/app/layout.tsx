@@ -143,7 +143,7 @@ export default async function RootLayout({
       className={`${inter.variable} ${weddingSerif.variable} ${weddingSans.variable}`}
     >
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <SpeedInsights />
+        {initialAnalyticsConsent === "granted" && <SpeedInsights />}
         <NextIntlClientProvider messages={messages}>
           <Provider
             initialAnalyticsConsent={initialAnalyticsConsent}
