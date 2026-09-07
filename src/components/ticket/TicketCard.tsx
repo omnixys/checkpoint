@@ -81,6 +81,7 @@ export default function TicketCard({ code, status, seatLabel, presence, onDelete
           <QrCode2RoundedIcon sx={{ fontSize: 44 }} />
 
           <IconButton
+            aria-label="Delete ticket"
             onClick={(e) => {
               e.stopPropagation();
               onDelete();

@@ -205,7 +205,7 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
                 sx={glassInputSx(theme)}
               />
 
-              <IconButton onClick={handleAddChild} disabled={true}>
+              <IconButton aria-label="Add child event" onClick={handleAddChild} disabled={true}>
                 <AddIcon />
               </IconButton>
             </Stack>
@@ -338,7 +338,7 @@ function ChildRow({ child }: { child: GetSubEventNameListQuery["eventChildren"][
         </Box>
       </Stack>
 
-      <IconButton disabled={true}>
+      <IconButton disabled={true} aria-label="Delete child event">
         <DeleteIcon />
       </IconButton>
     </Box>

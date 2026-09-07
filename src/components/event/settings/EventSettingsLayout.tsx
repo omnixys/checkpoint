@@ -52,7 +52,7 @@ export default function EventSettingsLayout({
               transition={{ duration: 0.25, ease: "easeInOut" }}
               whileTap={{ scale: 0.9 }}
             >
-              <IconButton>
+              <IconButton aria-label="Back to event">
                 <ArrowCircleLeftIcon fontSize="large" color="primary" />
               </IconButton>
             </motion.div>

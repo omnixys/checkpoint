@@ -155,13 +155,13 @@ export default function PlusOneCard({ plusOne, index, onEdit, onDelete }: Props)
 
           <Stack direction="row" spacing={0.5}>
             <Tooltip title={t("plusOnes.actions.edit")}>
-              <IconButton onClick={() => onEdit(plusOne)}>
+              <IconButton aria-label="Edit" onClick={() => onEdit(plusOne)}>
                 <EditRoundedIcon />
               </IconButton>
             </Tooltip>
 
             <Tooltip title={t("plusOnes.actions.delete")}>
-              <IconButton onClick={() => void onDelete(plusOne.id)}>
+              <IconButton aria-label="Delete" onClick={() => void onDelete(plusOne.id)}>
                 <DeleteRoundedIcon />
               </IconButton>
             </Tooltip>

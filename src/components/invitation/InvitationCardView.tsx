@@ -150,6 +150,7 @@ export default function InvitationCardView({ logic }: { logic: InvitationLogic }
                 <Tooltip title={copied ? tCommon("copy") : tInvitation("copyRsvp")} open={copied}>
                   <IconButton
                     size="small"
+                    aria-label="Copy RSVP link"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleCopy(inv.id);
@@ -183,6 +184,7 @@ export default function InvitationCardView({ logic }: { logic: InvitationLogic }
 
                 <IconButton
                   color="error"
+                  aria-label="Delete invitation"
                   onClick={(e) => {
                     e.stopPropagation();
                     setDeleteConfirm({

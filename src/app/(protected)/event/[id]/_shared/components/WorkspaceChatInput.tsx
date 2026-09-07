@@ -64,6 +64,7 @@ export function WorkspaceChatInput({
       </Box>
       <IconButton
         color="primary"
+        aria-label="Send message"
         disabled={!value.trim() || sending}
         onClick={onSend}
         size="medium"

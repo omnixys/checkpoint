@@ -142,6 +142,7 @@ export default function EventsHeader({
             transition={{ type: "spring", stiffness: 300, damping: 15 }}
           >
             <IconButton
+              aria-label="Refresh"
               disabled={currentUser?.role !== "ADMIN"}
               onClick={onRefresh}
               sx={{

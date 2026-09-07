@@ -421,6 +421,7 @@ function RoleDefinitionCard({
           <Tooltip title="Save role details">
             <span>
               <IconButton
+                aria-label="Save role details"
                 disabled={!canManage || loading}
                 onClick={() => onUpdate(draft)}
                 color="primary"
@@ -487,7 +488,11 @@ function RoleDefinitionCard({
           </Button>
           <Tooltip title={roleLocked ? "System roles cannot be archived" : "Archive role"}>
             <span>
-              <IconButton disabled={!canManage || roleLocked || loading} onClick={onArchive}>
+              <IconButton
+                aria-label="Archive role"
+                disabled={!canManage || roleLocked || loading}
+                onClick={onArchive}
+              >
                 <ArchiveIcon />
               </IconButton>
             </span>
@@ -501,6 +506,7 @@ function RoleDefinitionCard({
           >
             <span>
               <IconButton
+                aria-label="Delete role"
                 disabled={!canManage || roleLocked || role.assignedUserCount > 0 || loading}
                 onClick={onDelete}
                 color="error"

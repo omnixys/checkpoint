@@ -95,13 +95,13 @@ export default function PhoneNumberListAccordion({ values, onAdd, onEdit, onRemo
 
               <Stack direction="row" sx={{ justifyContent: { xs: "flex-end", sm: "initial" } }}>
                 <Tooltip title={t("edit")}>
-                  <IconButton onClick={() => onEdit(index)}>
+                  <IconButton aria-label="Edit" onClick={() => onEdit(index)}>
                     <EditIcon />
                   </IconButton>
                 </Tooltip>
 
                 <Tooltip title={t("delete")}>
-                  <IconButton onClick={() => onRemove(index)}>
+                  <IconButton aria-label="Delete" onClick={() => onRemove(index)}>
                     <DeleteIcon />
                   </IconButton>
                 </Tooltip>

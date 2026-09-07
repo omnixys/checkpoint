@@ -449,7 +449,10 @@ export default function GuestListClientPage() {
               />
 
               {isMobile && (
-                <IconButton onClick={(e) => setFilterAnchor(e.currentTarget)}>
+                <IconButton
+                  aria-label="Open filters"
+                  onClick={(e) => setFilterAnchor(e.currentTarget)}
+                >
                   <TuneIcon />
                 </IconButton>
               )}

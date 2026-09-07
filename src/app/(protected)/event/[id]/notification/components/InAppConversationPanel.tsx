@@ -116,6 +116,7 @@ export function InAppConversationPanel({ staffId, staffName }: Props) {
             }}
           />
           <IconButton
+            aria-label="Send message"
             onClick={handleSend}
             disabled={!input.trim() || sending}
             size="small"

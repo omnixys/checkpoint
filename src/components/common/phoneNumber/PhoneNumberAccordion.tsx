@@ -64,9 +64,11 @@ export default function PhoneNumberAccordion({ value, index, onRemove, onEdit }:
           <Typography variant="body2">{value.type}</Typography>
 
           <Stack direction="row" spacing={1}>
-            <IconButton onClick={() => onEdit(index)}>✏️</IconButton>
+            <IconButton aria-label="Edit" onClick={() => onEdit(index)}>
+              ✏️
+            </IconButton>
 
-            <IconButton onClick={() => onRemove(index)}>
+            <IconButton aria-label="Delete" onClick={() => onRemove(index)}>
               <DeleteIcon />
             </IconButton>
           </Stack>

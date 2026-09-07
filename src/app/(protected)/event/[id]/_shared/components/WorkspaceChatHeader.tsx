@@ -88,7 +88,11 @@ export function WorkspaceChatHeader({
 
       {actions && actions.length > 0 && (
         <>
-          <IconButton size="small" onClick={(e) => setAnchorEl(e.currentTarget)}>
+          <IconButton
+            size="small"
+            aria-label="More actions"
+            onClick={(e) => setAnchorEl(e.currentTarget)}
+          >
             <MoreVertIcon fontSize="small" />
           </IconButton>
           <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>

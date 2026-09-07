@@ -94,7 +94,7 @@ export default function UserMenu() {
   return (
     <>
       <Tooltip title={displayName}>
-        <IconButton onClick={handleOpen} size="small" sx={{ ml: 1 }}>
+        <IconButton aria-label="Open account menu" onClick={handleOpen} size="small" sx={{ ml: 1 }}>
           <Avatar
             sx={{
               width: 36,

@@ -449,7 +449,10 @@ export default function TimelineSection({ timeline, actions, eventName }: Props)
                 sx={{ minWidth: 140, ...glassInputSx(theme) }}
               />
 
-              <IconButton onClick={() => handleRemoveLocal(item.id)}>
+              <IconButton
+                aria-label="Remove timeline item"
+                onClick={() => handleRemoveLocal(item.id)}
+              >
                 <DeleteIcon />
               </IconButton>
             </Stack>

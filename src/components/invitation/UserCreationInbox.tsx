@@ -36,6 +36,7 @@ export default function UserCreationInbox({ logic }: { logic: InvitationLogic })
       {/* Button with badge */}
       <Badge color="primary" badgeContent={unreadCount} invisible={unreadCount === 0}>
         <IconButton
+          aria-label="Open user creation inbox"
           onClick={handleOpen}
           sx={{
             backdropFilter: "blur(12px)",
@@ -127,6 +128,7 @@ export default function UserCreationInbox({ logic }: { logic: InvitationLogic })
 
                 <IconButton
                   size="small"
+                  aria-label="Copy credentials"
                   onClick={() => navigator.clipboard.writeText(`${u.username} / ${u.password}`)}
                 >
                   <ContentCopyRoundedIcon fontSize="small" />

@@ -54,7 +54,11 @@ export function FilterControlCapsule({
           border: `1px solid ${apple.separator}`,
         }}
       >
-        <IconButton size="small" onClick={(e) => setAnchorEl(e.currentTarget)}>
+        <IconButton
+          size="small"
+          aria-label="Open filters"
+          onClick={(e) => setAnchorEl(e.currentTarget)}
+        >
           <TuneIcon fontSize="small" />
         </IconButton>
 

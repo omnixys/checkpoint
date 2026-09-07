@@ -44,6 +44,7 @@ export default function RefreshArcButton({ onReload }: { onReload: any }) {
       )}
 
       <IconButton
+        aria-label="Refresh"
         onClick={trigger}
         sx={{
           width: 42,

@@ -275,6 +275,7 @@ export default function NavigationTablet(): JSX.Element {
         >
           {/* <IconButton
                 size="small"
+                aria-label="Toggle sidebar"
                 onClick={() => setCollapsed((v) => !v)}
                 sx={{
                   transition: "transform 0.25s ease",

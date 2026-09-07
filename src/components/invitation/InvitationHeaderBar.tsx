@@ -70,7 +70,7 @@ export function InvitationHeaderBar({ collapsed, onToggle, logic }: Props) {
             {/* BACK */}
             <Link href={`/event/${id}`} passHref={true}>
               <motion.div whileTap={{ scale: 0.9 }}>
-                <IconButton>
+                <IconButton aria-label="Back to event">
                   <ArrowCircleLeftIcon color="primary" />
                 </IconButton>
               </motion.div>
@@ -81,6 +81,7 @@ export function InvitationHeaderBar({ collapsed, onToggle, logic }: Props) {
               <Tooltip title={t("create")}>
                 <motion.div whileTap={{ scale: 0.9 }}>
                   <IconButton
+                    aria-label="Create invitation"
                     onClick={() => logic.setCreateOpen(true)}
                     sx={{
                       backdropFilter: "blur(12px)",
@@ -142,6 +143,7 @@ export function InvitationHeaderBar({ collapsed, onToggle, logic }: Props) {
                 whileTap={{ scale: 0.9 }}
               >
                 <IconButton
+                  aria-label="Toggle filters"
                   onClick={onToggle}
                   sx={{
                     backdropFilter: "blur(12px)",
@@ -174,7 +176,7 @@ export function InvitationHeaderBar({ collapsed, onToggle, logic }: Props) {
                   transition={{ duration: 0.25, ease: "easeInOut" }}
                   whileTap={{ scale: 0.9 }}
                 >
-                  <IconButton>
+                  <IconButton aria-label="Back to event">
                     <ArrowCircleLeftIcon fontSize="large" color="primary" />
                   </IconButton>
                 </motion.div>
@@ -213,6 +215,7 @@ export function InvitationHeaderBar({ collapsed, onToggle, logic }: Props) {
             <Tooltip title={t("create")}>
               <motion.div whileTap={{ scale: 0.9 }}>
                 <IconButton
+                  aria-label="Create invitation"
                   onClick={() => logic.setCreateOpen(true)}
                   sx={{
                     backdropFilter: "blur(12px)",
@@ -232,6 +235,7 @@ export function InvitationHeaderBar({ collapsed, onToggle, logic }: Props) {
             <Tooltip title="Einladungen importieren">
               <motion.div whileTap={{ scale: 0.9 }}>
                 <IconButton
+                  aria-label="Import invitations"
                   onClick={() => logic.setImportOpen(true)}
                   sx={{
                     backdropFilter: "blur(12px)",
@@ -261,6 +265,7 @@ export function InvitationHeaderBar({ collapsed, onToggle, logic }: Props) {
             <Tooltip title={t("copyLink")}>
               <motion.div whileTap={{ scale: 0.9 }}>
                 <IconButton
+                  aria-label="Copy invitation link"
                   disabled={!eventId}
                   onClick={() => {
                     void copyInvitationLink();
@@ -287,6 +292,7 @@ export function InvitationHeaderBar({ collapsed, onToggle, logic }: Props) {
                   transition={{ duration: 0.25 }}
                 >
                   <IconButton
+                    aria-label="Toggle filters"
                     onClick={onToggle}
                     sx={{
                       backdropFilter: "blur(12px)",

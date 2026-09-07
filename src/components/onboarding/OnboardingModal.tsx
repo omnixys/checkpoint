@@ -97,7 +97,7 @@ export default function OnboardingModal({ open, onClose }: { open: boolean; onCl
         >
           <Typography variant="subtitle2">Onboarding</Typography>
 
-          <IconButton onClick={onClose}>
+          <IconButton aria-label="Close" onClick={onClose}>
             <CloseRounded />
           </IconButton>
         </Stack>

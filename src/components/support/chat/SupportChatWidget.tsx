@@ -170,6 +170,7 @@ function PendingBubble({
           {isFailed && onRetry && (
             <Tooltip title="Retry">
               <IconButton
+                aria-label="Retry"
                 onClick={() => onRetry(pending)}
                 size="small"
                 sx={{ color: "error.main", p: 0, mr: 0.5 }}
@@ -467,6 +468,7 @@ export default function SupportChatWidget({
 
             {!autoScroll && messages.length > 0 && (
               <IconButton
+                aria-label="Scroll to bottom"
                 onClick={() => scrollToBottom(true)}
                 size="small"
                 sx={{
@@ -512,6 +514,7 @@ export default function SupportChatWidget({
               />
               <IconButton
                 color="primary"
+                aria-label="Send message"
                 disabled={!input.trim() || sending || isCreating}
                 onClick={handleSend}
                 size="small"

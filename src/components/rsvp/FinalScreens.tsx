@@ -157,6 +157,7 @@ export default function FinalScreens({
 
                         <Tooltip title={t("common.copy")}>
                           <IconButton
+                            aria-label="Copy link"
                             onClick={() => copyToClipboard(link)}
                             sx={{ opacity: 0.7, alignSelf: { xs: "flex-end", sm: "center" } }}
                           >

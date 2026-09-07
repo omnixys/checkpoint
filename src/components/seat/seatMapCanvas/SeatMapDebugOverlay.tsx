@@ -79,6 +79,7 @@ export default function SeatMapDebugOverlay({
       <Tooltip title="Debug-Overlay einblenden (Ctrl+Shift+D)">
         <IconButton
           size="small"
+          aria-label="Show debug overlay"
           onClick={onToggle}
           data-testid="debug-toggle"
           sx={{
@@ -125,7 +126,12 @@ export default function SeatMapDebugOverlay({
           color="warning"
           sx={{ height: 20, fontSize: 10, fontWeight: 700 }}
         />
-        <IconButton size="small" onClick={onToggle} sx={{ color: "limegreen", p: 0.3 }}>
+        <IconButton
+          size="small"
+          aria-label="Hide debug overlay"
+          onClick={onToggle}
+          sx={{ color: "limegreen", p: 0.3 }}
+        >
           <BugReport fontSize="small" />
         </IconButton>
       </Stack>

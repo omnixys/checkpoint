@@ -45,6 +45,7 @@ export default function PhoneNumberField({
     >
       {/* Remove */}
       <IconButton
+        aria-label="Remove phone number"
         onClick={() => onRemove(index)}
         size="small"
         sx={{ position: "absolute", top: 8, right: 8 }}

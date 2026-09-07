@@ -48,7 +48,11 @@ export default function CalendarEventCard({ event }: Props): JSX.Element {
         }}
       />
 
-      <IconButton size="small" onClick={() => scheduleReminder(event, 30)}>
+      <IconButton
+        size="small"
+        aria-label="Schedule reminder"
+        onClick={() => scheduleReminder(event, 30)}
+      >
         <NotificationsActiveRoundedIcon fontSize="small" />
       </IconButton>
 

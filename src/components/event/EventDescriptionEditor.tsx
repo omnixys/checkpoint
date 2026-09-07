@@ -81,27 +81,27 @@ export default function EventDescriptionEditor({ value, onChange }: Props) {
         animate={{ opacity: 1, y: 0 }}
       >
         <Stack direction="row" spacing={1}>
-          <IconButton onClick={() => apply("**", "**")}>
+          <IconButton aria-label="Bold" onClick={() => apply("**", "**")}>
             <FormatBoldIcon />
           </IconButton>
 
-          <IconButton onClick={() => apply("_", "_")}>
+          <IconButton aria-label="Italic" onClick={() => apply("_", "_")}>
             <FormatItalicIcon />
           </IconButton>
 
-          <IconButton onClick={() => apply("<u>", "</u>")}>
+          <IconButton aria-label="Underline" onClick={() => apply("<u>", "</u>")}>
             <FormatUnderlinedIcon />
           </IconButton>
 
-          <IconButton onClick={() => apply("- ")} title="Bullet List">
+          <IconButton aria-label="Bullet list" onClick={() => apply("- ")} title="Bullet List">
             <FormatListBulletedIcon />
           </IconButton>
 
-          <IconButton onClick={() => apply("1. ")} title="Numbered List">
+          <IconButton aria-label="Numbered list" onClick={() => apply("1. ")} title="Numbered List">
             <FormatListNumberedIcon />
           </IconButton>
 
-          <IconButton onClick={() => apply("### ")} title="Heading">
+          <IconButton aria-label="Heading" onClick={() => apply("### ")} title="Heading">
             <TextFieldsIcon />
           </IconButton>
         </Stack>

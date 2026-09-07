@@ -43,11 +43,11 @@ export default function PlusOneAccordion({ value, index, onEdit, onRemove }: Pro
           <Typography variant="body2">{value.email || "—"}</Typography>
 
           <Stack direction="row">
-            <IconButton onClick={() => onEdit(index)}>
+            <IconButton aria-label="Edit" onClick={() => onEdit(index)}>
               <EditIcon />
             </IconButton>
 
-            <IconButton onClick={() => onRemove(index)}>
+            <IconButton aria-label="Delete" onClick={() => onRemove(index)}>
               <DeleteIcon />
             </IconButton>
           </Stack>

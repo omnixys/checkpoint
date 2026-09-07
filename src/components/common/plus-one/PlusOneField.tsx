@@ -70,7 +70,7 @@ export default function PlusOneField({
         borderRadius: 2,
       }}
     >
-      <IconButton onClick={() => onRemove(index)} size="small">
+      <IconButton aria-label="Remove companion" onClick={() => onRemove(index)} size="small">
         <DeleteIcon fontSize="small" />
       </IconButton>
 

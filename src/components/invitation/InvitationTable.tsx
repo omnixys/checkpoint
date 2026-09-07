@@ -180,6 +180,7 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
                       {children.length > 0 && (
                         <IconButton
                           size="small"
+                          aria-label="Expand row"
                           onClick={(event) => {
                             event.stopPropagation();
                             toggleExpand(parent.id);
@@ -243,6 +244,7 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
                     <Tooltip title={t("copyLink")}>
                       <IconButton
                         size="small"
+                        aria-label="Copy invitation link"
                         onClick={() => {
                           void handleCopyLink(parent.id);
                         }}
@@ -257,6 +259,7 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
                     <Tooltip title={t("delete")}>
                       <IconButton
                         color="error"
+                        aria-label="Delete invitation"
                         onClick={() => {
                           void handleDelete(parent.id);
                         }}

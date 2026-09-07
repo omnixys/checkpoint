@@ -222,6 +222,7 @@ function ChildEventAccordion({
           {/* RIGHT */}
           <IconButton
             color="error"
+            aria-label="Remove"
             onClick={(e) => {
               e.stopPropagation();
               onRemove();

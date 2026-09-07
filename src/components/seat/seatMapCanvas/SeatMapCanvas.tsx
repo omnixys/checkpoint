@@ -362,17 +362,17 @@ export default function SeatMapCanvas({
         }}
       >
         <Tooltip title="Vergrössern">
-          <IconButton size="small" onClick={handleZoomIn}>
+          <IconButton size="small" aria-label="Zoom in" onClick={handleZoomIn}>
             <ZoomIn fontSize="small" />
           </IconButton>
         </Tooltip>
         <Tooltip title="Verkleinern">
-          <IconButton size="small" onClick={handleZoomOut}>
+          <IconButton size="small" aria-label="Zoom out" onClick={handleZoomOut}>
             <ZoomOut fontSize="small" />
           </IconButton>
         </Tooltip>
         <Tooltip title="An Fenster anpassen">
-          <IconButton size="small" onClick={fitToScreen}>
+          <IconButton size="small" aria-label="Fit to screen" onClick={fitToScreen}>
             <FitScreen fontSize="small" />
           </IconButton>
         </Tooltip>

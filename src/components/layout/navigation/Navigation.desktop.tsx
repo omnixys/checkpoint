@@ -245,6 +245,7 @@ export default function NavigationDesktop(): JSX.Element | null {
         <Tooltip title={collapsed ? "Expand sidebar" : "Collapse sidebar"} placement="right">
           <IconButton
             size="small"
+            aria-label="Toggle sidebar"
             onClick={toggleSidebar}
             sx={{
               transition: "transform 0.25s ease",

@@ -124,7 +124,7 @@ export default function CalendarToolbar({
           mb: 2,
         }}
       >
-        <IconButton onClick={() => onNavigate("prev")}>
+        <IconButton aria-label="Previous month" onClick={() => onNavigate("prev")}>
           <ChevronLeftRoundedIcon />
         </IconButton>
 
@@ -139,7 +139,7 @@ export default function CalendarToolbar({
           {label}
         </Typography>
 
-        <IconButton onClick={() => onNavigate("next")}>
+        <IconButton aria-label="Next month" onClick={() => onNavigate("next")}>
           <ChevronRightRoundedIcon />
         </IconButton>
       </Box>

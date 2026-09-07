@@ -392,12 +392,12 @@ export default function SeatColorGroupSection({ settings, actions }: Props) {
                   <ColorGroupBox group={group} />
                 </Box>
                 <Tooltip title="Edit">
-                  <IconButton size="small" onClick={() => handleOpenEdit(idx)}>
+                  <IconButton size="small" aria-label="Edit" onClick={() => handleOpenEdit(idx)}>
                     <EditRoundedIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Delete">
-                  <IconButton size="small" onClick={() => handleDelete(idx)}>
+                  <IconButton size="small" aria-label="Delete" onClick={() => handleDelete(idx)}>
                     <DeleteOutlineRoundedIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
