@@ -14,6 +14,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { type JSX } from "react";
 import { AppleButton } from "@/checkpoint/components/apple/AppleButton";
@@ -187,7 +188,10 @@ export default function LoginForm(): JSX.Element {
                     ),
                     endAdornment: (
                       <InputAdornment position="end">
-                        <IconButton onClick={() => setShowPw((p) => !p)}>
+                        <IconButton
+                          onClick={() => setShowPw((p) => !p)}
+                          aria-label="Toggle password visibility"
+                        >
                           {showPw ? <VisibilityOff /> : <Visibility />}
                         </IconButton>
                       </InputAdornment>
@@ -211,6 +215,21 @@ export default function LoginForm(): JSX.Element {
               >
                 {t("login.back")}
               </AppleButton>
+
+              {/* Privacy Hint */}
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ textAlign: "center", mt: 2 }}
+              >
+                {t("login.privacyNote")}{" "}
+                <Link
+                  href={`${env.CHECKPOINT_BASE_PATH}privacy`}
+                  style={{ textDecoration: "underline" }}
+                >
+                  {t("login.privacyLink")}
+                </Link>
+              </Typography>
             </Stack>
           </form>
         </AppleCard>

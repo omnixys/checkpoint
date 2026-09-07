@@ -1,6 +1,17 @@
 "use client";
 
-import { Box, Button, Chip, Stack, TextField, Typography, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  Checkbox,
+  Chip,
+  Collapse,
+  FormControlLabel,
+  Stack,
+  TextField,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { useMemo, useState } from "react";
 
 import PhoneNumberDialog from "@/checkpoint/components/common/phoneNumber/PhoneNumberDialog";
@@ -14,6 +25,16 @@ import { useRsvpForm } from "@/checkpoint/hooks/invitation/useRsvpForm";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
 
+const TERMS_SECTION_KEYS = [
+  "scope",
+  "account",
+  "service",
+  "userContent",
+  "acceptableUse",
+  "liability",
+  "law",
+] as const;
+
 interface AcceptFormProps {
   invitation: GetInvitationQuery["invitation"];
   countries: CallingCodeCountry[];
@@ -22,6 +43,7 @@ interface AcceptFormProps {
 
 export default function AcceptForm({ invitation, countries, onAccepted }: AcceptFormProps) {
   const t = useTypedTranslations("rsvp");
+  const tLegal = useTypedTranslations("legal");
 
   const theme = useTheme();
   const form = useRsvpForm(invitation);
@@ -29,6 +51,8 @@ export default function AcceptForm({ invitation, countries, onAccepted }: Accept
   const [phoneDialogIndex, setPhoneDialogIndex] = useState<number | null>(null);
   const [plusOneDialogIndex, setPlusOneDialogIndex] = useState<number | null>(null);
   const [submitError, setSubmitError] = useState<AppError | null>(null);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [termsExpanded, setTermsExpanded] = useState(false);
   const handleMutationError = useMutationError({ operationName: "ReplyInvitation" });
   const firstNameError = useFieldError(submitError, "firstName");
   const lastNameError = useFieldError(submitError, "lastName");
@@ -143,9 +167,45 @@ export default function AcceptForm({ invitation, countries, onAccepted }: Accept
           onChange={(e) => form.update("guestNote", e.target.value)}
         />
 
+        {/* Terms & Conditions */}
+        <Box sx={{ border: 1, borderColor: "divider", borderRadius: 1, p: 2 }}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={termsAccepted}
+                onChange={(e) => setTermsAccepted(e.target.checked)}
+                size="small"
+              />
+            }
+            label={<Typography variant="body2">{t("acceptForm.readTerms")}</Typography>}
+          />
+          <Button
+            size="small"
+            variant="text"
+            onClick={() => setTermsExpanded((prev) => !prev)}
+            sx={{ ml: 1 }}
+          >
+            {termsExpanded ? t("acceptForm.hideTerms") : t("acceptForm.showTerms")}
+          </Button>
+          <Collapse in={termsExpanded}>
+            <Stack spacing={1} sx={{ mt: 1 }}>
+              {TERMS_SECTION_KEYS.map((section) => (
+                <Stack key={section} spacing={0.5}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                    {tLegal(`terms.sections.${section}.title`)}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {tLegal(`terms.sections.${section}.text`)}
+                  </Typography>
+                </Stack>
+              ))}
+            </Stack>
+          </Collapse>
+        </Box>
+
         <Button
           variant="contained"
-          disabled={!form.isValid}
+          disabled={!form.isValid || !termsAccepted}
           onClick={handleSubmit}
           sx={{ alignSelf: { xs: "stretch", sm: "flex-start" } }}
         >
