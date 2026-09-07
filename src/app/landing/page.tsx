@@ -115,7 +115,7 @@ export default function LandingPage() {
                 <Button component={Link} href={`${CHECKPOINT_BASE_PATH}security`} variant="text">
                   Security‑Dashboard
                 </Button>
-                <Button component={Link} href={`${CHECKPOINT_BASE_PATH}nvitations`} variant="text">
+                <Button component={Link} href={`${CHECKPOINT_BASE_PATH}invitations`} variant="text">
                   Einladungen
                 </Button>
               </Stack>

@@ -1,16 +1,18 @@
 {
   "nav": {
     "privacy": "Datenschutzerklärung",
-    "imprint": "Impressum"
+    "imprint": "Impressum",
+    "terms": "Nutzungsbedingungen",
+    "cookies": "Cookie-Richtlinie"
   },
   "privacy": {
     "title": "Datenschutzerklärung",
-    "intro": "Diese Datenschutzerklärung erläutert, wie Checkpoint (ein Dienst von [Firma]) personenbezogene Daten bei der Nutzung der Plattform verarbeitet.",
-    "lastUpdated": "Stand: [Datum]",
+    "intro": "Diese Datenschutzerklärung erläutert, wie Checkpoint (ein Dienst der Omnixys Technologies, Caleb Gyamfi) personenbezogene Daten bei der Nutzung der Plattform verarbeitet.",
+    "lastUpdated": "Stand: 7. September 2026",
     "sections": {
       "controller": {
         "title": "1. Verantwortlicher",
-        "text": "Verantwortlicher für die Datenverarbeitung ist [Firma], [Adresse], [E-Mail]. Bei Fragen zum Datenschutz können Sie uns jederzeit über diese Kontaktdaten erreichen."
+        "text": "Verantwortlicher für die Datenverarbeitung ist die Omnixys Technologies (Caleb Gyamfi), Waiblinger Straße 20A, 70372 Stuttgart, Deutschland. Bei Fragen zum Datenschutz können Sie uns jederzeit unter caleb.gyamfi@omnixys.com erreichen."
       },
       "collected": {
         "title": "2. Erhobene Daten",
@@ -22,7 +24,7 @@
       },
       "cookies": {
         "title": "4. Cookies und lokale Speicherung",
-        "text": "Wir verwenden Cookies und Browserspeicher für zentrale Funktionen: Ein Sprach-Cookie (locale) merkt sich Ihre gewählte Sprache, Authentifizierungs-Cookies verwalten Ihre Sitzung und ein Einwilligungs-Cookie protokolliert Ihre Analyse-Entscheidung. Für Sicherheitszwecke können ein Geräteschlüssel und technische Daten wie Ihre IP-Adresse verarbeitet werden. Zusätzlich speichert Ihr Browser technische Daten wie sichere Geräte-Anmeldedaten und Ihr Theme."
+        "text": "Wir verwenden Cookies und Browserspeicher für zentrale Funktionen: Ein Sprach-Cookie (locale) merkt sich Ihre gewählte Sprache, Authentifizierungs-Cookies verwalten Ihre Sitzung und ein Einwilligungs-Cookie (omnixys.analytics.consent) protokolliert Ihre Analyse-Entscheidung. Für Sicherheitszwecke können ein Geräteschlüssel und technische Daten wie Ihre IP-Adresse verarbeitet werden. Zusätzlich speichert Ihr Browser technische Daten wie sichere Geräte-Anmeldedaten und Ihr Theme."
       },
       "legalBasis": {
         "title": "5. Rechtsgrundlagen",
@@ -34,35 +36,93 @@
       },
       "contact": {
         "title": "7. Kontakt",
-        "text": "Zur Ausübung Ihrer Rechte oder bei Fragen zu dieser Datenschutzerklärung kontaktieren Sie uns bitte unter [E-Mail]."
+        "text": "Zur Ausübung Ihrer Rechte oder bei Fragen zu dieser Datenschutzerklärung kontaktieren Sie uns bitte unter caleb.gyamfi@omnixys.com."
       }
     }
   },
   "imprint": {
     "title": "Impressum",
     "intro": "Angaben gemäß § 5 DDG.",
-    "lastUpdated": "Stand: [Datum]",
+    "lastUpdated": "Stand: 7. September 2026",
     "sections": {
       "serviceProvider": {
         "title": "Diensteanbieter",
-        "text": "[Firma], [Adresse]"
+        "text": "Omnixys Technologies (Caleb Gyamfi), Waiblinger Straße 20A, 70372 Stuttgart, Deutschland"
       },
       "contact": {
         "title": "Kontakt",
-        "emailLine": "E-Mail: [E-Mail]",
-        "phoneLine": "Telefon: [Telefon]"
+        "emailLine": "E-Mail: caleb.gyamfi@omnixys.com",
+        "phoneLine": "Telefon: +49 1511 1951223"
       },
       "registry": {
         "title": "Handelsregister",
-        "text": "[Registereintrag (optional)]"
+        "text": "Das Unternehmen ist nicht im Handelsregister eingetragen."
       },
       "management": {
         "title": "Vertretungsberechtigte",
-        "text": "[Geschäftsführung]"
+        "text": "Caleb Gyamfi"
       },
       "responsible": {
         "title": "Verantwortlich für den Inhalt",
-        "text": "[Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV: Firma, Adresse]"
+        "text": "Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV: Omnixys Technologies (Caleb Gyamfi), Waiblinger Straße 20A, 70372 Stuttgart, Deutschland"
+      }
+    }
+  },
+  "terms": {
+    "title": "Nutzungsbedingungen",
+    "intro": "Bitte lesen Sie diese Nutzungsbedingungen sorgfältig, bevor Sie Checkpoint verwenden. Mit der Registrierung oder Nutzung der Plattform stimmen Sie diesen Bedingungen zu.",
+    "lastUpdated": "Stand: 7. September 2026",
+    "sections": {
+      "scope": {
+        "title": "1. Geltungsbereich",
+        "text": "Diese Nutzungsbedingungen regeln die Nutzung der Plattform Checkpoint (ein Dienst der Omnixys Technologies, Caleb Gyamfi). Sie gelten für alle Administratoren und Teammitglieder, die Events organisieren, Einladungen verwalten, QR-Tickets scannen und Anwesenheit erfassen."
+      },
+      "account": {
+        "title": "2. Konto",
+        "text": "Zur Nutzung der Plattform legen Sie ein Konto an und bewahren Ihre Anmeldedaten sicher auf. Sie sind für sämtliche Aktivitäten verantwortlich, die über Ihr Konto ausgeführt werden. Die hinterlegten Kontaktdaten müssen stets aktuell gehalten werden."
+      },
+      "service": {
+        "title": "3. Leistungsbeschreibung",
+        "text": "Checkpoint stellt QR-basierte Tools zur Gästeverwaltung und Event-Zutrittskontrolle bereit, einschließlich Einladungsverwaltung, Ticket-Erstellung, Scannen und Anwesenheitserfassung. Wir bemühen uns, den Dienst verfügbar zu halten, garantieren jedoch keine unterbrechungsfreie Erreichbarkeit."
+      },
+      "userContent": {
+        "title": "4. Event- und Gästedaten",
+        "text": "Sie bleiben für die von Ihnen eingegebenen Event- und Gästedaten verantwortlich. Sie gewährleisten, dass Sie zur Verarbeitung dieser Daten berechtigt sind und dass diese korrekt sind. Bei der Nutzung der Plattform halten Sie die geltenden Datenschutzbestimmungen ein."
+      },
+      "acceptableUse": {
+        "title": "5. Zulässige Nutzung",
+        "text": "Sie dürfen die Plattform nicht missbräuchlich nutzen, nicht auf Daten anderer Nutzer zugreifen, den Dienst nicht beeinträchtigen und nicht für rechtswidrige Zwecke verwenden. Das Scannen von QR-Tickets ist nur für Events zulässig, die Sie organisieren oder zu deren Verwaltung Sie berechtigt sind."
+      },
+      "liability": {
+        "title": "6. Haftung",
+        "text": "Wir haften für Schäden aus Vorsatz und grober Fahrlässigkeit sowie für die Verletzung von Leben, Körper und Gesundheit. Für einfache Fahrlässigkeit haften wir nur in Höhe des bei Vertragsschluss vorhersehbaren Schadens, es sei denn, es liegt eine Verletzung wesentlicher Vertragspflichten vor."
+      },
+      "law": {
+        "title": "7. Anwendbares Recht",
+        "text": "Es gilt das Recht der Bundesrepublik Deutschland. Zwingende gesetzliche Bestimmungen der Europäischen Union, insbesondere zu Gunsten der Verbraucher, bleiben vorbehalten."
+      }
+    }
+  },
+  "cookies": {
+    "title": "Cookie-Richtlinie",
+    "intro": "Diese Cookie-Richtlinie erläutert, welche Cookies und Browserspeicher bei Checkpoint verwendet werden.",
+    "lastUpdated": "Stand: 7. September 2026",
+    "sections": {
+      "essential": {
+        "title": "1. Notwendige Cookies",
+        "text": "Notwendige Cookies werden benötigt, damit die Plattform funktioniert. Dazu gehören das Sprach-Cookie (merkt sich Ihre gewählte Sprache) und Authentifizierungs-Cookies (verwalten Ihre Sitzung). Diese können nicht deaktiviert werden."
+      },
+      "consent": {
+        "title": "2. Einwilligungs-Cookie",
+        "text": "Das Einwilligungs-Cookie (omnixys.analytics.consent) protokolliert, ob Sie Analyse-Tracking zugestimmt haben. Es wird für 180 Tage gesetzt und kann jederzeit in den Geräteeinstellungen geändert werden."
+      },
+      "analytics": {
+        "title": "3. Analyse",
+        "text": "Mit Ihrer Einwilligung verwenden wir einen Analysedienst zur Messung der Nutzung. Dieser wird erst nach Ihrer Einwilligung über das Consent-Banner aktiviert."
+      },
+      "managing": {
+        "title": "4. Verwaltung der Cookies",
+        "text": "Sie können Ihre Analyse-Einwilligung jederzeit über die Geräteeinstellungen in der App ändern. Sie können Cookies und Speicher auch in den Browsereinstellungen löschen; dies kann Funktionen der Plattform einschränken."
       }
     }
   }

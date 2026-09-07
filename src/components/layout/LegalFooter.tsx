@@ -46,6 +46,24 @@ export default function LegalFooter() {
         >
           {t("nav.imprint")}
         </Typography>
+        <Typography
+          variant="caption"
+          component={Link}
+          href={`${CHECKPOINT_BASE_PATH}terms`}
+          color="text.secondary"
+          sx={{ textDecoration: "underline" }}
+        >
+          {t("nav.terms")}
+        </Typography>
+        <Typography
+          variant="caption"
+          component={Link}
+          href={`${CHECKPOINT_BASE_PATH}cookies`}
+          color="text.secondary"
+          sx={{ textDecoration: "underline" }}
+        >
+          {t("nav.cookies")}
+        </Typography>
       </Stack>
     </Box>
   );

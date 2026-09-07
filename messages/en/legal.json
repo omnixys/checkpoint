@@ -1,16 +1,18 @@
 {
   "nav": {
     "privacy": "Privacy Policy",
-    "imprint": "Imprint"
+    "imprint": "Imprint",
+    "terms": "Terms of Service",
+    "cookies": "Cookie Policy"
   },
   "privacy": {
     "title": "Privacy Policy",
-    "intro": "This Privacy Policy explains how Checkpoint (a service by [Firma]) handles personal data when you use the platform.",
-    "lastUpdated": "Last updated: [Datum]",
+    "intro": "This Privacy Policy explains how Checkpoint (a service of Omnixys Technologies, Caleb Gyamfi) handles personal data when you use the platform.",
+    "lastUpdated": "Last updated: September 7, 2026",
     "sections": {
       "controller": {
         "title": "1. Controller",
-        "text": "The controller responsible for data processing is [Firma], [Adresse], [E-Mail]. For any questions regarding data protection you may contact us at any time using these contact details."
+        "text": "The controller responsible for data processing is Omnixys Technologies (Caleb Gyamfi), Waiblinger Straße 20A, 70372 Stuttgart, Germany. For any questions regarding data protection you may contact us at any time at caleb.gyamfi@omnixys.com."
       },
       "collected": {
         "title": "2. Data We Collect",
@@ -22,7 +24,7 @@
       },
       "cookies": {
         "title": "4. Cookies and Local Storage",
-        "text": "We use cookies and browser storage for essential functions: a language cookie (locale) remembers your selected language, authentication cookies manage your session, and a consent cookie records your analytics decision. For security purposes a device key and technical data such as your IP address may be processed. In addition, your browser stores technical data such as secure device credentials and your theme setting."
+        "text": "We use cookies and browser storage for essential functions: a language cookie (locale) remembers your selected language, authentication cookies manage your session, and a consent cookie (omnixys.analytics.consent) records your analytics decision. For security purposes a device key and technical data such as your IP address may be processed. In addition, your browser stores technical data such as secure device credentials and your theme setting."
       },
       "legalBasis": {
         "title": "5. Legal Basis",
@@ -34,35 +36,93 @@
       },
       "contact": {
         "title": "7. Contact",
-        "text": "To exercise your rights or for any questions about this Privacy Policy, please contact us at [E-Mail]."
+        "text": "To exercise your rights or for any questions about this Privacy Policy, please contact us at caleb.gyamfi@omnixys.com."
       }
     }
   },
   "imprint": {
     "title": "Imprint",
     "intro": "Information pursuant to § 5 of the German Digital Services Act (DDG).",
-    "lastUpdated": "Last updated: [Datum]",
+    "lastUpdated": "Last updated: September 7, 2026",
     "sections": {
       "serviceProvider": {
         "title": "Service Provider",
-        "text": "[Firma], [Adresse]"
+        "text": "Omnixys Technologies (Caleb Gyamfi), Waiblinger Straße 20A, 70372 Stuttgart, Germany"
       },
       "contact": {
         "title": "Contact",
-        "emailLine": "Email: [E-Mail]",
-        "phoneLine": "Telephone: [Telefon]"
+        "emailLine": "Email: caleb.gyamfi@omnixys.com",
+        "phoneLine": "Telephone: +49 1511 1951223"
       },
       "registry": {
         "title": "Commercial Register",
-        "text": "[Registereintrag (optional)]"
+        "text": "The company is not entered in the commercial register."
       },
       "management": {
         "title": "Management",
-        "text": "[Geschäftsführung]"
+        "text": "Caleb Gyamfi"
       },
       "responsible": {
         "title": "Responsible for content",
-        "text": "[Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV: Firma, Adresse]"
+        "text": "Responsible for content pursuant to § 18 para. 2 of the State Media Treaty (MStV): Omnixys Technologies (Caleb Gyamfi), Waiblinger Straße 20A, 70372 Stuttgart, Germany"
+      }
+    }
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "intro": "Please read these Terms of Service carefully before using Checkpoint. By registering or using the platform you agree to these terms.",
+    "lastUpdated": "Last updated: September 7, 2026",
+    "sections": {
+      "scope": {
+        "title": "1. Scope",
+        "text": "These Terms of Service govern the use of the Checkpoint platform (a service of Omnixys Technologies, Caleb Gyamfi). They apply to all administrators and team members who organise events, manage invitations, scan QR tickets and track attendance."
+      },
+      "account": {
+        "title": "2. Account",
+        "text": "To use the platform you create an account and keep your login credentials secure. You are responsible for all activity performed through your account. Registered contact data must always be kept up to date."
+      },
+      "service": {
+        "title": "3. Service Description",
+        "text": "Checkpoint provides QR-based guest management and event access tools, including invitation management, ticket generation, scanning and attendance tracking. We make reasonable efforts to keep the service available but do not guarantee uninterrupted availability."
+      },
+      "userContent": {
+        "title": "4. Event and Guest Data",
+        "text": "You remain responsible for the event and guest data you enter. You warrant that you are entitled to process this data and that it is accurate. You will comply with all applicable data protection laws when using the platform."
+      },
+      "acceptableUse": {
+        "title": "5. Acceptable Use",
+        "text": "You must not misuse the platform, attempt to access other users' data, interfere with the service, or use it for illegal purposes. Checking QR tickets is only permitted for events you organise or are authorised to manage."
+      },
+      "liability": {
+        "title": "6. Liability",
+        "text": "We are liable for damages caused by intent and gross negligence as well as for harm to life, body and health. Liability for simple negligence is limited to damages that were foreseeable at the time of contract conclusion, unless it concerns a breach of essential contractual obligations." 
+      },
+      "law": {
+        "title": "7. Applicable Law",
+        "text": "These terms are governed by the law of the Federal Republic of Germany. Mandatory legal provisions of the European Union that are affected, in particular for consumers, remain reserved."
+      }
+    }
+  },
+  "cookies": {
+    "title": "Cookie Policy",
+    "intro": "This Cookie Policy explains which cookies and browser storage are used by Checkpoint.",
+    "lastUpdated": "Last updated: September 7, 2026",
+    "sections": {
+      "essential": {
+        "title": "1. Essential Cookies",
+        "text": "Essential cookies are required for the platform to function. These include the locale cookie (remembers your selected language) and authentication cookies (manage your session). These cannot be disabled."
+      },
+      "consent": {
+        "title": "2. Consent Cookie",
+        "text": "The consent cookie (omnixys.analytics.consent) records whether you have agreed to analytics tracking. It is set for 180 days and can be changed on your secure device settings at any time."
+      },
+      "analytics": {
+        "title": "3. Analytics",
+        "text": "With your consent we use an analytics service to measure usage. This is only activated after you have given your consent via the consent banner."
+      },
+      "managing": {
+        "title": "4. Managing Cookies",
+        "text": "You can change your analytics consent at any time via the device settings in the app. You can also delete cookies and storage in your browser settings; this may restrict functions of the platform."
       }
     }
   }
