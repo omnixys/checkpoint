@@ -225,18 +225,18 @@ const FEATURE_REGISTRY: Map<FeatureId, FeatureDefinition> = new Map([
       requiredPermissions: [EventPermissionKey.ViewEvent],
     },
   ],
-  [
-    "create-event",
-    {
-      id: "create-event",
-      category: "tools",
-      label: "Create Event",
-      description: "Set up a new event",
-      icon: AddCircleOutlineIcon,
-      path: "event/new",
-      requiredPermissions: [EventPermissionKey.EditEvent],
-    },
-  ],
+  // [
+  //   "create-event",
+  //   {
+  //     id: "create-event",
+  //     category: "tools",
+  //     label: "Create Event",
+  //     description: "Set up a new event",
+  //     icon: AddCircleOutlineIcon,
+  //     path: "event/new",
+  //     requiredPermissions: [EventPermissionKey.EditEvent],
+  //   },
+  // ],
   [
     "my-dashboard",
     {
