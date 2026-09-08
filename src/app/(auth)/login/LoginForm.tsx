@@ -136,6 +136,8 @@ export default function LoginForm(): JSX.Element {
               {/* Username */}
               <TextField
                 label={t("login.username")}
+                name="username"
+                autoComplete="username"
                 fullWidth={true}
                 value={username}
                 error={usernameError !== undefined}
@@ -164,6 +166,8 @@ export default function LoginForm(): JSX.Element {
               {/* Password */}
               <TextField
                 label={t("login.password")}
+                name="password"
+                autoComplete="current-password"
                 type={showPw ? "text" : "password"}
                 fullWidth={true}
                 value={password}
