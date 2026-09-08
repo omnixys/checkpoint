@@ -49,14 +49,6 @@ export function toWsUrl(value: string): string {
   return url.toString().replace(/\/$/, "");
 }
 
-export function toUuidOrEmpty(value: string): string {
-  if (!value) return "";
-  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value)) {
-    throw new Error("expected a UUID");
-  }
-  return value;
-}
-
 export function toSampleRate(value: string): number {
   const rate = Number(value);
   if (!Number.isFinite(rate) || rate < 0 || rate > 1) {

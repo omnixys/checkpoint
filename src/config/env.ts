@@ -4,7 +4,6 @@ import {
   toHttpUrl,
   toNodeEnv,
   toSampleRate,
-  toUuidOrEmpty,
   toWsUrl,
 } from "./env.shared";
 
@@ -40,7 +39,7 @@ export const env = {
   ),
   EVENT_ID: getEnv("NEXT_PUBLIC_EVENT_ID", process.env.NEXT_PUBLIC_EVENT_ID, {
     fallback: "",
-    transform: toUuidOrEmpty,
+    required: true,
   }),
   APP_URL,
   BASE_URL: getEnv("NEXT_PUBLIC_BASE_URL", process.env.NEXT_PUBLIC_BASE_URL, {
