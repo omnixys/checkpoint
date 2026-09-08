@@ -1,7 +1,18 @@
-import { render, screen } from "@testing-library/react";
+import { ThemeProvider } from "@mui/material/styles";
+import { cleanup, render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { createAppTheme } from "@/checkpoint/themes/createAppTheme";
 import LoginForm from "./LoginForm";
+
+afterEach(cleanup);
+
+const renderLoginForm = () =>
+  render(
+    <ThemeProvider theme={createAppTheme("light")}>
+      <LoginForm />
+    </ThemeProvider>,
+  );
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
@@ -37,7 +48,7 @@ vi.mock("@/checkpoint/providers/AnalyticsProvider", () => ({
 
 describe("LoginForm", () => {
   it("exposes password-manager autocomplete metadata", () => {
-    render(<LoginForm />);
+    renderLoginForm();
 
     expect(screen.getByLabelText("login.username")).toHaveAttribute("name", "username");
     expect(screen.getByLabelText("login.username")).toHaveAttribute("autocomplete", "username");
@@ -46,5 +57,19 @@ describe("LoginForm", () => {
       "autocomplete",
       "current-password",
     );
+  });
+
+  it("renders the branding panel and interactive fields", () => {
+    renderLoginForm();
+
+    expect(screen.getByRole("img", { name: "Omnixys" }).getAttribute("src")).toMatch(
+      /\/logo\/omnixys/,
+    );
+    expect(screen.getByText("login.subtitle")).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "login.title" })).toBeTruthy();
+    expect(screen.getByLabelText("login.username")).toBeTruthy();
+    expect(screen.getByLabelText("login.password")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "login.submit" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "login.back" })).toBeTruthy();
   });
 });

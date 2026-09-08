@@ -34,8 +34,8 @@ export default function LoginPage(): JSX.Element {
         sx={{
           flex: 1,
           display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          alignItems: { xs: "center", lg: "stretch" },
+          justifyContent: { xs: "center", lg: "stretch" },
         }}
       >
         <Suspense fallback={<Skeleton variant="rectangular" width="100%" height="100vh" />}>
