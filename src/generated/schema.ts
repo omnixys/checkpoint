@@ -1479,8 +1479,8 @@ export type Mutation = {
   markNotificationAsUnread: NotificationPayload;
   markRead: Scalars['Boolean']['output'];
   moveSeat: SeatPayload;
-  moveSection: SeatPayload;
-  moveTable: SeatPayload;
+  moveSection: SectionPayload;
+  moveTable: TablePayload;
   redoLayout: Scalars['Boolean']['output'];
   refresh: TokenPayload;
   regenerateBackupCodes: Array<Scalars['String']['output']>;

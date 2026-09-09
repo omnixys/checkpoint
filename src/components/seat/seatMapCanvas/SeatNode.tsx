@@ -17,6 +17,9 @@ interface Props {
   x: number | null;
   y: number | null;
   rotation: number | null;
+  width?: number;
+  height?: number;
+  shape?: string;
   presence?: {
     presenceState: PresenceState;
     checkedInAt?: string | null;
@@ -43,6 +46,9 @@ export default function SeatNode({
   x,
   y,
   rotation,
+  width = 28,
+  height = 28,
+  shape = "CIRCLE",
   presence,
   isOccupied,
   occupantName,
@@ -135,6 +141,8 @@ export default function SeatNode({
     <>
       <Box
         component="button"
+        type="button"
+        aria-pressed={isEditing ? isSelected : undefined}
         onClick={handleClick}
         onMouseDown={isEditing ? onMouseDown : undefined}
         sx={{
@@ -144,9 +152,9 @@ export default function SeatNode({
           transform: rotation
             ? `translate(-50%, -50%) rotate(${rotation}deg)`
             : "translate(-50%, -50%)",
-          width: 28,
-          height: 28,
-          borderRadius: "50%",
+          width,
+          height,
+          borderRadius: shape === "CIRCLE" ? "50%" : 1,
           bgcolor: seatColors.bgcolor,
           color: seatColors.color,
           border: "2px solid",

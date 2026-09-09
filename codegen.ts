@@ -5,6 +5,8 @@ import {
   getIntrospectionQuery,
   parse,
   printSchema,
+  visit,
+  Kind,
   type DocumentNode,
   type IntrospectionQuery,
 } from "graphql";
@@ -133,7 +135,30 @@ async function loadSanitizedSchemaDocument(pointer: string): Promise<DocumentNod
     const cached = JSON.parse(
       await readFile(new URL("./src/generated/introspection.json", import.meta.url), "utf8"),
     ) as IntrospectionQuery;
-    return parse(printSchema(buildClientSchema(cached)));
+    const document = parse(printSchema(buildClientSchema(cached)));
+    // The cached gateway predates the corrected Seat resolver payloads. This source
+    // overlay is validated against the isolated Nest schema; generated files stay outputs.
+    const overlay = parse(
+      await readFile(
+        new URL("./src/graphql/seat-layout.overlay.schema.graphql", import.meta.url),
+        "utf8",
+      ),
+    );
+    const fields = overlay.definitions.flatMap((definition) =>
+      definition.kind === Kind.OBJECT_TYPE_DEFINITION ? (definition.fields ?? []) : [],
+    );
+    return visit(document, {
+      ObjectTypeDefinition(node) {
+        if (node.name.value !== "Mutation") return;
+        return {
+          ...node,
+          fields: node.fields?.map(
+            (field) =>
+              fields.find((replacement) => replacement.name.value === field.name.value) ?? field,
+          ),
+        };
+      },
+    });
   }
   const response = await sanitizeIntrospectionFetch(pointer, {
     body: JSON.stringify({ query: getIntrospectionQuery() }),

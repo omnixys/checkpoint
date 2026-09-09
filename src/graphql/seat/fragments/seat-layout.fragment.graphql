@@ -26,6 +26,11 @@ fragment SeatLayoutSection on SectionPayload {
       x
       y
       rotation
+      width
+      height
+      shape
+      locked
+      hidden
       number
       status
       meta
@@ -49,6 +54,11 @@ fragment SeatLayoutSection on SectionPayload {
     x
     y
     rotation
+    width
+    height
+    shape
+    locked
+    hidden
     number
     status
     meta

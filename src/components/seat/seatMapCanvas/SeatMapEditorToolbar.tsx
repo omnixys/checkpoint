@@ -21,6 +21,7 @@ export type SelectedItem =
   | { type: "seat"; id: string; label: string };
 
 interface Props {
+  disabled?: boolean;
   mode: EditorMode;
   onModeToggle: () => void;
   selectedItems: SelectedItem[];
@@ -70,6 +71,7 @@ function selectionLabel(items: SelectedItem[]): string | null {
 }
 
 export default function SeatMapEditorToolbar({
+  disabled = false,
   mode,
   onModeToggle,
   selectedItems,
@@ -103,7 +105,13 @@ export default function SeatMapEditorToolbar({
         }}
       >
         <Tooltip title="Bearbeiten">
-          <IconButton size="small" aria-label="Edit" onClick={onModeToggle} color="primary">
+          <IconButton
+            disabled={disabled}
+            size="small"
+            aria-label="Edit"
+            onClick={onModeToggle}
+            color="primary"
+          >
             <EditOutlined fontSize="small" />
           </IconButton>
         </Tooltip>
@@ -128,7 +136,13 @@ export default function SeatMapEditorToolbar({
       }}
     >
       <Tooltip title="Ansicht">
-        <IconButton size="small" aria-label="View" onClick={onModeToggle} color="primary">
+        <IconButton
+          disabled={disabled}
+          size="small"
+          aria-label="View"
+          onClick={onModeToggle}
+          color="primary"
+        >
           <VisibilityOutlined fontSize="small" />
         </IconButton>
       </Tooltip>
@@ -136,13 +150,13 @@ export default function SeatMapEditorToolbar({
       <Divider />
 
       <Tooltip title="Rückgängig">
-        <IconButton size="small" aria-label="Undo" onClick={onUndo}>
+        <IconButton disabled={disabled} size="small" aria-label="Undo" onClick={onUndo}>
           <Undo fontSize="small" />
         </IconButton>
       </Tooltip>
 
       <Tooltip title="Wiederholen">
-        <IconButton size="small" aria-label="Redo" onClick={onRedo}>
+        <IconButton disabled={disabled} size="small" aria-label="Redo" onClick={onRedo}>
           <Redo fontSize="small" />
         </IconButton>
       </Tooltip>
@@ -150,13 +164,18 @@ export default function SeatMapEditorToolbar({
       <Divider />
 
       <Tooltip title="Bereich hinzufügen">
-        <IconButton size="small" aria-label="Add section" onClick={onAddSection}>
+        <IconButton
+          disabled={disabled}
+          size="small"
+          aria-label="Add section"
+          onClick={onAddSection}
+        >
           <Add fontSize="small" />
         </IconButton>
       </Tooltip>
 
       <Tooltip title="Tisch hinzufügen">
-        <IconButton size="small" aria-label="Add table" onClick={onAddTable}>
+        <IconButton disabled={disabled} size="small" aria-label="Add table" onClick={onAddTable}>
           <Add fontSize="small" />
         </IconButton>
       </Tooltip>
@@ -165,7 +184,12 @@ export default function SeatMapEditorToolbar({
 
       {singleSection && (
         <Tooltip title="Bereich duplizieren">
-          <IconButton size="small" aria-label="Clone section" onClick={onCloneSection}>
+          <IconButton
+            disabled={disabled}
+            size="small"
+            aria-label="Clone section"
+            onClick={onCloneSection}
+          >
             <ContentCopy fontSize="small" />
           </IconButton>
         </Tooltip>
@@ -173,7 +197,12 @@ export default function SeatMapEditorToolbar({
 
       {singleTable && (
         <Tooltip title="Tisch duplizieren">
-          <IconButton size="small" aria-label="Duplicate table" onClick={onDuplicateTable}>
+          <IconButton
+            disabled={disabled}
+            size="small"
+            aria-label="Duplicate table"
+            onClick={onDuplicateTable}
+          >
             <ContentCopy fontSize="small" />
           </IconButton>
         </Tooltip>
@@ -181,7 +210,7 @@ export default function SeatMapEditorToolbar({
 
       {selectedItems.length > 0 && (
         <Tooltip title="Umbenennen">
-          <IconButton size="small" aria-label="Rename" onClick={onRename}>
+          <IconButton disabled={disabled} size="small" aria-label="Rename" onClick={onRename}>
             <DriveFileRenameOutline fontSize="small" />
           </IconButton>
         </Tooltip>
@@ -189,7 +218,13 @@ export default function SeatMapEditorToolbar({
 
       {selectedItems.length > 0 && (
         <Tooltip title="Löschen">
-          <IconButton size="small" aria-label="Delete" onClick={onDelete} color="error">
+          <IconButton
+            disabled={disabled}
+            size="small"
+            aria-label="Delete"
+            onClick={onDelete}
+            color="error"
+          >
             <DeleteOutlined fontSize="small" />
           </IconButton>
         </Tooltip>
@@ -198,7 +233,12 @@ export default function SeatMapEditorToolbar({
       <Divider />
 
       <Tooltip title="Auto-Generieren">
-        <IconButton size="small" aria-label="Auto-generate" onClick={onAutoGenerate}>
+        <IconButton
+          disabled={disabled}
+          size="small"
+          aria-label="Auto-generate"
+          onClick={onAutoGenerate}
+        >
           <AutoFixHigh fontSize="small" />
         </IconButton>
       </Tooltip>

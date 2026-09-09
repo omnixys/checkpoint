@@ -16920,7 +16920,7 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "name": "SeatPayload",
+                "name": "SectionPayload",
                 "kind": "OBJECT",
                 "ofType": null
               }
@@ -16953,7 +16953,7 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "name": "SeatPayload",
+                "name": "TablePayload",
                 "kind": "OBJECT",
                 "ofType": null
               }

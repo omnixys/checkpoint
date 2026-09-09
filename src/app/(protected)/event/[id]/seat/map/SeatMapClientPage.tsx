@@ -1,8 +1,7 @@
-/** biome-ignore-all lint/suspicious/noEmptyBlockStatements: kp */
 "use client";
 
 import { useMutation, useQuery } from "@apollo/client/react";
-import { alpha, Box, Chip, Stack, Typography } from "@mui/material";
+import { Alert, Box, Chip, CircularProgress, Stack, Typography } from "@mui/material";
 import { useParams } from "next/navigation";
 import React from "react";
 import RouteGuard from "@/checkpoint/components/guard/RouteGuard";
@@ -17,6 +16,10 @@ import SeatMapRenameDialog from "@/checkpoint/components/seat/seatMapCanvas/Seat
 import SeatMapSearch, {
   type SeatMapFilters,
 } from "@/checkpoint/components/seat/seatMapCanvas/SeatMapSearch";
+import {
+  type PersistMove,
+  useLayoutDocument,
+} from "@/checkpoint/components/seat/seatMapCanvas/useLayoutDocument";
 import { BackToEventDetailButton } from "@/checkpoint/components/utils/back-to-event-detail-button";
 import {
   AutoGenerateSeatMapDocument,
@@ -68,10 +71,13 @@ function createDefaultTableName(tables: { name: string }[]): string {
   return `${tables.length + 1}`;
 }
 
+const EMPTY_LAYOUT: SeatMapViewQuery["seatLayout"] = [];
 export default function SeatMapClientPage() {
-  const { currentUser } = useAuth();
   const { id } = useParams();
-  const eventId = id as string;
+  return <SeatMapEvent key={id as string} eventId={id as string} />;
+}
+function SeatMapEvent({ eventId }: { eventId: string }) {
+  const { currentUser } = useAuth();
   const { activeRole, can } = useActiveEvent();
 
   const { fullEventTree } = useEventTreeQuery({
@@ -89,12 +95,12 @@ export default function SeatMapClientPage() {
     loadSeatList: true,
   });
 
-  const { seats, seatListLoading, seatGuestMap, getSeatHolderLabel, getSeatHolderName } =
-    useSeats(eventId);
+  const { seats, getSeatHolderLabel, getSeatHolderName } = useSeats(eventId);
 
   const {
     data: mapData,
     loading: mapLoading,
+    error: queryError,
     refetch: refetchMap,
   } = useQuery<SeatMapViewQuery>(SeatMapViewDocument, {
     variables: { eventId },
@@ -118,7 +124,58 @@ export default function SeatMapClientPage() {
   const [renameTable] = useMutation(RenameTableDocument);
 
   const [editorMode, setEditorMode] = React.useState<EditorMode>("view");
-  const [selectedItems, setSelectedItems] = React.useState<SelectedItem[]>([]);
+  const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
+  const persistMove = React.useCallback<PersistMove>(
+    async (kind, input) => {
+      if (kind === "SECTION") await moveSection({ variables: { input } });
+      else if (kind === "TABLE") await moveTable({ variables: { input } });
+      else await moveSeat({ variables: { input: { ...input, rotation: null } } });
+    },
+    [moveSection, moveTable, moveSeat],
+  );
+  const layout = useLayoutDocument(eventId, mapData?.seatLayout ?? EMPTY_LAYOUT, persistMove);
+  const selectedItems = React.useMemo<SelectedItem[]>(
+    () =>
+      selectedIds.flatMap((id): SelectedItem[] => {
+        const node = layout.document?.nodes[id];
+        if (!node) return [];
+        if (node.kind === "SECTION") return [{ type: "section", id, name: node.name }];
+        if (node.kind === "TABLE")
+          return [{ type: "table", id, name: node.name, sectionId: node.sectionId }];
+        return [{ type: "seat", id, label: String(node.number ?? "") }];
+      }),
+    [selectedIds, layout.document],
+  );
+  const colorGroups = React.useMemo(
+    () =>
+      new Map(
+        (mapData?.seatLayout ?? [])
+          .flatMap((section) => [
+            ...section.seats,
+            ...section.tables.flatMap((table) => table.seats),
+          ])
+          .map((seat) => [seat.id, seat.colorGroup]),
+      ),
+    [mapData],
+  );
+  const [actionPending, setActionPending] = React.useState(false);
+  const actionFlight = React.useRef(false);
+  const [actionError, setActionError] = React.useState<string | null>(null);
+  const blocked = layout.pending || actionPending;
+  const runAction = async (action: () => Promise<void>) => {
+    if (blocked || actionFlight.current) return;
+    actionFlight.current = true;
+    setActionPending(true);
+    setActionError(null);
+    try {
+      await action();
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : "Aktion fehlgeschlagen.");
+    } finally {
+      actionFlight.current = false;
+      setActionPending(false);
+    }
+  };
   const [autoGenerateOpen, setAutoGenerateOpen] = React.useState(false);
   const [renameOpen, setRenameOpen] = React.useState(false);
 
@@ -199,8 +256,6 @@ export default function SeatMapClientPage() {
     );
   }, [currentUser, seatList]);
 
-  const loading = seatListLoading || mapLoading;
-
   // ── Editor Actions ──
 
   const isAdmin = can(EventPermissionKey.ManageSeats);
@@ -209,7 +264,7 @@ export default function SeatMapClientPage() {
     const next = editorMode === "view" ? "edit" : ("view" as EditorMode);
     setEditorMode(next);
     if (next === "view") {
-      setSelectedItems([]);
+      setSelectedIds([]);
     }
   };
 
@@ -218,25 +273,23 @@ export default function SeatMapClientPage() {
       return;
     }
     const name = createDefaultSectionName(mapData.seatLayout);
-    try {
-      await createSection({
-        variables: {
-          input: {
-            eventId,
-            name,
-            x: 50,
-            y: 50,
-            capacity: null,
-            height: null,
-            width: null,
-            meta: null,
-            order: null,
-          },
+    await createSection({
+      variables: {
+        input: {
+          eventId,
+          name,
+          x: 50,
+          y: 50,
+          capacity: null,
+          height: null,
+          width: null,
+          meta: null,
+          order: null,
         },
-      });
-      await refetchMap();
-      setSelectedItems([]);
-    } catch (_err) {}
+      },
+    });
+    await refetchMap();
+    setSelectedIds([]);
   };
 
   const handleAddTable = async () => {
@@ -255,47 +308,43 @@ export default function SeatMapClientPage() {
     }
     const section = sections.find((s) => s.id === targetSectionId);
     const tableName = createDefaultTableName(section?.tables ?? []);
-    try {
-      await createTable({
-        variables: {
-          input: {
-            eventId,
-            sectionId: targetSectionId,
-            name: tableName,
-            x: 100,
-            y: 100,
-            width: 100,
-            height: 60,
-            capacity: null,
-            meta: null,
-            order: null,
-            rotation: null,
-            shape: null,
-          },
+    await createTable({
+      variables: {
+        input: {
+          eventId,
+          sectionId: targetSectionId,
+          name: tableName,
+          x: 100,
+          y: 100,
+          width: 100,
+          height: 60,
+          capacity: null,
+          meta: null,
+          order: null,
+          rotation: null,
+          shape: null,
         },
-      });
-      await refetchMap();
-      setSelectedItems([]);
-    } catch (_err) {}
+      },
+    });
+    await refetchMap();
+    setSelectedIds([]);
   };
 
   const handleDelete = async () => {
     if (selectedItems.length === 0) {
       return;
     }
-    try {
-      for (const item of selectedItems) {
-        if (item.type === "section") {
-          await deleteSection({ variables: { sectionId: item.id } });
-        } else if (item.type === "table") {
-          await deleteTable({ variables: { tableId: item.id } });
-        } else if (item.type === "seat") {
-          await deleteSeat({ variables: { seatId: item.id } });
-        }
+    for (const item of selectedItems) {
+      if (item.type === "section") {
+        await deleteSection({ variables: { sectionId: item.id } });
+      } else if (item.type === "table") {
+        await deleteTable({ variables: { tableId: item.id } });
+      } else if (item.type === "seat") {
+        await deleteSeat({ variables: { seatId: item.id } });
       }
-      await refetchMap();
-      setSelectedItems([]);
-    } catch (_err) {}
+    }
+    await refetchMap();
+    setSelectedIds([]);
   };
 
   const handleDuplicateTable = async () => {
@@ -303,14 +352,12 @@ export default function SeatMapClientPage() {
     if (!table || selectedItems.length !== 1) {
       return;
     }
-    try {
-      await duplicateTable({
-        variables: {
-          input: { tableId: table.id, offsetX: 60, offsetY: 60 },
-        },
-      });
-      await refetchMap();
-    } catch (_err) {}
+    await duplicateTable({
+      variables: {
+        input: { tableId: table.id, offsetX: 60, offsetY: 60 },
+      },
+    });
+    await refetchMap();
   };
 
   const handleCloneSection = async () => {
@@ -318,14 +365,12 @@ export default function SeatMapClientPage() {
     if (!section || selectedItems.length !== 1) {
       return;
     }
-    try {
-      await cloneSection({
-        variables: {
-          input: { sectionId: section.id, offsetX: 100, offsetY: 100 },
-        },
-      });
-      await refetchMap();
-    } catch (_err) {}
+    await cloneSection({
+      variables: {
+        input: { sectionId: section.id, offsetX: 100, offsetY: 100 },
+      },
+    });
+    await refetchMap();
   };
 
   const handleAutoGenerate = async (input: {
@@ -336,58 +381,32 @@ export default function SeatMapClientPage() {
     sectionLayout: SectionShape;
     spacing: number;
   }) => {
-    try {
-      await autoGenerate({ variables: { input: { eventId, ...input } } });
-      await refetchMap();
-      setAutoGenerateOpen(false);
-    } catch (_err) {}
-  };
-
-  const handleMoveSeat = async (seatId: string, x: number, y: number) => {
-    try {
-      await moveSeat({ variables: { input: { id: seatId, x, y, rotation: null } } });
-    } catch (_err) {}
-  };
-
-  const handleMoveTable = async (tableId: string, x: number, y: number) => {
-    try {
-      await moveTable({ variables: { input: { id: tableId, x, y } } });
-    } catch (_err) {}
-  };
-
-  const handleMoveSection = async (sectionId: string, x: number, y: number) => {
-    try {
-      await moveSection({ variables: { input: { id: sectionId, x, y } } });
-    } catch (_err) {}
+    await autoGenerate({ variables: { input: { eventId, ...input } } });
+    await refetchMap();
+    setAutoGenerateOpen(false);
   };
 
   const handleUndo = async () => {
-    try {
-      await undoLayout({ variables: { eventId } });
-      await refetchMap();
-    } catch (_err) {}
+    await undoLayout({ variables: { eventId } });
+    await refetchMap();
   };
 
   const handleRedo = async () => {
-    try {
-      await redoLayout({ variables: { eventId } });
-      await refetchMap();
-    } catch (_err) {}
+    await redoLayout({ variables: { eventId } });
+    await refetchMap();
   };
 
   const handleRename = async (
     updates: { id: string; type: SelectedItem["type"]; newName: string }[],
   ) => {
-    try {
-      for (const u of updates) {
-        if (u.type === "section") {
-          await renameSection({ variables: { input: { sectionId: u.id, newName: u.newName } } });
-        } else if (u.type === "table") {
-          await renameTable({ variables: { input: { tableId: u.id, newName: u.newName } } });
-        }
+    for (const u of updates) {
+      if (u.type === "section") {
+        await renameSection({ variables: { input: { sectionId: u.id, newName: u.newName } } });
+      } else if (u.type === "table") {
+        await renameTable({ variables: { input: { tableId: u.id, newName: u.newName } } });
       }
-      await refetchMap();
-    } catch (_err) {}
+    }
+    await refetchMap();
   };
 
   return (
@@ -395,16 +414,13 @@ export default function SeatMapClientPage() {
       <Stack spacing={1} sx={{ height: "100dvh", overflow: "hidden", position: "relative" }}>
         <Box
           sx={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
+            position: "relative",
             zIndex: 50,
             px: { xs: 1.5, md: 3 },
             py: 1,
-            bgcolor: (theme) => alpha(theme.palette.background.default, 0.7),
-            backdropFilter: "blur(16px)",
-            borderBottom: (theme) => `1px solid ${alpha(theme.palette.divider, 0.12)}`,
+            bgcolor: "background.paper",
+            borderBottom: 1,
+            borderColor: "divider",
             display: "flex",
             flexDirection: "column",
             gap: 1,
@@ -432,51 +448,60 @@ export default function SeatMapClientPage() {
 
         {isAdmin && (
           <SeatMapEditorToolbar
+            disabled={blocked}
             mode={editorMode}
             onModeToggle={handleModeToggle}
             selectedItems={selectedItems}
-            onAddSection={handleAddSection}
-            onAddTable={handleAddTable}
-            onDelete={handleDelete}
-            onDuplicateTable={handleDuplicateTable}
-            onCloneSection={handleCloneSection}
+            onAddSection={() => void runAction(handleAddSection)}
+            onAddTable={() => void runAction(handleAddTable)}
+            onDelete={() => void runAction(handleDelete)}
+            onDuplicateTable={() => void runAction(handleDuplicateTable)}
+            onCloneSection={() => void runAction(handleCloneSection)}
             onAutoGenerate={() => setAutoGenerateOpen(true)}
             onRename={() => setRenameOpen(true)}
-            onUndo={handleUndo}
-            onRedo={handleRedo}
+            onUndo={() => void runAction(handleUndo)}
+            onRedo={() => void runAction(handleRedo)}
           />
         )}
 
-        <SeatMapCanvas
-          sections={mapData?.seatLayout ?? []}
-          presenceMap={presenceMap}
-          seats={seats}
-          seatGuestMap={seatGuestMap}
-          getSeatHolderLabel={getSeatHolderLabel}
-          loading={loading}
-          eventId={eventId}
-          role={activeRole ?? "GUEST"}
-          highlightedSeatIds={highlightedSeatIds}
-          ownSeatIds={ownSeatIds}
-          isEditing={editorMode === "edit"}
-          selectedItems={selectedItems}
-          onSelectItem={setSelectedItems}
-          onMoveSeat={handleMoveSeat}
-          onMoveTable={handleMoveTable}
-          onMoveSection={handleMoveSection}
-        />
+        {(queryError || layout.error || actionError) && (
+          <Alert severity="error">{queryError?.message ?? layout.error ?? actionError}</Alert>
+        )}
+        {!mapData && mapLoading ? (
+          <CircularProgress aria-label="Sitzplan laden" />
+        ) : (
+          layout.document && (
+            <SeatMapCanvas
+              document={layout.document}
+              presenceMap={presenceMap}
+              colorGroups={colorGroups}
+              seats={seats}
+              getSeatHolderLabel={getSeatHolderLabel}
+              role={activeRole ?? "GUEST"}
+              highlightedSeatIds={highlightedSeatIds}
+              ownSeatIds={ownSeatIds}
+              isEditing={editorMode === "edit" && isAdmin}
+              selectedIds={selectedIds}
+              onSelect={setSelectedIds}
+              onMove={(operation) => {
+                if (!actionFlight.current) void layout.move(operation);
+              }}
+              pending={blocked}
+            />
+          )
+        )}
 
         <SeatMapAutoGenerateDialog
           open={autoGenerateOpen}
           onClose={() => setAutoGenerateOpen(false)}
-          onGenerate={handleAutoGenerate}
+          onGenerate={(input) => runAction(() => handleAutoGenerate(input))}
         />
 
         <SeatMapRenameDialog
           open={renameOpen}
           selectedItems={selectedItems}
           onClose={() => setRenameOpen(false)}
-          onRename={handleRename}
+          onRename={(updates) => runAction(() => handleRename(updates))}
         />
       </Stack>
     </RouteGuard>

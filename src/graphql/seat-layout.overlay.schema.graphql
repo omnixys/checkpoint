@@ -1,0 +1,6 @@
+# Offline gateway compatibility, checked against the Seat GraphQLSchemaFactory SDL.
+# Runtime schema comes from the corrected LayoutMutationResolver decorators.
+type Mutation {
+  moveSection(input: MoveSectionInput!): SectionPayload!
+  moveTable(input: MoveTableInput!): TablePayload!
+}
