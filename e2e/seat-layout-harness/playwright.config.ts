@@ -15,11 +15,20 @@ export default defineConfig({
     screenshot: "only-on-failure",
     trace: "retain-on-failure",
   },
-  webServer: {
-    command: "./node_modules/.bin/vite --config e2e/seat-layout-harness/vite.config.mts",
-    cwd: resolve(__dirname, "../.."),
-    url: "http://127.0.0.1:5178",
-    reuseExistingServer: true,
-    timeout: 30_000,
-  },
+  webServer: [
+    {
+      command: "./node_modules/.bin/vite --config e2e/seat-layout-harness/vite.config.mts",
+      cwd: resolve(__dirname, "../.."),
+      url: "http://127.0.0.1:5178",
+      reuseExistingServer: true,
+      timeout: 30_000,
+    },
+    {
+      command: "node e2e/seat-layout-harness/real-analysis-server.mjs",
+      cwd: resolve(__dirname, "../.."),
+      url: "http://127.0.0.1:5191/health",
+      reuseExistingServer: true,
+      timeout: 30000,
+    },
+  ],
 });

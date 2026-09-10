@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import type { NavItem } from "@/checkpoint/lib/experience/navigation-builder";
+import { confirmAppNavigation } from "@/checkpoint/lib/navigation/confirm-navigation";
 import { useThemeMode } from "@/checkpoint/providers/ThemeModeProvider";
 import { isActiveNavItem } from "./navigation.util";
 
@@ -72,7 +73,9 @@ export function MobileNavCarousel({ items }: Props) {
             return (
               <Box
                 key={item.path}
-                onClick={() => !item.disabled && router.push(item.path)}
+                onClick={() => {
+                  if (!item.disabled && confirmAppNavigation(item.path)) router.push(item.path);
+                }}
                 sx={{
                   flex: "0 0 25%", // 👈 max 4 sichtbar
                   minWidth: 76,

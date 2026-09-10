@@ -109,3 +109,7 @@ Die vorausgehende Analyse beschreibt den Ausgangszustand. Der Frontend-Adapter n
 Rotation: Grad um den eigenen Mittelpunkt, positive Winkel im Bildschirmkoordinatensystem im Uhrzeigersinn. Parent-Rotation wird bei Bestandsdaten weder auf Kindpositionen noch auf Kindwinkel vererbt. Parent-Bewegung verschiebt Nachfahren einmal und erhält Backend-Offsets.
 
 Die erweiterten Transform-, History-, Duplicate- und Atomic-Save-Vorschläge sind spätere Phasen. Wiederherstellbare Sicherung: `../../work-in-progress/seat-layout-later-phases-20260909`.
+
+## Import V1 (2026-09-10)
+
+Bild/PDF/Kamera, begrenzte echte deterministische Erkennung und verpflichtender Review ergänzen die Foundation. Geprüfte Vorschläge werden mit frischen IDs neben dem Bestand in einen ausschließlich lokalen Entwurf übernommen. Der gemeinsame Renderer und Single-Drag bleiben erhalten. Details zu Transport, Sicherheit, Navigation, Providergrenzen und tatsächlichen Prüfergebnissen: [SEAT_LAYOUT_IMPORT_ARCHITECTURE.md](./SEAT_LAYOUT_IMPORT_ARCHITECTURE.md). Der gemeinsame Document-Save bleibt außerhalb dieser Umsetzung.

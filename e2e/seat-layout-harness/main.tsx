@@ -9,6 +9,7 @@ import {
 } from "../../src/components/seat/seatMapCanvas/useLayoutDocument";
 import { createAppTheme } from "../../src/themes/createAppTheme";
 import type { HarnessSnapshot } from "./contract";
+import SourceFixture from "./SourceFixture";
 
 const fixture: SourceLayout = [
   {
@@ -185,4 +186,13 @@ function Harness() {
     </ThemeProvider>
   );
 }
-createRoot(document.getElementById("root")!).render(<Harness />);
+createRoot(document.getElementById("root")!).render(
+  new URLSearchParams(window.location.search).get("fixture") === "sources" ? (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <SourceFixture />
+    </ThemeProvider>
+  ) : (
+    <Harness />
+  ),
+);

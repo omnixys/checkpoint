@@ -349,3 +349,15 @@ If a validation step cannot be executed, explicitly report it rather than silent
 Keep `AGENTS.md` synchronized with durable repository conventions. If work introduces a permanent repository rule — a new mandatory validation command, a new test category, a new architecture convention, a new shared-package requirement, a new code-generation workflow, a new package boundary, or a new migration convention — update `AGENTS.md`. Do not add temporary task notes to `AGENTS.md`.
 
 Keep `SKILL.md` current as well. If the repository changes in a way that invalidates the workflow described there — build system changes, test framework changes, new test suites, migration tooling changes, source structure changes, new API technology, Kafka introduced or removed, package publishing workflow changes, or validation command changes — update `SKILL.md` in the same logical change. Do not knowingly leave stale instructions behind.
+
+## Seat layout import verification
+
+Changes to `src/components/seat/seatMapCanvas` require its targeted Vitest suite and the isolated browser harness:
+
+```bash
+node_modules/.bin/vitest run src/components/seat/seatMapCanvas
+node_modules/.bin/playwright test --config e2e/seat-layout-harness/playwright.config.ts
+node_modules/.bin/tsc --project e2e/seat-layout-harness/tsconfig.json
+```
+
+Build the sibling Seat service before the import browser test. The harness starts loopback-only test servers, uses the production renderer and real deterministic recognition, and never writes Seat domain entities. Source lifecycle mocks and controlled Move adapters remain explicitly separated from the real image-analysis path. See `SEAT_LAYOUT_IMPORT_ARCHITECTURE.md` for transport and local-draft boundaries. Do not add partial persistence for accepted imports before a shared Document-Save contract exists.

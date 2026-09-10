@@ -1,11 +1,4 @@
-import {
-  getEnv,
-  toBasePath,
-  toHttpUrl,
-  toNodeEnv,
-  toSampleRate,
-  toWsUrl,
-} from "./env.shared";
+import { getEnv, toBasePath, toHttpUrl, toNodeEnv, toSampleRate, toWsUrl } from "./env.shared";
 
 const NODE_ENV = getEnv("NODE_ENV", process.env.NODE_ENV, {
   fallback: "development",
@@ -49,6 +42,10 @@ export const env = {
     required: true,
     transform: toHttpUrl,
   }),
+  SEAT_API: getEnv("NEXT_PUBLIC_SEAT_API", process.env.NEXT_PUBLIC_SEAT_API, {
+    fallback: "http://localhost:7409",
+    transform: toHttpUrl,
+  }),
   EVENT_API: getEnv("NEXT_PUBLIC_EVENT_API", process.env.NEXT_PUBLIC_EVENT_API, {
     required: true,
     transform: toHttpUrl,
@@ -71,7 +68,7 @@ export const env = {
     { fallback: NODE_ENV === "production" ? "0.1" : "1", transform: toSampleRate },
   ),
   OMNIXYS_TENANT_ID: getEnv(
-    "NEXT_PUBLIC_OMNIXYS_TENANT_ID", 
-    process.env.NEXT_PUBLIC_OMNIXYS_TENANT_ID
+    "NEXT_PUBLIC_OMNIXYS_TENANT_ID",
+    process.env.NEXT_PUBLIC_OMNIXYS_TENANT_ID,
   ),
 } as const;

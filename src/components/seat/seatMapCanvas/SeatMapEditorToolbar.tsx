@@ -22,6 +22,7 @@ export type SelectedItem =
 
 interface Props {
   disabled?: boolean;
+  importDisabled?: boolean;
   mode: EditorMode;
   onModeToggle: () => void;
   selectedItems: SelectedItem[];
@@ -72,6 +73,7 @@ function selectionLabel(items: SelectedItem[]): string | null {
 
 export default function SeatMapEditorToolbar({
   disabled = false,
+  importDisabled = false,
   mode,
   onModeToggle,
   selectedItems,
@@ -105,13 +107,7 @@ export default function SeatMapEditorToolbar({
         }}
       >
         <Tooltip title="Bearbeiten">
-          <IconButton
-            disabled={disabled}
-            size="small"
-            aria-label="Edit"
-            onClick={onModeToggle}
-            color="primary"
-          >
+          <IconButton size="small" aria-label="Edit" onClick={onModeToggle} color="primary">
             <EditOutlined fontSize="small" />
           </IconButton>
         </Tooltip>
@@ -136,13 +132,7 @@ export default function SeatMapEditorToolbar({
       }}
     >
       <Tooltip title="Ansicht">
-        <IconButton
-          disabled={disabled}
-          size="small"
-          aria-label="View"
-          onClick={onModeToggle}
-          color="primary"
-        >
+        <IconButton size="small" aria-label="View" onClick={onModeToggle} color="primary">
           <VisibilityOutlined fontSize="small" />
         </IconButton>
       </Tooltip>
@@ -232,11 +222,11 @@ export default function SeatMapEditorToolbar({
 
       <Divider />
 
-      <Tooltip title="Auto-Generieren">
+      <Tooltip title="Sitzplan erstellen">
         <IconButton
-          disabled={disabled}
+          disabled={importDisabled}
           size="small"
-          aria-label="Auto-generate"
+          aria-label="Create layout"
           onClick={onAutoGenerate}
         >
           <AutoFixHigh fontSize="small" />

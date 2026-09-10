@@ -27,6 +27,7 @@ import ThemeToggleButton from "@/checkpoint/components/ThemeToggleButton";
 import { env } from "@/checkpoint/lib/env";
 import { resolveExperience } from "@/checkpoint/lib/experience/resolver";
 import { buildUserMenuItems } from "@/checkpoint/lib/experience/user-menu-builder";
+import { confirmAppNavigation } from "@/checkpoint/lib/navigation/confirm-navigation";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { useDevice } from "@/checkpoint/providers/DeviceProvider";
@@ -77,10 +78,12 @@ export default function UserMenu() {
   const handleClose = () => setAnchorEl(null);
 
   const go = (href: string) => {
+    if (!confirmAppNavigation(href)) return;
     handleClose();
     router.push(href);
   };
   const doLogout = async () => {
+    if (!confirmAppNavigation(`${CHECKPOINT_BASE_PATH}login`)) return;
     handleClose();
     await logout();
     router.replace(`${CHECKPOINT_BASE_PATH}login`);

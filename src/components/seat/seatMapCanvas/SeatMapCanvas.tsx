@@ -17,7 +17,16 @@ import { cameraTransform, nodeTransform, useSeatMapInteraction } from "./useSeat
 
 type Presence = NonNullable<SeatMapViewQuery["seatPresencesByEvent"]>[number];
 type ColorGroup = SeatMapViewQuery["seatLayout"][number]["seats"][number]["colorGroup"];
+export interface WorldBackground {
+  url: string;
+  width: number;
+  height: number;
+  opacity: number;
+  visible: boolean;
+}
 interface Props {
+  worldBackground?: WorldBackground | undefined;
+  showObjects?: boolean;
   document: LayoutDocument;
   presenceMap: Map<string, Presence>;
   colorGroups: ReadonlyMap<string, ColorGroup>;
@@ -36,11 +45,13 @@ const Body = memo(function Body({
   node,
   selected,
   editing,
+  transparent = false,
   onSelect,
 }: {
   node: Exclude<LayoutNode, { kind: "SEAT" }>;
   selected: boolean;
   editing: boolean;
+  transparent?: boolean;
   onSelect: (ids: string[]) => void;
 }) {
   return (
@@ -61,7 +72,12 @@ const Body = memo(function Body({
         border: "2px solid",
         borderColor: selected ? "primary.main" : "divider",
         borderRadius: ["ROUND", "CIRCLE", "OVAL"].includes(node.shape) ? "50%" : 1,
-        bgcolor: node.kind === "SECTION" ? "background.default" : "action.selected",
+        bgcolor:
+          node.kind === "SECTION"
+            ? transparent
+              ? "transparent"
+              : "background.default"
+            : "action.selected",
         color: "text.secondary",
         typography: "caption",
         fontWeight: 500,
@@ -102,6 +118,8 @@ export default function SeatMapCanvas({
   onSelect,
   onMove,
   pending,
+  worldBackground,
+  showObjects = true,
 }: Props) {
   const [camera, setCamera] = useState<Camera>({ x: 0, y: 0, scale: 1 }),
     [showDebug, setShowDebug] = useState(false);
@@ -115,6 +133,8 @@ export default function SeatMapCanvas({
     onCamera: setCamera,
   });
   const { containerRef, worldRef, registry, handlers, cancel } = interaction;
+  const backgroundRef = useRef(worldBackground);
+  backgroundRef.current = worldBackground;
   const fitEvent = useRef<string | null>(null),
     currentDocument = useRef(document);
   currentDocument.current = document;
@@ -136,7 +156,20 @@ export default function SeatMapCanvas({
     cancel();
     setCamera(
       fitCamera(
-        orderedNodes(currentDocument.current).filter((n) => n.kind !== "SEAT" || !n.hidden),
+        [
+          ...orderedNodes(currentDocument.current).filter((n) => n.kind !== "SEAT" || !n.hidden),
+          ...(backgroundRef.current
+            ? [
+                {
+                  x: backgroundRef.current.width / 2,
+                  y: backgroundRef.current.height / 2,
+                  width: backgroundRef.current.width,
+                  height: backgroundRef.current.height,
+                  rotation: 0,
+                },
+              ]
+            : []),
+        ],
         { width: container.clientWidth, height: container.clientHeight },
       ),
     );
@@ -146,13 +179,14 @@ export default function SeatMapCanvas({
     const el = containerRef.current;
     if (!el) return;
     const initialFit = () => {
-      if (document.order.length && fitEvent.current !== document.eventId) fitView();
+      if ((document.order.length || worldBackground) && fitEvent.current !== document.eventId)
+        fitView();
     };
     initialFit();
     const observer = new ResizeObserver(initialFit);
     observer.observe(el);
     return () => observer.disconnect();
-  }, [containerRef, fitView, document.eventId, document.order.length]);
+  }, [containerRef, fitView, document.eventId, document.order.length, worldBackground]);
   useEffect(() => {
     const key = (e: KeyboardEvent) => {
       if (
@@ -244,7 +278,7 @@ export default function SeatMapCanvas({
         </Tooltip>
         <Chip label={`${Math.round(camera.scale * 100)}%`} size="small" variant="outlined" />
       </Stack>
-      {!nodes.length && (
+      {!nodes.length && !worldBackground && (
         <Box
           sx={{ height: "100%", display: "grid", placeItems: "center", color: "text.secondary" }}
         >
@@ -262,60 +296,79 @@ export default function SeatMapCanvas({
           transformOrigin: "0 0",
         }}
       >
-        {ordered.map((n) => {
-          const seat = seatMap.get(n.id),
-            occupied = Boolean(seat?.guestId || seat?.invitationId);
-          return (
-            <Box
-              key={n.id}
-              ref={(element: HTMLDivElement | null) => {
-                if (element) registry.current.set(n.id, element);
-                else registry.current.delete(n.id);
-              }}
-              data-node-id={n.id}
-              data-testid={`${n.kind.toLowerCase()}-${n.id}`}
-              sx={{
-                position: "absolute",
-                left: 0,
-                top: 0,
-                transform: nodeTransform(n),
-                transformOrigin: "0 0",
-              }}
-            >
-              {n.kind === "SEAT" ? (
-                <SeatNode
-                  seatId={n.id}
-                  seatNumber={n.number}
-                  x={0}
-                  y={0}
-                  rotation={0}
-                  width={n.width}
-                  height={n.height}
-                  shape={n.shape}
-                  presence={presenceMap.get(n.id) ?? null}
-                  isOccupied={occupied}
-                  occupantName={occupied && seat ? getSeatHolderLabel(seat) : undefined}
-                  isOwnSeat={ownSeatIds?.has(n.id)}
-                  highlighted={highlightedSeatIds ? highlightedSeatIds.has(n.id) : undefined}
-                  role={role}
-                  colorGroup={colorGroups.get(n.id)}
-                  isEditing={isEditing}
-                  isSelected={selected.has(n.id)}
-                  onClick={(e) => {
-                    if (!pending && e.detail === 0) onSelect([n.id]);
-                  }}
-                />
-              ) : (
-                <Body
-                  node={n}
-                  selected={selected.has(n.id)}
-                  editing={isEditing && !pending}
-                  onSelect={onSelect}
-                />
-              )}
-            </Box>
-          );
-        })}
+        {worldBackground?.visible && (
+          <Box
+            component="img"
+            src={worldBackground.url}
+            alt="Temporäre Planvorlage"
+            draggable={false}
+            sx={{
+              position: "absolute",
+              left: 0,
+              top: 0,
+              width: worldBackground.width,
+              height: worldBackground.height,
+              opacity: worldBackground.opacity,
+              pointerEvents: "none",
+            }}
+          />
+        )}
+        {showObjects &&
+          ordered.map((n) => {
+            const seat = seatMap.get(n.id),
+              occupied = Boolean(seat?.guestId || seat?.invitationId);
+            return (
+              <Box
+                key={n.id}
+                ref={(element: HTMLDivElement | null) => {
+                  if (element) registry.current.set(n.id, element);
+                  else registry.current.delete(n.id);
+                }}
+                data-node-id={n.id}
+                data-testid={`${n.kind.toLowerCase()}-${n.id}`}
+                sx={{
+                  position: "absolute",
+                  left: 0,
+                  top: 0,
+                  transform: nodeTransform(n),
+                  transformOrigin: "0 0",
+                }}
+              >
+                {n.kind === "SEAT" ? (
+                  <SeatNode
+                    seatId={n.id}
+                    seatNumber={n.number}
+                    x={0}
+                    y={0}
+                    rotation={0}
+                    width={n.width}
+                    height={n.height}
+                    shape={n.shape}
+                    presence={presenceMap.get(n.id) ?? null}
+                    isOccupied={occupied}
+                    occupantName={occupied && seat ? getSeatHolderLabel(seat) : undefined}
+                    isOwnSeat={ownSeatIds?.has(n.id)}
+                    highlighted={highlightedSeatIds ? highlightedSeatIds.has(n.id) : undefined}
+                    role={role}
+                    colorGroup={colorGroups.get(n.id)}
+                    isEditing={isEditing}
+                    isSelected={selected.has(n.id)}
+                    onClick={(e) => {
+                      if (!pending && e.detail === 0) onSelect([n.id]);
+                    }}
+                  />
+                ) : (
+                  <Body
+                    node={n}
+                    transparent={Boolean(worldBackground?.visible)}
+                    selected={selected.has(n.id)}
+                    editing={isEditing && !pending}
+                    onSelect={onSelect}
+                  />
+                )}
+              </Box>
+            );
+          })}
       </Box>
       {isEditing && (
         <SeatMapDebugOverlay

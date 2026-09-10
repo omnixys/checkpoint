@@ -67,3 +67,15 @@ FAILURE`, or `NOT RUN` (with a reason). Never convert `NOT RUN` into `PASS`.
 
 See the "Definition of Done" section in `AGENTS.md`. Before finishing, confirm
 `AGENTS.md` and `SKILL.md` remain accurate for this repository.
+
+## Seat layout import verification
+
+Changes to `src/components/seat/seatMapCanvas` require its targeted Vitest suite and the isolated browser harness:
+
+```bash
+node_modules/.bin/vitest run src/components/seat/seatMapCanvas
+node_modules/.bin/playwright test --config e2e/seat-layout-harness/playwright.config.ts
+node_modules/.bin/tsc --project e2e/seat-layout-harness/tsconfig.json
+```
+
+Build the sibling Seat service before the import browser test. The harness starts loopback-only test servers, uses the production renderer and real deterministic recognition, and never writes Seat domain entities. Source lifecycle mocks and controlled Move adapters remain explicitly separated from the real image-analysis path. See `SEAT_LAYOUT_IMPORT_ARCHITECTURE.md` for transport and local-draft boundaries. Do not add partial persistence for accepted imports before a shared Document-Save contract exists.

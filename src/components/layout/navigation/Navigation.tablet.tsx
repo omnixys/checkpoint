@@ -28,6 +28,7 @@ import {
   withNavigationBadge,
 } from "@/checkpoint/lib/experience/navigation-builder";
 import { resolveExperience } from "@/checkpoint/lib/experience/resolver";
+import { confirmAppNavigation } from "@/checkpoint/lib/navigation/confirm-navigation";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { getRoleColor, isActiveNavItem } from "./navigation.util";
@@ -182,7 +183,9 @@ export default function NavigationTablet(): JSX.Element {
                               key={item.path}
                               disabled={item.disabled}
                               selected={active}
-                              onClick={() => router.push(item.path)}
+                              onClick={() => {
+                                if (confirmAppNavigation(item.path)) router.push(item.path);
+                              }}
                               sx={{
                                 position: "relative",
                                 borderRadius: 2,

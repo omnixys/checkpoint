@@ -14,6 +14,7 @@ import { usePathname, useRouter } from "next/navigation";
 import type { UserRoleType } from "@/checkpoint/generated/graphql";
 import { useTourAnchor } from "@/checkpoint/hooks/core/useTourAnchor";
 import type { NavItem } from "@/checkpoint/lib/experience/navigation-builder";
+import { confirmAppNavigation } from "@/checkpoint/lib/navigation/confirm-navigation";
 import { useTour } from "@/checkpoint/providers/TourProvider";
 import { getRoleColor, isActiveNavItem } from "./navigation.util";
 
@@ -49,7 +50,9 @@ export default function NavigationItem({ item, items, collapsed = false, role }:
       ref={ref}
       disabled={item.disabled}
       selected={isActive}
-      onClick={() => router.push(item.path)}
+      onClick={() => {
+        if (confirmAppNavigation(item.path)) router.push(item.path);
+      }}
       sx={{
         position: "relative",
         borderRadius: collapsed ? 1.5 : 2,
