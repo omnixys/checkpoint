@@ -8,6 +8,6 @@
 export const WEDDING_BRANDING = {
   monogram: "C · R",
   monogramCompact: "C·R",
-  hashtags: ["#CALEBGETSRICH", "#HAPPELYEVERGYAMFI"],
-  hashtagLine: "#CALEBGETSRICH #HAPPELYEVERGYAMFI",
+  hashtags: ["#CALEBGETSRICH", "#HAPPILYEVERGYAMFI"],
+  hashtagLine: "#CALEBGETSRICH #HAPPILYEVERGYAMFI",
 } as const;

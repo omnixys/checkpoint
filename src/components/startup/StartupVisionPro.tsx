@@ -147,7 +147,7 @@ export default function StartupVisionPro(): JSX.Element | null {
                             color: "primary.main",
               fontFamily: "var(--font-wedding-serif), Georgia, serif",
                }}>
-                #CGR #HAPPELYEVERGYAMFI
+                #CGR #HAPPILYEVERGYAMFI
               </Typography> */}
           </Stack>
         ) : (
