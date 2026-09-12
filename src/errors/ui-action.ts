@@ -26,6 +26,7 @@ export type UiAction =
   | (UiActionBase & {
       readonly type: "redirect";
       readonly to: string;
+      readonly mode?: "page" | "login-modal";
     })
   | (UiActionBase & {
       readonly type: "retry";

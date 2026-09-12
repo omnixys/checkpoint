@@ -50,8 +50,41 @@ describe("global Apollo error link", () => {
         traceId: "trace-refresh",
         operationName: "Refresh",
       },
-      actions: [{ type: "dialog", dialog: "sessionExpired" }],
+      actions: [{ type: "redirect", to: "/login", mode: "login-modal" }],
     });
+    unsubscribe();
+  });
+
+  it("opens the login dialog for a bare Unauthorized GraphQL error", () => {
+    const listener = vi.fn();
+    const unsubscribe = notificationService.subscribe(listener);
+    const error = new CombinedGraphQLErrors({
+      errors: [{ message: "Unauthorized", extensions: { status: 401 } }],
+    });
+
+    handleApolloError(error, "InternalConversations");
+
+    expect(listener).toHaveBeenCalledOnce();
+    expect(listener.mock.calls[0]?.[0].error.code).toBe("UNAUTHORIZED");
+    expect(listener.mock.calls[0]?.[0]).toMatchObject({
+      actions: [{ type: "redirect", to: "/login", mode: "login-modal" }],
+    });
+    unsubscribe();
+  });
+
+  it("does not route non-auth global errors through the login dialog", () => {
+    const listener = vi.fn();
+    const unsubscribe = notificationService.subscribe(listener);
+    const error = new CombinedGraphQLErrors({
+      errors: [{ message: "Rate limited", extensions: { code: "RATE_LIMIT_EXCEEDED" } }],
+    });
+
+    handleApolloError(error, "InternalConversations");
+
+    expect(listener).toHaveBeenCalledOnce();
+    expect(listener.mock.calls[0]?.[0].actions).not.toMatchObject([
+      { type: "redirect", to: "/login", mode: "login-modal" },
+    ]);
     unsubscribe();
   });
 });

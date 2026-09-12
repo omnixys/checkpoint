@@ -128,14 +128,19 @@ export function normalizeAppError(error: unknown, context: AppErrorContext = {})
     const graphQlError = selectGraphQlError(error.errors);
     const extensions = (graphQlError?.extensions ?? {}) as GraphQLErrorExtensions;
     const rawCode = stringOf(extensions.code);
-    const code = canonicalCode(rawCode);
+    const status = normalizeStatus(extensions.status ?? extensions.originalError?.statusCode);
+    const code =
+      rawCode !== undefined && isErrorCode(rawCode)
+        ? rawCode
+        : (codeForAuthStatusOrMessage(graphQlError?.message, status) ??
+          ErrorCode.INTERNAL_SERVER_ERROR);
     return new AppError({
       code,
       message:
         code === ErrorCode.INTERNAL_SERVER_ERROR
           ? "An unexpected error occurred"
           : (graphQlError?.message ?? "Request failed"),
-      status: normalizeStatus(extensions.status ?? extensions.originalError?.statusCode),
+      status: status === "UNKNOWN" ? statusForCode(code) : status,
       requestId: stringOf(extensions.requestId),
       correlationId: stringOf(extensions.correlationId),
       traceId: stringOf(extensions.traceId),
@@ -203,6 +208,25 @@ function selectGraphQlError(
 
 function canonicalCode(value: unknown): ErrorCode {
   return isErrorCode(value) ? value : ErrorCode.INTERNAL_SERVER_ERROR;
+}
+
+/**
+ * Fall back to an auth error when the backend omits a canonical
+ * `extensions.code` but the HTTP status or message clearly indicate
+ * an authentication/authorization failure.
+ */
+function codeForAuthStatusOrMessage(
+  message: string | undefined,
+  status: number | "UNKNOWN",
+): ErrorCode | undefined {
+  const normalized = message?.toLowerCase() ?? "";
+  if (status === 401 || normalized.includes("unauthorized")) {
+    return ErrorCode.UNAUTHORIZED;
+  }
+  if (status === 403 || normalized.includes("forbidden")) {
+    return ErrorCode.FORBIDDEN;
+  }
+  return undefined;
 }
 
 function codeForStatus(status: number): ErrorCode {

@@ -21,6 +21,22 @@ export class AppErrorMapper {
         code: error.code,
       }) as UiAction;
 
+    /**
+     * HTTP 401/403 (even without a canonical code) always means the
+     * session can no longer be used: open the login dialog instead of
+     * surfacing a generic error.
+     */
+    if (error.status === 401 || error.status === 403) {
+      return [
+        action({
+          type: "redirect",
+          to: "/login",
+          mode: "login-modal",
+          message: error.message,
+        }),
+      ];
+    }
+
     switch (error.code) {
       case ErrorCode.RSVP_NOT_SUBMITTED:
       case ErrorCode.RSVP_NOT_ACCEPTED:
@@ -61,16 +77,21 @@ export class AppErrorMapper {
       case ErrorCode.SESSION_EXPIRED:
         return [
           action({
-            type: "dialog",
-            dialog: "sessionExpired",
+            type: "redirect",
+            to: "/login",
+            mode: "login-modal",
             message: "Your session has expired. Please sign in again.",
-            redirectTo: "/login",
           }),
         ];
       case ErrorCode.FORBIDDEN:
       case ErrorCode.UNAUTHORIZED_TENANT:
         return [
-          action({ type: "redirect", to: "/error/forbidden", message: "Access is not authorized" }),
+          action({
+            type: "redirect",
+            to: "/login",
+            mode: "login-modal",
+            message: "Access is not authorized",
+          }),
         ];
       case ErrorCode.RATE_LIMIT_EXCEEDED:
         return [
@@ -132,7 +153,10 @@ export class AppErrorMapper {
   }
 
   static mapGlobal(error: AppError): readonly UiAction[] {
-    return GLOBAL_CODES.has(error.code) ? AppErrorMapper.map(error) : [];
+    if (GLOBAL_CODES.has(error.code) || error.status === 401 || error.status === 403) {
+      return AppErrorMapper.map(error);
+    }
+    return [];
   }
 
   static fieldError(error: AppError, field: string): string | undefined {

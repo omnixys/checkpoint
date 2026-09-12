@@ -128,8 +128,10 @@ const weddingSans = Lato({
 
 export default async function RootLayout({
   children,
+  dialog,
 }: Readonly<{
   children: React.ReactNode;
+  dialog?: React.ReactNode;
 }>) {
   const messages = await getMessages();
   const locale = await getLocale();
@@ -151,6 +153,7 @@ export default async function RootLayout({
           >
             <StartupVisionPro />
             {children}
+            {dialog}
           </Provider>
         </NextIntlClientProvider>
       </body>

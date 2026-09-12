@@ -1,34 +1,14 @@
 "use client";
 
-import LockRoundedIcon from "@mui/icons-material/LockRounded";
-import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import {
-  alpha,
-  Box,
-  IconButton,
-  InputAdornment,
-  Stack,
-  TextField,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { alpha, Box, Stack, Typography, useTheme } from "@mui/material";
 import type { Theme } from "@mui/material/styles";
 import { motion, useReducedMotion } from "framer-motion";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { type JSX } from "react";
-import { AppleButton } from "@/checkpoint/components/apple/AppleButton";
-import { AppleCard } from "@/checkpoint/components/apple/AppleCard";
-import type { AppError } from "@/checkpoint/errors/app-error";
-import { useFieldError, useMutationError } from "@/checkpoint/hooks/error";
+import type { JSX } from "react";
+import { LoginFormCard } from "@/checkpoint/components/auth/login/LoginFormCard";
+import { useLoginForm } from "@/checkpoint/components/auth/login/useLoginForm";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { setCurrentUser } from "@/checkpoint/lib/apollo/auth-context";
-import { AuthManager } from "@/checkpoint/lib/auth/AuthManager";
-import { getCurrentUser } from "@/checkpoint/lib/auth/get-current-user";
 import { env } from "@/checkpoint/lib/env";
-import { useAnalytics } from "@/checkpoint/providers/AnalyticsProvider";
 
 const CINEMATIC_EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -37,45 +17,10 @@ export default function LoginForm(): JSX.Element {
   const searchParams = useSearchParams();
   const theme = useTheme();
   const t = useTypedTranslations("auth");
-  const analytics = useAnalytics();
   const reduceMotion = useReducedMotion();
 
   const redirect = searchParams.get("redirect") || env.CHECKPOINT_BASE_PATH;
-
-  const [username, setUsername] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [showPw, setShowPw] = React.useState(false);
-  const [appError, setAppError] = React.useState<AppError | null>(null);
-  const [loading, setLoading] = React.useState(false);
-  const [focused, setFocused] = React.useState<string | null>(null);
-  const handleMutationError = useMutationError({ operationName: "CredentialsLogin" });
-  const usernameError = useFieldError(appError, "username");
-  const passwordError = useFieldError(appError, "password");
-
-  async function submitForm(): Promise<void> {
-    if (loading) {
-      return;
-    }
-
-    try {
-      setLoading(true);
-      setAppError(null);
-      analytics.track("LoginStarted");
-
-      await AuthManager.login({ username, password });
-      const user = await getCurrentUser();
-
-      setCurrentUser(user);
-      analytics.track("LoginSucceeded");
-
-      router.replace(redirect);
-    } catch (e) {
-      analytics.track("LoginFailed", { errorCode: "AUTHENTICATION_FAILED" });
-      setAppError(handleMutationError(e));
-    } finally {
-      setLoading(false);
-    }
-  }
+  const form = useLoginForm({ onSuccess: () => router.replace(redirect) });
 
   return (
     <Box
@@ -176,122 +121,7 @@ export default function LoginForm(): JSX.Element {
           transition={{ duration: reduceMotion ? 0 : 0.7, ease: CINEMATIC_EASE }}
           style={{ width: "100%" }}
         >
-          <AppleCard>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                void submitForm();
-              }}
-            >
-              <Stack spacing={3} sx={{ width: "100%", minWidth: 0 }}>
-                {/* Username */}
-                <TextField
-                  label={t("login.username")}
-                  name="username"
-                  autoComplete="username"
-                  fullWidth={true}
-                  value={username}
-                  error={usernameError !== undefined}
-                  helperText={usernameError}
-                  onFocus={() => setFocused("username")}
-                  onBlur={() => setFocused(null)}
-                  onChange={(e) => setUsername(e.target.value)}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      transition: "all 0.3s",
-                      boxShadow:
-                        focused === "username"
-                          ? `0 0 0 2px ${theme.palette.primary.main}55`
-                          : "none",
-                    },
-                  }}
-                  slotProps={{
-                    input: {
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <PersonRoundedIcon />
-                        </InputAdornment>
-                      ),
-                    },
-                  }}
-                />
-
-                {/* Password */}
-                <TextField
-                  label={t("login.password")}
-                  name="password"
-                  autoComplete="current-password"
-                  type={showPw ? "text" : "password"}
-                  fullWidth={true}
-                  value={password}
-                  error={passwordError !== undefined}
-                  helperText={passwordError}
-                  onFocus={() => setFocused("password")}
-                  onBlur={() => setFocused(null)}
-                  onChange={(e) => setPassword(e.target.value)}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      transition: "all 0.3s",
-                      boxShadow:
-                        focused === "password"
-                          ? `0 0 0 2px ${theme.palette.primary.main}55`
-                          : "none",
-                    },
-                  }}
-                  slotProps={{
-                    input: {
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <LockRoundedIcon />
-                        </InputAdornment>
-                      ),
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            onClick={() => setShowPw((p) => !p)}
-                            aria-label="Toggle password visibility"
-                          >
-                            {showPw ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    },
-                  }}
-                />
-
-                {/* CTA */}
-                <motion.div whileTap={{ scale: 0.96 }}>
-                  <AppleButton type="submit" fullWidth={true} variant="accent" disabled={loading}>
-                    {loading ? t("login.submitLoading") : t("login.submit")}
-                  </AppleButton>
-                </motion.div>
-
-                {/* Secondary */}
-                <AppleButton
-                  fullWidth={true}
-                  variant="ghost"
-                  onClick={() => router.push(env.CHECKPOINT_BASE_PATH)}
-                >
-                  {t("login.back")}
-                </AppleButton>
-
-                {/* Privacy Hint */}
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  sx={{ textAlign: "center", mt: 2 }}
-                >
-                  {t("login.privacyNote")}{" "}
-                  <Link
-                    href={`${env.CHECKPOINT_BASE_PATH}privacy`}
-                    style={{ textDecoration: "underline" }}
-                  >
-                    {t("login.privacyLink")}
-                  </Link>
-                </Typography>
-              </Stack>
-            </form>
-          </AppleCard>
+          <LoginFormCard form={form} onBack={() => router.push(env.CHECKPOINT_BASE_PATH)} />
         </motion.div>
       </Box>
     </Box>

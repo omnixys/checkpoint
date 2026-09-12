@@ -16,6 +16,8 @@ export default defineConfig({
       NEXT_PUBLIC_APP_URL: "http://localhost:3000",
       NEXT_PUBLIC_INVITATION_API: "http://localhost:7407/invitation",
       NEXT_PUBLIC_EVENT_API: "http://localhost:7406/media",
+      NEXT_PUBLIC_EVENT_ID: "checkpoint-test-event",
+      NEXT_PUBLIC_OMNIXYS_TENANT_ID: "checkpoint-test-tenant",
       NEXT_PUBLIC_NEXYS_HOME_URL: "http://localhost:3000/nexys",
       ANALYTICS_CONSENT_SECRET: "checkpoint-test-consent-secret-not-production",
       ANALYTICS_API_URL: "http://localhost:7303",

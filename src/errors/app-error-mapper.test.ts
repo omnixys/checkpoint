@@ -48,6 +48,33 @@ describe("AppError normalization", () => {
     expect(normalized.message).toBe("An unexpected error occurred");
     expect(normalized.rawCode).toBe("NEW_UNKNOWN_CODE");
   });
+
+  it("maps an Unauthorized message without a canonical code to UNAUTHORIZED", () => {
+    const error = new CombinedGraphQLErrors({
+      errors: [{ message: "Unauthorized" }],
+    });
+    const normalized = normalizeAppError(error);
+    expect(normalized.code).toBe(ErrorCode.UNAUTHORIZED);
+    expect(normalized.status).toBe(401);
+  });
+
+  it("maps an HTTP 401 extension status to UNAUTHORIZED", () => {
+    const error = new CombinedGraphQLErrors({
+      errors: [{ message: "localized message", extensions: { status: 401 } }],
+    });
+    const normalized = normalizeAppError(error);
+    expect(normalized.code).toBe(ErrorCode.UNAUTHORIZED);
+    expect(normalized.status).toBe(401);
+  });
+
+  it("maps a Forbidden message without a canonical code to FORBIDDEN", () => {
+    const error = new CombinedGraphQLErrors({
+      errors: [{ message: "Forbidden", extensions: { status: 403 } }],
+    });
+    const normalized = normalizeAppError(error);
+    expect(normalized.code).toBe(ErrorCode.FORBIDDEN);
+    expect(normalized.status).toBe(403);
+  });
 });
 
 describe("AppErrorMapper", () => {
@@ -68,8 +95,49 @@ describe("AppErrorMapper", () => {
 
     expect(AppErrorMapper.mapGlobal(invalidCredentials)).toEqual([]);
     expect(AppErrorMapper.mapGlobal(forbidden)).toMatchObject([
-      { type: "redirect", to: "/error/forbidden" },
+      { type: "redirect", to: "/login", mode: "login-modal" },
     ]);
+  });
+
+  it("routes session/auth failures to the login dialog", () => {
+    const cases: Array<ErrorCode> = [
+      ErrorCode.UNAUTHORIZED,
+      ErrorCode.REFRESH_TOKEN_EXPIRED,
+      ErrorCode.SESSION_EXPIRED,
+      ErrorCode.FORBIDDEN,
+      ErrorCode.UNAUTHORIZED_TENANT,
+    ];
+    for (const code of cases) {
+      const error = new AppError({ code, message: "backend text" });
+      expect(AppErrorMapper.map(error)).toMatchObject([
+        { type: "redirect", to: "/login", mode: "login-modal", code },
+      ]);
+    }
+  });
+
+  it("treats a 401 HTTP status as a login redirect even without a canonical code", () => {
+    const error = new AppError({
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: "Unauthorized",
+      status: 401,
+    });
+
+    expect(AppErrorMapper.map(error)).toMatchObject([
+      { type: "redirect", to: "/login", mode: "login-modal" },
+    ]);
+    expect(AppErrorMapper.mapGlobal(error)).toMatchObject([
+      { type: "redirect", to: "/login", mode: "login-modal" },
+    ]);
+  });
+
+  it("leaves non-auth 4xx statuses untouched by the login redirect guard", () => {
+    const error = new AppError({
+      code: ErrorCode.RATE_LIMIT_EXCEEDED,
+      message: "Rate limited",
+      status: 429,
+    });
+
+    expect(AppErrorMapper.map(error)).toMatchObject([{ type: "banner" }]);
   });
 
   it("surfaces RSVP, preview and seat business errors as a dialog", () => {

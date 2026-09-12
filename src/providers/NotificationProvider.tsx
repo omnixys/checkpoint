@@ -64,7 +64,11 @@ function NotificationRuntime({ children, onError }: NotificationProviderProps) {
           case "redirect": {
             const destination = appPath(action.to);
             if (typeof window === "undefined" || window.location.pathname !== destination) {
-              router.replace(destination);
+              if (action.mode === "login-modal") {
+                router.push(destination, { scroll: false });
+              } else {
+                router.replace(destination);
+              }
             }
             break;
           }
