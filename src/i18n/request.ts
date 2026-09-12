@@ -51,7 +51,7 @@ export default getRequestConfig(async () => {
     // ticket: (await import(`../../messages/${language}/ticket.json`)).default,
     // security: (await import(`../../messages/${language}/security.json`)).default,
     // settings: (await import(`../../messages/${language}/settings.json`)).default,
-    // seat: (await import(`../../messages/${language}/seat.json`)).default,
+    seat: (await import(`../../messages/${language}/seat.json`)).default,
     // notification: (await import(`../../messages/${language}/notification.json`)).default,
     // user: (await import(`../../messages/${language}/user.json`)).default,
     layout: (await import(`../../messages/${language}/layout.json`)).default,

@@ -1,5 +1,6 @@
 import { Box, Stack, Typography } from "@mui/material";
 import { BackButtonBase } from "@/checkpoint/components/utils/back-button-base";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
 
 interface Props {
@@ -8,6 +9,8 @@ interface Props {
 }
 
 export default function NoTicket({ eventId, eventName }: Props) {
+  const tCommon = useTypedTranslations("common");
+
   return (
     <Box
       sx={{
@@ -52,16 +55,16 @@ export default function NoTicket({ eventId, eventName }: Props) {
 
         <Stack spacing={1}>
           <Typography variant="h5" sx={{ fontWeight: 800 }}>
-            Kein Ticket für dieses Event
+            {tCommon("noTicket.title")}
           </Typography>
           <Typography sx={{ color: "text.secondary", maxWidth: 460 }}>
-            Für {eventName} ist aktuell kein persönliches Ticket mit QR-Code hinterlegt.
+            {tCommon("noTicket.body", { eventName })}
           </Typography>
         </Stack>
 
         <BackButtonBase
           href={`${env.CHECKPOINT_BASE_PATH}event/${eventId}`}
-          label="Zurück zum Event"
+          label={tCommon("noTicket.back")}
         />
       </Stack>
     </Box>

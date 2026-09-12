@@ -7,6 +7,7 @@ import type { JSX } from "react";
 import NoTicket from "@/checkpoint/components/utils/NoTicket";
 import useSeatQuery from "@/checkpoint/hooks/seat/useSeatQuery";
 import useMyTicketQuery from "@/checkpoint/hooks/ticket/useMyTicketQuery";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 
 /**
@@ -17,6 +18,7 @@ export default function MySeatContent(): JSX.Element {
   /* -------------------------------------------------------
    * Hooks (ALWAYS executed)
    * ----------------------------------------------------- */
+  const tSeat = useTypedTranslations("seat");
   const { activeEvent } = useActiveEvent();
   const { ticketEventIdMap, myTicketListLoading } = useMyTicketQuery({
     eventId: activeEvent?.id,
@@ -30,11 +32,10 @@ export default function MySeatContent(): JSX.Element {
     loadFullSeatInfo: true,
   });
 
-  // TODO implement i18N keys
   if (!activeEvent) {
     return (
       <Box sx={{ p: 4 }}>
-        <Typography>Kein aktives Event ausgewählt.</Typography>
+        <Typography>{tSeat("mySeat.noActiveEvent")}</Typography>
       </Box>
     );
   }
@@ -42,7 +43,7 @@ export default function MySeatContent(): JSX.Element {
   if (myTicketListLoading) {
     return (
       <Box sx={{ p: 4 }}>
-        <Typography>Lade Ticket…</Typography>
+        <Typography>{tSeat("mySeat.loadingTicket")}</Typography>
       </Box>
     );
   }
@@ -54,7 +55,7 @@ export default function MySeatContent(): JSX.Element {
   if (fullSeatInfoLoading) {
     return (
       <Box sx={{ p: 4 }}>
-        <Typography>Lade Sitzplatz…</Typography>
+        <Typography>{tSeat("mySeat.loadingSeat")}</Typography>
       </Box>
     );
   }
@@ -62,7 +63,7 @@ export default function MySeatContent(): JSX.Element {
   if (fullSeatInfoError) {
     return (
       <Box sx={{ p: 4 }}>
-        <Typography>Sitzplatz konnte nicht geladen werden.</Typography>
+        <Typography>{tSeat("mySeat.errorLoadingSeat")}</Typography>
       </Box>
     );
   }
@@ -70,11 +71,11 @@ export default function MySeatContent(): JSX.Element {
   if (!ticket.seatId || !fullSeatInfo) {
     const canChooseSeat = activeEvent.settings?.allowGuestSeatSelection === true;
     const title = canChooseSeat
-      ? "Noch keinen Sitzplatz ausgewählt"
-      : "Dein Sitzplatz steht noch aus";
+      ? tSeat("mySeat.emptyTitleChoose")
+      : tSeat("mySeat.emptyTitlePending");
     const message = canChooseSeat
-      ? "Bitte suche dir noch einen Platz für dieses Event aus."
-      : "Bitte gedulde dich noch. Ein Platz wird dir noch zugewiesen.";
+      ? tSeat("mySeat.emptyMessageChoose")
+      : tSeat("mySeat.emptyMessagePending");
 
     return (
       <Box sx={{ p: { xs: 1.5, sm: 2 }, pt: { xs: 10, sm: 18, md: 30 } }}>
@@ -136,7 +137,7 @@ export default function MySeatContent(): JSX.Element {
       >
         <CardContent>
           <Stack spacing={2}>
-            <Typography variant="h6">Dein Sitzplatz</Typography>
+            <Typography variant="h6">{tSeat("mySeat.title")}</Typography>
 
             <Stack
               direction={{ xs: "column", sm: "row" }}
@@ -147,8 +148,11 @@ export default function MySeatContent(): JSX.Element {
             >
               <EventSeatIcon />
               <Typography sx={{ overflowWrap: "anywhere" }}>
-                Bereich {fullSeatInfo?.section?.name} · Tisch {fullSeatInfo.table?.name} · Sitz{" "}
-                {fullSeatInfo.number}
+                {tSeat("mySeat.seatLine", {
+                  section: fullSeatInfo?.section?.name ?? "—",
+                  table: fullSeatInfo.table?.name ?? "—",
+                  number: fullSeatInfo.number ?? "—",
+                })}
               </Typography>
             </Stack>
 

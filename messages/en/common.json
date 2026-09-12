@@ -41,6 +41,12 @@
     "de-DE": "German"
   },
 
+  "noTicket": {
+    "title": "No ticket for this event",
+    "body": "There is currently no personal ticket with a QR code set up for {eventName}.",
+    "back": "Back to event"
+  },
+
   "copy": "Copy to Clipboard!",
   "management": "Management",
   "chooseSeat": "Choose a Seat",

@@ -9,7 +9,6 @@ import invitation from "../../messages/en/invitation.json";
 // import ticket from "../../messages/en/ticket.json";
 // import security from "../../messages/en/security.json";
 // import settings from "../../messages/en/settings.json";
-// import seat from "../../messages/en/seat.json";
 // import notification from "../../messages/en/notification.json";
 // import user from "../../messages/en/user.json";
 import layout from "../../messages/en/layout.json";
@@ -18,6 +17,7 @@ import onboarding from "../../messages/en/onboarding.json";
 import qr from "../../messages/en/qr.json";
 import rsvp from "../../messages/en/rsvp.json";
 import scanner from "../../messages/en/scanner.json";
+import seat from "../../messages/en/seat.json";
 import ticket from "../../messages/en/ticket.json";
 
 export const messages = {
@@ -28,7 +28,6 @@ export const messages = {
   // ticket,
   // security,
   // settings,
-  // seat,
   // notification,
   // user,
   layout,
@@ -40,6 +39,7 @@ export const messages = {
   create,
   onboarding,
   scanner,
+  seat,
   qr,
   ticket,
 };

@@ -1,0 +1,14 @@
+{
+  "mySeat": {
+    "noActiveEvent": "Kein aktives Event ausgewählt.",
+    "loadingTicket": "Lade Ticket…",
+    "loadingSeat": "Lade Sitzplatz…",
+    "errorLoadingSeat": "Der Sitzplatz konnte nicht geladen werden.",
+    "emptyTitleChoose": "Noch keinen Sitzplatz ausgewählt",
+    "emptyTitlePending": "Dein Sitzplatz steht noch aus",
+    "emptyMessageChoose": "Bitte suche dir noch einen Platz für dieses Event aus.",
+    "emptyMessagePending": "Bitte gedulde dich noch. Ein Platz wird dir noch zugewiesen.",
+    "title": "Dein Sitzplatz",
+    "seatLine": "Bereich {section} · Tisch {table} · Sitz {number}"
+  }
+}

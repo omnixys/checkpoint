@@ -1,0 +1,14 @@
+{
+  "mySeat": {
+    "noActiveEvent": "No active event selected.",
+    "loadingTicket": "Loading ticket…",
+    "loadingSeat": "Loading seat…",
+    "errorLoadingSeat": "The seat could not be loaded.",
+    "emptyTitleChoose": "No seat selected yet",
+    "emptyTitlePending": "Your seat is still pending",
+    "emptyMessageChoose": "Please choose a seat for this event.",
+    "emptyMessagePending": "Please be patient — a seat will be assigned to you.",
+    "title": "Your seat",
+    "seatLine": "Section {section} · Table {table} · Seat {number}"
+  }
+}

@@ -40,6 +40,12 @@
     "de-DE": "Deutsch"
   },
 
+  "noTicket": {
+    "title": "Kein Ticket für dieses Event",
+    "body": "Für {eventName} ist aktuell kein persönliches Ticket mit QR-Code hinterlegt.",
+    "back": "Zurück zum Event"
+  },
+
   "copy": "Kopiert!",
   "management": "Verwaltung",
   "chooseSeat": "Sitzplatz auswählen",
