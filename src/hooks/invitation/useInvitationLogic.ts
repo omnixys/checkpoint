@@ -3,6 +3,7 @@
 // TODO kein any
 
 import { useMutation } from "@apollo/client/react";
+import { useLocale } from "next-intl";
 import { useMemo, useState } from "react";
 import type {
   AssignSeatMutation,
@@ -70,6 +71,7 @@ export function useInvitationLogic(eventId: string) {
   const logger = getLogger("useInvitationLogic");
   const { can } = useActiveEvent();
   const canApprove = can(EventPermissionKey.ApproveGuests);
+  const uiLocale = useLocale();
 
   /* -----------------------------------------------------------------------
    * Filters
@@ -104,6 +106,7 @@ export function useInvitationLogic(eventId: string) {
   const [bulkApproveEntries, setBulkApproveEntries] = useState<Record<string, BulkApproveEntry>>(
     {},
   );
+  const [bulkApproveLocales, setBulkApproveLocales] = useState<Record<string, string>>({});
   const [seatOptionsByEventId, setSeatOptionsByEventId] = useState<Record<string, SeatOption[]>>(
     {},
   );
@@ -504,9 +507,16 @@ export function useInvitationLogic(eventId: string) {
       };
     }
 
+    const defaultLocale = uiLocale.startsWith("en") ? "en-US" : "de-DE";
+    const localeDefaults: Record<string, string> = {};
+    for (const invitation of selectedInvitations) {
+      localeDefaults[invitation.id] = defaultLocale;
+    }
+
     setApprovalDialogMode(mode);
     setBulkApproveIds(ids);
     setBulkApproveEntries(defaults);
+    setBulkApproveLocales(localeDefaults);
     setApproveOpen(true);
   }
 
@@ -514,6 +524,14 @@ export function useInvitationLogic(eventId: string) {
     setApproveOpen(false);
     setBulkApproveIds(null);
     setBulkApproveEntries({});
+    setBulkApproveLocales({});
+  }
+
+  function setBulkApproveLocale(invitationId: string, locale: string) {
+    setBulkApproveLocales((prev) => ({
+      ...prev,
+      [invitationId]: locale,
+    }));
   }
 
   function setBulkApproveSeat(invitationId: string, seatId: string | null) {
@@ -580,6 +598,7 @@ export function useInvitationLogic(eventId: string) {
       setApproveOpen(false);
       setBulkApproveIds(null);
       setBulkApproveEntries({});
+      setBulkApproveLocales({});
       setSelected([]);
     } catch (err) {
       await Promise.allSettled([
@@ -843,10 +862,12 @@ export function useInvitationLogic(eventId: string) {
     approvalDialogMode,
     bulkApproveEntries,
     bulkApproveInvitationList,
+    bulkApproveLocales,
     seatOptionsByEventId,
     openBulkApproveDialog,
     closeBulkApproveDialog,
     setBulkApproveSeat,
+    setBulkApproveLocale,
     submitApprovalDialog,
     approvalMutationLoading: bulkApproveMutationLoading || bulkStageMutationLoading,
 

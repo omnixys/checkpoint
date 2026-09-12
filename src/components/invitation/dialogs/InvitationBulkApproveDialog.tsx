@@ -130,6 +130,26 @@ export default function InvitationBulkApproveDialog({ logic }: InvitationBulkApp
                         ))}
                       </Select>
                     </FormControl>
+
+                    {/* LOCALE (optional) — released tickets trigger a guest message */}
+                    {finalizing && (
+                      <FormControl fullWidth={true}>
+                        <InputLabel id={`bulk-approve-locale-${invitation.id}`}>
+                          {tInvitation("bulkApprove.locale")}
+                        </InputLabel>
+                        <Select
+                          labelId={`bulk-approve-locale-${invitation.id}`}
+                          label={tInvitation("bulkApprove.locale")}
+                          value={logic.bulkApproveLocales[invitation.id] ?? "de-DE"}
+                          onChange={(event) =>
+                            logic.setBulkApproveLocale(invitation.id, event.target.value)
+                          }
+                        >
+                          <MenuItem value="de-DE">{tCommon("language.de-DE")}</MenuItem>
+                          <MenuItem value="en-US">{tCommon("language.en-US")}</MenuItem>
+                        </Select>
+                      </FormControl>
+                    )}
                   </Stack>
 
                   <Typography variant="caption" color="text.secondary">
