@@ -675,8 +675,8 @@ export default function QrCard({ ticket, event, onActivated }: Props) {
                         value={qrPayload}
                         size={QR_SIZE}
                         marginSize={MARGIN_SIZE}
-                        fgColor={theme.palette.primary.main}
-                        bgColor={theme.palette.background.paper}
+                        fgColor={theme.palette.common.black}
+                        bgColor={theme.palette.common.white}
                         style={{
                           width: "100%",
                           height: "100%",
