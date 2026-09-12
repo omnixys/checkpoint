@@ -466,8 +466,8 @@ export default function WebCameraScanner({ onDetect, onRestart }: Props) {
       }
 
       const reader = new BrowserQRCodeReader();
-      const controls = await reader.decodeFromVideoDevice(
-        undefined,
+      const controls = await reader.decodeFromConstraints(
+        CAMERA_CONSTRAINTS,
         video,
         (result, _error, callbackControls) => {
           if (!isCurrentSession(sessionId)) {
