@@ -33,5 +33,7 @@
   "securePass": "Secure pass",
   "activeState": "Active",
   "expiredState": "Expired",
-  "rotatingState": "Rotating"
+  "rotatingState": "Rotating",
+  "enlarge": "View QR code full size",
+  "close": "Close"
 }

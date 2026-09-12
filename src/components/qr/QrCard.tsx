@@ -5,6 +5,7 @@ import EventSeatRoundedIcon from "@mui/icons-material/EventSeatRounded";
 import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
 import ShieldRoundedIcon from "@mui/icons-material/ShieldRounded";
 import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
+import ZoomInRoundedIcon from "@mui/icons-material/ZoomInRounded";
 import {
   Alert,
   Box,
@@ -12,6 +13,7 @@ import {
   Chip,
   CircularProgress,
   Stack,
+  Tooltip,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -24,6 +26,7 @@ import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "rea
 import ActivateTicketButton from "@/checkpoint/components/qr/ActivateTicketButton";
 import QrCountdownRings from "@/checkpoint/components/qr/QrCountdownRings";
 import QrRingLegend from "@/checkpoint/components/qr/QrRingLegend";
+import QrZoomDialog from "@/checkpoint/components/qr/QrZoomDialog";
 import { BackButtonBase } from "@/checkpoint/components/utils/back-button-base";
 import type { GetActiveEventQuery, GetMyFullTicketListQuery } from "@/checkpoint/generated/graphql";
 import useSeatQuery from "@/checkpoint/hooks/seat/useSeatQuery";
@@ -103,6 +106,7 @@ export default function QrCard({ ticket, event, onActivated }: Props) {
   const [remainingSeconds, setRemainingSeconds] = useState<number>(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPreparingQr, setIsPreparingQr] = useState<boolean>(false);
+  const [zoomOpen, setZoomOpen] = useState<boolean>(false);
 
   const inFlightRef = useRef(false);
   const hasStartedRef = useRef(false);
@@ -268,6 +272,20 @@ export default function QrCard({ ticket, event, onActivated }: Props) {
       inFlightRef.current = false;
     }
   }, [generateToken, isDeviceActivated, isRevoked, tQr, ticket]);
+
+  const openZoom = useCallback(() => {
+    if (qrPayload) {
+      setZoomOpen(true);
+    }
+  }, [qrPayload]);
+
+  const closeZoom = useCallback(() => setZoomOpen(false), []);
+
+  useEffect(() => {
+    if (!qrPayload) {
+      setZoomOpen(false);
+    }
+  }, [qrPayload]);
 
   const generateRef = useRef(generateSignedQrPayload);
 
@@ -618,6 +636,16 @@ export default function QrCard({ ticket, event, onActivated }: Props) {
               }}
             >
               <Box
+                role="button"
+                tabIndex={qrPayload ? 0 : -1}
+                aria-label={qrPayload ? tQr("enlarge") : undefined}
+                onClick={openZoom}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    openZoom();
+                  }
+                }}
                 sx={{
                   position: "relative",
                   width: "100%",
@@ -631,8 +659,64 @@ export default function QrCard({ ticket, event, onActivated }: Props) {
                   borderColor: alpha(theme.palette.divider, 0.62),
                   backgroundColor: alpha(theme.palette.background.paper, 0.62),
                   boxShadow: `inset 0 1px 0 ${alpha(theme.palette.common.white, 0.12)}`,
+                  cursor: qrPayload ? "pointer" : "default",
+                  transition: theme.transitions.create(["border-color", "box-shadow"], {
+                    duration: theme.transitions.duration.shorter,
+                  }),
+                  ...(qrPayload
+                    ? {
+                        "&:hover": {
+                          borderColor: alpha(theme.palette.primary.main, 0.5),
+                          boxShadow: `inset 0 1px 0 ${alpha(
+                            theme.palette.common.white,
+                            0.12,
+                          )}, 0 ${theme.spacing(1)} ${theme.spacing(3)} ${alpha(
+                            theme.palette.primary.main,
+                            0.18,
+                          )}`,
+                        },
+                        "&:focus-visible": {
+                          outline: 2,
+                          outlineStyle: "solid",
+                          outlineColor: theme.palette.primary.main,
+                          outlineOffset: 2,
+                        },
+                      }
+                    : {}),
                 }}
               >
+                {qrPayload ? (
+                  <Tooltip title={tQr("enlarge")}>
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        top: theme.spacing(1),
+                        right: theme.spacing(1),
+                        zIndex: 3,
+                        width: theme.spacing(4.25),
+                        height: theme.spacing(4.25),
+                        borderRadius: 999,
+                        display: "grid",
+                        placeItems: "center",
+                        color: theme.palette.text.secondary,
+                        backgroundColor: alpha(theme.palette.background.paper, 0.82),
+                        backdropFilter: "blur(10px)",
+                        WebkitBackdropFilter: "blur(10px)",
+                        border: 1,
+                        borderColor: alpha(theme.palette.divider, 0.62),
+                        boxShadow: `0 ${theme.spacing(0.75)} ${theme.spacing(2)} ${alpha(
+                          theme.palette.common.black,
+                          theme.palette.mode === "dark" ? 0.42 : 0.18,
+                        )}`,
+                        pointerEvents: "none",
+                      }}
+                    >
+                      <ZoomInRoundedIcon
+                        sx={{ width: theme.spacing(2.2), height: theme.spacing(2.2) }}
+                      />
+                    </Box>
+                  </Tooltip>
+                ) : null}
                 <motion.div
                   key={cycleKey}
                   {...qrBeatAnimation(QR_TOKEN_LIFETIME_SECONDS)}
@@ -781,6 +865,14 @@ export default function QrCard({ ticket, event, onActivated }: Props) {
           ) : null}
         </Stack>
       </Box>
+
+      <QrZoomDialog
+        open={zoomOpen}
+        onClose={closeZoom}
+        payload={qrPayload ?? ""}
+        remainingSeconds={remainingSeconds}
+        eventName={event.name}
+      />
     </motion.div>
   );
 }

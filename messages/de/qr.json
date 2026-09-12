@@ -33,5 +33,7 @@
   "securePass": "Sicherer Pass",
   "activeState": "Aktiv",
   "expiredState": "Abgelaufen",
-  "rotatingState": "Rotiert"
+  "rotatingState": "Rotiert",
+  "enlarge": "QR-Code vergrößern",
+  "close": "Schließen"
 }
