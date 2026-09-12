@@ -1,5 +1,5 @@
-mutation ResendGuestConfirmations($invitationIds: [ID!]!) {
-  resendGuestConfirmations(invitationIds: $invitationIds) {
+mutation ResendGuestConfirmations($invitationIds: [ID!]!, $locale: String) {
+  resendGuestConfirmations(invitationIds: $invitationIds, locale: $locale) {
     total
     resent
     skipped

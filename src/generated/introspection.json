@@ -1213,6 +1213,18 @@
             "deprecationReason": null
           },
           {
+            "name": "locale",
+            "description": "Locale used for the guest confirmation message (e.g. de-DE, en-US).",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "seatId",
             "description": "ID of the seat to assign when approving the invitation.",
             "type": {
@@ -1275,6 +1287,18 @@
                 "kind": "SCALAR",
                 "ofType": null
               }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "locale",
+            "description": "Locale used for the guest confirmation message (e.g. de-DE, en-US).",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -4995,11 +5019,15 @@
             "name": "guestConfirmationReminderEnabled",
             "description": null,
             "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "name": "Boolean",
+                "kind": "SCALAR",
+                "ofType": null
+              }
             },
-            "defaultValue": null,
+            "defaultValue": "true",
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -5007,19 +5035,23 @@
             "name": "guestConfirmationReminderPresets",
             "description": null,
             "type": {
-              "kind": "LIST",
+              "kind": "NON_NULL",
               "name": null,
               "ofType": {
                 "name": null,
-                "kind": "NON_NULL",
+                "kind": "LIST",
                 "ofType": {
-                  "name": "GuestReminderPreset",
-                  "kind": "ENUM",
-                  "ofType": null
+                  "name": null,
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "name": "GuestReminderPreset",
+                    "kind": "ENUM",
+                    "ofType": null
+                  }
                 }
               }
             },
-            "defaultValue": null,
+            "defaultValue": "[WEEK_BEFORE, THREE_DAYS_BEFORE, HOURS_24_BEFORE]",
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -17668,7 +17700,7 @@
           },
           {
             "name": "resendGuestConfirmations",
-            "description": null,
+            "description": "Re-sends the confirmation message (email or WhatsApp) to guests who have not yet completed their registration.",
             "args": [
               {
                 "name": "invitationIds",
@@ -17689,6 +17721,18 @@
                       }
                     }
                   }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "locale",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -20969,6 +21013,18 @@
                 "kind": "SCALAR",
                 "ofType": null
               }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "guestNote",
+            "description": "Optional note from guest",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -26745,7 +26801,7 @@
       {
         "kind": "OBJECT",
         "name": "ResendGuestConfirmationItem",
-        "description": null,
+        "description": "Per-invitation result of a guest confirmation resend.",
         "isOneOf": null,
         "fields": [
           {
@@ -26766,7 +26822,7 @@
           },
           {
             "name": "reason",
-            "description": null,
+            "description": "Reason a resend was skipped, when applicable (already-registered, invalid-status, event-ended, missing-payload, rate-limited).",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -26778,7 +26834,7 @@
           },
           {
             "name": "resent",
-            "description": null,
+            "description": "Whether the confirmation message was re-issued.",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -26801,7 +26857,7 @@
       {
         "kind": "OBJECT",
         "name": "ResendGuestConfirmationsPayload",
-        "description": null,
+        "description": "Aggregate result of resending guest confirmation messages.",
         "isOneOf": null,
         "fields": [
           {
@@ -26812,7 +26868,7 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "name": "Int",
+                "name": "Float",
                 "kind": "SCALAR",
                 "ofType": null
               }
@@ -26852,7 +26908,7 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "name": "Int",
+                "name": "Float",
                 "kind": "SCALAR",
                 "ofType": null
               }
@@ -26868,7 +26924,7 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "name": "Int",
+                "name": "Float",
                 "kind": "SCALAR",
                 "ofType": null
               }
@@ -29003,13 +29059,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "name": "JSON",
-                "kind": "SCALAR",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -32142,13 +32194,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "name": "JSON",
-                "kind": "SCALAR",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null

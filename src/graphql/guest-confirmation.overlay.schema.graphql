@@ -28,7 +28,7 @@ extend type InvitationPayload {
 }
 
 extend type Mutation {
-  resendGuestConfirmations(invitationIds: [ID!]!): ResendGuestConfirmationsPayload!
+  resendGuestConfirmations(invitationIds: [ID!]!, locale: String): ResendGuestConfirmationsPayload!
 }
 
 type ResendGuestConfirmationItem {

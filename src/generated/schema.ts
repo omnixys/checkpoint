@@ -141,6 +141,8 @@ export type AnalyticsSecurityChartsPayload = {
 export type ApproveInvitationDataInput = {
   /** ID of the invitation to approve/unapprove (cuid). */
   invitationId: Scalars['ID']['input'];
+  /** Locale used for the guest confirmation message (e.g. de-DE, en-US). */
+  locale: InputMaybe<Scalars['String']['input']>;
   /** ID of the seat to assign when approving the invitation. */
   seatId: InputMaybe<Scalars['ID']['input']>;
 };
@@ -152,6 +154,8 @@ export type ApproveInvitationInput = {
   eventId: InputMaybe<Scalars['ID']['input']>;
   /** ID of the invitation to approve/unapprove (cuid). */
   invitationId: Scalars['ID']['input'];
+  /** Locale used for the guest confirmation message (e.g. de-DE, en-US). */
+  locale: InputMaybe<Scalars['String']['input']>;
   /** ID of the seat to assign when approving the invitation. */
   seatId: InputMaybe<Scalars['ID']['input']>;
 };
@@ -538,8 +542,8 @@ export type CreateSettingsInput = {
   dressCode: InputMaybe<Scalars['String']['input']>;
   endsAt: InputMaybe<Scalars['DateTime']['input']>;
   guestConfirmationMaxResends: InputMaybe<Scalars['Int']['input']>;
-  guestConfirmationReminderEnabled: InputMaybe<Scalars['Boolean']['input']>;
-  guestConfirmationReminderPresets: InputMaybe<Array<GuestReminderPreset>>;
+  guestConfirmationReminderEnabled: Scalars['Boolean']['input'];
+  guestConfirmationReminderPresets: Array<GuestReminderPreset>;
   invitedByOptions: Array<Scalars['String']['input']>;
   isActive: Scalars['Boolean']['input'];
   isPublic: Scalars['Boolean']['input'];
@@ -1500,6 +1504,7 @@ export type Mutation = {
   replyInvitation: InvitationPayload;
   requestAnalyticsReplay: ReplayJobPayload;
   requestPasswordReset: Scalars['Boolean']['output'];
+  /** Re-sends the confirmation message (email or WhatsApp) to guests who have not yet completed their registration. */
   resendGuestConfirmations: ResendGuestConfirmationsPayload;
   /** Revoke a ticket (security or admin) */
   revokeTicket: TicketPayload;
@@ -2118,6 +2123,7 @@ export type MutationRequestPasswordResetArgs = {
 
 export type MutationResendGuestConfirmationsArgs = {
   invitationIds: Array<Scalars['ID']['input']>;
+  locale: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -2525,6 +2531,8 @@ export type ProcessingMetricsPayload = {
 export type PublicPlusOneInput = {
   email: InputMaybe<Scalars['String']['input']>;
   firstName: Scalars['String']['input'];
+  /** Optional note from guest */
+  guestNote: InputMaybe<Scalars['String']['input']>;
   lastName: Scalars['String']['input'];
   phoneNumbers: InputMaybe<Array<PhoneNumberInput>>;
   plusOneAgeCategory: PlusOneAgeCategory;
@@ -3327,19 +3335,23 @@ export type ReplayJobPayload = {
   status: Scalars['String']['output'];
 };
 
+/** Per-invitation result of a guest confirmation resend. */
 export type ResendGuestConfirmationItem = {
   __typename: 'ResendGuestConfirmationItem';
   invitationId: Scalars['ID']['output'];
+  /** Reason a resend was skipped, when applicable (already-registered, invalid-status, event-ended, missing-payload, rate-limited). */
   reason: Maybe<Scalars['String']['output']>;
+  /** Whether the confirmation message was re-issued. */
   resent: Scalars['Boolean']['output'];
 };
 
+/** Aggregate result of resending guest confirmation messages. */
 export type ResendGuestConfirmationsPayload = {
   __typename: 'ResendGuestConfirmationsPayload';
-  resent: Scalars['Int']['output'];
+  resent: Scalars['Float']['output'];
   results: Array<ResendGuestConfirmationItem>;
-  skipped: Scalars['Int']['output'];
-  total: Scalars['Int']['output'];
+  skipped: Scalars['Float']['output'];
+  total: Scalars['Float']['output'];
 };
 
 export type ResetVerificationPayload = {
@@ -3566,7 +3578,7 @@ export type SectionPayload = {
   eventId: Scalars['String']['output'];
   height: Maybe<Scalars['Float']['output']>;
   id: Scalars['ID']['output'];
-  meta: Scalars['JSON']['output'];
+  meta: Maybe<Scalars['JSON']['output']>;
   name: Scalars['String']['output'];
   order: Scalars['Float']['output'];
   rotation: Maybe<Scalars['Float']['output']>;
@@ -3908,7 +3920,7 @@ export type TablePayload = {
   eventId: Scalars['String']['output'];
   height: Maybe<Scalars['Float']['output']>;
   id: Scalars['ID']['output'];
-  meta: Scalars['JSON']['output'];
+  meta: Maybe<Scalars['JSON']['output']>;
   name: Scalars['String']['output'];
   order: Scalars['Float']['output'];
   rotation: Maybe<Scalars['Float']['output']>;

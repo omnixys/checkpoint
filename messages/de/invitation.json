@@ -240,6 +240,7 @@
     "button": "Erneut senden",
     "title": "Bestätigung erneut senden",
     "message": "Soll die Bestätigungsanfrage an {count} Gast/Gäste erneut gesendet werden?",
+    "locale": "Sprache",
     "confirm": "Erneut senden ({count})",
     "cancel": "Abbrechen",
     "close": "Schließen",

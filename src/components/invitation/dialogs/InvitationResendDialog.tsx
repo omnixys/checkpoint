@@ -9,6 +9,11 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
   Typography,
 } from "@mui/material";
 import { useState } from "react";
@@ -18,6 +23,7 @@ import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 export default function InvitationResendDialog({ logic }: { logic: InvitationLogic }) {
   const t = useTypedTranslations("invitation");
+  const tCommon = useTypedTranslations("common");
 
   const ids = logic.resendIds;
   const [submitting, setSubmitting] = useState(false);
@@ -63,7 +69,22 @@ export default function InvitationResendDialog({ logic }: { logic: InvitationLog
             </Typography>
           </Alert>
         ) : (
-          <Typography>{t("resend.message", { count })}</Typography>
+          <Stack spacing={2}>
+            <Typography>{t("resend.message", { count })}</Typography>
+            <FormControl fullWidth size="small">
+              <InputLabel id="resend-locale">{t("resend.locale")}</InputLabel>
+              <Select
+                labelId="resend-locale"
+                label={t("resend.locale")}
+                value={logic.resendLocale ?? "de-DE"}
+                onChange={(event) => logic.setResendLocale(event.target.value)}
+                disabled={submitting}
+              >
+                <MenuItem value="de-DE">{tCommon("language.de-DE")}</MenuItem>
+                <MenuItem value="en-US">{tCommon("language.en-US")}</MenuItem>
+              </Select>
+            </FormControl>
+          </Stack>
         )}
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>

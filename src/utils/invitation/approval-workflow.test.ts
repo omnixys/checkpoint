@@ -56,7 +56,31 @@ describe("invitation approval workflow", () => {
 
     expect(stage).not.toHaveBeenCalled();
     expect(approve).toHaveBeenCalledWith({
-      invitationIds: [{ invitationId: "staged-1", seatId: "seat-7" }],
+      invitationIds: [{ invitationId: "staged-1", seatId: "seat-7", locale: null }],
+      approved: true,
+    });
+  });
+
+  it("carries the selected per-guest locale into the final approval", async () => {
+    const stage = vi.fn().mockResolvedValue(undefined);
+    const approve = vi.fn().mockResolvedValue(undefined);
+
+    await dispatchApprovalMutation(
+      "finalize",
+      ["staged-1", "staged-2"],
+      {
+        "staged-1": { invitationId: "staged-1", seatId: null },
+        "staged-2": { invitationId: "staged-2", seatId: "seat-2" },
+      },
+      { stage, approve },
+      { "staged-1": "en-US", "staged-2": "de-DE" },
+    );
+
+    expect(approve).toHaveBeenCalledWith({
+      invitationIds: [
+        { invitationId: "staged-1", seatId: null, locale: "en-US" },
+        { invitationId: "staged-2", seatId: "seat-2", locale: "de-DE" },
+      ],
       approved: true,
     });
   });

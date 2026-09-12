@@ -98,7 +98,7 @@ const initialState: State = {
       seatColorGroups: null,
       visibleTabs: [EventVisibleTab.TIMELINE, EventVisibleTab.DETAILS, EventVisibleTab.MAP],
       guestConfirmationReminderEnabled: true,
-      guestConfirmationReminderPresets: null,
+      guestConfirmationReminderPresets: [],
       guestConfirmationMaxResends: null,
     },
     children: [],

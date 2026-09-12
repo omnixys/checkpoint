@@ -115,6 +115,7 @@ export function useInvitationLogic(eventId: string) {
    * Bulk Resend State
    * --------------------------------------------------------------------- */
   const [resendIds, setResendIds] = useState<string[] | null>(null);
+  const [resendLocale, setResendLocale] = useState<string | null>(null);
   const [resendResult, setResendResult] = useState<{
     total: number;
     resent: number;
@@ -587,10 +588,16 @@ export function useInvitationLogic(eventId: string) {
 
       await persistSeatChoices(effectiveIds);
 
-      await dispatchApprovalMutation(approvalDialogMode, effectiveIds, bulkApproveEntries, {
-        stage: (input) => bulkStageMutation({ variables: { input } }),
-        approve: (input) => bulkApproveMutation({ variables: { input } }),
-      });
+      await dispatchApprovalMutation(
+        approvalDialogMode,
+        effectiveIds,
+        bulkApproveEntries,
+        {
+          stage: (input) => bulkStageMutation({ variables: { input } }),
+          approve: (input) => bulkApproveMutation({ variables: { input } }),
+        },
+        bulkApproveLocales,
+      );
 
       await globalEventInvitationListRefetch();
       await refreshSeats(affectedEventIds);
@@ -614,18 +621,21 @@ export function useInvitationLogic(eventId: string) {
    * Bulk Resend Actions
    * --------------------------------------------------------------------- */
   function openBulkResendDialog(ids: string[]) {
+    const defaultLocale = uiLocale.startsWith("en") ? "en-US" : "de-DE";
     setResendResult(null);
+    setResendLocale(defaultLocale);
     setResendIds(ids);
   }
 
   function closeBulkResendDialog() {
     setResendIds(null);
+    setResendLocale(null);
     setResendResult(null);
   }
 
   async function resendConfirmations(ids: string[]) {
     const result = await resendGuestConfirmationsMutation({
-      variables: { invitationIds: ids },
+      variables: { invitationIds: ids, locale: resendLocale ?? null },
     });
 
     const payload = result.data?.resendGuestConfirmations;
@@ -873,6 +883,8 @@ export function useInvitationLogic(eventId: string) {
 
     /* bulk resend */
     resendIds,
+    resendLocale,
+    setResendLocale,
     resendResult,
     resendGuestConfirmationsLoading,
     openBulkResendDialog,

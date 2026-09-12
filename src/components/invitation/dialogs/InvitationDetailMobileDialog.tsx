@@ -4,6 +4,7 @@ import { useLazyQuery, useMutation } from "@apollo/client/react";
 import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import { Box, Button, Chip, Divider, Drawer, Stack, Tooltip, Typography } from "@mui/material";
+import { useLocale } from "next-intl";
 import { useEffect, useState } from "react";
 import InvitationDeleteConfirmDialog from "@/checkpoint/components/invitation/dialogs/InvitationDeleteConfirmDialog";
 import {
@@ -27,6 +28,7 @@ export default function InvitationDetailMobileDialog({ logic }: { logic: Invitat
 
   const tInvitation = useTypedTranslations("invitation");
   const tCommon = useTypedTranslations("common");
+  const uiLocale = useLocale();
 
   const [copied, setCopied] = useState(false);
   const [approveSeatOpen, setApproveSeatOpen] = useState(false);
@@ -113,6 +115,7 @@ export default function InvitationDetailMobileDialog({ logic }: { logic: Invitat
           eventId: inv.eventId,
           invitationId: inv.id,
           approved,
+          locale: uiLocale.startsWith("en") ? "en-US" : "de-DE",
         },
       },
     });

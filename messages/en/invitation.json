@@ -240,6 +240,7 @@
     "button": "Resend",
     "title": "Resend confirmation",
     "message": "Resend the confirmation request to {count} guest(s)?",
+    "locale": "Language",
     "confirm": "Send again ({count})",
     "cancel": "Cancel",
     "close": "Close",

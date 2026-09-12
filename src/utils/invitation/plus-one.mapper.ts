@@ -14,6 +14,7 @@ export function mapPlusOnes(plusOnes: PublicPlusOneInput[]): PublicPlusOneInput[
       lastName: p.lastName.trim(),
       email: p.email ?? null,
       plusOneAgeCategory: p.plusOneAgeCategory,
+      guestNote: p.guestNote ?? null,
       phoneNumbers: p.phoneNumbers ?? null,
     }));
 }

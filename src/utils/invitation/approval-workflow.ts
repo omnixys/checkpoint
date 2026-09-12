@@ -27,10 +27,11 @@ export async function dispatchApprovalMutation(
       staged: boolean;
     }) => Promise<unknown>;
     approve: (input: {
-      invitationIds: Array<{ invitationId: string; seatId: string | null }>;
+      invitationIds: Array<{ invitationId: string; seatId: string | null; locale: string | null }>;
       approved: boolean;
     }) => Promise<unknown>;
   },
+  locales?: Record<string, string>,
 ) {
   if (mode === "stage") {
     return mutations.stage({
@@ -45,7 +46,11 @@ export async function dispatchApprovalMutation(
       if (!entry) {
         throw new Error(`Missing approval entry for ${invitationId}`);
       }
-      return { invitationId: entry.invitationId, seatId: entry.seatId };
+      return {
+        invitationId: entry.invitationId,
+        seatId: entry.seatId,
+        locale: locales?.[invitationId] ?? null,
+      };
     }),
     approved: true,
   });

@@ -17,6 +17,7 @@ import {
   Typography,
 } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
+import { useLocale } from "next-intl";
 import { useEffect, useState } from "react";
 import InvitationDeleteConfirmDialog from "@/checkpoint/components/invitation/dialogs/InvitationDeleteConfirmDialog";
 import { MotionDialogTransition } from "@/checkpoint/components/motion/MotionDialogTransition";
@@ -41,6 +42,8 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
 
   const tInvitation = useTypedTranslations("invitation");
   const tCommon = useTypedTranslations("common");
+
+  const uiLocale = useLocale();
 
   const [copied, setCopied] = useState(false);
   const [approveSeatOpen, setApproveSeatOpen] = useState(false);
@@ -128,6 +131,7 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
           eventId: inv.eventId,
           invitationId: inv.id,
           approved,
+          locale: uiLocale.startsWith("en") ? "en-US" : "de-DE",
         },
       },
     });
