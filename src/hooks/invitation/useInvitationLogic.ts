@@ -71,6 +71,7 @@ export function useInvitationLogic(eventId: string) {
   const logger = getLogger("useInvitationLogic");
   const { can } = useActiveEvent();
   const canApprove = can(EventPermissionKey.ApproveGuests);
+  const canManage = can(EventPermissionKey.ManageInvitations);
   const uiLocale = useLocale();
 
   /* -----------------------------------------------------------------------
@@ -123,6 +124,11 @@ export function useInvitationLogic(eventId: string) {
   } | null>(null);
 
   /* -----------------------------------------------------------------------
+   * Bulk Delete State
+   * --------------------------------------------------------------------- */
+  const [bulkDeleteIds, setBulkDeleteIds] = useState<string[] | null>(null);
+
+  /* -----------------------------------------------------------------------
    * Inbox
    * --------------------------------------------------------------------- */
   const [createdUsers, setCreatedUsers] = useState<UserCreatedEntry[]>([]);
@@ -157,6 +163,8 @@ export function useInvitationLogic(eventId: string) {
     createInvitationMutation,
     resendGuestConfirmationsMutation,
     resendGuestConfirmationsLoading,
+    removeInvitationsMutation,
+    removeInvitationsLoading,
   } = useInvitationMutation();
   const [assignSeatMutation] = useMutation<AssignSeatMutation, AssignSeatMutationVariables>(
     AssignSeatDocument,
@@ -652,6 +660,31 @@ export function useInvitationLogic(eventId: string) {
   }
 
   /* -----------------------------------------------------------------------
+   * Bulk Delete Actions
+   * --------------------------------------------------------------------- */
+  function openBulkDeleteDialog(ids: string[]) {
+    setBulkDeleteIds(ids);
+  }
+
+  function closeBulkDeleteDialog() {
+    setBulkDeleteIds(null);
+  }
+
+  async function submitBulkDelete(ids: string[]) {
+    if (ids.length === 0) {
+      throw new Error("No invitations selected");
+    }
+
+    await removeInvitationsMutation({
+      variables: { ids },
+    });
+
+    await reload();
+    setSelected([]);
+    setBulkDeleteIds(null);
+  }
+
+  /* -----------------------------------------------------------------------
    * Generic Helpers
    * --------------------------------------------------------------------- */
   async function reload() {
@@ -795,6 +828,7 @@ export function useInvitationLogic(eventId: string) {
     invitations: filteredInvitations,
     loading: globalEventInvitationListLoading || fullEventTreeLoading,
     canApprove,
+    canManage,
 
     /* filters */
     search,
@@ -890,6 +924,13 @@ export function useInvitationLogic(eventId: string) {
     openBulkResendDialog,
     closeBulkResendDialog,
     resendConfirmations,
+
+    /* bulk delete */
+    bulkDeleteIds,
+    removeInvitationsLoading,
+    openBulkDeleteDialog,
+    closeBulkDeleteDialog,
+    submitBulkDelete,
 
     /* data */
     reload,

@@ -1492,6 +1492,7 @@ export type Mutation = {
   removeContact: Scalars['Boolean']['output'];
   removeEventRole: EventAccessPayload;
   removeInvitation: SuccessPayload;
+  removeInvitations: SuccessPayload;
   removePhoneNumbers: Scalars['Boolean']['output'];
   removePlusOneInvitation: InvitationPayload;
   removeRealmRole: Scalars['Boolean']['output'];
@@ -2053,6 +2054,11 @@ export type MutationRemoveEventRoleArgs = {
 
 export type MutationRemoveInvitationArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type MutationRemoveInvitationsArgs = {
+  ids: Array<Scalars['ID']['input']>;
 };
 
 

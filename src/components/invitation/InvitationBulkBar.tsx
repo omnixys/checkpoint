@@ -1,5 +1,6 @@
 "use client";
 
+import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import { Box, Button, Stack, Typography, useTheme } from "@mui/material";
 import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
@@ -90,6 +91,17 @@ export default function InvitationBulkBar({ logic }: InvitationBulkBarProps) {
           <Button variant="outlined" onClick={() => logic.openBulkSendDialog(selected)}>
             {t("bulk.send")}
           </Button>
+
+          {logic.canManage && (
+            <Button
+              variant="outlined"
+              color="error"
+              startIcon={<DeleteForeverRoundedIcon />}
+              onClick={() => logic.openBulkDeleteDialog(selected)}
+            >
+              {t("bulk.delete")}
+            </Button>
+          )}
 
           {logic.canApprove && (
             <Button

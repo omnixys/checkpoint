@@ -46,6 +46,9 @@
   "deleteConfirm": {
     "title": "Delete invitation?",
     "message": "Are you sure you want to permanently delete the invitation for {name}? This action cannot be undone.",
+    "bulkTitle": "Delete {count} invitations?",
+    "bulkMessage": "Are you sure you want to permanently delete the {count} selected invitations, including their guests? This action cannot be undone.",
+    "bulkConfirm": "Yes, delete",
     "confirm": "Yes, delete",
     "cancel": "Cancel"
   },
@@ -54,6 +57,7 @@
     "approve_one": "Approve 1 invitation",
     "approve_other": "Approve {count} invitations",
     "send": "Send invitations",
+    "delete": "Delete",
     "clear": "Clear selection"
   },
   "approvalWorkflow": {

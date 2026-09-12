@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useRef } from "react";
 import RouteGuard from "@/checkpoint/components/guard/RouteGuard";
 import InvitationBulkApproveDialog from "@/checkpoint/components/invitation/dialogs/InvitationBulkApproveDialog";
+import InvitationBulkDeleteDialog from "@/checkpoint/components/invitation/dialogs/InvitationBulkDeleteDialog";
 import InvitationBulkSendDialog from "@/checkpoint/components/invitation/dialogs/InvitationBulkSendDialog";
 import InvitationCreateDialog from "@/checkpoint/components/invitation/dialogs/InvitationCreateDialog";
 import InvitationDetailDialog from "@/checkpoint/components/invitation/dialogs/InvitationDetailDialog";
@@ -87,6 +88,7 @@ export default function InvitationClientPage({ countries }: { countries: Calling
         )}
 
         <InvitationResendDialog logic={logic} />
+        <InvitationBulkDeleteDialog logic={logic} />
       </Box>
     </RouteGuard>
   );

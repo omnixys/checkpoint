@@ -24,6 +24,9 @@ import {
   RemoveInvitationDocument,
   type RemoveInvitationMutation,
   type RemoveInvitationMutationVariables,
+  RemoveInvitationsDocument,
+  type RemoveInvitationsMutation,
+  type RemoveInvitationsMutationVariables,
   RemovePlusOneDocument,
   type RemovePlusOneMutation,
   type RemovePlusOneMutationVariables,
@@ -86,6 +89,11 @@ export default function useInvitationMutation() {
     RemoveInvitationMutationVariables
   >(RemoveInvitationDocument);
 
+  const [removeInvitationsMutation, removeInvitationsMutationResult] = useMutation<
+    RemoveInvitationsMutation,
+    RemoveInvitationsMutationVariables
+  >(RemoveInvitationsDocument);
+
   const [importInvitationsMutation, _importInvitationsMutationResult] = useMutation<
     ImportInvitationsMutation,
     ImportInvitationsMutationVariables
@@ -135,6 +143,8 @@ export default function useInvitationMutation() {
     createInvitationMutation,
     approveInvitationMutation,
     deleteInvitationMutation,
+    removeInvitationsMutation,
+    removeInvitationsLoading: removeInvitationsMutationResult.loading,
     importInvitationsMutation,
     sendBulkInvitationsMutation,
 

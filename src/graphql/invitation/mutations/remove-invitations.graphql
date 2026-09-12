@@ -1,0 +1,6 @@
+mutation RemoveInvitations($ids: [ID!]!) {
+  removeInvitations(ids: $ids) {
+    ok
+    message
+  }
+}

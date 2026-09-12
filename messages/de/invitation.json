@@ -69,6 +69,9 @@
   "deleteConfirm": {
     "title": "Einladung löschen?",
     "message": "Möchtest du die Einladung von {name} wirklich dauerhaft löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.",
+    "bulkTitle": "{count} Einladungen löschen?",
+    "bulkMessage": "Möchtest du die {count} ausgewählten Einladungen inklusive ihrer Gäste wirklich dauerhaft löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.",
+    "bulkConfirm": "Ja, löschen",
     "confirm": "Ja, löschen",
     "cancel": "Abbrechen"
   },
@@ -77,6 +80,7 @@
     "approve_one": "1 Einladung genehmigen",
     "approve_other": "{count} Einladungen genehmigen",
     "send": "Einladungen verschicken",
+    "delete": "Löschen",
     "clear": "Auswahl löschen"
   },
   "approvalWorkflow": {
