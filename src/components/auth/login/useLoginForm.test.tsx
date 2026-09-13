@@ -5,6 +5,7 @@ import { AppError, ErrorCode } from "@/checkpoint/errors/app-error";
 
 const mocks = vi.hoisted(() => ({
   login: vi.fn(),
+  requestGuestMagicLink: vi.fn(),
   getCurrentUser: vi.fn(),
   setCurrentUser: vi.fn(),
   track: vi.fn(),
@@ -13,7 +14,10 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@/checkpoint/lib/auth/AuthManager", () => ({
-  AuthManager: { login: mocks.login },
+  AuthManager: {
+    login: mocks.login,
+    requestGuestMagicLink: mocks.requestGuestMagicLink,
+  },
 }));
 vi.mock("@/checkpoint/lib/auth/get-current-user", () => ({
   getCurrentUser: mocks.getCurrentUser,
@@ -94,5 +98,52 @@ describe("useLoginForm", () => {
     });
 
     expect(a.current.username).not.toBe(b.current.username);
+  });
+
+  it.each([
+    [" Guest@Example.COM ", "guest@example.com"],
+    ["+49 151 23456789", "+4915123456789"],
+  ])("normalizes and requests a guest link for %s", async (input, expected) => {
+    mocks.requestGuestMagicLink.mockResolvedValueOnce(undefined);
+    const { result } = renderHook(() => useLoginForm({ onSuccess: vi.fn() }));
+
+    await act(async () => {
+      result.current.setMode("guest");
+      result.current.setGuestIdentifier(input);
+    });
+    await act(async () => {
+      await result.current.submitGuest();
+    });
+
+    expect(mocks.requestGuestMagicLink).toHaveBeenCalledWith(expected);
+    expect(result.current.guestSent).toBe(true);
+    expect(result.current.guestNetworkError).toBe(false);
+  });
+
+  it("does not send an invalid guest identifier", async () => {
+    const { result } = renderHook(() => useLoginForm({ onSuccess: vi.fn() }));
+
+    await act(async () => {
+      result.current.setGuestIdentifier("not an identifier");
+      await result.current.submitGuest();
+    });
+
+    expect(mocks.requestGuestMagicLink).not.toHaveBeenCalled();
+    expect(result.current.guestInvalid).toBe(true);
+  });
+
+  it("shows only the technical retry state when transport fails", async () => {
+    mocks.requestGuestMagicLink.mockRejectedValueOnce(new Error("network unavailable"));
+    const { result } = renderHook(() => useLoginForm({ onSuccess: vi.fn() }));
+
+    await act(async () => {
+      result.current.setGuestIdentifier("guest@example.com");
+    });
+    await act(async () => {
+      await result.current.submitGuest();
+    });
+
+    expect(result.current.guestSent).toBe(false);
+    expect(result.current.guestNetworkError).toBe(true);
   });
 });

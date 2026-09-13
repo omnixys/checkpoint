@@ -144,4 +144,22 @@ describe("AuthManager recovery", () => {
 
     expect(realtime.restart).toHaveBeenCalledTimes(3);
   });
+
+  it("requests guest magic links through the enumeration-safe mutation", async () => {
+    mutate.mockResolvedValueOnce({ data: { requestGuestMagicLink: true } });
+
+    await AuthManager.requestGuestMagicLink("guest@example.com");
+
+    expect(mutate).toHaveBeenCalledWith(
+      expect.objectContaining({ variables: { identifier: "guest@example.com" } }),
+    );
+  });
+
+  it("reconnects subscriptions after magic-link verification", async () => {
+    mutate.mockResolvedValueOnce({ data: { verifyMagicLink: { accessToken: "cookie-backed" } } });
+
+    await AuthManager.verifyMagicLink("one-time-token");
+
+    expect(realtime.restart).toHaveBeenCalledOnce();
+  });
 });

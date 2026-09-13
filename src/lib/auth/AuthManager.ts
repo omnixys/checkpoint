@@ -10,6 +10,12 @@ import {
   RefreshDocument,
   type RefreshMutation,
   type RefreshMutationVariables,
+  RequestGuestMagicLinkDocument,
+  type RequestGuestMagicLinkMutation,
+  type RequestGuestMagicLinkMutationVariables,
+  VerifyMagicLinkDocument,
+  type VerifyMagicLinkMutation,
+  type VerifyMagicLinkMutationVariables,
 } from "@/checkpoint/generated/graphql";
 import { getCookie } from "@/checkpoint/lib/apollo/cookie.utils";
 /**
@@ -226,6 +232,48 @@ class AuthManagerClass {
     /**
      * Emit identity event
      */
+    AuthEventsBus.emit("auth:login");
+    restartWebSocketTransport();
+  }
+
+  async requestGuestMagicLink(identifier: string): Promise<void> {
+    this.assertApollo();
+    const res = await this.apollo?.mutate<
+      RequestGuestMagicLinkMutation,
+      RequestGuestMagicLinkMutationVariables
+    >({
+      mutation: RequestGuestMagicLinkDocument,
+      variables: { identifier },
+      fetchPolicy: "no-cache",
+      context: { fetchOptions: { credentials: "include" } },
+    });
+    if (res?.data?.requestGuestMagicLink !== true) {
+      throw new AppError({
+        code: ErrorCode.INTERNAL_SERVER_ERROR,
+        message: "Guest magic-link request response was incomplete",
+        operationName: "RequestGuestMagicLink",
+      });
+    }
+  }
+
+  async verifyMagicLink(token: string): Promise<void> {
+    this.assertApollo();
+    const res = await this.apollo?.mutate<
+      VerifyMagicLinkMutation,
+      VerifyMagicLinkMutationVariables
+    >({
+      mutation: VerifyMagicLinkDocument,
+      variables: { token },
+      fetchPolicy: "no-cache",
+      context: { fetchOptions: { credentials: "include" } },
+    });
+    if (!res?.data?.verifyMagicLink) {
+      throw new AppError({
+        code: ErrorCode.INVALID_CREDENTIALS,
+        message: "Magic link is invalid or expired",
+        operationName: "VerifyMagicLink",
+      });
+    }
     AuthEventsBus.emit("auth:login");
     restartWebSocketTransport();
   }

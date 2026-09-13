@@ -1,0 +1,3 @@
+mutation RequestGuestMagicLink($identifier: String!) {
+  requestGuestMagicLink(identifier: $identifier)
+}

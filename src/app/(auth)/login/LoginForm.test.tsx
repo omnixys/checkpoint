@@ -1,5 +1,5 @@
 import { ThemeProvider } from "@mui/material/styles";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createAppTheme } from "@/checkpoint/themes/createAppTheme";
@@ -71,5 +71,16 @@ describe("LoginForm", () => {
     expect(screen.getByLabelText("login.password")).toBeTruthy();
     expect(screen.getByRole("button", { name: "login.submit" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "login.back" })).toBeTruthy();
+  });
+
+  it("switches between password and guest magic-link modes", () => {
+    renderLoginForm();
+
+    fireEvent.click(screen.getByRole("button", { name: "login.guestToggle" }));
+
+    expect(screen.queryByLabelText("login.username")).toBeNull();
+    expect(screen.getByLabelText("login.guestIdentifier")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "login.guestSubmit" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "login.credentialsToggle" })).toBeTruthy();
   });
 });
