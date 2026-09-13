@@ -2,9 +2,21 @@ import type {
   PhoneNumberType,
   PlusOneAgeCategory as PlusOneAgeCategoryGenerated,
 } from "@/checkpoint/generated/graphql";
+import { InvitationStatus } from "@/checkpoint/generated/graphql";
 
 export type PlusOnePhoneNumberType = PhoneNumberType;
 export type PlusOneAgeCategory = PlusOneAgeCategoryGenerated;
+
+/**
+ * A plus-one is locked once it has been approved (or accepted). Approved
+ * plus-ones may only have their existing phone number adjusted; name, email,
+ * age category and removal are read-only.
+ */
+export function isApprovedPlusOneStatus(
+  status: InvitationStatus | string | null | undefined,
+): boolean {
+  return status === InvitationStatus.APPROVED || status === InvitationStatus.ACCEPTED;
+}
 
 export interface PlusOnePhoneNumberInput {
   countryCode: string;

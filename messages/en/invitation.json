@@ -208,15 +208,19 @@
     },
     "actions": {
       "edit": "Edit",
-      "delete": "Remove"
+      "delete": "Remove",
+      "editPhone": "Edit phone number"
     },
     "dialog": {
       "createTitle": "Add plus-one",
       "editTitle": "Edit plus-one",
       "subtitle": "Maintain the contact information of the plus-one here.",
       "createAction": "Add",
-      "updateAction": "Save"
+      "updateAction": "Save",
+      "lockedHint": "This plus-one has been approved and is locked. Only the phone number can be changed."
     },
+    "removeApprovedBlocked": "Approved plus-ones cannot be removed.",
+    "removeAllBlocked": "Removal is not possible while a plus-one has been approved.",
     "phoneTypes": {
       "WHATSAPP": "WhatsApp",
       "MOBILE": "Mobile",

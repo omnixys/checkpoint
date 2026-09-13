@@ -23,6 +23,7 @@ import type {
   PlusOneItem,
   UpdatePlusOneInput,
 } from "@/checkpoint/app/(protected)/me/my-plus-ones/types/plusOne.types";
+import { isApprovedPlusOneStatus } from "@/checkpoint/app/(protected)/me/my-plus-ones/types/plusOne.types";
 import RouteGuard from "@/checkpoint/components/guard/RouteGuard";
 import type { CreatePlusOneInput } from "@/checkpoint/generated/graphql";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
@@ -51,6 +52,11 @@ export default function MyPlusOnesPage() {
 
   const seatsAssigned = useMemo(
     () => plusOnes?.filter((entry) => entry.seat?.label).length,
+    [plusOnes],
+  );
+
+  const hasApprovedPlusOne = useMemo(
+    () => plusOnes?.some((entry) => isApprovedPlusOneStatus(entry.status)) ?? false,
     [plusOnes],
   );
 
@@ -269,7 +275,7 @@ export default function MyPlusOnesPage() {
                   variant="outlined"
                   startIcon={<DeleteSweepRoundedIcon />}
                   onClick={() => void removeAllPlusOnes()}
-                  disabled={!hasRootInvitation || plusOnes?.length === 0}
+                  disabled={!hasRootInvitation || plusOnes?.length === 0 || hasApprovedPlusOne}
                   fullWidth={true}
                 >
                   {t("plusOnes.removeAll")}

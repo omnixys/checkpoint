@@ -11,7 +11,10 @@ import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import PhoneIphoneRoundedIcon from "@mui/icons-material/PhoneIphoneRounded";
 import { alpha, Box, Chip, IconButton, Stack, Tooltip, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
-import type { PlusOneItem } from "@/checkpoint/app/(protected)/me/my-plus-ones/types/plusOne.types";
+import {
+  isApprovedPlusOneStatus,
+  type PlusOneItem,
+} from "@/checkpoint/app/(protected)/me/my-plus-ones/types/plusOne.types";
 import { formatEnum } from "@/checkpoint/i18n/format-enum";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
@@ -37,14 +40,15 @@ export default function PlusOneCard({ plusOne, index, onEdit, onDelete }: Props)
     ? formatEnum(t, "plusOnes.status", plusOne.status)
     : t("plusOnes.status.UNKNOWN");
 
-  const statusIcon =
-    plusOne.status === "ACCEPTED" || plusOne.status === "APPROVED" ? (
-      <CheckCircleRoundedIcon fontSize="small" />
-    ) : plusOne.status === "PENDING" ? (
-      <HourglassEmptyRoundedIcon fontSize="small" />
-    ) : (
-      <BlockRoundedIcon fontSize="small" />
-    );
+  const approved = isApprovedPlusOneStatus(plusOne.status);
+
+  const statusIcon = approved ? (
+    <CheckCircleRoundedIcon fontSize="small" />
+  ) : plusOne.status === "PENDING" ? (
+    <HourglassEmptyRoundedIcon fontSize="small" />
+  ) : (
+    <BlockRoundedIcon fontSize="small" />
+  );
 
   return (
     <MotionBox
@@ -154,17 +158,27 @@ export default function PlusOneCard({ plusOne, index, onEdit, onDelete }: Props)
           </Stack>
 
           <Stack direction="row" spacing={0.5}>
-            <Tooltip title={t("plusOnes.actions.edit")}>
-              <IconButton aria-label="Edit" onClick={() => onEdit(plusOne)}>
-                <EditRoundedIcon />
-              </IconButton>
-            </Tooltip>
+            {approved ? (
+              <Tooltip title={t("plusOnes.actions.editPhone")}>
+                <IconButton aria-label="Edit phone number" onClick={() => onEdit(plusOne)}>
+                  <PhoneIphoneRoundedIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <>
+                <Tooltip title={t("plusOnes.actions.edit")}>
+                  <IconButton aria-label="Edit" onClick={() => onEdit(plusOne)}>
+                    <EditRoundedIcon />
+                  </IconButton>
+                </Tooltip>
 
-            <Tooltip title={t("plusOnes.actions.delete")}>
-              <IconButton aria-label="Delete" onClick={() => void onDelete(plusOne.id)}>
-                <DeleteRoundedIcon />
-              </IconButton>
-            </Tooltip>
+                <Tooltip title={t("plusOnes.actions.delete")}>
+                  <IconButton aria-label="Delete" onClick={() => void onDelete(plusOne.id)}>
+                    <DeleteRoundedIcon />
+                  </IconButton>
+                </Tooltip>
+              </>
+            )}
           </Stack>
         </Stack>
 

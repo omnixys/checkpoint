@@ -6,6 +6,7 @@ import type {
   PlusOneItem,
   UpdatePlusOneInput,
 } from "@/checkpoint/app/(protected)/me/my-plus-ones/types/plusOne.types";
+import { isApprovedPlusOneStatus } from "@/checkpoint/app/(protected)/me/my-plus-ones/types/plusOne.types";
 import type { CreatePlusOneInput } from "@/checkpoint/generated/graphql";
 import useInvitationMutation from "@/checkpoint/hooks/invitation/useInvitationMutation";
 import useInvitationQuery from "@/checkpoint/hooks/invitation/useInvitationQuery";
@@ -75,6 +76,14 @@ export const usePlusOnes = (): UsePlusOnesResult => {
 
   const remaining = plusOneInvitationList?.maxInvitees ?? 0;
 
+  const isApprovedPlusOne = useCallback(
+    (id: string) => {
+      const entry = plusOnes?.find((plusOne) => plusOne.id === id);
+      return entry ? isApprovedPlusOneStatus(entry.status) : false;
+    },
+    [plusOnes],
+  );
+
   const createPlusOne = useCallback(
     async (input: CreatePlusOneInput) => {
       if (!invitationId || !eventId) {
@@ -141,6 +150,13 @@ export const usePlusOnes = (): UsePlusOnesResult => {
 
   const removePlusOne = useCallback(
     async (id: string) => {
+      if (isApprovedPlusOne(id)) {
+        enqueueSnackbar(t("plusOnes.removeApprovedBlocked"), {
+          variant: "error",
+        });
+        return;
+      }
+
       try {
         const _kp = await removePlusOneMutation({
           variables: {
@@ -157,12 +173,19 @@ export const usePlusOnes = (): UsePlusOnesResult => {
         });
       }
     },
-    [enqueueSnackbar, removePlusOneMutation, t],
+    [enqueueSnackbar, isApprovedPlusOne, removePlusOneMutation, t],
   );
 
   const removeAllPlusOnes = useCallback(async () => {
     if (!invitationId) {
       enqueueSnackbar(t("plusOnes.errorMissingInvitation"), {
+        variant: "error",
+      });
+      return;
+    }
+
+    if (plusOnes?.some((plusOne) => isApprovedPlusOneStatus(plusOne.status))) {
+      enqueueSnackbar(t("plusOnes.removeAllBlocked"), {
         variant: "error",
       });
       return;
@@ -183,7 +206,7 @@ export const usePlusOnes = (): UsePlusOnesResult => {
         variant: "error",
       });
     }
-  }, [enqueueSnackbar, invitationId, removeAllPlusOneMutation, t]);
+  }, [enqueueSnackbar, invitationId, plusOnes, removeAllPlusOneMutation, t]);
 
   return {
     plusOnes,

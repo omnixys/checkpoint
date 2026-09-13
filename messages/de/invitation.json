@@ -208,15 +208,19 @@
     },
     "actions": {
       "edit": "Bearbeiten",
-      "delete": "Entfernen"
+      "delete": "Entfernen",
+      "editPhone": "Telefonnummer bearbeiten"
     },
     "dialog": {
       "createTitle": "Begleitperson hinzufügen",
       "editTitle": "Begleitperson bearbeiten",
       "subtitle": "Pflege hier die Kontaktinformationen der Begleitperson.",
       "createAction": "Hinzufügen",
-      "updateAction": "Speichern"
+      "updateAction": "Speichern",
+      "lockedHint": "Diese Begleitperson wurde freigegeben und ist gesperrt. Es kann nur noch die Telefonnummer geändert werden."
     },
+    "removeApprovedBlocked": "Freigegebene Begleitpersonen können nicht entfernt werden.",
+    "removeAllBlocked": "Entfernen ist nicht möglich, solange eine Begleitperson freigegeben wurde.",
     "phoneTypes": {
       "WHATSAPP": "WhatsApp",
       "MOBILE": "Mobil",

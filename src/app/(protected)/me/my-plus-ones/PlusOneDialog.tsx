@@ -1,6 +1,7 @@
 "use client";
 
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import LockPersonRoundedIcon from "@mui/icons-material/LockPersonRounded";
 import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 import {
   alpha,
@@ -28,6 +29,7 @@ import type {
   PlusOneItem,
   UpdatePlusOneInput,
 } from "@/checkpoint/app/(protected)/me/my-plus-ones/types/plusOne.types";
+import { isApprovedPlusOneStatus } from "@/checkpoint/app/(protected)/me/my-plus-ones/types/plusOne.types";
 import type { CreatePlusOneInput } from "@/checkpoint/generated/graphql";
 import { PhoneNumberType, type PlusOneAgeCategory } from "@/checkpoint/generated/graphql";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
@@ -77,6 +79,8 @@ export default function PlusOneDialog({
   const [phoneType, setPhoneType] = useState<PhoneNumberType>(PhoneNumberType.WHATSAPP);
   const [label, setLabel] = useState("");
   const [plusOneAgeCategory, setPlusOneAgeCategory] = useState<PlusOneAgeCategory | null>(null);
+
+  const isLocked = mode === "edit" && isApprovedPlusOneStatus(initialValue?.status);
 
   useEffect(() => {
     if (!open) {
@@ -147,6 +151,8 @@ export default function PlusOneDialog({
 
     setSubmitting(true);
 
+    const lockedOriginal = isLocked ? initialValue : null;
+
     try {
       if (mode === "create") {
         await onCreate({
@@ -161,10 +167,10 @@ export default function PlusOneDialog({
       } else if (initialValue) {
         await onUpdate({
           id: initialValue.id,
-          firstName: firstName.trim(),
-          lastName: lastName.trim(),
-          email: email.trim() || null,
-          plusOneAgeCategory: selectedAgeCategory,
+          firstName: lockedOriginal ? lockedOriginal.firstName.trim() : firstName.trim(),
+          lastName: lockedOriginal ? lockedOriginal.lastName.trim() : lastName.trim(),
+          email: lockedOriginal ? lockedOriginal.email?.trim() || null : email.trim() || null,
+          plusOneAgeCategory: lockedOriginal?.plusOneAgeCategory ?? selectedAgeCategory,
           phoneNumbers,
         });
       }
@@ -209,6 +215,25 @@ export default function PlusOneDialog({
             transition={{ duration: 0.2 }}
           >
             <Stack spacing={2.25}>
+              {isLocked && (
+                <Box
+                  sx={{
+                    borderRadius: 2,
+                    border: `1px solid ${alpha(theme.palette.info.main, 0.35)}`,
+                    background: alpha(theme.palette.info.main, 0.08),
+                    px: 2,
+                    py: 1.25,
+                  }}
+                >
+                  <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                    <LockPersonRoundedIcon fontSize="small" color="info" />
+                    <Typography variant="body2" color="text.secondary">
+                      {tInvitation("plusOnes.dialog.lockedHint")}
+                    </Typography>
+                  </Stack>
+                </Box>
+              )}
+
               <MotionBox
                 initial={{ opacity: 0, x: -12 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -220,6 +245,7 @@ export default function PlusOneDialog({
                     value={firstName}
                     onChange={(event) => setFirstName(event.target.value)}
                     fullWidth={true}
+                    disabled={isLocked}
                     sx={glassInputSx(theme)}
                   />
                   <TextField
@@ -227,6 +253,7 @@ export default function PlusOneDialog({
                     value={lastName}
                     onChange={(event) => setLastName(event.target.value)}
                     fullWidth={true}
+                    disabled={isLocked}
                     sx={glassInputSx(theme)}
                   />
                 </Stack>
@@ -243,6 +270,7 @@ export default function PlusOneDialog({
                   onChange={(event) => setEmail(event.target.value)}
                   fullWidth={true}
                   type="email"
+                  disabled={isLocked}
                   sx={glassInputSx(theme)}
                 />
               </MotionBox>
@@ -274,12 +302,12 @@ export default function PlusOneDialog({
                   >
                     <FormControlLabel
                       value="OVER_SIX"
-                      control={<Radio />}
+                      control={<Radio disabled={isLocked} />}
                       label={tCommon("plusOne.overSix")}
                     />
                     <FormControlLabel
                       value="UNDER_SIX"
-                      control={<Radio />}
+                      control={<Radio disabled={isLocked} />}
                       label={tCommon("plusOne.underSix")}
                     />
                   </RadioGroup>
