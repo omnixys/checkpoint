@@ -148,7 +148,10 @@
     "checkedInWithCount": "Eingecheckt: {count}",
     "insideWithCount": "Drinnen: {count}",
     "outsideWithCount": "Draußen: {count}",
-    "notArrivedWithCount": "Nicht da: {count}"
+    "notArrivedWithCount": "Nicht da: {count}",
+    "presenceLabel": "Aufenthaltsstatus manuell setzen",
+    "presenceIn": "DRINNEN",
+    "presenceOut": "DRAUßEN"
   },
   "filter": {
     "all": "Alle",

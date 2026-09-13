@@ -17,18 +17,22 @@ import {
   Stack,
   Switch,
   TextField,
+  ToggleButton,
+  ToggleButtonGroup,
   Typography,
   useTheme,
 } from "@mui/material";
 import { red } from "@mui/material/colors";
 import { motion } from "framer-motion";
 import { useParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import RouteGuard from "@/checkpoint/components/guard/RouteGuard";
 import type { Filter } from "@/checkpoint/components/guests/types";
 import RefreshArcButton from "@/checkpoint/components/RefreshArcButton";
 import { BackToEventDetailButton } from "@/checkpoint/components/utils/back-to-event-detail-button";
 import { VisionEmblaCarousel } from "@/checkpoint/components/vision/VisionCarousel";
+import type { PresenceState } from "@/checkpoint/generated/graphql";
+import { useUpdateTicketPresence } from "@/checkpoint/hooks/ticket/useUpdateTicketPresence";
 import { useSecurityGuests } from "@/checkpoint/hooks/user/useSecurityGuests";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { useDevice } from "@/checkpoint/providers/DeviceProvider";
@@ -63,6 +67,22 @@ export default function GuestListClientPage() {
 
   const { guests, reload } = useSecurityGuests(eventId);
   const [axis, _setAxis] = useState<"x" | "y">("x");
+
+  const updatePresence = useUpdateTicketPresence();
+  const [pendingPresence, setPendingPresence] = useState<string | null>(null);
+
+  const handlePresenceChange = useCallback(
+    async (ticketId: string, state: PresenceState) => {
+      setPendingPresence(ticketId);
+      try {
+        await updatePresence(ticketId, state);
+      } finally {
+        setPendingPresence(null);
+        void reload();
+      }
+    },
+    [reload, updatePresence],
+  );
 
   /* ------------------------------------------------------------------ */
   /* Counters */
@@ -565,10 +585,31 @@ export default function GuestListClientPage() {
                     }}
                   />
 
-                  <Chip
+                  <ToggleButtonGroup
+                    exclusive
                     size="small"
-                    label={guest.presence === "INSIDE" ? t("guests.inside") : t("guests.outside")}
-                  />
+                    value={guest.presence}
+                    disabled={pendingPresence === guest.ticketId}
+                    onChange={(_event, value) => {
+                      if (value === "INSIDE" || value === "OUTSIDE") {
+                        void handlePresenceChange(guest.ticketId, value);
+                      }
+                    }}
+                    aria-label={t("guests.presenceLabel")}
+                    sx={{
+                      "& .MuiToggleButton-root": {
+                        px: 1.4,
+                        py: 0.1,
+                        textTransform: "none",
+                        fontSize: 12,
+                        fontWeight: 700,
+                        borderColor: theme.palette.divider,
+                      },
+                    }}
+                  >
+                    <ToggleButton value="INSIDE">{t("guests.presenceIn")}</ToggleButton>
+                    <ToggleButton value="OUTSIDE">{t("guests.presenceOut")}</ToggleButton>
+                  </ToggleButtonGroup>
                 </Stack>
               </Paper>
             ))}

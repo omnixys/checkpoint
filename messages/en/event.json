@@ -148,7 +148,10 @@
     "checkedInWithCount": "Checked in: {count}",
     "insideWithCount": "Inside: {count}",
     "outsideWithCount": "Outside: {count}",
-    "notArrivedWithCount": "Not arrived: {count}"
+    "notArrivedWithCount": "Not arrived: {count}",
+    "presenceLabel": "Manually override presence",
+    "presenceIn": "IN",
+    "presenceOut": "OUT"
   },
   "filter": {
     "all": "All",

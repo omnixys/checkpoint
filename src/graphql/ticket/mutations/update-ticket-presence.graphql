@@ -1,0 +1,7 @@
+# import TicketFull from "../fragments/ticket.fragment.graphql"
+
+mutation UpdateTicketPresence($input: UpdateTicketPresenceInput!) {
+  updateTicketPresence(input: $input) {
+    ...TicketFull
+  }
+}

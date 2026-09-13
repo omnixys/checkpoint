@@ -9,12 +9,11 @@ import useGuestQuery from "@/checkpoint/hooks/user/useGuestQuery";
 import type { GuestDTO } from "../../components/guests/types";
 
 export function useSecurityGuests(eventId: string) {
-  const { securityTicketList, securityTicketListLoading, securityTicketListError } = useTicketQuery(
-    {
+  const { securityTicketList, securityTicketListLoading, securityTicketListRefetch } =
+    useTicketQuery({
       eventId,
       loadSecurityTicketPage: true,
-    },
-  );
+    });
 
   const { securityGuestMap } = useGuestQuery({
     loadSecurityGuestIdList: true,
@@ -51,8 +50,6 @@ export function useSecurityGuests(eventId: string) {
   return {
     guests,
     loading: securityTicketListLoading,
-    reload: async () => {
-      await securityTicketListError;
-    },
+    reload: securityTicketListRefetch,
   };
 }
