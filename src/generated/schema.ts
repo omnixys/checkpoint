@@ -933,6 +933,11 @@ export type FeatureFlagPayload = {
   versions: Array<Scalars['Int']['output']>;
 };
 
+export enum GateDirection {
+  ENTRY = 'ENTRY',
+  EXIT = 'EXIT'
+}
+
 export enum GenderType {
   DIVERSE = 'DIVERSE',
   FEMALE = 'FEMALE',
@@ -1504,6 +1509,7 @@ export type Mutation = {
   reopenSupportConversation: SupportConversation;
   replyInvitation: InvitationPayload;
   requestAnalyticsReplay: ReplayJobPayload;
+  requestGuestMagicLink: Scalars['Boolean']['output'];
   requestPasswordReset: Scalars['Boolean']['output'];
   /** Re-sends the confirmation message (email or WhatsApp) to guests who have not yet completed their registration. */
   resendGuestConfirmations: ResendGuestConfirmationsPayload;
@@ -1544,6 +1550,7 @@ export type Mutation = {
   updateTable: TablePayload;
   updateTemplate: TemplatePayload;
   updateTenant: TenantType;
+  updateTicketPresence: TicketPayload;
   updateTimeLines: EventPayload;
   updateUser: UserPayload;
   updateUserAddress: UserAddress;
@@ -2122,6 +2129,11 @@ export type MutationRequestAnalyticsReplayArgs = {
 };
 
 
+export type MutationRequestGuestMagicLinkArgs = {
+  identifier: Scalars['String']['input'];
+};
+
+
 export type MutationRequestPasswordResetArgs = {
   email: Scalars['String']['input'];
 };
@@ -2306,6 +2318,11 @@ export type MutationUpdateTemplateArgs = {
 
 export type MutationUpdateTenantArgs = {
   input: UpdateTenantInput;
+};
+
+
+export type MutationUpdateTicketPresenceArgs = {
+  input: UpdateTicketPresenceInput;
 };
 
 
@@ -3401,6 +3418,7 @@ export type SavedSearchPayload = {
 
 export type ScanInput = {
   deviceId: Scalars['String']['input'];
+  direction: GateDirection;
   gate: InputMaybe<Scalars['String']['input']>;
   signature: Scalars['String']['input'];
   token: Scalars['String']['input'];
@@ -3430,10 +3448,12 @@ export type ScanPayload = {
 
 /** The result of a ticket scan, including anti-sharing cases. */
 export enum ScanVerdict {
+  ALREADY_INSIDE = 'ALREADY_INSIDE',
   BLOCKED = 'BLOCKED',
   DEVICE_MISMATCH = 'DEVICE_MISMATCH',
   EXPIRED_EVENT = 'EXPIRED_EVENT',
   INVALID_NONCE = 'INVALID_NONCE',
+  NOT_INSIDE = 'NOT_INSIDE',
   OK = 'OK',
   REPLAY = 'REPLAY',
   REVOKED = 'REVOKED',
@@ -4190,6 +4210,11 @@ export type UpdateTenantInput = {
   slug: InputMaybe<Scalars['String']['input']>;
   status: InputMaybe<Scalars['String']['input']>;
   updatedBy: Scalars['String']['input'];
+};
+
+export type UpdateTicketPresenceInput = {
+  state: PresenceState;
+  ticketId: Scalars['ID']['input'];
 };
 
 export type UpdateTimelineInput = {

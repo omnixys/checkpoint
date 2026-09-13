@@ -5,8 +5,6 @@ import {
   getIntrospectionQuery,
   parse,
   printSchema,
-  visit,
-  Kind,
   type DocumentNode,
   type IntrospectionQuery,
 } from "graphql";
@@ -130,35 +128,90 @@ async function sanitizeIntrospectionFetch(
   });
 }
 
+type NamedDefinition = {
+  name?: { value?: string } | undefined;
+};
+
+function definitionKey(definition: NamedDefinition & { kind?: string }): string {
+  return `${definition.kind ?? ""}:${definition.name?.value ?? ""}`;
+}
+
+function applyOverlay(document: DocumentNode, overlay: DocumentNode): DocumentNode {
+  const definitions = new Map<string, NamedDefinition & { kind?: string }>();
+
+  for (const definition of document.definitions) {
+    definitions.set(definitionKey(definition), definition);
+  }
+
+  for (const definition of overlay.definitions) {
+    const key = definitionKey(definition);
+    const existing = definitions.get(key);
+
+    if (!existing) {
+      definitions.set(key, definition);
+      continue;
+    }
+
+    if (
+      existing.kind === "ObjectTypeDefinition" &&
+      definition.kind === "ObjectTypeDefinition"
+    ) {
+      const fields = new Map(
+        (existing.fields ?? []).map((field) => [field.name.value, field]),
+      );
+      for (const field of definition.fields ?? []) {
+        fields.set(field.name.value, field);
+      }
+      definitions.set(key, { ...existing, fields: [...fields.values()] });
+      continue;
+    }
+
+    if (
+      existing.kind === "InputObjectTypeDefinition" &&
+      definition.kind === "InputObjectTypeDefinition"
+    ) {
+      const fields = new Map(
+        (existing.fields ?? []).map((field) => [field.name.value, field]),
+      );
+      for (const field of definition.fields ?? []) {
+        fields.set(field.name.value, field);
+      }
+      definitions.set(key, { ...existing, fields: [...fields.values()] });
+      continue;
+    }
+
+    if (existing.kind === "EnumTypeDefinition" && definition.kind === "EnumTypeDefinition") {
+      const knownValues = new Set(
+        (existing.values ?? []).map((value) => value.name.value),
+      );
+      const addedValues = (definition.values ?? []).filter(
+        (value) => !knownValues.has(value.name.value),
+      );
+      definitions.set(key, { ...existing, values: [...(existing.values ?? []), ...addedValues] });
+      continue;
+    }
+  }
+
+  return { ...document, definitions: [...definitions.values()] };
+}
+
 async function loadSanitizedSchemaDocument(pointer: string): Promise<DocumentNode> {
   if (process.env.CODEGEN_OFFLINE === "true") {
     const cached = JSON.parse(
       await readFile(new URL("./src/generated/introspection.json", import.meta.url), "utf8"),
     ) as IntrospectionQuery;
-    const document = parse(printSchema(buildClientSchema(cached)));
-    // The cached gateway predates the corrected Seat resolver payloads. This source
-    // overlay is validated against the isolated Nest schema; generated files stay outputs.
-    const overlay = parse(
-      await readFile(
-        new URL("./src/graphql/seat-layout.overlay.schema.graphql", import.meta.url),
-        "utf8",
-      ),
-    );
-    const fields = overlay.definitions.flatMap((definition) =>
-      definition.kind === Kind.OBJECT_TYPE_DEFINITION ? (definition.fields ?? []) : [],
-    );
-    return visit(document, {
-      ObjectTypeDefinition(node) {
-        if (node.name.value !== "Mutation") return;
-        return {
-          ...node,
-          fields: node.fields?.map(
-            (field) =>
-              fields.find((replacement) => replacement.name.value === field.name.value) ?? field,
-          ),
-        };
-      },
-    });
+    let document = parse(printSchema(buildClientSchema(cached)));
+    // The cached gateway predates server-side contract additions. These source
+    // overlays are validated against the isolated service schemas; generated
+    // files stay outputs.
+    for (const overlayFile of [
+      "./src/graphql/seat-layout.overlay.schema.graphql",
+      "./src/graphql/scan-gate.overlay.schema.graphql",
+    ]) {
+      const overlay = parse(await readFile(new URL(overlayFile, import.meta.url), "utf8"));
+      document = applyOverlay(document, overlay);
+    }
+    return document;
   }
   const response = await sanitizeIntrospectionFetch(pointer, {
     body: JSON.stringify({ query: getIntrospectionQuery() }),

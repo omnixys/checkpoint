@@ -1,0 +1,29 @@
+# Offline codegen overlay for the gate-hardening scanner contract.
+# The cached gateway introspection predates the direction-aware scan flow:
+# - ScanVerdict gained ALREADY_INSIDE + NOT_INSIDE (ticket service migration)
+# - ScanInput gained the required `direction: GateDirection` field
+# - GateDirection is a new enum
+# Generated files stay outputs; this overlay is validated against the isolated ticket schema.
+
+enum GateDirection {
+  ENTRY
+  EXIT
+}
+
+input ScanInput {
+  direction: GateDirection!
+}
+
+enum ScanVerdict {
+  ALREADY_INSIDE
+  NOT_INSIDE
+}
+
+input UpdateTicketPresenceInput {
+  ticketId: ID!
+  state: PresenceState!
+}
+
+type Mutation {
+  updateTicketPresence(input: UpdateTicketPresenceInput!): TicketPayload!
+}
