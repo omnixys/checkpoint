@@ -1,7 +1,7 @@
 "use client";
 
 import { Capacitor } from "@capacitor/core";
-import { Box, Stack, Typography, useTheme } from "@mui/material";
+import { Box, Stack, ToggleButton, ToggleButtonGroup, Typography, useTheme } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useMemo, useState } from "react";
@@ -9,34 +9,24 @@ import NativeScanner from "@/checkpoint/components/scan/NativeScanner";
 import ScanResultCard from "@/checkpoint/components/scan/ScanResultCard";
 import StatusHeader from "@/checkpoint/components/scan/StatusHeader";
 import WebCameraScanner from "@/checkpoint/components/scan/WebCameraScanner";
-import type { ScanPayload, ScanVerdict } from "@/checkpoint/generated/graphql";
+import type { ScanPayload } from "@/checkpoint/generated/graphql";
+import { GateDirection } from "@/checkpoint/generated/graphql";
+import useInvitationQuery from "@/checkpoint/hooks/invitation/useInvitationQuery";
 import { useScanTicket } from "@/checkpoint/hooks/scan/useScanTicket";
 import useSeatQuery from "@/checkpoint/hooks/seat/useSeatQuery";
 import useUserQuery from "@/checkpoint/hooks/user/useUserQuery";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import type { ScanResult } from "@/checkpoint/types/scan.type";
+import { scanReason, scanStatus } from "@/checkpoint/utils/scan-verdict";
 
 const MotionBox = motion.create(Box);
-
-function mapReason(verdict: ScanVerdict): ScanResult["reason"] {
-  switch (verdict) {
-    case "OK":
-      return "OK";
-    case "REVOKED":
-      return "TICKET_REVOKED";
-    case "DEVICE_MISMATCH":
-      return "DEVICE_MISMATCH";
-    default:
-      return "INVALID_QR";
-  }
-}
 
 function buildScanResult(
   payload: ScanPayload,
   guest: ScanResult["guest"],
   seat: NonNullable<ScanResult["seat"]> | null | undefined,
+  plusOneAgeCategory: ScanResult["plusOneAgeCategory"],
 ): ScanResult {
-  const valid = payload.verdict === "OK";
   const device =
     payload.ticket.deviceId &&
     payload.ticket.devicePublicKey &&
@@ -51,12 +41,13 @@ function buildScanResult(
       : undefined;
 
   return {
-    status: valid ? "SUCCESS" : "ERROR",
+    status: scanStatus(payload.verdict),
     message: payload.message,
-    valid,
+    valid: payload.verdict === "OK",
     deviceMatched: payload.verdict !== "DEVICE_MISMATCH",
-    reason: mapReason(payload.verdict),
+    reason: scanReason(payload.verdict),
     ticket: payload.ticket,
+    ...(plusOneAgeCategory ? { plusOneAgeCategory } : {}),
     ...(guest ? { guest } : {}),
     ...(seat ? { seat } : {}),
     ...(device ? { device } : {}),
@@ -77,6 +68,7 @@ export default function ScanContent() {
   const theme = useTheme();
   const tScanner = useTypedTranslations("scanner");
   const scanTicket = useScanTicket();
+  const [direction, setDirection] = useState<GateDirection>(GateDirection.ENTRY);
   const [scanPayload, setScanPayload] = useState<ScanPayload | null>(null);
   const [fallbackResult, setFallbackResult] = useState<ScanResult | null>(null);
 
@@ -92,13 +84,20 @@ export default function ScanContent() {
     loadUserName: Boolean(scannedTicket?.guestProfileId),
   });
 
+  const { invitation } = useInvitationQuery({
+    invitationId: scannedTicket?.invitationId,
+    loadInvitation: Boolean(scannedTicket?.invitationId),
+  });
+
+  const plusOneAgeCategory = invitation?.plusOneAgeCategory ?? null;
+
   const result = useMemo(() => {
     if (scanPayload) {
-      return buildScanResult(scanPayload, userInfo ?? undefined, fullSeatInfo);
+      return buildScanResult(scanPayload, userInfo ?? undefined, fullSeatInfo, plusOneAgeCategory);
     }
 
     return fallbackResult;
-  }, [fallbackResult, fullSeatInfo, scanPayload, userInfo]);
+  }, [fallbackResult, fullSeatInfo, plusOneAgeCategory, scanPayload, userInfo]);
 
   const clearResult = useCallback(() => {
     setScanPayload(null);
@@ -110,7 +109,7 @@ export default function ScanContent() {
       clearResult();
 
       try {
-        const payload = await scanTicket(qrText);
+        const payload = await scanTicket(qrText, { direction });
 
         if (!payload) {
           setFallbackResult(buildInvalidResult(tScanner("invalidQr")));
@@ -124,7 +123,7 @@ export default function ScanContent() {
         return false;
       }
     },
-    [clearResult, scanTicket, tScanner],
+    [clearResult, direction, scanTicket, tScanner],
   );
 
   const isNative = Capacitor.isNativePlatform();
@@ -195,6 +194,29 @@ export default function ScanContent() {
                   {isNative ? tScanner("nativeSubtitle") : tScanner("webSubtitle")}
                 </Typography>
               </Box>
+
+              <ToggleButtonGroup
+                exclusive
+                fullWidth
+                size="small"
+                value={direction}
+                onChange={(_, value: GateDirection | null) => {
+                  if (value) {
+                    setDirection(value);
+                  }
+                }}
+                aria-label={tScanner("direction.label")}
+                sx={{
+                  backgroundColor: alpha(theme.palette.background.default, 0.5),
+                }}
+              >
+                <ToggleButton value={GateDirection.ENTRY} sx={{ fontWeight: 700 }}>
+                  {tScanner("direction.entry")}
+                </ToggleButton>
+                <ToggleButton value={GateDirection.EXIT} sx={{ fontWeight: 700 }}>
+                  {tScanner("direction.exit")}
+                </ToggleButton>
+              </ToggleButtonGroup>
 
               {isNative ? (
                 <NativeScanner onDetect={handleWebDetect} onRestart={clearResult} />

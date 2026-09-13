@@ -1,6 +1,7 @@
 import type {
   GetFullSeatInfoQuery,
   GetUserNameQuery,
+  PlusOneAgeCategory,
   TicketPayload,
 } from "@/checkpoint/generated/graphql";
 
@@ -26,9 +27,16 @@ export interface ScanResult {
     | "TICKET_REVOKED"
     | "WRONG_EVENT"
     | "ALREADY_INSIDE"
+    | "NOT_INSIDE"
+    | "EXPIRED_EVENT"
     | "DEVICE_MISMATCH"
     | "OK"
     | undefined;
+
+  /**
+   * Age category of a plus-one (present only for ENTRY scans of plus-one tickets)
+   */
+  plusOneAgeCategory?: PlusOneAgeCategory | null | undefined;
 
   /**
    * Device binding (present only if ticket is known)

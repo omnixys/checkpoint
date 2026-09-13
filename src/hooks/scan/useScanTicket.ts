@@ -1,6 +1,7 @@
 import { useMutation } from "@apollo/client/react";
 import { useCallback } from "react";
 import {
+  type GateDirection,
   type ScanPayload,
   ScanTokenDocument,
   type ScanTokenMutation,
@@ -42,6 +43,10 @@ function parseQrPayload(qr: string): QrPayload | null {
   }
 }
 
+interface ScanTicketOptions {
+  direction: GateDirection;
+}
+
 export function useScanTicket() {
   const analytics = useAnalytics();
   const [scanMutation] = useMutation<ScanTokenMutation, ScanTokenMutationVariables>(
@@ -49,7 +54,7 @@ export function useScanTicket() {
   );
 
   return useCallback(
-    async (qr: string): Promise<ScanPayload | null> => {
+    async (qr: string, options: ScanTicketOptions): Promise<ScanPayload | null> => {
       const parsed = parseQrPayload(qr);
 
       if (!parsed) {
@@ -64,6 +69,7 @@ export function useScanTicket() {
             signature: parsed.signature,
             deviceId: parsed.deviceId,
             gate: "MAIN_GATE",
+            direction: options.direction,
           },
         },
       });

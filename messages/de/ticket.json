@@ -9,6 +9,11 @@
   "table": "Tisch",
   "seat": "Sitzplatz",
   "guest": "Gast",
+  "ageCategory": {
+    "label": "Alterskategorie",
+    "overSix": "Über 6 Jahre",
+    "underSix": "Unter 6 Jahre"
+  },
   "scanStatus": {
     "success": "Erfolgreich",
     "error": "Fehler",
@@ -30,6 +35,8 @@
     "ticketRevoked": "Ticket widerrufen",
     "wrongEvent": "Falsches Event",
     "alreadyInside": "Bereits eingecheckt",
+    "notInside": "Nicht eingecheckt",
+    "expiredEvent": "Event beendet",
     "deviceMismatch": "Gerät stimmt nicht überein",
     "unknown": "Unbekanntes Ergebnis"
   }

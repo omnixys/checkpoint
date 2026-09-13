@@ -19,6 +19,11 @@
   "granted": "Access granted",
   "failed": "Verification failed",
   "scannerLabel": "QR code scanner",
+  "direction": {
+    "label": "Scan direction",
+    "entry": "IN",
+    "exit": "OUT"
+  },
   "torchOn": "Turn light on",
   "torchOff": "Turn light off",
   "torchOnTooltip": "Light on",

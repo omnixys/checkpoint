@@ -19,6 +19,11 @@
   "granted": "Freigabe erteilt",
   "failed": "Prüfung fehlgeschlagen",
   "scannerLabel": "QR-Code Scanner",
+  "direction": {
+    "label": "Scanrichtung",
+    "entry": "EINLASS",
+    "exit": "AUSLASS"
+  },
   "torchOn": "Licht einschalten",
   "torchOff": "Licht ausschalten",
   "torchOnTooltip": "Licht an",

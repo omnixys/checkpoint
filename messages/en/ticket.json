@@ -9,6 +9,11 @@
   "seat": "Seat",
   
   "guest": "Guest",
+  "ageCategory": {
+    "label": "Age category",
+    "overSix": "Over 6 years",
+    "underSix": "Under 6 years"
+  },
   "scanStatus": {
     "success": "Success",
     "error": "Error",
@@ -30,6 +35,8 @@
     "ticketRevoked": "Ticket revoked",
     "wrongEvent": "Wrong event",
     "alreadyInside": "Already inside",
+    "notInside": "Not checked in",
+    "expiredEvent": "Event has ended",
     "deviceMismatch": "Device mismatch",
     "unknown": "Unknown result"
   }

@@ -74,6 +74,10 @@ export default function ScanResultCard({ result }: { result: ScanResult }) {
         return tTicket("reason.wrongEvent");
       case "ALREADY_INSIDE":
         return tTicket("reason.alreadyInside");
+      case "NOT_INSIDE":
+        return tTicket("reason.notInside");
+      case "EXPIRED_EVENT":
+        return tTicket("reason.expiredEvent");
       case "DEVICE_MISMATCH":
         return tTicket("reason.deviceMismatch");
       case "INVALID_QR":
@@ -173,6 +177,23 @@ export default function ScanResultCard({ result }: { result: ScanResult }) {
                   borderColor: alpha(color, 0.26),
                 }}
               />
+              {result.plusOneAgeCategory ? (
+                <Chip
+                  size="small"
+                  label={`${tTicket("ageCategory.label")}: ${
+                    result.plusOneAgeCategory === "OVER_SIX"
+                      ? tTicket("ageCategory.overSix")
+                      : tTicket("ageCategory.underSix")
+                  }`}
+                  sx={{
+                    ml: 1,
+                    height: theme.spacing(3),
+                    color: theme.palette.text.secondary,
+                    fontWeight: 700,
+                    backgroundColor: alpha(theme.palette.text.secondary, 0.08),
+                  }}
+                />
+              ) : null}
               <Typography
                 variant="h6"
                 sx={{
