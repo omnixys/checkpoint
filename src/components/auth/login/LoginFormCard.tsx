@@ -51,9 +51,14 @@ export function LoginFormCard({ form, onBack }: LoginFormCardProps): JSX.Element
     setMode,
     guestIdentifier,
     setGuestIdentifier,
+    guestFirstName,
+    setGuestFirstName,
+    guestLastName,
+    setGuestLastName,
     guestLoading,
     guestSent,
     guestInvalid,
+    guestNameRequired,
     guestNetworkError,
     submitGuest,
   } = form;
@@ -107,6 +112,34 @@ export function LoginFormCard({ form, onBack }: LoginFormCardProps): JSX.Element
                   },
                 }}
               />
+
+              {guestLooksLikePhone ? (
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                  <TextField
+                    label={t("login.guestFirstName")}
+                    name="guestFirstName"
+                    autoComplete="given-name"
+                    fullWidth={true}
+                    value={guestFirstName}
+                    error={guestNameRequired}
+                    onChange={(event) => setGuestFirstName(event.target.value)}
+                    slotProps={{ htmlInput: { spellCheck: false } }}
+                  />
+                  <TextField
+                    label={t("login.guestLastName")}
+                    name="guestLastName"
+                    autoComplete="family-name"
+                    fullWidth={true}
+                    value={guestLastName}
+                    error={guestNameRequired}
+                    onChange={(event) => setGuestLastName(event.target.value)}
+                    slotProps={{ htmlInput: { spellCheck: false } }}
+                  />
+                </Stack>
+              ) : null}
+              {guestNameRequired ? (
+                <Alert severity="info">{t("login.guestNameRequired")}</Alert>
+              ) : null}
 
               {guestSent ? (
                 <Alert severity="success" role="status" aria-live="polite">

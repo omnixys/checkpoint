@@ -236,14 +236,22 @@ class AuthManagerClass {
     restartWebSocketTransport();
   }
 
-  async requestGuestMagicLink(identifier: string): Promise<void> {
+  async requestGuestMagicLink(
+    identifier: string,
+    firstName?: string,
+    lastName?: string,
+  ): Promise<void> {
     this.assertApollo();
     const res = await this.apollo?.mutate<
       RequestGuestMagicLinkMutation,
       RequestGuestMagicLinkMutationVariables
     >({
       mutation: RequestGuestMagicLinkDocument,
-      variables: { identifier },
+      variables: {
+        identifier,
+        firstName: firstName ?? null,
+        lastName: lastName ?? null,
+      },
       fetchPolicy: "no-cache",
       context: { fetchOptions: { credentials: "include" } },
     });

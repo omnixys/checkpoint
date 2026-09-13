@@ -933,6 +933,7 @@ export type FeatureFlagPayload = {
   versions: Array<Scalars['Int']['output']>;
 };
 
+/** The direction of a gate scan: ENTRY (Einlass) or EXIT (Ausgang). */
 export enum GateDirection {
   ENTRY = 'ENTRY',
   EXIT = 'EXIT'
@@ -1550,6 +1551,7 @@ export type Mutation = {
   updateTable: TablePayload;
   updateTemplate: TemplatePayload;
   updateTenant: TenantType;
+  /** Manually override the presence state of a ticket (security staff) */
   updateTicketPresence: TicketPayload;
   updateTimeLines: EventPayload;
   updateUser: UserPayload;
@@ -2130,7 +2132,9 @@ export type MutationRequestAnalyticsReplayArgs = {
 
 
 export type MutationRequestGuestMagicLinkArgs = {
+  firstName: InputMaybe<Scalars['String']['input']>;
   identifier: Scalars['String']['input'];
+  lastName: InputMaybe<Scalars['String']['input']>;
 };
 
 

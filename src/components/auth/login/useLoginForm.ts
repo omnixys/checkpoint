@@ -31,9 +31,14 @@ export interface LoginFormState {
   readonly submit: () => Promise<void>;
   readonly guestIdentifier: string;
   readonly setGuestIdentifier: (value: string) => void;
+  readonly guestFirstName: string;
+  readonly setGuestFirstName: (value: string) => void;
+  readonly guestLastName: string;
+  readonly setGuestLastName: (value: string) => void;
   readonly guestLoading: boolean;
   readonly guestSent: boolean;
   readonly guestInvalid: boolean;
+  readonly guestNameRequired: boolean;
   readonly guestNetworkError: boolean;
   readonly submitGuest: () => Promise<void>;
 }
@@ -46,6 +51,10 @@ function normalizeGuestIdentifier(value: string): string | null {
 
   const phone = parsePhoneNumberFromString(trimmed);
   return phone?.isValid() ? phone.number : null;
+}
+
+function isPhoneIdentifier(value: string): boolean {
+  return value.trimStart().startsWith("+");
 }
 
 /**
@@ -63,9 +72,12 @@ export function useLoginForm({ onSuccess }: UseLoginFormOptions): LoginFormState
   const [loading, setLoading] = useState(false);
   const [mode, setModeState] = useState<"credentials" | "guest">("credentials");
   const [guestIdentifier, setGuestIdentifierState] = useState("");
+  const [guestFirstName, setGuestFirstNameState] = useState("");
+  const [guestLastName, setGuestLastNameState] = useState("");
   const [guestLoading, setGuestLoading] = useState(false);
   const [guestSent, setGuestSent] = useState(false);
   const [guestInvalid, setGuestInvalid] = useState(false);
+  const [guestNameRequired, setGuestNameRequired] = useState(false);
   const [guestNetworkError, setGuestNetworkError] = useState(false);
   const handleMutationError = useMutationError({ operationName: "CredentialsLogin" });
   const usernameError = useFieldError(appError, "username");
@@ -99,14 +111,26 @@ export function useLoginForm({ onSuccess }: UseLoginFormOptions): LoginFormState
   function setMode(nextMode: "credentials" | "guest"): void {
     setModeState(nextMode);
     setGuestInvalid(false);
+    setGuestNameRequired(false);
     setGuestNetworkError(false);
   }
 
   function setGuestIdentifier(value: string): void {
     setGuestIdentifierState(value);
     setGuestInvalid(false);
+    setGuestNameRequired(false);
     setGuestNetworkError(false);
     setGuestSent(false);
+  }
+
+  function setGuestFirstName(value: string): void {
+    setGuestFirstNameState(value);
+    setGuestNameRequired(false);
+  }
+
+  function setGuestLastName(value: string): void {
+    setGuestLastNameState(value);
+    setGuestNameRequired(false);
   }
 
   async function submitGuest(): Promise<void> {
@@ -120,10 +144,19 @@ export function useLoginForm({ onSuccess }: UseLoginFormOptions): LoginFormState
       return;
     }
 
+    if (isPhoneIdentifier(guestIdentifier) && (!guestFirstName.trim() || !guestLastName.trim())) {
+      setGuestNameRequired(true);
+      return;
+    }
+
     try {
       setGuestLoading(true);
       setGuestNetworkError(false);
-      await AuthManager.requestGuestMagicLink(identifier);
+      await AuthManager.requestGuestMagicLink(
+        identifier,
+        guestFirstName.trim() || undefined,
+        guestLastName.trim() || undefined,
+      );
       setGuestSent(true);
     } catch {
       setGuestNetworkError(true);
@@ -151,9 +184,14 @@ export function useLoginForm({ onSuccess }: UseLoginFormOptions): LoginFormState
     submit,
     guestIdentifier,
     setGuestIdentifier,
+    guestFirstName,
+    setGuestFirstName,
+    guestLastName,
+    setGuestLastName,
     guestLoading,
     guestSent,
     guestInvalid,
+    guestNameRequired,
     guestNetworkError,
     submitGuest,
   };

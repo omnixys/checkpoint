@@ -151,7 +151,33 @@ describe("AuthManager recovery", () => {
     await AuthManager.requestGuestMagicLink("guest@example.com");
 
     expect(mutate).toHaveBeenCalledWith(
-      expect.objectContaining({ variables: { identifier: "guest@example.com" } }),
+      expect.objectContaining({
+        variables: { identifier: "guest@example.com", firstName: null, lastName: null },
+      }),
+    );
+  });
+
+  it("forwards the full name with a phone-based magic-link request", async () => {
+    mutate.mockResolvedValueOnce({ data: { requestGuestMagicLink: true } });
+
+    await AuthManager.requestGuestMagicLink("+4915123456789", "Max", "Mustermann");
+
+    expect(mutate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        variables: { identifier: "+4915123456789", firstName: "Max", lastName: "Mustermann" },
+      }),
+    );
+  });
+
+  it("omits the name as null when it is not provided", async () => {
+    mutate.mockResolvedValueOnce({ data: { requestGuestMagicLink: true } });
+
+    await AuthManager.requestGuestMagicLink("guest@example.com", undefined, undefined);
+
+    expect(mutate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        variables: { identifier: "guest@example.com", firstName: null, lastName: null },
+      }),
     );
   });
 

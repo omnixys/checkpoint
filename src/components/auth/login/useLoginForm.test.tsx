@@ -101,23 +101,44 @@ describe("useLoginForm", () => {
   });
 
   it.each([
-    [" Guest@Example.COM ", "guest@example.com"],
-    ["+49 151 23456789", "+4915123456789"],
-  ])("normalizes and requests a guest link for %s", async (input, expected) => {
+    [" Guest@Example.COM ", "guest@example.com", undefined, undefined],
+    ["+49 151 23456789", "+4915123456789", "Max", "Mustermann"],
+  ])("normalizes and requests a guest link for %s", async (input, expected, first, last) => {
     mocks.requestGuestMagicLink.mockResolvedValueOnce(undefined);
     const { result } = renderHook(() => useLoginForm({ onSuccess: vi.fn() }));
 
     await act(async () => {
       result.current.setMode("guest");
       result.current.setGuestIdentifier(input);
+      if (first) {
+        result.current.setGuestFirstName(first);
+        result.current.setGuestLastName(last ?? "");
+      }
     });
     await act(async () => {
       await result.current.submitGuest();
     });
 
-    expect(mocks.requestGuestMagicLink).toHaveBeenCalledWith(expected);
+    expect(mocks.requestGuestMagicLink).toHaveBeenCalledWith(expected, first, last);
     expect(result.current.guestSent).toBe(true);
     expect(result.current.guestNetworkError).toBe(false);
+  });
+
+  it("requires both names before requesting a link for a phone identifier", async () => {
+    const { result } = renderHook(() => useLoginForm({ onSuccess: vi.fn() }));
+
+    await act(async () => {
+      result.current.setGuestIdentifier("+49 151 23456789");
+      result.current.setGuestFirstName("Max");
+      await result.current.submitGuest();
+    });
+    await act(async () => {
+      await result.current.submitGuest();
+    });
+
+    expect(mocks.requestGuestMagicLink).not.toHaveBeenCalled();
+    expect(result.current.guestNameRequired).toBe(true);
+    expect(result.current.guestSent).toBe(false);
   });
 
   it("does not send an invalid guest identifier", async () => {

@@ -9275,7 +9275,7 @@
       {
         "kind": "ENUM",
         "name": "GateDirection",
-        "description": null,
+        "description": "The direction of a gate scan: ENTRY (Einlass) or EXIT (Ausgang).",
         "isOneOf": null,
         "fields": null,
         "inputFields": null,
@@ -17735,6 +17735,18 @@
             "description": null,
             "args": [
               {
+                "name": "firstName",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
                 "name": "identifier",
                 "description": null,
                 "type": {
@@ -17745,6 +17757,18 @@
                     "kind": "SCALAR",
                     "ofType": null
                   }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "lastName",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -19195,7 +19219,7 @@
           },
           {
             "name": "updateTicketPresence",
-            "description": null,
+            "description": "Manually override the presence state of a ticket (security staff)",
             "args": [
               {
                 "name": "input",
