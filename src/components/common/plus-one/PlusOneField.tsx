@@ -141,7 +141,8 @@ export default function PlusOneField({
         <Stack spacing={2}>
           {value.phoneNumbers.map((p, phoneIndex) => (
             <PhoneNumberField
-              key={`${p.type}:${p.countryCode}:${p.number}:${p.label ?? ""}`}
+              // biome-ignore lint/suspicious/noArrayIndexKey: phone entries have no stable id; index keeps the field mounted (focus) while typing
+              key={phoneIndex}
               value={p}
               index={phoneIndex}
               countries={countries}
