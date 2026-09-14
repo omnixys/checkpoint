@@ -18,7 +18,7 @@ export const env = {
     { required: true, transform: toHttpUrl },
   ),
   ANALYTICS_URL: getEnv("NEXT_PUBLIC_ANALYTICS_URL", process.env.NEXT_PUBLIC_ANALYTICS_URL, {
-    fallback: "http://localhost:8000",
+    fallback: NODE_ENV === "production" ? "https://api.omnixys.com" : "http://localhost:8000",
     transform: toHttpUrl,
   }),
   BACKEND_WS_URL: getEnv("NEXT_PUBLIC_GRAPHQL_WS_URL", process.env.NEXT_PUBLIC_GRAPHQL_WS_URL, {
@@ -55,7 +55,8 @@ export const env = {
     transform: toHttpUrl,
   }),
   OTEL_ENDPOINT: getEnv("NEXT_PUBLIC_OTEL_ENDPOINT", process.env.NEXT_PUBLIC_OTEL_ENDPOINT, {
-    fallback: "/otel/v1/traces",
+    fallback:
+      NODE_ENV === "production" ? "https://api.omnixys.com/otel/v1/traces" : "/otel/v1/traces",
   }),
   OTEL_SERVICE_NAME: getEnv(
     "NEXT_PUBLIC_OTEL_SERVICE_NAME",

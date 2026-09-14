@@ -1510,6 +1510,7 @@ export type Mutation = {
   reopenSupportConversation: SupportConversation;
   replyInvitation: InvitationPayload;
   requestAnalyticsReplay: ReplayJobPayload;
+  requestGuestConfirmation: Scalars['Boolean']['output'];
   requestGuestMagicLink: Scalars['Boolean']['output'];
   requestPasswordReset: Scalars['Boolean']['output'];
   /** Re-sends the confirmation message (email or WhatsApp) to guests who have not yet completed their registration. */
@@ -1551,7 +1552,6 @@ export type Mutation = {
   updateTable: TablePayload;
   updateTemplate: TemplatePayload;
   updateTenant: TenantType;
-  /** Manually override the presence state of a ticket (security staff) */
   updateTicketPresence: TicketPayload;
   updateTimeLines: EventPayload;
   updateUser: UserPayload;
@@ -2128,6 +2128,11 @@ export type MutationRequestAnalyticsReplayArgs = {
   dryRun?: Scalars['Boolean']['input'];
   filter: ReplayFilterInput;
   workspaceId: Scalars['ID']['input'];
+};
+
+
+export type MutationRequestGuestConfirmationArgs = {
+  input: RequestGuestConfirmationInput;
 };
 
 
@@ -3360,6 +3365,13 @@ export type ReplayJobPayload = {
   replayedCount: Scalars['String']['output'];
   skippedCount: Scalars['String']['output'];
   status: Scalars['String']['output'];
+};
+
+export type RequestGuestConfirmationInput = {
+  eventId: Scalars['ID']['input'];
+  firstName: Scalars['String']['input'];
+  identifier: Scalars['String']['input'];
+  lastName: Scalars['String']['input'];
 };
 
 /** Per-invitation result of a guest confirmation resend. */

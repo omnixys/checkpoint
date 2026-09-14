@@ -69,7 +69,7 @@ target "build" {
     NEXT_PUBLIC_EVENT_ID           = "7569a53c-49da-41b4-8f4f-a44379c59f7b"
     NEXT_PUBLIC_CHECKPOINT_BASE_PATH = "/"
     NEXT_PUBLIC_NEXYS_HOME_URL       = "https://nexys.omnixys.com"
-    NEXT_PUBLIC_OTEL_ENDPOINT         = "/otel/v1/traces"
+    NEXT_PUBLIC_OTEL_ENDPOINT         = "https://api.omnixys.com/otel/v1/traces"
     NEXT_PUBLIC_OTEL_SERVICE_NAME     = "checkpoint-web"
     NEXT_PUBLIC_OTEL_SAMPLE_RATE      = "0.1"
     NEXT_PUBLIC_FALLBACK_URL         = "https://ui.omnixys.com"

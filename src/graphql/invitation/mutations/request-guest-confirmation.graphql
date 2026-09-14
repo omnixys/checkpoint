@@ -1,0 +1,3 @@
+mutation RequestGuestConfirmation($input: RequestGuestConfirmationInput!) {
+  requestGuestConfirmation(input: $input)
+}

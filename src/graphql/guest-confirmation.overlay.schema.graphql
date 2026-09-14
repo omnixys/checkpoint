@@ -1,3 +1,11 @@
 extend type Mutation {
   requestGuestMagicLink(identifier: String!): Boolean!
+  requestGuestConfirmation(input: RequestGuestConfirmationInput!): Boolean!
+}
+
+input RequestGuestConfirmationInput {
+  eventId: ID!
+  firstName: String!
+  lastName: String!
+  identifier: String!
 }

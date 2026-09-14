@@ -42,6 +42,7 @@ export default function VerifyPageClient() {
 
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
+  const eventId = searchParams.get("eventId");
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -171,6 +172,14 @@ export default function VerifyPageClient() {
           >
             {t("verify.retry")}
           </Button>
+          {eventId ? (
+            <Button
+              href={`/request-guest-confirmation?eventId=${encodeURIComponent(eventId)}`}
+              variant="outlined"
+            >
+              {t("verify.requestNewLink")}
+            </Button>
+          ) : null}
         </Stack>
       </CenteredContainer>
     );

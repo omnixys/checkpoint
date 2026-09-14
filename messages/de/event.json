@@ -150,8 +150,8 @@
     "outsideWithCount": "Draußen: {count}",
     "notArrivedWithCount": "Nicht da: {count}",
     "presenceLabel": "Aufenthaltsstatus manuell setzen",
-    "presenceIn": "DRINNEN",
-    "presenceOut": "DRAUßEN"
+    "presenceIn": "EIN",
+    "presenceOut": "AUS"
   },
   "filter": {
     "all": "Alle",
