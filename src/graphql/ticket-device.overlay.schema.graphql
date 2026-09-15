@@ -1,0 +1,16 @@
+# Offline codegen overlay for the per-(event, device) device binding contract.
+# The cached gateway introspection predates the device re-binding flow:
+# - activateDevice now allows the same device to re-bind and unbinds sibling
+#   tickets of the same event on that device
+# - resetDeviceBinding is a new staff-only mutation that clears a ticket's
+#   device binding so it can be activated again
+# Generated files stay outputs; this overlay is validated against the isolated
+# ticket schema.
+
+input ResetDeviceBindingInput {
+  ticketId: ID!
+}
+
+type Mutation {
+  resetDeviceBinding(input: ResetDeviceBindingInput!): TicketPayload!
+}

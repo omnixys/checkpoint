@@ -1515,6 +1515,7 @@ export type Mutation = {
   requestPasswordReset: Scalars['Boolean']['output'];
   /** Re-sends the confirmation message (email or WhatsApp) to guests who have not yet completed their registration. */
   resendGuestConfirmations: ResendGuestConfirmationsPayload;
+  resetDeviceBinding: TicketPayload;
   /** Revoke a ticket (security or admin) */
   revokeTicket: TicketPayload;
   revokeWebAuthnCredential: Scalars['Boolean']['output'];
@@ -2151,6 +2152,11 @@ export type MutationRequestPasswordResetArgs = {
 export type MutationResendGuestConfirmationsArgs = {
   invitationIds: Array<Scalars['ID']['input']>;
   locale: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type MutationResetDeviceBindingArgs = {
+  input: ResetDeviceBindingInput;
 };
 
 
@@ -3391,6 +3397,10 @@ export type ResendGuestConfirmationsPayload = {
   results: Array<ResendGuestConfirmationItem>;
   skipped: Scalars['Float']['output'];
   total: Scalars['Float']['output'];
+};
+
+export type ResetDeviceBindingInput = {
+  ticketId: Scalars['ID']['input'];
 };
 
 export type ResetVerificationPayload = {

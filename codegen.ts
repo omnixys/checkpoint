@@ -207,6 +207,7 @@ async function loadSanitizedSchemaDocument(pointer: string): Promise<DocumentNod
     for (const overlayFile of [
       "./src/graphql/seat-layout.overlay.schema.graphql",
       "./src/graphql/scan-gate.overlay.schema.graphql",
+      "./src/graphql/ticket-device.overlay.schema.graphql",
     ]) {
       const overlay = parse(await readFile(new URL(overlayFile, import.meta.url), "utf8"));
       document = applyOverlay(document, overlay);

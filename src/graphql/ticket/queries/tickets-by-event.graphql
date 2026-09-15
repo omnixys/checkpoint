@@ -12,6 +12,7 @@ query TicketPage($eventId: ID!) {
     seatId
     currentState
     revoked
+    deviceId
   }
 }
 
