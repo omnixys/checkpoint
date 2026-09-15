@@ -34,7 +34,7 @@ import useGenerateTokenMutation from "@/checkpoint/hooks/ticket/useGenerateToken
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
 import { useDevice } from "@/checkpoint/providers/DeviceProvider";
-import { loadPrivateKey } from "@/checkpoint/utils/ticket/device-utils";
+import { loadDevicePrivateKey } from "@/checkpoint/utils/ticket/device-utils";
 import { hapticCritical, hapticRotate } from "@/checkpoint/utils/ticket/haptics";
 import { qrBeatAnimation } from "@/checkpoint/utils/ticket/qr-beat";
 import { signQrMessage } from "@/checkpoint/utils/ticket/qr-signature";
@@ -107,6 +107,9 @@ export default function QrCard({ ticket, event, onActivated }: Props) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPreparingQr, setIsPreparingQr] = useState<boolean>(false);
   const [zoomOpen, setZoomOpen] = useState<boolean>(false);
+  const [deviceKeyState, setDeviceKeyState] = useState<"checking" | "ready" | "mismatch">(
+    "checking",
+  );
 
   const inFlightRef = useRef(false);
   const hasStartedRef = useRef(false);
@@ -119,6 +122,9 @@ export default function QrCard({ ticket, event, onActivated }: Props) {
     () => Boolean(ticket?.deviceId && ticket.devicePublicKey && ticket.deviceActivationAt),
     [ticket],
   );
+
+  const qrReady = isDeviceActivated && deviceKeyState === "ready";
+  const qrBlocked = isDeviceActivated && deviceKeyState === "mismatch";
 
   const isRevoked = ticket?.revoked ?? false;
   const isQrActive = remainingSeconds > 0 && Boolean(qrPayload);
@@ -184,7 +190,34 @@ export default function QrCard({ ticket, event, onActivated }: Props) {
     setCycleStartedAt(null);
     setRemainingSeconds(0);
     setErrorMessage(null);
+    setDeviceKeyState("checking");
   }, [ticketId]);
+
+  useEffect(() => {
+    if (!ticket || !isDeviceActivated) {
+      setDeviceKeyState("ready");
+      return;
+    }
+
+    let cancelled = false;
+    setDeviceKeyState("checking");
+
+    void loadDevicePrivateKey(ticket.id, ticket.devicePublicKey)
+      .then((key) => {
+        if (!cancelled) {
+          setDeviceKeyState(key ? "ready" : "mismatch");
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setDeviceKeyState("mismatch");
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [ticket, isDeviceActivated]);
 
   useEffect(() => {
     if (!cycleStartedAt) {
@@ -216,7 +249,7 @@ export default function QrCard({ ticket, event, onActivated }: Props) {
   }, [cycleStartedAt]);
 
   const generateSignedQrPayload = useCallback(async () => {
-    if (!ticket || isRevoked || !isDeviceActivated || inFlightRef.current) {
+    if (!ticket || isRevoked || !qrReady || inFlightRef.current) {
       return;
     }
 
@@ -230,7 +263,7 @@ export default function QrCard({ ticket, event, onActivated }: Props) {
     setIsPreparingQr(true);
 
     try {
-      const privateKey = await loadPrivateKey();
+      const privateKey = await loadDevicePrivateKey(ticket.id, ticket.devicePublicKey);
       if (!privateKey) {
         throw new Error("missing_private_key");
       }
@@ -271,7 +304,7 @@ export default function QrCard({ ticket, event, onActivated }: Props) {
       setIsPreparingQr(false);
       inFlightRef.current = false;
     }
-  }, [generateToken, isDeviceActivated, isRevoked, tQr, ticket]);
+  }, [generateToken, qrReady, isRevoked, tQr, ticket]);
 
   const openZoom = useCallback(() => {
     if (qrPayload) {
@@ -294,16 +327,16 @@ export default function QrCard({ ticket, event, onActivated }: Props) {
   }, [generateSignedQrPayload]);
 
   useEffect(() => {
-    if (!isDeviceActivated || isRevoked || hasStartedRef.current) {
+    if (!qrReady || isRevoked || hasStartedRef.current) {
       return;
     }
 
     hasStartedRef.current = true;
     void generateRef.current();
-  }, [isDeviceActivated, isRevoked]);
+  }, [qrReady, isRevoked]);
 
   useEffect(() => {
-    if (!isDeviceActivated || isRevoked || !qrPayload || remainingSeconds > 0) {
+    if (!qrReady || isRevoked || !qrPayload || remainingSeconds > 0) {
       return;
     }
 
@@ -312,7 +345,7 @@ export default function QrCard({ ticket, event, onActivated }: Props) {
     }, 300);
 
     return () => window.clearTimeout(id);
-  }, [isDeviceActivated, isRevoked, qrPayload, remainingSeconds]);
+  }, [qrReady, isRevoked, qrPayload, remainingSeconds]);
 
   const { fullSeatInfo } = useSeatQuery({
     loadFullSeatInfo: true,
@@ -627,7 +660,52 @@ export default function QrCard({ ticket, event, onActivated }: Props) {
             </Stack>
           ) : null}
 
-          {!isRevoked && isDeviceActivated ? (
+          {!isRevoked && qrBlocked ? (
+            <Stack
+              spacing={2}
+              sx={{
+                p: { xs: 2, sm: 2.5 },
+                borderRadius: 4,
+                border: 1,
+                borderColor: alpha(theme.palette.error.main, 0.34),
+                backgroundColor: alpha(theme.palette.error.main, 0.08),
+              }}
+            >
+              <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
+                <Box
+                  sx={{
+                    width: theme.spacing(5),
+                    height: theme.spacing(5),
+                    borderRadius: 999,
+                    display: "grid",
+                    placeItems: "center",
+                    color: theme.palette.error.main,
+                    backgroundColor: alpha(theme.palette.error.main, 0.12),
+                    flexShrink: 0,
+                  }}
+                >
+                  <WarningAmberRoundedIcon
+                    sx={{ width: theme.spacing(2.8), height: theme.spacing(2.8) }}
+                  />
+                </Box>
+                <Box sx={{ minWidth: 0 }}>
+                  <Typography sx={{ fontWeight: 900 }}>{tQr("deviceMismatchTitle")}</Typography>
+                  <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                    {tQr("deviceMismatchText")}
+                  </Typography>
+                </Box>
+              </Stack>
+
+              <ActivateTicketButton
+                ticketId={ticket.id}
+                eventName={event.name}
+                requireConfirmation
+                onActivated={onActivated}
+              />
+            </Stack>
+          ) : null}
+
+          {!isRevoked && qrReady ? (
             <Box
               sx={{
                 display: "flex",
@@ -791,7 +869,7 @@ export default function QrCard({ ticket, event, onActivated }: Props) {
             </Box>
           ) : null}
 
-          {!isRevoked && isDeviceActivated ? (
+          {!isRevoked && qrReady ? (
             <Stack spacing={1.5}>
               <Button
                 fullWidth={true}

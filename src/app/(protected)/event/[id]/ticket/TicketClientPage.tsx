@@ -10,9 +10,13 @@ import { useCallback, useState } from "react";
 import RouteGuard from "@/checkpoint/components/guard/RouteGuard";
 import CreateTicketDialog from "@/checkpoint/components/ticket/dialog/CreateTicketDialog";
 import DeleteTicketDialog from "@/checkpoint/components/ticket/dialog/DeleteTicketDialog";
+import ResetTicketDeviceDialog from "@/checkpoint/components/ticket/dialog/ResetTicketDeviceDialog";
 import TicketHeader from "@/checkpoint/components/ticket/TicketHeader";
 import TicketList from "@/checkpoint/components/ticket/TicketList";
 import {
+  ResetDeviceBindingDocument,
+  type ResetDeviceBindingMutation,
+  type ResetDeviceBindingMutationVariables,
   RevokeTicketDocument,
   type RevokeTicketMutation,
   type RevokeTicketMutationVariables,
@@ -32,9 +36,10 @@ export default function TicketClientPage() {
    * --------------------------------------------------------- */
   const [openCreate, setOpenCreate] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [resetDeviceId, setResetDeviceId] = useState<string | null>(null);
   const [_openRotate, _setOpenRotate] = useState(false);
 
-  const { ticketPage, ticketPageLoading, ticketPageError } = useTicketQuery({
+  const { ticketPage, ticketPageLoading, ticketPageError, ticketPageRefetch } = useTicketQuery({
     eventId,
     loadTicketPage: true,
   });
@@ -42,6 +47,11 @@ export default function TicketClientPage() {
   /** -----------------------------------------------------------
    * Mutations
    * --------------------------------------------------------- */
+  const [resetDeviceBinding] = useMutation<
+    ResetDeviceBindingMutation,
+    ResetDeviceBindingMutationVariables
+  >(ResetDeviceBindingDocument);
+
   const [revokeTicket] = useMutation<RevokeTicketMutation, RevokeTicketMutationVariables>(
     RevokeTicketDocument,
   );
@@ -57,6 +67,15 @@ export default function TicketClientPage() {
     await revokeTicket({ variables: { input: { ticketId: deleteId, reason: "Einfach SO" } } });
     setDeleteId(null);
   }, [revokeTicket, deleteId]);
+
+  const handleResetDeviceBinding = useCallback(async () => {
+    if (!resetDeviceId) {
+      return;
+    }
+    await resetDeviceBinding({ variables: { input: { ticketId: resetDeviceId } } });
+    setResetDeviceId(null);
+    await ticketPageRefetch();
+  }, [resetDeviceBinding, resetDeviceId, ticketPageRefetch]);
 
   /** -----------------------------------------------------------
    * Loading & Error States
@@ -111,12 +130,26 @@ export default function TicketClientPage() {
           tickets={ticketPage} //TODO Request optimieren!!
           onOpen={(id) => logger.debug("open ticket", id)}
           onDelete={(id) => setDeleteId(id)}
+          onResetBinding={(id) => setResetDeviceId(id)}
           onFilter={() => logger.debug("filter logic")}
         />
 
         {/* ---------------- DIALOG: DELETE/REVOKE ---------------- */}
         <Dialog open={!!deleteId} onClose={() => setDeleteId(null)} fullWidth={true} maxWidth="xs">
           <DeleteTicketDialog onCancel={() => setDeleteId(null)} onConfirm={handleDelete} />
+        </Dialog>
+
+        {/* ---------------- DIALOG: RESET DEVICE BINDING ---------------- */}
+        <Dialog
+          open={!!resetDeviceId}
+          onClose={() => setResetDeviceId(null)}
+          fullWidth={true}
+          maxWidth="xs"
+        >
+          <ResetTicketDeviceDialog
+            onCancel={() => setResetDeviceId(null)}
+            onConfirm={handleResetDeviceBinding}
+          />
         </Dialog>
 
         {/* ---------------- DIALOG: CREATE ---------------- */}

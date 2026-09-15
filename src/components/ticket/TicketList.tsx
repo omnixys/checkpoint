@@ -10,10 +10,11 @@ interface Props {
   tickets: TicketPageQuery["ticketsByEvent"];
   onOpen: (id: string) => void;
   onDelete: (id: string) => void;
+  onResetBinding: (id: string) => void;
   onFilter: () => void;
 }
 
-export default function TicketList({ tickets, onOpen, onDelete }: Props) {
+export default function TicketList({ tickets, onOpen, onDelete, onResetBinding }: Props) {
   const { seatMap } = useSeatQuery({
     seatIdList: tickets.map((ticket) => ticket.seatId),
     loadSeatIdList: true,
@@ -51,8 +52,10 @@ export default function TicketList({ tickets, onOpen, onDelete }: Props) {
             status={t.revoked ? "REVOKED" : "ACTIVE"}
             seatLabel={getSeatLabel(t.seatId)}
             presence={t.currentState}
+            deviceId={t.deviceId}
             onOpen={() => onOpen(t.id)}
             onDelete={() => onDelete(t.id)}
+            onResetBinding={() => onResetBinding(t.id)}
           />
         </Grid>
       ))}

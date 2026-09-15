@@ -4,7 +4,8 @@ import { useMutation } from "@apollo/client/react";
 import ShieldRoundedIcon from "@mui/icons-material/ShieldRounded";
 import { Alert, Button, CircularProgress, Stack, useTheme } from "@mui/material";
 import { alpha } from "@mui/material/styles";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import DeviceBindingConfirmDialog from "@/checkpoint/components/qr/DeviceBindingConfirmDialog";
 import {
   ActivateDeviceDocument,
   type ActivateDeviceMutation,
@@ -14,32 +15,46 @@ import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import {
   createDeviceKeyPair,
   getDeviceHash,
-  savePrivateKey,
+  saveDeviceBindingMeta,
+  saveDevicePrivateKey,
 } from "@/checkpoint/utils/ticket/device-utils";
 
 interface Props {
   ticketId: string;
+  eventName?: string | undefined;
+  requireConfirmation?: boolean;
   onActivated?: (() => void) | undefined;
 }
 
-export default function ActivateTicketButton({ ticketId, onActivated }: Props) {
+export default function ActivateTicketButton({
+  ticketId,
+  eventName,
+  requireConfirmation = false,
+  onActivated,
+}: Props) {
   const theme = useTheme();
   const tQr = useTypedTranslations("qr");
   const [error, setError] = useState<boolean>(false);
+  const [confirmOpen, setConfirmOpen] = useState<boolean>(false);
+  const inFlightRef = useRef(false);
   const [activateDevice, { loading }] = useMutation<
     ActivateDeviceMutation,
     ActivateDeviceMutationVariables
   >(ActivateDeviceDocument);
 
-  const handleActivate = async () => {
+  const runActivation = async () => {
+    if (inFlightRef.current) {
+      return;
+    }
+    inFlightRef.current = true;
     setError(false);
 
     try {
       const deviceId = await getDeviceHash();
       const { publicKey, privateKey } = await createDeviceKeyPair();
-      await savePrivateKey(privateKey);
+      await saveDevicePrivateKey(ticketId, privateKey);
 
-      await activateDevice({
+      const result = await activateDevice({
         variables: {
           input: {
             ticketId,
@@ -49,10 +64,29 @@ export default function ActivateTicketButton({ ticketId, onActivated }: Props) {
         },
       });
 
+      const boundAt = result.data?.activateDevice.deviceActivationAt;
+      saveDeviceBindingMeta(ticketId, {
+        ticketId,
+        eventId: result.data?.activateDevice.eventId ?? "",
+        eventName: eventName ?? "",
+        deviceId,
+        boundAt: boundAt ?? new Date().toISOString(),
+      });
+
       onActivated?.();
     } catch {
       setError(true);
+    } finally {
+      inFlightRef.current = false;
     }
+  };
+
+  const handleClick = () => {
+    if (requireConfirmation) {
+      setConfirmOpen(true);
+      return;
+    }
+    void runActivation();
   };
 
   return (
@@ -60,7 +94,7 @@ export default function ActivateTicketButton({ ticketId, onActivated }: Props) {
       <Button
         fullWidth={true}
         variant="contained"
-        onClick={handleActivate}
+        onClick={handleClick}
         disabled={loading}
         startIcon={
           loading ? undefined : (
@@ -105,6 +139,15 @@ export default function ActivateTicketButton({ ticketId, onActivated }: Props) {
           {tQr("deviceActivationFailed")}
         </Alert>
       ) : null}
+
+      <DeviceBindingConfirmDialog
+        open={confirmOpen}
+        onCancel={() => setConfirmOpen(false)}
+        onConfirm={() => {
+          setConfirmOpen(false);
+          void runActivation();
+        }}
+      />
     </Stack>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
+import LockResetRoundedIcon from "@mui/icons-material/LockResetRounded";
 import QrCode2RoundedIcon from "@mui/icons-material/QrCode2Rounded";
 import { alpha, Box, Chip, IconButton, Stack, Typography, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
@@ -11,11 +12,22 @@ interface Props {
   status: "ACTIVE" | "PENDING" | "REVOKED";
   seatLabel?: string;
   presence?: PresenceState;
+  deviceId?: string | null;
   onDelete: () => void;
   onOpen: () => void;
+  onResetBinding?: () => void;
 }
 
-export default function TicketCard({ code, status, seatLabel, presence, onDelete, onOpen }: Props) {
+export default function TicketCard({
+  code,
+  status,
+  seatLabel,
+  presence,
+  deviceId,
+  onDelete,
+  onOpen,
+  onResetBinding,
+}: Props) {
   const theme = useTheme();
 
   const rawStatus = status || "UNKNOWN";
@@ -80,16 +92,31 @@ export default function TicketCard({ code, status, seatLabel, presence, onDelete
         >
           <QrCode2RoundedIcon sx={{ fontSize: 44 }} />
 
-          <IconButton
-            aria-label="Delete ticket"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete();
-            }}
-            sx={{ color: theme.palette.error.main }}
-          >
-            <DeleteRoundedIcon />
-          </IconButton>
+          <Stack direction="row" spacing={0.5}>
+            <IconButton
+              aria-label="Delete ticket"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete();
+              }}
+              sx={{ color: theme.palette.error.main }}
+            >
+              <DeleteRoundedIcon />
+            </IconButton>
+
+            {deviceId && onResetBinding && (
+              <IconButton
+                aria-label="Reset device binding"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onResetBinding();
+                }}
+                sx={{ color: theme.palette.text.secondary }}
+              >
+                <LockResetRoundedIcon />
+              </IconButton>
+            )}
+          </Stack>
         </Stack>
 
         <Typography
