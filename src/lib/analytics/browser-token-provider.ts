@@ -8,7 +8,7 @@ const logger = getLogger("Analytics");
  */
 export async function fetchAnalyticsToken(_request?: { forceRefresh: boolean }): Promise<string> {
   try {
-    const response = await fetch("/api/analytics/token", {
+    const response = await fetch("/api/analytics/tokens", {
       method: "POST",
       credentials: "same-origin",
       headers: { "content-type": "application/json" },

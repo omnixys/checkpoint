@@ -51,6 +51,7 @@ export default function ScanResultCard({ guestLoading, onNextScan, result, seatL
     <Drawer
       anchor="bottom"
       open={true}
+      sx={{ zIndex: 12_000_001 }}
       slotProps={{
         backdrop: { sx: { backgroundColor: alpha(theme.palette.common.black, 0.18) } },
         paper: {
