@@ -12,10 +12,8 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import html2canvas from "html2canvas";
-import jsPdf from "jspdf";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   VerifyGuestSignUpDocument,
   type VerifyGuestSignUpMutation,
@@ -27,6 +25,11 @@ import { setCurrentUser } from "@/checkpoint/lib/apollo/auth-context";
 import { AuthManager } from "@/checkpoint/lib/auth/AuthManager";
 import { getCurrentUser } from "@/checkpoint/lib/auth/get-current-user";
 import { env } from "@/checkpoint/lib/env";
+import {
+  deliverPdfBlob,
+  generateGuestCredentialsPdf,
+  isCoarsePointerDevice,
+} from "@/checkpoint/lib/ticket/ticket-pdf";
 import { useAnalytics } from "@/checkpoint/providers/AnalyticsProvider";
 
 /* -------------------------------------------------------------------------- */
@@ -56,6 +59,13 @@ export default function VerifyPageClient() {
   const executedRef = useRef(false);
   const pdfRef = useRef<HTMLDivElement>(null);
 
+  const [isMobile] = useState(isCoarsePointerDevice);
+  const [pdfStatus, setPdfStatus] = useState<"idle" | "generating" | "ok" | "blocked" | "failed">(
+    "idle",
+  );
+  const autoTriggeredRef = useRef(false);
+  const generatedPdfRef = useRef<Blob | null>(null);
+
   useEffect(() => {
     if (!token || executedRef.current) {
       return;
@@ -74,38 +84,41 @@ export default function VerifyPageClient() {
   /* PDF Download Logic                                                       */
   /* ------------------------------------------------------------------------ */
 
-  const handleDownload = async () => {
+  const runPdfFlow = useCallback(async () => {
     if (!pdfRef.current) {
       return;
     }
 
     analytics.track("TicketDownloadStarted");
+    setPdfStatus("generating");
+
     try {
-      const canvas = await html2canvas(pdfRef.current, {
-        scale: 2,
-        useCORS: true,
-      });
+      const blob = generatedPdfRef.current ?? (await generateGuestCredentialsPdf(pdfRef.current));
+      generatedPdfRef.current = blob;
 
-      const imgData = canvas.toDataURL("image/png");
+      const delivery = deliverPdfBlob(blob, isMobile);
 
-      const pdf = new jsPdf({
-        orientation: "portrait",
-        unit: "mm",
-        format: "a4",
-      });
+      if (delivery === "new-tab" || delivery === "download") {
+        analytics.track("TicketDownloaded");
+        setPdfStatus("ok");
+        return;
+      }
 
-      const imgWidth = 210;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-
-      pdf.save("guest-credentials.pdf");
-      analytics.track("TicketDownloaded");
-    } catch (error) {
+      setPdfStatus("blocked");
+    } catch {
       analytics.track("TicketDownloadFailed", { errorCode: "PDF_GENERATION_FAILED" });
-      throw error;
+      setPdfStatus("failed");
     }
-  };
+  }, [analytics, isMobile]);
+
+  useEffect(() => {
+    if (!data?.verifyGuestSignUp?.results?.length || autoTriggeredRef.current || !pdfRef.current) {
+      return;
+    }
+
+    autoTriggeredRef.current = true;
+    void runPdfFlow();
+  }, [data, runPdfFlow]);
 
   const login = async (username: string, password: string) => {
     if (loading) {
@@ -220,10 +233,21 @@ export default function VerifyPageClient() {
           </Stack>
         </div>
 
-        {/* Download Button */}
-        <Button variant="contained" onClick={handleDownload}>
-          {t("verify.download")}
-        </Button>
+        {pdfStatus === "generating" ? (
+          <Stack spacing={1} sx={{ alignItems: "center" }}>
+            <CircularProgress size={20} />
+            <Typography variant="body2" color="text.secondary">
+              {t("verify.preparing")}
+            </Typography>
+          </Stack>
+        ) : null}
+
+        {pdfStatus === "blocked" || pdfStatus === "failed" ? (
+          <Button variant="outlined" onClick={() => void runPdfFlow()}>
+            {t("verify.download")}
+          </Button>
+        ) : null}
+
         <Button
           variant="contained"
           disabled={isLoggingIn}
