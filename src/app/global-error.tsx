@@ -9,7 +9,9 @@ import { env } from "@/checkpoint/lib/env";
 initializeBrowserTracing({
   enabled: env.IS_PRODUCTION,
   serviceName: env.OTEL_SERVICE_NAME,
+  environment: env.NODE_ENV,
   sampleRate: 1.0,
+  otlpEndpoint: env.OTEL_ENDPOINT,
   instrumentations: [],
 }).catch(() => {});
 
