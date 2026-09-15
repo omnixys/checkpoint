@@ -4,408 +4,170 @@ import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import ErrorRoundedIcon from "@mui/icons-material/ErrorRounded";
 import InfoRoundedIcon from "@mui/icons-material/InfoRounded";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
-import { Box, Chip, Divider, Stack, Typography, useTheme } from "@mui/material";
+import { Box, Button, Drawer, Skeleton, Stack, Typography, useTheme } from "@mui/material";
 import { alpha } from "@mui/material/styles";
-import { motion } from "framer-motion";
-import { useLocale } from "next-intl";
-import { Fragment } from "react/jsx-runtime";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
-import { useDevice } from "@/checkpoint/providers/DeviceProvider";
 import type { ScanResult } from "@/checkpoint/types/scan.type";
 
 type ResultTone = "success" | "error" | "warning";
 
-function getResultTone(status: ScanResult["status"]): ResultTone {
-  if (status === "SUCCESS") {
-    return "success";
-  }
-
-  if (status === "ERROR") {
-    return "error";
-  }
-
-  return "warning";
+interface Props {
+  guestLoading: boolean;
+  onNextScan: () => void;
+  result: ScanResult;
+  seatLoading: boolean;
 }
 
-function formatDateTime(value: string, locale: string) {
-  return new Intl.DateTimeFormat(locale, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value));
+function getTone(status: ScanResult["status"]): ResultTone {
+  if (status === "SUCCESS") return "success";
+  return status === "WARNING" ? "warning" : "error";
 }
 
-interface SeatSegment {
-  label: string;
-  value: string;
-}
-
-function seatSegmentKey(segment: SeatSegment) {
-  return `${segment.label}:${segment.value}`;
-}
-
-export default function ScanResultCard({ result }: { result: ScanResult }) {
+export default function ScanResultCard({ guestLoading, onNextScan, result, seatLoading }: Props) {
   const theme = useTheme();
-  const locale = useLocale();
-  const { isMobile } = useDevice();
+  const tScanner = useTypedTranslations("scanner");
   const tTicket = useTypedTranslations("ticket");
-
-  const tone = getResultTone(result.status);
-  const color =
-    tone === "success"
-      ? theme.palette.success.main
-      : tone === "error"
-        ? theme.palette.error.main
-        : theme.palette.warning.main;
-
-  const statusLabel =
-    result.status === "SUCCESS"
-      ? tTicket("scanStatus.success")
-      : result.status === "ERROR"
-        ? tTicket("scanStatus.error")
-        : tTicket("scanStatus.warning");
-
-  const reasonLabel = (() => {
-    switch (result.reason) {
-      case "OK":
-        return tTicket("reason.ok");
-      case "TICKET_REVOKED":
-        return tTicket("reason.ticketRevoked");
-      case "WRONG_EVENT":
-        return tTicket("reason.wrongEvent");
-      case "ALREADY_INSIDE":
-        return tTicket("reason.alreadyInside");
-      case "NOT_INSIDE":
-        return tTicket("reason.notInside");
-      case "EXPIRED_EVENT":
-        return tTicket("reason.expiredEvent");
-      case "DEVICE_MISMATCH":
-        return tTicket("reason.deviceMismatch");
-      case "INVALID_QR":
-        return tTicket("reason.invalidQr");
-      default:
-        return null;
-    }
-  })();
-
+  const tone = getTone(result.status);
+  const color = theme.palette[tone].main;
   const guestName = result.guest?.personalInfo
     ? `${result.guest.personalInfo.firstName} ${result.guest.personalInfo.lastName}`
     : null;
-
-  // TODO SeatSegment mit tTicket with seats
-  // const seatParts = [
-  //   result.seat?.section.name,
-  //   result.seat?.table?.name ? tTicket("tableWithName", { name: result.seat.table.name }) : null,
-  //   result.seat?.label ? tTicket("seatLabelWithValue", { label: result.seat.label }) : null,
-  //   result.seat?.number ? tTicket("seatNumberWithValue", { number: result.seat.number }) : null,
-  // ].filter(Boolean);
-
-  const seatSegments: SeatSegment[] = [
+  const seats = [
     result.seat?.section?.name
       ? { label: tTicket("section"), value: result.seat.section.name }
       : null,
-
     result.seat?.table?.name ? { label: tTicket("table"), value: result.seat.table.name } : null,
-
-    // result.seat?.label
-    //   ? { label: tTicket("seat"), value: result.seat.label }
-    //   : null,
-
-    result.seat?.number ? { label: "#", value: String(result.seat.number) } : null,
-  ].filter((v): v is SeatSegment => v !== null);
+    result.seat?.number ? { label: tTicket("seat"), value: String(result.seat.number) } : null,
+  ].filter((value): value is { label: string; value: string } => value !== null);
+  const loadingDetails = result.status === "SUCCESS" && (guestLoading || seatLoading);
+  const statusLabel =
+    result.status === "SUCCESS"
+      ? tScanner("sheet.accepted")
+      : result.status === "WARNING"
+        ? tScanner("sheet.attention")
+        : tScanner("sheet.notAccepted");
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ type: "spring", stiffness: 170, damping: 20 }}
-    >
-      <Box
-        sx={{
-          p: { xs: 2, sm: 2.5 },
-          borderRadius: 4,
+    <Drawer
+      anchor="bottom"
+      open={true}
+      PaperProps={{
+        sx: {
+          width: "100%",
+          maxWidth: theme.spacing(64),
+          mx: "auto",
+          px: { xs: 2, sm: 3 },
+          pt: 2,
+          pb: "max(env(safe-area-inset-bottom), 16px)",
+          borderTopLeftRadius: theme.shape.borderRadius,
+          borderTopRightRadius: theme.shape.borderRadius,
           border: 1,
           borderColor: alpha(color, 0.36),
-          minWidth: 0,
-          background: `linear-gradient(145deg, ${alpha(
-            theme.palette.background.paper,
-            0.76,
-          )}, ${alpha(theme.palette.background.default, 0.62)})`,
-          backdropFilter: "blur(24px) saturate(150%)",
-          WebkitBackdropFilter: "blur(24px) saturate(150%)",
-          boxShadow: `0 ${theme.spacing(2)} ${theme.spacing(7)} ${alpha(color, 0.18)}`,
-        }}
-      >
-        <Stack spacing={2}>
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={1.5}
-            sx={{ alignItems: { xs: "flex-start", sm: "center" } }}
+          backgroundColor: theme.palette.background.paper,
+          boxShadow: `0 -${theme.spacing(1)} ${theme.spacing(5)} ${alpha(theme.palette.common.black, 0.2)}`,
+        },
+      }}
+      slotProps={{ backdrop: { sx: { backgroundColor: alpha(theme.palette.common.black, 0.18) } } }}
+    >
+      <Stack spacing={2} sx={{ minWidth: 0 }}>
+        <Stack direction="row" spacing={1.5} sx={{ alignItems: "flex-start", minWidth: 0 }}>
+          <Box
+            sx={{
+              width: theme.spacing(5.5),
+              height: theme.spacing(5.5),
+              borderRadius: "50%",
+              display: "grid",
+              placeItems: "center",
+              flexShrink: 0,
+              color,
+              backgroundColor: alpha(color, 0.14),
+            }}
           >
-            <Box
-              sx={{
-                width: theme.spacing(5.5),
-                height: theme.spacing(5.5),
-                borderRadius: 999,
-                display: "grid",
-                placeItems: "center",
-                color,
-                backgroundColor: alpha(color, 0.12),
-                boxShadow: `inset 0 0 ${theme.spacing(2)} ${alpha(color, 0.16)}`,
-                flexShrink: 0,
-              }}
+            {tone === "success" ? (
+              <CheckCircleRoundedIcon />
+            ) : tone === "warning" ? (
+              <InfoRoundedIcon />
+            ) : (
+              <ErrorRoundedIcon />
+            )}
+          </Box>
+          <Box sx={{ minWidth: 0, flex: 1 }}>
+            <Typography variant="subtitle1" sx={{ color, fontWeight: 700, lineHeight: 1.2 }}>
+              {statusLabel}
+            </Typography>
+            <Typography
+              variant="body2"
+              sx={{ color: theme.palette.text.primary, mt: 0.5, overflowWrap: "anywhere" }}
             >
-              {tone === "success" ? (
-                <CheckCircleRoundedIcon
-                  sx={{ width: theme.spacing(3), height: theme.spacing(3) }}
-                />
-              ) : tone === "error" ? (
-                <ErrorRoundedIcon sx={{ width: theme.spacing(3), height: theme.spacing(3) }} />
-              ) : (
-                <InfoRoundedIcon sx={{ width: theme.spacing(3), height: theme.spacing(3) }} />
-              )}
-            </Box>
+              {result.message}
+            </Typography>
+          </Box>
+        </Stack>
 
-            <Box sx={{ minWidth: 0, flex: 1 }}>
-              <Chip
-                label={statusLabel}
-                sx={{
-                  height: theme.spacing(3),
-                  color,
-                  fontWeight: 800,
-                  backgroundColor: alpha(color, 0.12),
-                  border: 1,
-                  borderColor: alpha(color, 0.26),
-                }}
-              />
-              {result.plusOneAgeCategory ? (
-                <Chip
-                  size="small"
-                  label={`${tTicket("ageCategory.label")}: ${
-                    result.plusOneAgeCategory === "OVER_SIX"
-                      ? tTicket("ageCategory.overSix")
-                      : tTicket("ageCategory.underSix")
-                  }`}
-                  sx={{
-                    ml: 1,
-                    height: theme.spacing(3),
-                    color: theme.palette.text.secondary,
-                    fontWeight: 700,
-                    backgroundColor: alpha(theme.palette.text.secondary, 0.08),
-                  }}
-                />
-              ) : null}
-              <Typography
-                variant="h6"
-                sx={{
-                  color: theme.palette.text.primary,
-                  fontWeight: 800,
-                  lineHeight: 1.18,
-                  mt: 1,
-                  overflowWrap: "anywhere",
-                }}
-              >
-                {result.message}
-              </Typography>
-            </Box>
-          </Stack>
-
-          {reasonLabel && result.reason !== "OK" ? (
-            <Box
-              sx={{
-                p: 1.5,
-                borderRadius: 3,
-                color,
-                backgroundColor: alpha(color, 0.1),
-                border: 1,
-                borderColor: alpha(color, 0.2),
-              }}
-            >
-              <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                {result.valid ? tTicket("hint") : tTicket("reasonLabel")}
-              </Typography>
-              <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mt: 0.25 }}>
-                {reasonLabel}
-              </Typography>
-            </Box>
-          ) : null}
-
-          {result.status === "SUCCESS" && (guestName || seatSegments.length > 0) ? (
-            <>
-              <Divider sx={{ borderColor: alpha(theme.palette.divider, 0.72) }} />
-
+        {result.status === "SUCCESS" ? (
+          <Box
+            sx={{
+              p: 1.5,
+              borderRadius: theme.shape.borderRadius,
+              backgroundColor: theme.palette.extended.surface.level3,
+            }}
+          >
+            {loadingDetails ? (
+              <Stack spacing={1} aria-live="polite">
+                <Skeleton width="58%" />
+                <Skeleton width="82%" />
+              </Stack>
+            ) : (
               <Stack spacing={1.25}>
                 {guestName ? (
-                  <Stack
-                    direction={{ xs: "column", sm: "row" }}
-                    spacing={1.25}
-                    sx={{ alignItems: { xs: "flex-start", sm: "center" } }}
-                  >
+                  <Stack direction="row" spacing={1} sx={{ alignItems: "center", minWidth: 0 }}>
                     <PersonRoundedIcon
-                      sx={{
-                        width: theme.spacing(2.4),
-                        height: theme.spacing(2.4),
-                        color: theme.palette.text.secondary,
-                      }}
+                      aria-hidden="true"
+                      sx={{ color: theme.palette.text.secondary, flexShrink: 0 }}
                     />
                     <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
                       {tTicket("guest")}
                     </Typography>
-                    <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                    <Typography
+                      variant="body2"
+                      sx={{ fontWeight: 700, minWidth: 0, overflowWrap: "anywhere" }}
+                    >
                       {guestName}
                     </Typography>
                   </Stack>
                 ) : null}
-
-                {isMobile ? (
-                  <Stack spacing={1}>
-                    {seatSegments.map((seg) => {
-                      const isLast = seg === seatSegments[seatSegments.length - 1];
-                      return (
-                        <Box
-                          key={seatSegmentKey(seg)}
-                          sx={{
-                            px: 1.5,
-                            py: 1,
-                            borderRadius: 3,
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-
-                            background: isLast
-                              ? `linear-gradient(135deg, ${alpha(theme.palette.success.main, 0.25)}, ${alpha(
-                                  theme.palette.success.main,
-                                  0.1,
-                                )})`
-                              : `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.12)}, ${alpha(
-                                  theme.palette.background.paper,
-                                  0.4,
-                                )})`,
-
-                            border: `1px solid ${
-                              isLast
-                                ? alpha(theme.palette.success.main, 0.4)
-                                : alpha(theme.palette.primary.main, 0.25)
-                            }`,
-
-                            backdropFilter: "blur(12px)",
-                          }}
-                        >
-                          {/* Label */}
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              color: theme.palette.text.secondary,
-                              fontWeight: 600,
-                            }}
-                          >
-                            {seg.label}
-                          </Typography>
-
-                          {/* Value */}
-                          <Typography
-                            sx={{
-                              fontWeight: 900,
-                              fontSize: "0.95rem",
-                              letterSpacing: 0.3,
-                              maxWidth: "60%",
-                              textAlign: "right",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              whiteSpace: "nowrap",
-                            }}
-                          >
-                            {seg.value}
-                          </Typography>
-                        </Box>
-                      );
-                    })}
-                  </Stack>
-                ) : (
+                {seats.map((seat) => (
                   <Stack
                     direction="row"
-                    spacing={1}
-                    sx={{ gap: 1, flexWrap: "wrap", alignItems: "center" }}
+                    justifyContent="space-between"
+                    key={seat.label}
+                    spacing={2}
                   >
-                    {seatSegments.map((seg) => (
-                      <Fragment key={seatSegmentKey(seg)}>
-                        <Box
-                          sx={{
-                            px: 1.5,
-                            py: 0.6,
-                            borderRadius: 999,
-                            background: `linear-gradient(135deg, ${alpha(
-                              theme.palette.primary.main,
-                              0.18,
-                            )}, ${alpha(theme.palette.secondary.main, 0.12)})`,
-                            border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
-                            backdropFilter: "blur(10px)",
-                          }}
-                        >
-                          <Typography variant="caption" sx={{ fontWeight: 800 }}>
-                            {seg.value}
-                          </Typography>
-                        </Box>
-
-                        {seg !== seatSegments[seatSegments.length - 1] && (
-                          <Typography
-                            variant="caption"
-                            sx={{ color: theme.palette.text.secondary }}
-                          >
-                            →
-                          </Typography>
-                        )}
-                      </Fragment>
-                    ))}
+                    <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                      {seat.label}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ fontWeight: 700, textAlign: "right", overflowWrap: "anywhere" }}
+                    >
+                      {seat.value}
+                    </Typography>
                   </Stack>
-                )}
+                ))}
               </Stack>
-            </>
-          ) : null}
+            )}
+          </Box>
+        ) : null}
 
-          {result.ticket ? (
-            <>
-              <Divider sx={{ borderColor: alpha(theme.palette.divider, 0.72) }} />
-              <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
-                {tTicket("ticketState", {
-                  status: result.ticket.revoked
-                    ? tTicket("status.revoked")
-                    : tTicket("status.valid"),
-                })}
-              </Typography>
-            </>
-          ) : null}
-
-          {result.status === "ERROR" && result.device ? (
-            <>
-              <Divider sx={{ borderColor: alpha(theme.palette.divider, 0.72) }} />
-              <Stack spacing={0.75}>
-                <Typography variant="subtitle2" sx={{ fontWeight: 800 }}>
-                  {tTicket("deviceBinding")}
-                </Typography>
-                <Typography
-                  variant="caption"
-                  sx={{ color: theme.palette.text.secondary, overflowWrap: "anywhere" }}
-                >
-                  {tTicket("deviceHash", { hash: result.device.hash })}
-                </Typography>
-                <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
-                  {tTicket("deviceActivated", {
-                    date: formatDateTime(result.device.activatedAt, locale),
-                  })}
-                </Typography>
-                <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
-                  {tTicket("deviceIp", { ip: result.device.activationIP })}
-                </Typography>
-                {result.deviceMatched ? null : (
-                  <Typography variant="body2" sx={{ color: theme.palette.error.main }}>
-                    {tTicket("reason.deviceMismatch")}
-                  </Typography>
-                )}
-              </Stack>
-            </>
-          ) : null}
-        </Stack>
-      </Box>
-    </motion.div>
+        <Button
+          fullWidth
+          variant="contained"
+          onClick={onNextScan}
+          sx={{ minHeight: theme.spacing(6) }}
+        >
+          {tScanner("nextScan")}
+        </Button>
+      </Stack>
+    </Drawer>
   );
 }

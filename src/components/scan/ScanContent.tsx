@@ -12,12 +12,17 @@ import WebCameraScanner from "@/checkpoint/components/scan/WebCameraScanner";
 import type { ScanPayload } from "@/checkpoint/generated/graphql";
 import { GateDirection } from "@/checkpoint/generated/graphql";
 import useInvitationQuery from "@/checkpoint/hooks/invitation/useInvitationQuery";
-import { useScanTicket } from "@/checkpoint/hooks/scan/useScanTicket";
+import { parseQrPayload, useScanTicket } from "@/checkpoint/hooks/scan/useScanTicket";
 import useSeatQuery from "@/checkpoint/hooks/seat/useSeatQuery";
 import useUserQuery from "@/checkpoint/hooks/user/useUserQuery";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import type { ScanResult } from "@/checkpoint/types/scan.type";
-import { scanReason, scanStatus } from "@/checkpoint/utils/scan-verdict";
+import {
+  type ScanFailureReason,
+  scanReason,
+  scanRequestFailureReason,
+  scanStatus,
+} from "@/checkpoint/utils/scan-verdict";
 
 const MotionBox = motion.create(Box);
 
@@ -54,13 +59,16 @@ function buildScanResult(
   };
 }
 
-function buildInvalidResult(message: string): ScanResult {
+function buildFailureResult(
+  reason: NonNullable<ScanResult["reason"]>,
+  message: string,
+): ScanResult {
   return {
     status: "ERROR",
     message,
     valid: false,
     deviceMatched: false,
-    reason: "INVALID_QR",
+    reason,
   };
 }
 
@@ -71,15 +79,16 @@ export default function ScanContent() {
   const [direction, setDirection] = useState<GateDirection>(GateDirection.ENTRY);
   const [scanPayload, setScanPayload] = useState<ScanPayload | null>(null);
   const [fallbackResult, setFallbackResult] = useState<ScanResult | null>(null);
+  const [scannerKey, setScannerKey] = useState(0);
 
   const scannedTicket = scanPayload?.ticket;
 
-  const { fullSeatInfo } = useSeatQuery({
+  const { fullSeatInfo, fullSeatInfoLoading } = useSeatQuery({
     seatId: scannedTicket?.seatId,
     loadFullSeatInfo: Boolean(scannedTicket?.seatId),
   });
 
-  const { userInfo } = useUserQuery({
+  const { userInfo, userInfoLoading } = useUserQuery({
     userId: scannedTicket?.guestProfileId,
     loadUserName: Boolean(scannedTicket?.guestProfileId),
   });
@@ -104,26 +113,62 @@ export default function ScanContent() {
     setFallbackResult(null);
   }, []);
 
+  const failureMessage = useCallback(
+    (reason: ScanFailureReason) => {
+      const messages: Record<ScanFailureReason, string> = {
+        CAMERA_INSECURE: tScanner("failure.cameraInsecure"),
+        CAMERA_IN_USE: tScanner("failure.cameraInUse"),
+        CAMERA_PERMISSION_DENIED: tScanner("failure.cameraPermission"),
+        CAMERA_UNAVAILABLE: tScanner("failure.cameraUnavailable"),
+        EMPTY_RESPONSE: tScanner("failure.emptyResponse"),
+        NETWORK_ERROR: tScanner("failure.network"),
+        UNEXPECTED_ERROR: tScanner("failure.unexpected"),
+      };
+
+      return messages[reason];
+    },
+    [tScanner],
+  );
+
+  const handleFailure = useCallback(
+    (reason: ScanFailureReason) => {
+      setScanPayload(null);
+      setFallbackResult(buildFailureResult(reason, failureMessage(reason)));
+    },
+    [failureMessage],
+  );
+
+  const startNextScan = useCallback(() => {
+    clearResult();
+    setScannerKey((current) => current + 1);
+  }, [clearResult]);
+
   const handleWebDetect = useCallback(
     async (qrText: string) => {
       clearResult();
+
+      if (!parseQrPayload(qrText)) {
+        setFallbackResult(buildFailureResult("INVALID_QR", tScanner("invalidQr")));
+        return false;
+      }
 
       try {
         const payload = await scanTicket(qrText, { direction });
 
         if (!payload) {
-          setFallbackResult(buildInvalidResult(tScanner("invalidQr")));
+          setFallbackResult(buildFailureResult("EMPTY_RESPONSE", failureMessage("EMPTY_RESPONSE")));
           return false;
         }
 
         setScanPayload(payload);
         return payload.verdict === "OK";
-      } catch {
-        setFallbackResult(buildInvalidResult(tScanner("scanFailed")));
+      } catch (error) {
+        const reason = scanRequestFailureReason(error);
+        setFallbackResult(buildFailureResult(reason, failureMessage(reason)));
         return false;
       }
     },
-    [clearResult, direction, scanTicket, tScanner],
+    [clearResult, direction, failureMessage, scanTicket, tScanner],
   );
 
   const isNative = Capacitor.isNativePlatform();
@@ -219,9 +264,19 @@ export default function ScanContent() {
               </ToggleButtonGroup>
 
               {isNative ? (
-                <NativeScanner onDetect={handleWebDetect} onRestart={clearResult} />
+                <NativeScanner
+                  key={scannerKey}
+                  onDetect={handleWebDetect}
+                  onFailure={handleFailure}
+                  onRestart={clearResult}
+                />
               ) : (
-                <WebCameraScanner onDetect={handleWebDetect} onRestart={clearResult} />
+                <WebCameraScanner
+                  key={scannerKey}
+                  onDetect={handleWebDetect}
+                  onFailure={handleFailure}
+                  onRestart={clearResult}
+                />
               )}
             </Stack>
           </MotionBox>
@@ -235,7 +290,12 @@ export default function ScanContent() {
                 exit={{ opacity: 0, y: 12 }}
                 transition={{ duration: 0.24, ease: "easeOut" }}
               >
-                <ScanResultCard result={result} />
+                <ScanResultCard
+                  guestLoading={userInfoLoading}
+                  onNextScan={startNextScan}
+                  result={result}
+                  seatLoading={fullSeatInfoLoading}
+                />
               </motion.div>
             ) : null}
           </AnimatePresence>

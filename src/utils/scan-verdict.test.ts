@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { ScanVerdict } from "@/checkpoint/generated/graphql";
-import { POLICY_VERDICTS, scanReason, scanStatus } from "@/checkpoint/utils/scan-verdict";
+import {
+  cameraFailureReason,
+  POLICY_VERDICTS,
+  scanReason,
+  scanRequestFailureReason,
+  scanStatus,
+} from "@/checkpoint/utils/scan-verdict";
 
 describe("scanReason", () => {
   it.each([
@@ -38,4 +44,23 @@ describe("scanStatus", () => {
       expect(scanStatus(verdict)).toBe("ERROR");
     },
   );
+});
+
+describe("scan failure reasons", () => {
+  it.each([
+    ["NotAllowedError", "CAMERA_PERMISSION_DENIED"],
+    ["SecurityError", "CAMERA_PERMISSION_DENIED"],
+    ["NotFoundError", "CAMERA_UNAVAILABLE"],
+    ["OverconstrainedError", "CAMERA_UNAVAILABLE"],
+    ["NotReadableError", "CAMERA_IN_USE"],
+  ] as const)("maps camera error %s to %s", (name, expected) => {
+    expect(cameraFailureReason(new DOMException("camera error", name))).toBe(expected);
+  });
+
+  it("keeps request failures actionable without exposing their raw message", () => {
+    expect(scanRequestFailureReason(new Error("connection reset by peer"))).toBe("NETWORK_ERROR");
+    expect(scanRequestFailureReason(new Error("unexpected server response"))).toBe(
+      "UNEXPECTED_ERROR",
+    );
+  });
 });

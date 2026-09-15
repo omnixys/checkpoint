@@ -3,6 +3,7 @@
   "webSubtitle": "Browser-Scanner mit sicherer Ticketprüfung",
   "nativeSubtitle": "Nativer Scanner mit sicherer Ticketprüfung",
   "scanAgain": "Erneut scannen",
+  "nextScan": "Nächsten Scan starten",
   "success": "Ticket akzeptiert",
   "error": "Scan abgelehnt",
   "verifying": "Ticket wird geprüft",
@@ -12,6 +13,20 @@
   "cameraStartFailed": "Kamera konnte nicht gestartet werden.",
   "invalidQr": "Ungültiger QR-Code",
   "scanFailed": "Scan fehlgeschlagen",
+  "sheet": {
+    "accepted": "Zutritt erlaubt",
+    "attention": "Bitte prüfen",
+    "notAccepted": "Zutritt nicht erlaubt"
+  },
+  "failure": {
+    "cameraPermission": "Kamerazugriff in den Einstellungen erlauben und erneut versuchen.",
+    "cameraUnavailable": "Keine nutzbare Kamera gefunden. Andere Kamera wählen oder Gerät prüfen.",
+    "cameraInUse": "Die Kamera wird bereits von einer anderen App verwendet. Diese bitte schließen.",
+    "cameraInsecure": "Der Kamerazugriff benötigt eine sichere Verbindung (HTTPS).",
+    "network": "Verbindung prüfen und erneut versuchen.",
+    "emptyResponse": "Der Scan konnte nicht bestätigt werden. Bitte erneut versuchen.",
+    "unexpected": "Der Scan konnte nicht abgeschlossen werden. Bitte erneut versuchen."
+  },
   "scanButton": "QR-Code scannen",
   "wait": "Bitte warten",
   "ready": "Bereit für den nächsten Gast",

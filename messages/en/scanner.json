@@ -3,6 +3,7 @@
   "webSubtitle": "Browser scanner with secure ticket verification",
   "nativeSubtitle": "Native scanner with secure ticket verification",
   "scanAgain": "Scan again",
+  "nextScan": "Start next scan",
   "success": "Ticket accepted",
   "error": "Scan rejected",
   "verifying": "Verifying ticket",
@@ -12,6 +13,20 @@
   "cameraStartFailed": "Camera could not be started.",
   "invalidQr": "Invalid QR code",
   "scanFailed": "Scan failed",
+  "sheet": {
+    "accepted": "Access allowed",
+    "attention": "Check required",
+    "notAccepted": "Access not allowed"
+  },
+  "failure": {
+    "cameraPermission": "Allow camera access in settings, then try again.",
+    "cameraUnavailable": "No usable camera was found. Choose another camera or check the device.",
+    "cameraInUse": "The camera is already being used by another app. Close it and try again.",
+    "cameraInsecure": "Camera access requires a secure connection (HTTPS).",
+    "network": "Check the connection, then try again.",
+    "emptyResponse": "The scan could not be confirmed. Please try again.",
+    "unexpected": "The scan could not be completed. Please try again."
+  },
   "scanButton": "Scan QR code",
   "wait": "Please wait",
   "ready": "Ready for the next guest",

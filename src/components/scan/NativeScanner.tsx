@@ -15,10 +15,12 @@ import { useCallback, useState } from "react";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { useActiveEvent } from "@/checkpoint/providers/ActiveEventProvider";
 import { getLogger } from "@/checkpoint/utils/logger";
+import type { ScanFailureReason } from "@/checkpoint/utils/scan-verdict";
 
 interface Props {
   onDetect: (qrText: string) => Promise<boolean>;
   onRestart?: (() => void) | undefined;
+  onFailure: (reason: ScanFailureReason) => void;
 }
 
 const MotionBox = motion.create(Box);
@@ -32,7 +34,11 @@ async function playNativeFeedback(ok: boolean) {
   }
 }
 
-export default function NativeScanner({ onDetect, onRestart }: Props) {
+function isCancelled(error: unknown) {
+  return error instanceof Error && /cancel(?:led|ed)?|dismiss/i.test(error.message);
+}
+
+export default function NativeScanner({ onDetect, onRestart, onFailure }: Props) {
   const theme = useTheme();
   const tScanner = useTypedTranslations("scanner");
   const { activeEventId: eventId } = useActiveEvent();
@@ -47,7 +53,11 @@ export default function NativeScanner({ onDetect, onRestart }: Props) {
     setLoading(true);
 
     try {
-      await MlKitScanner.requestPermissions();
+      const permission = await MlKitScanner.requestPermissions();
+      if (permission.camera !== "granted") {
+        onFailure("CAMERA_PERMISSION_DENIED");
+        return;
+      }
 
       const result: MlKitScanResult = await MlKitScanner.scan({
         formats: [BarcodeFormat.QrCode],
@@ -59,11 +69,14 @@ export default function NativeScanner({ onDetect, onRestart }: Props) {
       await playNativeFeedback(ok);
     } catch (error) {
       logger.error("Native scan failed:", error);
-      await playNativeFeedback(false);
+      if (!isCancelled(error)) {
+        onFailure("UNEXPECTED_ERROR");
+        await playNativeFeedback(false);
+      }
     } finally {
       setLoading(false);
     }
-  }, [eventId, loading, onDetect, onRestart]);
+  }, [eventId, loading, onDetect, onFailure, onRestart]);
 
   return (
     <MotionBox

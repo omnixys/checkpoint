@@ -15,7 +15,7 @@ interface QrPayload {
   deviceId: string;
 }
 
-function parseQrPayload(qr: string): QrPayload | null {
+export function parseQrPayload(qr: string): QrPayload | null {
   try {
     const parsed: unknown = JSON.parse(qr);
 

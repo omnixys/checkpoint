@@ -24,6 +24,13 @@ export interface ScanResult {
    */
   reason?:
     | "INVALID_QR"
+    | "EMPTY_RESPONSE"
+    | "NETWORK_ERROR"
+    | "UNEXPECTED_ERROR"
+    | "CAMERA_PERMISSION_DENIED"
+    | "CAMERA_UNAVAILABLE"
+    | "CAMERA_IN_USE"
+    | "CAMERA_INSECURE"
     | "TICKET_REVOKED"
     | "WRONG_EVENT"
     | "ALREADY_INSIDE"

@@ -21,6 +21,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { RefObject } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { cameraFailureReason, type ScanFailureReason } from "@/checkpoint/utils/scan-verdict";
 
 type ScannerState = "IDLE" | "SCANNING" | "VERIFYING" | "RESULT";
 type Verdict = "success" | "error" | null;
@@ -29,6 +30,7 @@ type FinalVerdict = Exclude<Verdict, null>;
 interface Props {
   onDetect: (qrText: string) => Promise<boolean>;
   onRestart?: (() => void) | undefined;
+  onFailure: (reason: ScanFailureReason) => void;
 }
 
 interface LastScan {
@@ -227,7 +229,7 @@ function pulseDevice(verdict: FinalVerdict) {
   navigator.vibrate(verdict === "success" ? [18, 32, 18] : [46, 36, 46]);
 }
 
-export default function WebCameraScanner({ onDetect, onRestart }: Props) {
+export default function WebCameraScanner({ onDetect, onRestart, onFailure }: Props) {
   const theme = useTheme();
   const tScanner = useTypedTranslations("scanner");
 
@@ -247,6 +249,7 @@ export default function WebCameraScanner({ onDetect, onRestart }: Props) {
   const lastDetectionAtRef = useRef<number>(0);
   const onDetectRef = useRef<Props["onDetect"]>(onDetect);
   const onRestartRef = useRef<Props["onRestart"]>(onRestart);
+  const onFailureRef = useRef<Props["onFailure"]>(onFailure);
   const stateRef = useRef<ScannerState>("IDLE");
 
   const [state, setState] = useState<ScannerState>("IDLE");
@@ -547,7 +550,7 @@ export default function WebCameraScanner({ onDetect, onRestart }: Props) {
       if (isCurrentSession(sessionId)) {
         await startZxingScanner(sessionId);
       }
-    } catch {
+    } catch (error) {
       if (!activeRef.current || sessionIdRef.current !== sessionId) {
         return;
       }
@@ -558,6 +561,7 @@ export default function WebCameraScanner({ onDetect, onRestart }: Props) {
       setLoading(false);
       setScannerState("IDLE");
       setCameraError(true);
+      onFailureRef.current(cameraFailureReason(error));
     }
   }, [
     isCurrentSession,
@@ -633,6 +637,10 @@ export default function WebCameraScanner({ onDetect, onRestart }: Props) {
   useEffect(() => {
     onRestartRef.current = onRestart;
   }, [onRestart]);
+
+  useEffect(() => {
+    onFailureRef.current = onFailure;
+  }, [onFailure]);
 
   useEffect(() => {
     activeRef.current = true;
