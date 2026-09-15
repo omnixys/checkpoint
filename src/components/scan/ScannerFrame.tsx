@@ -213,7 +213,16 @@ export default function ScannerFrame() {
             maxWidth: 420,
           }}
         >
-          <ScanResultCard result={result} />
+          <ScanResultCard
+            guestLoading={false}
+            onNextScan={() => {
+              setResult(null);
+              lockedRef.current = false;
+              setLocked(false);
+            }}
+            result={result}
+            seatLoading={false}
+          />
         </Box>
       ) : null}
     </Box>

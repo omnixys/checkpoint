@@ -51,23 +51,25 @@ export default function ScanResultCard({ guestLoading, onNextScan, result, seatL
     <Drawer
       anchor="bottom"
       open={true}
-      PaperProps={{
-        sx: {
-          width: "100%",
-          maxWidth: theme.spacing(64),
-          mx: "auto",
-          px: { xs: 2, sm: 3 },
-          pt: 2,
-          pb: "max(env(safe-area-inset-bottom), 16px)",
-          borderTopLeftRadius: theme.shape.borderRadius,
-          borderTopRightRadius: theme.shape.borderRadius,
-          border: 1,
-          borderColor: alpha(color, 0.36),
-          backgroundColor: theme.palette.background.paper,
-          boxShadow: `0 -${theme.spacing(1)} ${theme.spacing(5)} ${alpha(theme.palette.common.black, 0.2)}`,
+      slotProps={{
+        backdrop: { sx: { backgroundColor: alpha(theme.palette.common.black, 0.18) } },
+        paper: {
+          sx: {
+            width: "100%",
+            maxWidth: theme.spacing(64),
+            mx: "auto",
+            px: { xs: 2, sm: 3 },
+            pt: 2,
+            pb: "max(env(safe-area-inset-bottom), 16px)",
+            borderTopLeftRadius: theme.shape.borderRadius,
+            borderTopRightRadius: theme.shape.borderRadius,
+            border: 1,
+            borderColor: alpha(color, 0.36),
+            backgroundColor: theme.palette.background.paper,
+            boxShadow: `0 -${theme.spacing(1)} ${theme.spacing(5)} ${alpha(theme.palette.common.black, 0.2)}`,
+          },
         },
       }}
-      slotProps={{ backdrop: { sx: { backgroundColor: alpha(theme.palette.common.black, 0.18) } } }}
     >
       <Stack spacing={2} sx={{ minWidth: 0 }}>
         <Stack direction="row" spacing={1.5} sx={{ alignItems: "flex-start", minWidth: 0 }}>
@@ -139,9 +141,9 @@ export default function ScanResultCard({ guestLoading, onNextScan, result, seatL
                 {seats.map((seat) => (
                   <Stack
                     direction="row"
-                    justifyContent="space-between"
                     key={seat.label}
                     spacing={2}
+                    sx={{ justifyContent: "space-between" }}
                   >
                     <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
                       {seat.label}

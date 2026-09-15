@@ -38,12 +38,14 @@ describe("scanStatus", () => {
     },
   );
 
-  it.each([ScanVerdict.REVOKED, ScanVerdict.DEVICE_MISMATCH, ScanVerdict.REPLAY, ScanVerdict.BLOCKED])(
-    "marks invalid verdicts (%s) as ERROR",
-    (verdict) => {
-      expect(scanStatus(verdict)).toBe("ERROR");
-    },
-  );
+  it.each([
+    ScanVerdict.REVOKED,
+    ScanVerdict.DEVICE_MISMATCH,
+    ScanVerdict.REPLAY,
+    ScanVerdict.BLOCKED,
+  ])("marks invalid verdicts (%s) as ERROR", (verdict) => {
+    expect(scanStatus(verdict)).toBe("ERROR");
+  });
 });
 
 describe("scan failure reasons", () => {
