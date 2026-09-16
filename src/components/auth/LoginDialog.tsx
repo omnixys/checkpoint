@@ -5,6 +5,7 @@ import { Box, Dialog, IconButton, Typography, useMediaQuery, useTheme } from "@m
 import { useRouter } from "next/navigation";
 import type { JSX } from "react";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
 import { LoginFormCard } from "./login/LoginFormCard";
 import { useLoginForm } from "./login/useLoginForm";
 
@@ -14,7 +15,11 @@ import { useLoginForm } from "./login/useLoginForm";
  * a session/auth error. After a successful sign-in `router.back()` returns
  * to the page that triggered the dialog.
  */
-export default function LoginDialog(): JSX.Element {
+export default function LoginDialog({
+  callingCodeCountries,
+}: {
+  readonly callingCodeCountries: ReadonlyArray<CallingCodeCountry>;
+}): JSX.Element {
   const router = useRouter();
   const theme = useTheme();
   const t = useTypedTranslations("auth");
@@ -49,7 +54,7 @@ export default function LoginDialog(): JSX.Element {
         </IconButton>
       </Box>
       <Box sx={{ px: 3, pb: 3 }}>
-        <LoginFormCard form={form} onBack={close} />
+        <LoginFormCard form={form} onBack={close} callingCodeCountries={callingCodeCountries} />
       </Box>
     </Dialog>
   );

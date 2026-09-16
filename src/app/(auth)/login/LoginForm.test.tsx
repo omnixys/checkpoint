@@ -3,20 +3,29 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createAppTheme } from "@/checkpoint/themes/createAppTheme";
+import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
 import LoginForm from "./LoginForm";
+
+const callingCodeCountries: CallingCodeCountry[] = [
+  { iso2: "DE", name: "Germany", flagSvg: "/flags/de.svg", callingCode: "+49" },
+];
 
 afterEach(cleanup);
 
 const renderLoginForm = () =>
   render(
     <ThemeProvider theme={createAppTheme("light")}>
-      <LoginForm />
+      <LoginForm callingCodeCountries={callingCodeCountries} />
     </ThemeProvider>,
   );
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
   useSearchParams: () => new URLSearchParams(),
+}));
+
+vi.mock("next/link", () => ({
+  default: ({ children, ...props }: { children: ReactNode }) => <a {...props}>{children}</a>,
 }));
 
 vi.mock("@/checkpoint/components/apple/AppleButton", () => ({
@@ -79,8 +88,37 @@ describe("LoginForm", () => {
     fireEvent.click(screen.getByRole("button", { name: "login.guestToggle" }));
 
     expect(screen.queryByLabelText("login.username")).toBeNull();
-    expect(screen.getByLabelText("login.guestIdentifier")).toBeTruthy();
     expect(screen.getByRole("button", { name: "login.guestSubmit" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "login.credentialsToggle" })).toBeTruthy();
+  });
+
+  it("defaults the guest form to the phone tab and shows country codes", () => {
+    renderLoginForm();
+
+    fireEvent.click(screen.getByRole("button", { name: "login.guestToggle" }));
+
+    const telTab = screen.getByRole("tab", { name: "login.guestTabTel" });
+    expect(telTab).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByRole("tab", { name: "login.guestTabEmail" })).toHaveAttribute(
+      "aria-selected",
+      "false",
+    );
+    expect(screen.getByLabelText("login.guestCallingCode")).toBeTruthy();
+    expect(screen.getByLabelText("login.guestPhoneNumber")).toBeTruthy();
+    expect(screen.queryByLabelText("login.guestEmail")).toBeNull();
+  });
+
+  it("switches the guest form to the email tab", () => {
+    renderLoginForm();
+
+    fireEvent.click(screen.getByRole("button", { name: "login.guestToggle" }));
+    fireEvent.click(screen.getByRole("tab", { name: "login.guestTabEmail" }));
+
+    expect(screen.getByRole("tab", { name: "login.guestTabEmail" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    expect(screen.getByLabelText("login.guestEmail")).toBeTruthy();
+    expect(screen.queryByLabelText("login.guestPhoneNumber")).toBeNull();
   });
 });

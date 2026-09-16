@@ -13,9 +13,12 @@ export interface UseLoginFormOptions {
   readonly onSuccess: () => void | Promise<void>;
 }
 
+export type GuestMode = "credentials" | "guest";
+export type GuestTab = "email" | "tel";
+
 export interface LoginFormState {
-  readonly mode: "credentials" | "guest";
-  readonly setMode: (mode: "credentials" | "guest") => void;
+  readonly mode: GuestMode;
+  readonly setMode: (mode: GuestMode) => void;
   readonly username: string;
   readonly setUsername: (value: string) => void;
   readonly password: string;
@@ -29,8 +32,14 @@ export interface LoginFormState {
   readonly usernameError: string | undefined;
   readonly passwordError: string | undefined;
   readonly submit: () => Promise<void>;
-  readonly guestIdentifier: string;
-  readonly setGuestIdentifier: (value: string) => void;
+  readonly guestTab: GuestTab;
+  readonly setGuestTab: (tab: GuestTab) => void;
+  readonly guestEmail: string;
+  readonly setGuestEmail: (value: string) => void;
+  readonly guestCallingCode: string;
+  readonly setGuestCallingCode: (value: string) => void;
+  readonly guestPhoneNumber: string;
+  readonly setGuestPhoneNumber: (value: string) => void;
   readonly guestFirstName: string;
   readonly setGuestFirstName: (value: string) => void;
   readonly guestLastName: string;
@@ -43,35 +52,19 @@ export interface LoginFormState {
   readonly submitGuest: () => Promise<void>;
 }
 
-function normalizeGuestIdentifier(value: string): string | null {
-  const trimmed = value.trim();
-  if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
-    return trimmed.toLowerCase();
-  }
-
-  const phone = parsePhoneNumberFromString(trimmed);
-  return phone?.isValid() ? phone.number : null;
-}
-
-function isPhoneIdentifier(value: string): boolean {
-  return value.trimStart().startsWith("+");
-}
-
-/**
- * Shared credentials-login flow used by both the full login page and the
- * intercepted login dialog. After a successful sign-in the caller decides
- * where to continue via `onSuccess`.
- */
 export function useLoginForm({ onSuccess }: UseLoginFormOptions): LoginFormState {
   const analytics = useAnalytics();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPw, setShowPw] = useState(false);
+  const [mode, setMode] = useState<GuestMode>("credentials");
+  const [username, setUsernameState] = useState("");
+  const [password, setPasswordState] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [focused, setFocused] = useState<string | null>(null);
-  const [appError, setAppError] = useState<AppError | null>(null);
   const [loading, setLoading] = useState(false);
-  const [mode, setModeState] = useState<"credentials" | "guest">("credentials");
-  const [guestIdentifier, setGuestIdentifierState] = useState("");
+  const [appError, setAppError] = useState<AppError | null>(null);
+  const [guestTab, setGuestTabState] = useState<GuestTab>("tel");
+  const [guestEmail, setGuestEmailState] = useState("");
+  const [guestCallingCode, setGuestCallingCodeState] = useState("+49");
+  const [guestPhoneNumber, setGuestPhoneNumberState] = useState("");
   const [guestFirstName, setGuestFirstNameState] = useState("");
   const [guestLastName, setGuestLastNameState] = useState("");
   const [guestLoading, setGuestLoading] = useState(false);
@@ -79,9 +72,31 @@ export function useLoginForm({ onSuccess }: UseLoginFormOptions): LoginFormState
   const [guestInvalid, setGuestInvalid] = useState(false);
   const [guestNameRequired, setGuestNameRequired] = useState(false);
   const [guestNetworkError, setGuestNetworkError] = useState(false);
-  const handleMutationError = useMutationError({ operationName: "CredentialsLogin" });
+
   const usernameError = useFieldError(appError, "username");
   const passwordError = useFieldError(appError, "password");
+  const handleMutationError = useMutationError({ operationName: "CredentialsLogin" });
+
+  function resetGuestErrors(): void {
+    setGuestInvalid(false);
+    setGuestNameRequired(false);
+    setGuestNetworkError(false);
+  }
+
+  function setModeAndReset(nextMode: GuestMode): void {
+    setMode(nextMode);
+    resetGuestErrors();
+  }
+
+  function setUsernameAndReset(value: string): void {
+    setUsernameState(value);
+    setAppError(null);
+  }
+
+  function setPasswordAndReset(value: string): void {
+    setPasswordState(value);
+    setAppError(null);
+  }
 
   async function submit(): Promise<void> {
     if (loading) {
@@ -108,29 +123,36 @@ export function useLoginForm({ onSuccess }: UseLoginFormOptions): LoginFormState
     }
   }
 
-  function setMode(nextMode: "credentials" | "guest"): void {
-    setModeState(nextMode);
-    setGuestInvalid(false);
-    setGuestNameRequired(false);
-    setGuestNetworkError(false);
+  function submitGuestTabAndReset(tab: GuestTab): void {
+    setGuestTabState(tab);
+    resetGuestErrors();
   }
 
-  function setGuestIdentifier(value: string): void {
-    setGuestIdentifierState(value);
-    setGuestInvalid(false);
-    setGuestNameRequired(false);
-    setGuestNetworkError(false);
-    setGuestSent(false);
+  function submitGuestEmailAndReset(value: string): void {
+    setGuestEmailState(value);
+    resetGuestErrors();
   }
 
-  function setGuestFirstName(value: string): void {
+  function submitGuestCallingCodeAndReset(value: string): void {
+    setGuestCallingCodeState(value);
+    resetGuestErrors();
+  }
+
+  function submitGuestPhoneNumberAndReset(value: string): void {
+    setGuestPhoneNumberState(value);
+    resetGuestErrors();
+  }
+
+  function submitGuestFirstNameAndReset(value: string): void {
     setGuestFirstNameState(value);
     setGuestNameRequired(false);
+    setGuestNetworkError(false);
   }
 
-  function setGuestLastName(value: string): void {
+  function submitGuestLastNameAndReset(value: string): void {
     setGuestLastNameState(value);
     setGuestNameRequired(false);
+    setGuestNetworkError(false);
   }
 
   async function submitGuest(): Promise<void> {
@@ -138,13 +160,27 @@ export function useLoginForm({ onSuccess }: UseLoginFormOptions): LoginFormState
       return;
     }
 
-    const identifier = normalizeGuestIdentifier(guestIdentifier);
+    let identifier: string | null = null;
+    if (guestTab === "email") {
+      const email = guestEmail.trim().toLowerCase();
+      if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        identifier = email;
+      }
+    } else {
+      const callingCode = guestCallingCode.trim().replace(/^\+/, "");
+      const raw = `+${callingCode}${guestPhoneNumber.trim()}`;
+      const parsed = parsePhoneNumberFromString(raw);
+      if (parsed?.isValid()) {
+        identifier = parsed.number;
+      }
+    }
+
     if (!identifier) {
       setGuestInvalid(true);
       return;
     }
 
-    if (isPhoneIdentifier(guestIdentifier) && (!guestFirstName.trim() || !guestLastName.trim())) {
+    if (guestTab === "tel" && (!guestFirstName.trim() || !guestLastName.trim())) {
       setGuestNameRequired(true);
       return;
     }
@@ -168,13 +204,13 @@ export function useLoginForm({ onSuccess }: UseLoginFormOptions): LoginFormState
 
   return {
     mode,
-    setMode,
+    setMode: setModeAndReset,
     username,
-    setUsername,
+    setUsername: setUsernameAndReset,
     password,
-    setPassword,
-    showPassword: showPw,
-    toggleShowPassword: () => setShowPw((p) => !p),
+    setPassword: setPasswordAndReset,
+    showPassword,
+    toggleShowPassword: () => setShowPassword((value) => !value),
     focused,
     setFocused,
     loading,
@@ -182,12 +218,18 @@ export function useLoginForm({ onSuccess }: UseLoginFormOptions): LoginFormState
     usernameError,
     passwordError,
     submit,
-    guestIdentifier,
-    setGuestIdentifier,
+    guestTab,
+    setGuestTab: submitGuestTabAndReset,
+    guestEmail,
+    setGuestEmail: submitGuestEmailAndReset,
+    guestCallingCode,
+    setGuestCallingCode: submitGuestCallingCodeAndReset,
+    guestPhoneNumber,
+    setGuestPhoneNumber: submitGuestPhoneNumberAndReset,
     guestFirstName,
-    setGuestFirstName,
+    setGuestFirstName: submitGuestFirstNameAndReset,
     guestLastName,
-    setGuestLastName,
+    setGuestLastName: submitGuestLastNameAndReset,
     guestLoading,
     guestSent,
     guestInvalid,

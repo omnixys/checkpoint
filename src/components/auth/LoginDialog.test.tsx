@@ -3,6 +3,7 @@ import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/re
 import type { ReactNode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createAppTheme } from "@/checkpoint/themes/createAppTheme";
+import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
 import LoginDialog from "./LoginDialog";
 
 const mocks = vi.hoisted(() => ({
@@ -13,9 +14,17 @@ const mocks = vi.hoisted(() => ({
   track: vi.fn(),
 }));
 
+const callingCodeCountries: CallingCodeCountry[] = [
+  { iso2: "DE", name: "Germany", flagSvg: "/flags/de.svg", callingCode: "+49" },
+];
+
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ back: mocks.back }),
   useSearchParams: () => new URLSearchParams(),
+}));
+
+vi.mock("next/link", () => ({
+  default: ({ children, ...props }: { children: ReactNode }) => <a {...props}>{children}</a>,
 }));
 
 vi.mock("@/checkpoint/components/apple/AppleButton", () => ({
@@ -62,7 +71,7 @@ afterEach(cleanup);
 const renderDialog = () =>
   render(
     <ThemeProvider theme={createAppTheme("light")}>
-      <LoginDialog />
+      <LoginDialog callingCodeCountries={callingCodeCountries} />
     </ThemeProvider>,
   );
 

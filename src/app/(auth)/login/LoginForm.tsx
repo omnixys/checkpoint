@@ -9,10 +9,15 @@ import { LoginFormCard } from "@/checkpoint/components/auth/login/LoginFormCard"
 import { useLoginForm } from "@/checkpoint/components/auth/login/useLoginForm";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
+import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
 
 const CINEMATIC_EASE = [0.16, 1, 0.3, 1] as const;
 
-export default function LoginForm(): JSX.Element {
+export default function LoginForm({
+  callingCodeCountries,
+}: {
+  readonly callingCodeCountries: ReadonlyArray<CallingCodeCountry>;
+}): JSX.Element {
   const router = useRouter();
   const searchParams = useSearchParams();
   const theme = useTheme();
@@ -121,7 +126,11 @@ export default function LoginForm(): JSX.Element {
           transition={{ duration: reduceMotion ? 0 : 0.7, ease: CINEMATIC_EASE }}
           style={{ width: "100%" }}
         >
-          <LoginFormCard form={form} onBack={() => router.push(env.CHECKPOINT_BASE_PATH)} />
+          <LoginFormCard
+            form={form}
+            onBack={() => router.push(env.CHECKPOINT_BASE_PATH)}
+            callingCodeCountries={callingCodeCountries}
+          />
         </motion.div>
       </Box>
     </Box>

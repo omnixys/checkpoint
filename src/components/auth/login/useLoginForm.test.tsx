@@ -100,16 +100,28 @@ describe("useLoginForm", () => {
     expect(a.current.username).not.toBe(b.current.username);
   });
 
+  it("defaults the guest tab to phone", async () => {
+    const { result } = renderHook(() => useLoginForm({ onSuccess: vi.fn() }));
+
+    expect(result.current.guestTab).toBe("tel");
+    expect(result.current.guestCallingCode).toBe("+49");
+  });
+
   it.each([
     [" Guest@Example.COM ", "guest@example.com", undefined, undefined],
-    ["+49 151 23456789", "+4915123456789", "Max", "Mustermann"],
+    ["151 23456789", "+4915123456789", "Max", "Mustermann"],
   ])("normalizes and requests a guest link for %s", async (input, expected, first, last) => {
     mocks.requestGuestMagicLink.mockResolvedValueOnce(undefined);
     const { result } = renderHook(() => useLoginForm({ onSuccess: vi.fn() }));
 
     await act(async () => {
-      result.current.setMode("guest");
-      result.current.setGuestIdentifier(input);
+      if (expected.startsWith("+")) {
+        result.current.setGuestTab("tel");
+        result.current.setGuestPhoneNumber(input);
+      } else {
+        result.current.setGuestTab("email");
+        result.current.setGuestEmail(input);
+      }
       if (first) {
         result.current.setGuestFirstName(first);
         result.current.setGuestLastName(last ?? "");
@@ -128,7 +140,8 @@ describe("useLoginForm", () => {
     const { result } = renderHook(() => useLoginForm({ onSuccess: vi.fn() }));
 
     await act(async () => {
-      result.current.setGuestIdentifier("+49 151 23456789");
+      result.current.setGuestTab("tel");
+      result.current.setGuestPhoneNumber("151 23456789");
       result.current.setGuestFirstName("Max");
       await result.current.submitGuest();
     });
@@ -141,11 +154,27 @@ describe("useLoginForm", () => {
     expect(result.current.guestSent).toBe(false);
   });
 
-  it("does not send an invalid guest identifier", async () => {
+  it("does not send an invalid guest email", async () => {
     const { result } = renderHook(() => useLoginForm({ onSuccess: vi.fn() }));
 
     await act(async () => {
-      result.current.setGuestIdentifier("not an identifier");
+      result.current.setGuestTab("email");
+      result.current.setGuestEmail("not an email");
+      await result.current.submitGuest();
+    });
+
+    expect(mocks.requestGuestMagicLink).not.toHaveBeenCalled();
+    expect(result.current.guestInvalid).toBe(true);
+  });
+
+  it("does not send an invalid guest phone number", async () => {
+    const { result } = renderHook(() => useLoginForm({ onSuccess: vi.fn() }));
+
+    await act(async () => {
+      result.current.setGuestTab("tel");
+      result.current.setGuestPhoneNumber("abc");
+      result.current.setGuestFirstName("Max");
+      result.current.setGuestLastName("Mustermann");
       await result.current.submitGuest();
     });
 
@@ -158,7 +187,8 @@ describe("useLoginForm", () => {
     const { result } = renderHook(() => useLoginForm({ onSuccess: vi.fn() }));
 
     await act(async () => {
-      result.current.setGuestIdentifier("guest@example.com");
+      result.current.setGuestTab("email");
+      result.current.setGuestEmail("guest@example.com");
     });
     await act(async () => {
       await result.current.submitGuest();

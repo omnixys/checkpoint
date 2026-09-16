@@ -1,6 +1,7 @@
 "use client";
 
 import AlternateEmailRoundedIcon from "@mui/icons-material/AlternateEmailRounded";
+import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
 import LockRoundedIcon from "@mui/icons-material/LockRounded";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import SmartphoneRoundedIcon from "@mui/icons-material/SmartphoneRounded";
@@ -8,14 +9,17 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import {
   Alert,
+  alpha,
+  Box,
   CircularProgress,
   IconButton,
   InputAdornment,
+  MenuItem,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import { alpha, useTheme } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import type { JSX } from "react";
@@ -23,18 +27,26 @@ import { AppleButton } from "@/checkpoint/components/apple/AppleButton";
 import { AppleCard } from "@/checkpoint/components/apple/AppleCard";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
+import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
 import type { LoginFormState } from "./useLoginForm";
 
 export interface LoginFormCardProps {
   readonly form: LoginFormState;
   readonly onBack: () => void;
+  readonly callingCodeCountries: ReadonlyArray<CallingCodeCountry>;
 }
 
-export function LoginFormCard({ form, onBack }: LoginFormCardProps): JSX.Element {
+export function LoginFormCard({
+  form,
+  onBack,
+  callingCodeCountries,
+}: LoginFormCardProps): JSX.Element {
   const theme = useTheme();
   const reduceMotion = useReducedMotion();
   const t = useTypedTranslations("auth");
   const {
+    mode,
+    setMode,
     username,
     setUsername,
     password,
@@ -47,10 +59,14 @@ export function LoginFormCard({ form, onBack }: LoginFormCardProps): JSX.Element
     usernameError,
     passwordError,
     submit,
-    mode,
-    setMode,
-    guestIdentifier,
-    setGuestIdentifier,
+    guestTab,
+    setGuestTab,
+    guestEmail,
+    setGuestEmail,
+    guestCallingCode,
+    setGuestCallingCode,
+    guestPhoneNumber,
+    setGuestPhoneNumber,
     guestFirstName,
     setGuestFirstName,
     guestLastName,
@@ -64,7 +80,7 @@ export function LoginFormCard({ form, onBack }: LoginFormCardProps): JSX.Element
   } = form;
 
   const isGuestMode = mode === "guest";
-  const guestLooksLikePhone = guestIdentifier.trimStart().startsWith("+");
+  const isTelTab = guestTab === "tel";
 
   return (
     <AppleCard>
@@ -84,59 +100,225 @@ export function LoginFormCard({ form, onBack }: LoginFormCardProps): JSX.Element
                 </Typography>
               </Stack>
 
-              <TextField
-                label={t("login.guestIdentifier")}
-                name="guestIdentifier"
-                type={guestLooksLikePhone ? "tel" : "email"}
-                autoComplete={guestLooksLikePhone ? "tel" : "email"}
-                fullWidth={true}
-                value={guestIdentifier}
-                error={guestInvalid}
-                helperText={guestInvalid ? t("login.guestInvalid") : undefined}
-                onChange={(event) => setGuestIdentifier(event.target.value)}
-                slotProps={{
-                  htmlInput: {
-                    inputMode: guestLooksLikePhone ? "tel" : "email",
-                    spellCheck: false,
-                  },
-                  input: {
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        {guestLooksLikePhone ? (
-                          <SmartphoneRoundedIcon aria-hidden={true} />
-                        ) : (
-                          <AlternateEmailRoundedIcon aria-hidden={true} />
-                        )}
-                      </InputAdornment>
-                    ),
-                  },
+              {/* Identifier method toggle */}
+              <Stack
+                direction="row"
+                role="tablist"
+                aria-label={t("login.guestTabLabel")}
+                sx={{
+                  border: 1,
+                  borderColor: "divider",
+                  borderRadius: 2,
+                  overflow: "hidden",
                 }}
-              />
+              >
+                <Box
+                  component="button"
+                  type="button"
+                  role="tab"
+                  aria-selected={guestTab === "tel"}
+                  tabIndex={guestTab === "tel" ? 0 : -1}
+                  sx={{
+                    flex: 1,
+                    py: 1,
+                    textTransform: "none",
+                    fontWeight: 600,
+                    fontSize: "0.8rem",
+                    color: guestTab === "tel" ? "primary.contrastText" : "text.secondary",
+                    bgcolor: guestTab === "tel" ? "primary.main" : "transparent",
+                    transition: theme.transitions.create(["color", "background-color"], {
+                      duration: theme.transitions.duration.short,
+                    }),
+                    border: "none",
+                    cursor: "pointer",
+                    "&:focus-visible": {
+                      outline: `2px solid ${alpha(theme.palette.primary.main, 0.6)}`,
+                      outlineOffset: -2,
+                    },
+                  }}
+                  onClick={() => setGuestTab("tel")}
+                >
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{ alignItems: "center", justifyContent: "center" }}
+                  >
+                    <SmartphoneRoundedIcon fontSize="small" aria-hidden={true} />
+                    <span>{t("login.guestTabTel")}</span>
+                  </Stack>
+                </Box>
+                <Box
+                  component="button"
+                  type="button"
+                  role="tab"
+                  aria-selected={guestTab === "email"}
+                  tabIndex={guestTab === "email" ? 0 : -1}
+                  sx={{
+                    flex: 1,
+                    py: 1,
+                    textTransform: "none",
+                    fontWeight: 600,
+                    fontSize: "0.8rem",
+                    color: guestTab === "email" ? "primary.contrastText" : "text.secondary",
+                    bgcolor: guestTab === "email" ? "primary.main" : "transparent",
+                    transition: theme.transitions.create(["color", "background-color"], {
+                      duration: theme.transitions.duration.short,
+                    }),
+                    border: "none",
+                    cursor: "pointer",
+                    "&:focus-visible": {
+                      outline: `2px solid ${alpha(theme.palette.primary.main, 0.6)}`,
+                      outlineOffset: -2,
+                    },
+                  }}
+                  onClick={() => setGuestTab("email")}
+                >
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{ alignItems: "center", justifyContent: "center" }}
+                  >
+                    <AlternateEmailRoundedIcon fontSize="small" aria-hidden={true} />
+                    <span>{t("login.guestTabEmail")}</span>
+                  </Stack>
+                </Box>
+              </Stack>
 
-              {guestLooksLikePhone ? (
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                  <TextField
-                    label={t("login.guestFirstName")}
-                    name="guestFirstName"
-                    autoComplete="given-name"
-                    fullWidth={true}
-                    value={guestFirstName}
-                    error={guestNameRequired}
-                    onChange={(event) => setGuestFirstName(event.target.value)}
-                    slotProps={{ htmlInput: { spellCheck: false } }}
-                  />
-                  <TextField
-                    label={t("login.guestLastName")}
-                    name="guestLastName"
-                    autoComplete="family-name"
-                    fullWidth={true}
-                    value={guestLastName}
-                    error={guestNameRequired}
-                    onChange={(event) => setGuestLastName(event.target.value)}
-                    slotProps={{ htmlInput: { spellCheck: false } }}
-                  />
-                </Stack>
-              ) : null}
+              {isTelTab ? (
+                <>
+                  <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                    <TextField
+                      select={true}
+                      label={t("login.guestCallingCode")}
+                      name="guestCallingCode"
+                      fullWidth={true}
+                      value={guestCallingCode}
+                      error={guestInvalid}
+                      onChange={(e) => setGuestCallingCode(e.target.value)}
+                      slotProps={{
+                        select: {
+                          renderValue: (selected): JSX.Element => {
+                            const code = String(selected);
+                            const country = callingCodeCountries.find(
+                              (c) => c.callingCode === code,
+                            );
+                            return (
+                              <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                                {country?.flagSvg ? (
+                                  <Box
+                                    component="img"
+                                    src={country.flagSvg}
+                                    alt=""
+                                    sx={{ height: 18, width: 24, objectFit: "contain" }}
+                                  />
+                                ) : null}
+                                <span>{code}</span>
+                              </Stack>
+                            );
+                          },
+                          IconComponent: KeyboardArrowDownRoundedIcon,
+                          inputProps: { spellCheck: false },
+                        },
+                      }}
+                    >
+                      {callingCodeCountries.map((country) => (
+                        <MenuItem
+                          key={country.iso2}
+                          value={country.callingCode ?? ""}
+                          sx={{ gap: 1, alignItems: "center" }}
+                        >
+                          {country.flagSvg ? (
+                            <Box
+                              component="img"
+                              src={country.flagSvg}
+                              alt=""
+                              sx={{ height: 18, width: 24, objectFit: "contain" }}
+                            />
+                          ) : null}
+                          <Typography variant="body2">({country.callingCode})</Typography>
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {country.name}
+                          </Typography>
+                        </MenuItem>
+                      ))}
+                    </TextField>
+
+                    <TextField
+                      label={t("login.guestPhoneNumber")}
+                      name="guestPhoneNumber"
+                      autoComplete="tel-national"
+                      fullWidth={true}
+                      value={guestPhoneNumber}
+                      error={guestInvalid}
+                      helperText={guestInvalid ? t("login.guestInvalid") : undefined}
+                      onChange={(e) => setGuestPhoneNumber(e.target.value)}
+                      slotProps={{
+                        htmlInput: { inputMode: "tel", spellCheck: false },
+                        input: {
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <SmartphoneRoundedIcon aria-hidden={true} />
+                            </InputAdornment>
+                          ),
+                        },
+                      }}
+                    />
+                  </Stack>
+
+                  <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                    <TextField
+                      label={t("login.guestFirstName")}
+                      name="guestFirstName"
+                      autoComplete="given-name"
+                      fullWidth={true}
+                      value={guestFirstName}
+                      error={guestNameRequired}
+                      onChange={(e) => setGuestFirstName(e.target.value)}
+                      slotProps={{ htmlInput: { spellCheck: false } }}
+                    />
+                    <TextField
+                      label={t("login.guestLastName")}
+                      name="guestLastName"
+                      autoComplete="family-name"
+                      fullWidth={true}
+                      value={guestLastName}
+                      error={guestNameRequired}
+                      onChange={(e) => setGuestLastName(e.target.value)}
+                      slotProps={{ htmlInput: { spellCheck: false } }}
+                    />
+                  </Stack>
+                </>
+              ) : (
+                <TextField
+                  label={t("login.guestEmail")}
+                  name="guestEmail"
+                  autoComplete="email"
+                  fullWidth={true}
+                  value={guestEmail}
+                  error={guestInvalid}
+                  helperText={guestInvalid ? t("login.guestInvalid") : undefined}
+                  onChange={(e) => setGuestEmail(e.target.value)}
+                  slotProps={{
+                    htmlInput: { inputMode: "email", spellCheck: false },
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <AlternateEmailRoundedIcon aria-hidden={true} />
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
+                />
+              )}
+
               {guestNameRequired ? (
                 <Alert severity="info">{t("login.guestNameRequired")}</Alert>
               ) : null}

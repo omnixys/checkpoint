@@ -1,7 +1,14 @@
 import { Box, Skeleton } from "@mui/material";
 import { type JSX, Suspense } from "react";
 import LegalFooter from "@/checkpoint/components/layout/LegalFooter";
+import {
+  GetAllCallingCodesDocument,
+  type GetAllCallingCodesQuery,
+  type GetAllCallingCodesQueryVariables,
+} from "@/checkpoint/generated/graphql";
+import { createServerClient } from "@/checkpoint/lib/apollo/server-client";
 import { buildMetadata } from "@/checkpoint/lib/metadata/buildMetadata";
+import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
 import LoginForm from "./LoginForm";
 
 export const metadata = buildMetadata({
@@ -21,7 +28,22 @@ export const metadata = buildMetadata({
   },
 });
 
-export default function LoginPage(): JSX.Element {
+export default async function LoginPage(): Promise<JSX.Element> {
+  const client = await createServerClient();
+
+  const res = await client.query<GetAllCallingCodesQuery, GetAllCallingCodesQueryVariables>({
+    query: GetAllCallingCodesDocument,
+    fetchPolicy: "cache-first",
+  });
+
+  const callingCodeCountries: CallingCodeCountry[] =
+    res?.data?.getAllCountries.map((c) => ({
+      iso2: c.iso2,
+      name: c.name,
+      flagSvg: c.flagSvg,
+      callingCode: c.callingCode?.code ?? null,
+    })) ?? [];
+
   return (
     <Box
       sx={{
@@ -39,7 +61,7 @@ export default function LoginPage(): JSX.Element {
         }}
       >
         <Suspense fallback={<Skeleton variant="rectangular" width="100%" height="100vh" />}>
-          <LoginForm />
+          <LoginForm callingCodeCountries={callingCodeCountries} />
         </Suspense>
       </Box>
       <LegalFooter />
