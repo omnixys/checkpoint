@@ -3,6 +3,7 @@
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
+  Alert,
   Box,
   Button,
   Divider,
@@ -20,6 +21,7 @@ import { TimelineImportExport } from "@/checkpoint/components/event/settings/sec
 import type { TimelineDesign } from "@/checkpoint/components/event/settings/sections/timeline/TimelineRenderer";
 import TimelineTicketPreview from "@/checkpoint/components/event/settings/sections/timeline/TimelineTicketPreview";
 import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
+import { filterProgramTimeline } from "@/checkpoint/utils/event/timeline";
 
 export interface TimelineItem {
   id: string;
@@ -85,6 +87,7 @@ export default function TimelineSection({ timeline, actions, eventName }: Props)
   const [dirtyUpdates, setDirtyUpdates] = useState(false);
   const [dirtyAdds, setDirtyAdds] = useState(false);
   const [dirtyRemovals, setDirtyRemovals] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [design, setDesign] = useState<TimelineDesign>("vip");
 
   const [draft, setDraft] = useState<DraftTimelineItem>({
@@ -94,28 +97,35 @@ export default function TimelineSection({ timeline, actions, eventName }: Props)
     timestamp: buildTimestampFromTime(DEFAULT_TIME),
   });
 
+  /**
+   * Server entries that belong to the user-managed event program only.
+   * Operational/system entries (Kafka milestones, event lifecycle) are excluded.
+   */
+  const programItems = useMemo(() => filterProgramTimeline(timeline), [timeline]);
+
   useEffect(() => {
-    setLocal(timeline);
+    setLocal(programItems);
     setRemovedIds([]);
     setDirtyUpdates(false);
     setDirtyAdds(false);
     setDirtyRemovals(false);
-  }, [timeline]);
+    setSaveError(null);
+  }, [programItems]);
 
   /**
    * Tracks items that do not yet exist on the server.
    * These are created locally first and persisted only when the user clicks save.
    */
   const newItems = useMemo(() => {
-    const existingIds = new Set(timeline.map((item) => item.id));
+    const existingIds = new Set(programItems.map((item) => item.id));
     return local.filter((item) => !existingIds.has(item.id));
-  }, [local, timeline]);
+  }, [local, programItems]);
 
   /**
    * Tracks existing server items that were edited locally.
    */
   const updatedItems = useMemo(() => {
-    const originalMap = new Map(timeline.map((item) => [item.id, item]));
+    const originalMap = new Map(programItems.map((item) => [item.id, item]));
 
     return local.filter((item) => {
       const original = originalMap.get(item.id);
@@ -130,7 +140,7 @@ export default function TimelineSection({ timeline, actions, eventName }: Props)
         original.timestamp !== item.timestamp
       );
     });
-  }, [local, timeline]);
+  }, [local, programItems]);
 
   /**
    * Updates a single timeline item in local state.
@@ -175,7 +185,7 @@ export default function TimelineSection({ timeline, actions, eventName }: Props)
    * Existing server items are tracked separately for removal persistence.
    */
   const handleRemoveLocal = (id: string) => {
-    const existsOnServer = timeline.some((item) => item.id === id);
+    const existsOnServer = programItems.some((item) => item.id === id);
 
     if (existsOnServer) {
       setRemovedIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
@@ -193,9 +203,14 @@ export default function TimelineSection({ timeline, actions, eventName }: Props)
       return;
     }
 
-    validateTimelineItems(newItems);
-    await actions.addTimeline(newItems);
-    setDirtyAdds(false);
+    try {
+      validateTimelineItems(newItems);
+      await actions.addTimeline(newItems);
+      setDirtyAdds(false);
+      setSaveError(null);
+    } catch (error) {
+      setSaveError(toErrorMessage(error));
+    }
   };
 
   /**
@@ -206,9 +221,14 @@ export default function TimelineSection({ timeline, actions, eventName }: Props)
       return;
     }
 
-    validateTimelineItems(updatedItems);
-    await actions.updateTimeline(updatedItems);
-    setDirtyUpdates(false);
+    try {
+      validateTimelineItems(updatedItems);
+      await actions.updateTimeline(updatedItems);
+      setDirtyUpdates(false);
+      setSaveError(null);
+    } catch (error) {
+      setSaveError(toErrorMessage(error));
+    }
   };
 
   /**
@@ -219,14 +239,25 @@ export default function TimelineSection({ timeline, actions, eventName }: Props)
       return;
     }
 
-    await actions.removeTimeline(removedIds);
-    setRemovedIds([]);
-    setDirtyRemovals(false);
+    try {
+      await actions.removeTimeline(removedIds);
+      setRemovedIds([]);
+      setDirtyRemovals(false);
+      setSaveError(null);
+    } catch (error) {
+      setSaveError(toErrorMessage(error));
+    }
   };
 
   return (
     <Stack spacing={3}>
       <Typography variant="h6">Timeline</Typography>
+
+      {saveError && (
+        <Alert severity="error" onClose={() => setSaveError(null)}>
+          {saveError}
+        </Alert>
+      )}
 
       <Box
         sx={{
@@ -480,6 +511,16 @@ export default function TimelineSection({ timeline, actions, eventName }: Props)
       </Stack>
     </Stack>
   );
+}
+
+/**
+ * Returns a user-presentable message for a save failure.
+ */
+function toErrorMessage(error: unknown): string {
+  if (error instanceof Error && error.message.trim()) {
+    return error.message;
+  }
+  return "An unknown error occurred while saving the timeline.";
 }
 
 /**

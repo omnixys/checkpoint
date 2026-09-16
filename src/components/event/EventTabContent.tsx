@@ -6,6 +6,7 @@ import EventLocationMap from "@/checkpoint/components/event/details/EventLocatio
 import EventTimeline from "@/checkpoint/components/event/details/EventTimeline";
 import EventDescriptionEditor from "@/checkpoint/components/event/EventDescriptionEditor";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { filterProgramTimeline } from "@/checkpoint/utils/event/timeline";
 
 interface Props {
   ev: any;
@@ -18,7 +19,7 @@ export default function EventTabContent({ ev, active, onDescriptionChange }: Pro
 
   switch (active) {
     case "timeline":
-      return <EventTimeline items={ev.timeline} />;
+      return <EventTimeline items={filterProgramTimeline(ev.timeline)} />;
 
     case "details":
     case "settings":

@@ -10,7 +10,6 @@ import {
   type CreateSettingsInput,
   type EventAddressInput,
   EventCategory,
-  type EventTimelinePayload,
   EventVisibleTab,
   GetEventSettingsDocument,
   InvitationApprovalMode,
@@ -24,6 +23,7 @@ import {
   type UserRoleType,
 } from "@/checkpoint/generated/graphql";
 import useEventQuery from "@/checkpoint/hooks/events/useEventQuery";
+import { filterProgramTimeline } from "@/checkpoint/utils/event/timeline";
 
 interface TimelineCreate {
   type: string;
@@ -248,24 +248,15 @@ export function useEventSettings(eventId: string) {
             timestamp: item.timestamp,
           })),
         },
+        refetchQueries: [{ query: GetEventSettingsDocument, variables: { eventId } }],
+        awaitRefetchQueries: true,
       }),
 
     /**
      * Update Timeline (ARRAY!)
      */
-    updateTimeline: (items: TimelineUpdate[]) => {
-      const timeline: EventTimelinePayload[] = items.map((t) => ({
-        __typename: "EventTimelinePayload",
-        id: t.id,
-        eventId,
-        referenceId: null,
-        sourceId: null,
-        label: t.label,
-        timestamp: t.timestamp,
-        type: t.type,
-      }));
-
-      return updateTimelineMutation({
+    updateTimeline: (items: TimelineUpdate[]) =>
+      updateTimelineMutation({
         variables: {
           eventId,
           input: items.map((item) => ({
@@ -275,17 +266,9 @@ export function useEventSettings(eventId: string) {
             timestamp: item.timestamp,
           })),
         },
-
-        optimisticResponse: {
-          __typename: "Mutation",
-          updateTimeLines: {
-            __typename: "EventPayload",
-            id: eventId,
-            timeline,
-          },
-        },
-      });
-    },
+        refetchQueries: [{ query: GetEventSettingsDocument, variables: { eventId } }],
+        awaitRefetchQueries: true,
+      }),
 
     /**
      * Remove Timeline (ARRAY!)
@@ -298,6 +281,8 @@ export function useEventSettings(eventId: string) {
             id: item,
           })),
         },
+        refetchQueries: [{ query: GetEventSettingsDocument, variables: { eventId } }],
+        awaitRefetchQueries: true,
       }),
 
     /**
@@ -369,7 +354,7 @@ export function useEventSettings(eventId: string) {
         ...(eventSettings.parentId ? { parentId: eventSettings.parentId } : {}),
       },
       settings: eventSettings.settings,
-      timeline: eventSettings.timeline,
+      timeline: filterProgramTimeline(eventSettings.timeline),
       roles: eventRoles,
     };
   }, [eventSettings, eventRoles]);
