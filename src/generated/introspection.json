@@ -13671,7 +13671,7 @@
           },
           {
             "name": "activateDevice",
-            "description": "Bind a device to a ticket (first activation)",
+            "description": "Bind a device to a ticket. The same device may re-bind; sibling tickets of the same event are unbound.",
             "args": [
               {
                 "name": "input",
@@ -17732,7 +17732,7 @@
           },
           {
             "name": "requestGuestConfirmation",
-            "description": null,
+            "description": "Requests a fresh guest-registration confirmation link without disclosing whether an invitation matched.",
             "args": [
               {
                 "name": "input",
@@ -17908,7 +17908,7 @@
           },
           {
             "name": "resetDeviceBinding",
-            "description": null,
+            "description": "Reset the device binding of a ticket so it can be activated again (staff only)",
             "args": [
               {
                 "name": "input",
@@ -19285,7 +19285,7 @@
           },
           {
             "name": "updateTicketPresence",
-            "description": null,
+            "description": "Manually override the presence state of a ticket (security staff)",
             "args": [
               {
                 "name": "input",
@@ -27022,7 +27022,7 @@
       {
         "kind": "INPUT_OBJECT",
         "name": "RequestGuestConfirmationInput",
-        "description": null,
+        "description": "Public request for a fresh guest-registration confirmation link. The response is intentionally enumeration-safe.",
         "isOneOf": false,
         "fields": null,
         "inputFields": [
@@ -27060,7 +27060,7 @@
           },
           {
             "name": "identifier",
-            "description": null,
+            "description": "The email address or international phone number used for the invitation.",
             "type": {
               "kind": "NON_NULL",
               "name": null,

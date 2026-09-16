@@ -1397,7 +1397,7 @@ export type Mutation = {
   activateAnalyticsFeatureFlag: FeatureFlagPayload;
   activateAnalyticsMetric: MetricDefinitionPayload;
   activateAnalyticsRule: AnalyticsRulePayload;
-  /** Bind a device to a ticket (first activation) */
+  /** Bind a device to a ticket. The same device may re-bind; sibling tickets of the same event are unbound. */
   activateDevice: TicketPayload;
   activateEvent: Scalars['Boolean']['output'];
   addAnalyticsFeatureFlagVersion: FeatureFlagPayload;
@@ -1510,11 +1510,13 @@ export type Mutation = {
   reopenSupportConversation: SupportConversation;
   replyInvitation: InvitationPayload;
   requestAnalyticsReplay: ReplayJobPayload;
+  /** Requests a fresh guest-registration confirmation link without disclosing whether an invitation matched. */
   requestGuestConfirmation: Scalars['Boolean']['output'];
   requestGuestMagicLink: Scalars['Boolean']['output'];
   requestPasswordReset: Scalars['Boolean']['output'];
   /** Re-sends the confirmation message (email or WhatsApp) to guests who have not yet completed their registration. */
   resendGuestConfirmations: ResendGuestConfirmationsPayload;
+  /** Reset the device binding of a ticket so it can be activated again (staff only) */
   resetDeviceBinding: TicketPayload;
   /** Revoke a ticket (security or admin) */
   revokeTicket: TicketPayload;
@@ -1553,6 +1555,7 @@ export type Mutation = {
   updateTable: TablePayload;
   updateTemplate: TemplatePayload;
   updateTenant: TenantType;
+  /** Manually override the presence state of a ticket (security staff) */
   updateTicketPresence: TicketPayload;
   updateTimeLines: EventPayload;
   updateUser: UserPayload;
@@ -3373,9 +3376,11 @@ export type ReplayJobPayload = {
   status: Scalars['String']['output'];
 };
 
+/** Public request for a fresh guest-registration confirmation link. The response is intentionally enumeration-safe. */
 export type RequestGuestConfirmationInput = {
   eventId: Scalars['ID']['input'];
   firstName: Scalars['String']['input'];
+  /** The email address or international phone number used for the invitation. */
   identifier: Scalars['String']['input'];
   lastName: Scalars['String']['input'];
 };

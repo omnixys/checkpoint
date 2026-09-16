@@ -26,6 +26,7 @@ import { useEffect, useState } from "react";
 
 import { SeatColorGroupMatchType } from "@/checkpoint/generated/graphql";
 import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
+import { toSeatColorGroupInput } from "@/checkpoint/utils/event/seatColorGroup.mapper";
 
 interface StyleInput {
   background: string;
@@ -316,16 +317,7 @@ export default function SeatColorGroupSection({ settings, actions }: Props) {
   const handleSave = async () => {
     setDirty(false);
     await actions.updateSettings({
-      seatColorGroups: localGroups.map((g, idx) => ({
-        id: g.id || undefined,
-        name: g.name,
-        matchType: g.matchType,
-        invitedByValues: g.invitedByValues ?? [],
-        priority: g.priority,
-        order: idx,
-        isOrphaned: g.isOrphaned,
-        style: g.style,
-      })),
+      seatColorGroups: localGroups.map((g, idx) => toSeatColorGroupInput({ ...g, order: idx })),
     });
   };
 
