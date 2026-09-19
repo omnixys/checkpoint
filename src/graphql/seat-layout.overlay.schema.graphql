@@ -3,4 +3,11 @@
 type Mutation {
   moveSection(input: MoveSectionInput!): SectionPayload!
   moveTable(input: MoveTableInput!): TablePayload!
+  updateSection(input: UpdateSectionInput!): SectionPayload!
+  appendTableSeats(input: AppendTableSeatsInput!): [SeatPayload!]!
+}
+
+input AppendTableSeatsInput {
+  tableId: ID!
+  count: Int!
 }

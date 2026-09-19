@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { exportLayout, exportMove, importLayout } from "./adapter";
-import { moveNode, orderedNodes } from "./document";
+import { exportLayout, exportMove, importLayout, type SourceLayout } from "./adapter";
+import {
+  moveNode,
+  orderedNodes,
+  resizeNode,
+  resizeSection,
+  rotateNode,
+  setNodeShape,
+} from "./document";
 import {
   clientToScreen,
   fitCamera,
@@ -56,6 +63,193 @@ describe("layout adapter", () => {
         { ...source[0]!, seats: [{ ...source[0]!.seats[0]!, tableId: "table" }] },
       ]),
     ).toThrow(/Zuordnung/);
+  });
+});
+describe("section resizing", () => {
+  it("keeps the north-west edge stable and never clips children", () => {
+    const before = importLayout("event", source);
+    const section = before.nodes.section!;
+    const enlarged = resizeSection(before, "section", section.width + 200, section.height + 100);
+    expect(enlarged.nodes.section).toMatchObject({
+      x: section.x + 100,
+      y: section.y + 50,
+      width: section.width + 200,
+      height: section.height + 100,
+    });
+    const clamped = resizeSection(before, "section", 1, 1);
+    expect(clamped.nodes.section!.width).toBeGreaterThanOrEqual(160);
+    expect(clamped.nodes.section!.height).toBeGreaterThanOrEqual(120);
+  });
+});
+describe("node resizing and shapes", () => {
+  const farSeat: SourceLayout = [
+    {
+      id: "section",
+      name: "S",
+      x: 0,
+      y: 0,
+      width: 600,
+      height: 500,
+      rotation: 0,
+      shape: "RECTANGLE",
+      meta: null,
+      tables: [
+        {
+          id: "table",
+          name: "T",
+          sectionId: "section",
+          x: 0,
+          y: 0,
+          width: 100,
+          height: 60,
+          rotation: 0,
+          shape: "ROUND",
+          meta: null,
+          seats: [
+            {
+              id: "seat",
+              sectionId: "section",
+              tableId: "table",
+              x: 250,
+              y: 150,
+              rotation: 0,
+              number: 1,
+              meta: null,
+            },
+          ],
+        },
+      ],
+      seats: [],
+    },
+  ];
+  it("resizes tables keeping the north-west corner fixed and seats in place", () => {
+    const before = importLayout("far", farSeat);
+    const table = before.nodes.table!;
+    const enlarged = resizeNode(before, "table", table.width + 200, table.height + 100);
+    expect(enlarged.nodes.table).toMatchObject({
+      x: 100,
+      y: 50,
+      width: 300,
+      height: 160,
+    });
+    expect(enlarged.nodes.table).not.toBe(before.nodes.table);
+    expect(enlarged.nodes.seat).toBe(before.nodes.seat);
+  });
+  it("grows a table only until it would cover a seated guest", () => {
+    const perimeter: SourceLayout = [
+      {
+        id: "section",
+        name: "S",
+        x: 0,
+        y: 0,
+        width: 400,
+        height: 300,
+        rotation: 0,
+        shape: "RECTANGLE",
+        meta: null,
+        tables: [
+          {
+            id: "table",
+            name: "T",
+            sectionId: "section",
+            x: 0,
+            y: 0,
+            width: 100,
+            height: 60,
+            rotation: 0,
+            shape: "ROUND",
+            meta: null,
+            seats: [
+              {
+                id: "seat",
+                sectionId: "section",
+                tableId: "table",
+                x: 90,
+                y: 80,
+                rotation: 0,
+                number: 1,
+                meta: null,
+              },
+            ],
+          },
+        ],
+        seats: [],
+      },
+    ];
+    const grown = resizeNode(importLayout("e", perimeter), "table", 1000, 1000);
+    expect(grown.nodes.table).toMatchObject({ width: 136, height: 116 });
+    expect(grown.nodes.seat).toMatchObject({ x: 90, y: 80 });
+  });
+  it("never snaps a table smaller than its current size when a seat is inside", () => {
+    const before = importLayout("event", source);
+    const grown = resizeNode(before, "table", 1000, 1000);
+    expect(grown.nodes.table!.width).toBeGreaterThan(before.nodes.table!.width);
+  });
+  it("clamps tables and seats to their minimum size", () => {
+    const before = importLayout("event", source);
+    expect(resizeNode(before, "table", 1, 1).nodes.table).toMatchObject({ width: 60, height: 40 });
+    expect(resizeNode(before, "seat", 1, 1).nodes.seat).toMatchObject({ width: 24, height: 16 });
+  });
+  it("applies kind-specific default extents when switching shapes", () => {
+    const before = importLayout("event", source);
+    expect(setNodeShape(before, "seat", "RECTANGLE").nodes.seat).toMatchObject({
+      shape: "RECTANGLE",
+      width: 56,
+      height: 28,
+    });
+    const square = setNodeShape(before, "seat", "SQUARE");
+    expect(square.nodes.seat).toMatchObject({ shape: "SQUARE", width: 36, height: 36 });
+    const round = setNodeShape(before, "table", "ROUND");
+    expect(round.nodes.table).toMatchObject({ shape: "ROUND", width: 140, height: 140 });
+    const oval = setNodeShape(round, "table", "OVAL");
+    expect(oval.nodes.table!.width).toBeGreaterThan(oval.nodes.table!.height);
+    const row = setNodeShape(round, "table", "ROW");
+    expect(row.nodes.table).toMatchObject({ shape: "ROW", width: 420 });
+  });
+  it("makes a table an explicit square", () => {
+    const before = importLayout("event", source);
+    const table = before.nodes.table!;
+    const size = Math.max(table.width, table.height);
+    expect(setNodeShape(before, "table", "RECTANGLE", size, size).nodes.table).toMatchObject({
+      shape: "RECTANGLE",
+      width: 140,
+      height: 140,
+    });
+  });
+});
+describe("rotation", () => {
+  it("rotates a table around its center and orbits its seats at a stable distance", () => {
+    const before = importLayout("event", source);
+    const table = before.nodes.table!;
+    const rotated = rotateNode(before, "table", table.rotation + 90);
+    expect(rotated.nodes.table).toMatchObject({ x: 600, y: 350, rotation: 270 });
+    expect(rotated.nodes.seat).toMatchObject({ rotation: 90, x: 580, y: 360 });
+    expect(rotated.nodes.free).toBe(before.nodes.free);
+    const radius = Math.hypot(before.nodes.seat!.x - table.x, before.nodes.seat!.y - table.y);
+    expect(
+      Math.hypot(rotated.nodes.seat!.x - table.x, rotated.nodes.seat!.y - table.y),
+    ).toBeCloseTo(radius);
+  });
+  it("rotates a section and repositions its tables and free seats accordingly", () => {
+    const before = importLayout("event", source);
+    const rotated = rotateNode(before, "section", before.nodes.section!.rotation + 90);
+    expect(rotated.nodes.section).toMatchObject({ x: 500, y: 400 });
+    expect(rotated.nodes.table!.rotation).toBe(270);
+    const radiusTable = Math.hypot(before.nodes.table!.x - 500, before.nodes.table!.y - 400);
+    const radiusFree = Math.hypot(before.nodes.free!.x - 500, before.nodes.free!.y - 400);
+    expect(Math.hypot(rotated.nodes.table!.x - 500, rotated.nodes.table!.y - 400)).toBeCloseTo(
+      radiusTable,
+    );
+    expect(Math.hypot(rotated.nodes.free!.x - 500, rotated.nodes.free!.y - 400)).toBeCloseTo(
+      radiusFree,
+    );
+  });
+  it("keeps rotations normalized and ignores unchanged or invalid angles", () => {
+    const before = importLayout("event", source);
+    const wrapped = rotateNode(before, "table", 451);
+    expect(wrapped.nodes.table!.rotation).toBe(91);
+    expect(rotateNode(before, "table", before.nodes.table!.rotation)).toBe(before);
+    expect(rotateNode(before, "table", Number.NaN)).toBe(before);
   });
 });
 describe("camera and drag", () => {

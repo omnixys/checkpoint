@@ -5,10 +5,13 @@ import { Alert, Box, Button, Chip, CircularProgress, Stack, Typography } from "@
 import { useParams } from "next/navigation";
 import React from "react";
 import RouteGuard from "@/checkpoint/components/guard/RouteGuard";
+import { exportMove } from "@/checkpoint/components/seat/seatMapCanvas/core/adapter";
+import { setNodeShape } from "@/checkpoint/components/seat/seatMapCanvas/core/document";
 import { SeatMapCreateDialog } from "@/checkpoint/components/seat/seatMapCanvas/import/SeatMapCreateDialog";
 import { useDraftLossWarning } from "@/checkpoint/components/seat/seatMapCanvas/import/useDraftLossWarning";
 import { useLocalLayoutDraft } from "@/checkpoint/components/seat/seatMapCanvas/import/useLocalLayoutDraft";
 import SeatColorLegend from "@/checkpoint/components/seat/seatMapCanvas/SeatColorLegend";
+import SeatMapAddSeatsDialog from "@/checkpoint/components/seat/seatMapCanvas/SeatMapAddSeatsDialog";
 import SeatMapCanvas from "@/checkpoint/components/seat/seatMapCanvas/SeatMapCanvas";
 import SeatMapEditorToolbar, {
   type EditorMode,
@@ -19,11 +22,12 @@ import SeatMapSearch, {
   type SeatMapFilters,
 } from "@/checkpoint/components/seat/seatMapCanvas/SeatMapSearch";
 import {
-  type PersistMove,
+  type PersistLayoutOperation,
   useLayoutDocument,
 } from "@/checkpoint/components/seat/seatMapCanvas/useLayoutDocument";
 import { BackToEventDetailButton } from "@/checkpoint/components/utils/back-to-event-detail-button";
 import {
+  AppendTableSeatsDocument,
   AutoGenerateSeatMapDocument,
   CloneSectionDocument,
   CreateSectionDocument,
@@ -43,6 +47,7 @@ import {
   type SectionShape,
   type TableShape,
   UndoLayoutDocument,
+  UpdateSectionDocument,
 } from "@/checkpoint/generated/graphql";
 import useEventTreeQuery from "@/checkpoint/hooks/events/useEventTreeQuery";
 import useSeatListQuery from "@/checkpoint/hooks/seat/useSeatListQuery";
@@ -71,6 +76,32 @@ function createDefaultTableName(tables: { name: string }[]): string {
     }
   }
   return `${tables.length + 1}`;
+}
+
+function findFreeTablePosition(
+  section: { id: string; width: number | null; height: number | null },
+  document: NonNullable<ReturnType<typeof useLayoutDocument>>["document"],
+) {
+  const width = section.width ?? 400;
+  const height = section.height ?? 300;
+  const tableWidth = 100;
+  const tableHeight = 60;
+  const nodes = document ? Object.values(document.nodes) : [];
+  for (let y = -height / 2 + 50; y <= height / 2 - 50; y += 100) {
+    for (let x = -width / 2 + 70; x <= width / 2 - 70; x += 140) {
+      const worldX = (nodes.find((node) => node.id === section.id)?.x ?? 0) + x;
+      const worldY = (nodes.find((node) => node.id === section.id)?.y ?? 0) + y;
+      const collides = nodes.some(
+        (node) =>
+          node.kind === "TABLE" &&
+          node.sectionId === section.id &&
+          Math.abs(node.x - worldX) < (node.width + tableWidth) / 2 + 16 &&
+          Math.abs(node.y - worldY) < (node.height + tableHeight) / 2 + 16,
+      );
+      if (!collides) return { x, y };
+    }
+  }
+  return null;
 }
 
 const EMPTY_LAYOUT: SeatMapViewQuery["seatLayout"] = [];
@@ -111,6 +142,8 @@ function SeatMapEvent({ eventId }: { eventId: string }) {
 
   const [createSection] = useMutation(CreateSectionDocument);
   const [createTable] = useMutation(CreateTableDocument);
+  const [appendTableSeats] = useMutation(AppendTableSeatsDocument);
+  const [updateSection] = useMutation(UpdateSectionDocument);
   const [deleteSection] = useMutation(DeleteSectionDocument);
   const [deleteTable] = useMutation(DeleteTableDocument);
   const [deleteSeat] = useMutation(DeleteSeatDocument);
@@ -127,15 +160,42 @@ function SeatMapEvent({ eventId }: { eventId: string }) {
 
   const [editorMode, setEditorMode] = React.useState<EditorMode>("view");
   const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
-  const persistMove = React.useCallback<PersistMove>(
-    async (kind, input) => {
-      if (kind === "SECTION") await moveSection({ variables: { input } });
-      else if (kind === "TABLE") await moveTable({ variables: { input } });
+  const persistLayout = React.useCallback<PersistLayoutOperation>(
+    async (operation) => {
+      const node = operation.after.nodes[operation.nodeId];
+      const before = operation.before.nodes[operation.nodeId];
+      if (!node || !before) return;
+      if (
+        node.kind === "SECTION" &&
+        before.kind === "SECTION" &&
+        (node.width !== before.width || node.height !== before.height)
+      ) {
+        await updateSection({
+          variables: {
+            input: {
+              id: node.id,
+              x: node.x,
+              y: node.y,
+              width: node.width,
+              height: node.height,
+              capacity: null,
+              meta: null,
+              name: null,
+              order: null,
+              shape: null,
+            },
+          },
+        });
+        return;
+      }
+      const input = exportMove(operation.after, node.id);
+      if (node.kind === "SECTION") await moveSection({ variables: { input } });
+      else if (node.kind === "TABLE") await moveTable({ variables: { input } });
       else await moveSeat({ variables: { input: { ...input, rotation: null } } });
     },
-    [moveSection, moveTable, moveSeat],
+    [moveSection, moveTable, moveSeat, updateSection],
   );
-  const layout = useLayoutDocument(eventId, mapData?.seatLayout ?? EMPTY_LAYOUT, persistMove);
+  const layout = useLayoutDocument(eventId, mapData?.seatLayout ?? EMPTY_LAYOUT, persistLayout);
   const draftLayout = useLocalLayoutDraft(eventId, layout.document, layout.move);
   useDraftLossWarning(draftLayout.isLocal);
   const selectedItems = React.useMemo<SelectedItem[]>(
@@ -150,6 +210,11 @@ function SeatMapEvent({ eventId }: { eventId: string }) {
       }),
     [selectedIds, draftLayout.document],
   );
+  const selectedSingleNode = React.useMemo(() => {
+    const only = selectedItems[0];
+    if (selectedItems.length !== 1 || !only) return null;
+    return draftLayout.document?.nodes[only.id] ?? null;
+  }, [selectedItems, draftLayout.document]);
   const colorGroups = React.useMemo(
     () =>
       new Map(
@@ -180,7 +245,24 @@ function SeatMapEvent({ eventId }: { eventId: string }) {
       setActionPending(false);
     }
   };
+  const handleSetShape = (shape: string) => {
+    const node = selectedSingleNode;
+    if (!node || !draftLayout.document || actionFlight.current) return;
+    const after = setNodeShape(draftLayout.document, node.id, shape);
+    if (after !== draftLayout.document)
+      draftLayout.localApply({ nodeId: node.id, before: draftLayout.document, after });
+  };
+  const handleMakeTableSquare = () => {
+    const node = selectedSingleNode;
+    if (!node?.kind || node.kind !== "TABLE" || !draftLayout.document || actionFlight.current)
+      return;
+    const size = Math.max(node.width, node.height);
+    const after = setNodeShape(draftLayout.document, node.id, "RECTANGLE", size, size);
+    if (after !== draftLayout.document)
+      draftLayout.localApply({ nodeId: node.id, before: draftLayout.document, after });
+  };
   const [autoGenerateOpen, setAutoGenerateOpen] = React.useState(false);
+  const [addSeatsOpen, setAddSeatsOpen] = React.useState(false);
   const [renameOpen, setRenameOpen] = React.useState(false);
 
   const [filters, setFilters] = React.useState<SeatMapFilters>({
@@ -306,11 +388,15 @@ function SeatMapEvent({ eventId }: { eventId: string }) {
       return;
     }
     const sectionSelection = selectedItems.find((s) => s.type === "section");
-    const targetSectionId = sectionSelection?.id ?? sections[0]?.id;
+    const targetSectionId = sectionSelection?.id;
     if (!targetSectionId) {
       return;
     }
     const section = sections.find((s) => s.id === targetSectionId);
+    if (!section) return;
+    const position = findFreeTablePosition(section, draftLayout.document);
+    if (!position)
+      throw new Error("Kein freier Platz in dieser Section. Bitte vergrößern Sie die Section.");
     const tableName = createDefaultTableName(section?.tables ?? []);
     await createTable({
       variables: {
@@ -318,8 +404,8 @@ function SeatMapEvent({ eventId }: { eventId: string }) {
           eventId,
           sectionId: targetSectionId,
           name: tableName,
-          x: 100,
-          y: 100,
+          x: position.x,
+          y: position.y,
           width: 100,
           height: 60,
           capacity: null,
@@ -375,6 +461,21 @@ function SeatMapEvent({ eventId }: { eventId: string }) {
       },
     });
     await refetchMap();
+  };
+  const selectedTable = React.useMemo(() => {
+    const selection = selectedItems.length === 1 ? selectedItems[0] : null;
+    if (selection?.type !== "table") return null;
+    for (const section of mapData?.seatLayout ?? []) {
+      const table = section.tables.find((candidate) => candidate.id === selection.id);
+      if (table) return { ...table, seatCount: table.seats.length };
+    }
+    return null;
+  }, [mapData, selectedItems]);
+  const handleAddSeats = async (count: number) => {
+    if (!selectedTable) return;
+    await appendTableSeats({ variables: { input: { tableId: selectedTable.id, count } } });
+    await refetchMap();
+    setAddSeatsOpen(false);
   };
 
   const handleAutoGenerate = async (input: {
@@ -459,6 +560,7 @@ function SeatMapEvent({ eventId }: { eventId: string }) {
             selectedItems={selectedItems}
             onAddSection={() => void runAction(handleAddSection)}
             onAddTable={() => void runAction(handleAddTable)}
+            onAddSeats={() => setAddSeatsOpen(true)}
             onDelete={() => void runAction(handleDelete)}
             onDuplicateTable={() => void runAction(handleDuplicateTable)}
             onCloneSection={() => void runAction(handleCloneSection)}
@@ -466,6 +568,10 @@ function SeatMapEvent({ eventId }: { eventId: string }) {
             onRename={() => setRenameOpen(true)}
             onUndo={() => void runAction(handleUndo)}
             onRedo={() => void runAction(handleRedo)}
+            selectedShape={selectedSingleNode?.shape ?? null}
+            onSetShape={handleSetShape}
+            onMakeTableSquare={handleMakeTableSquare}
+            geometryDisabled={blocked}
           />
         )}
 
@@ -516,6 +622,15 @@ function SeatMapEvent({ eventId }: { eventId: string }) {
               onMove={(operation) => {
                 if (!actionFlight.current) void draftLayout.move(operation);
               }}
+              onResize={(operation) => {
+                if (actionFlight.current) return;
+                const kind = operation.after.nodes[operation.nodeId]?.kind;
+                if (kind === "SECTION") void draftLayout.resize(operation);
+                else if (kind) draftLayout.localApply(operation);
+              }}
+              onRotate={(operation) => {
+                if (!actionFlight.current) draftLayout.localApply(operation);
+              }}
               pending={blocked}
             />
           )
@@ -544,6 +659,14 @@ function SeatMapEvent({ eventId }: { eventId: string }) {
           selectedItems={selectedItems}
           onClose={() => setRenameOpen(false)}
           onRename={(updates) => runAction(() => handleRename(updates))}
+        />
+        <SeatMapAddSeatsDialog
+          open={addSeatsOpen && Boolean(selectedTable)}
+          tableName={selectedTable?.name ?? ""}
+          currentCount={selectedTable?.seatCount ?? 0}
+          pending={blocked}
+          onClose={() => setAddSeatsOpen(false)}
+          onConfirm={(count) => runAction(() => handleAddSeats(count))}
         />
       </Stack>
     </RouteGuard>

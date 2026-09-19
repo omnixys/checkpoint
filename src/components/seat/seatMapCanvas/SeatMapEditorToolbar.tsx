@@ -11,7 +11,17 @@ import {
   Undo,
   VisibilityOutlined,
 } from "@mui/icons-material";
-import { Box, Divider, IconButton, Stack, Tooltip, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  MenuItem,
+  Select,
+  Stack,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 
 export type EditorMode = "view" | "edit";
 
@@ -19,6 +29,32 @@ export type SelectedItem =
   | { type: "section"; id: string; name: string }
   | { type: "table"; id: string; name: string; sectionId: string }
   | { type: "seat"; id: string; label: string };
+
+type SingleKind = SelectedItem["type"];
+
+const SHAPE_OPTIONS: Record<SingleKind, { value: string; label: string }[]> = {
+  section: [
+    { value: "RECTANGLE", label: "Rechteckig" },
+    { value: "CIRCLE", label: "Rund" },
+  ],
+  table: [
+    { value: "ROUND", label: "Rund" },
+    { value: "RECTANGLE", label: "Rechteckig" },
+    { value: "OVAL", label: "Oval" },
+    { value: "ROW", label: "Reihen" },
+  ],
+  seat: [
+    { value: "CIRCLE", label: "Rund" },
+    { value: "SQUARE", label: "Quadrat" },
+    { value: "RECTANGLE", label: "Bank" },
+  ],
+};
+
+const SHAPE_DEFAULT: Record<SingleKind, string> = {
+  section: "RECTANGLE",
+  table: "ROUND",
+  seat: "CIRCLE",
+};
 
 interface Props {
   disabled?: boolean;
@@ -28,6 +64,7 @@ interface Props {
   selectedItems: SelectedItem[];
   onAddSection: () => void;
   onAddTable: () => void;
+  onAddSeats: () => void;
   onDelete: () => void;
   onDuplicateTable: () => void;
   onCloneSection: () => void;
@@ -35,6 +72,10 @@ interface Props {
   onRename: () => void;
   onUndo: () => void;
   onRedo: () => void;
+  selectedShape?: string | null;
+  onSetShape?: (shape: string) => void;
+  onMakeTableSquare?: () => void;
+  geometryDisabled?: boolean;
 }
 
 function selectionLabel(items: SelectedItem[]): string | null {
@@ -79,6 +120,7 @@ export default function SeatMapEditorToolbar({
   selectedItems,
   onAddSection,
   onAddTable,
+  onAddSeats,
   onDelete,
   onDuplicateTable,
   onCloneSection,
@@ -86,9 +128,14 @@ export default function SeatMapEditorToolbar({
   onRename,
   onUndo,
   onRedo,
+  selectedShape = null,
+  onSetShape,
+  onMakeTableSquare,
+  geometryDisabled = false,
 }: Props) {
   const singleSection = selectedItems.length === 1 && selectedItems[0]?.type === "section";
   const singleTable = selectedItems.length === 1 && selectedItems[0]?.type === "table";
+  const single = selectedItems.length === 1 ? selectedItems[0] : null;
   const label = selectionLabel(selectedItems);
 
   if (mode === "view") {
@@ -128,7 +175,7 @@ export default function SeatMapEditorToolbar({
         borderRadius: 2,
         boxShadow: 3,
         p: 1,
-        minWidth: 40,
+        minWidth: single ? 136 : 40,
       }}
     >
       <Tooltip title="Ansicht">
@@ -165,10 +212,23 @@ export default function SeatMapEditorToolbar({
       </Tooltip>
 
       <Tooltip title="Tisch hinzufügen">
-        <IconButton disabled={disabled} size="small" aria-label="Add table" onClick={onAddTable}>
+        <IconButton
+          disabled={disabled || !singleSection}
+          size="small"
+          aria-label="Add table"
+          onClick={onAddTable}
+        >
           <Add fontSize="small" />
         </IconButton>
       </Tooltip>
+
+      {singleTable && (
+        <Tooltip title="Sitzplätze hinzufügen">
+          <IconButton disabled={disabled} size="small" aria-label="Add seats" onClick={onAddSeats}>
+            <Add fontSize="small" />
+          </IconButton>
+        </Tooltip>
+      )}
 
       <Divider />
 
@@ -218,6 +278,39 @@ export default function SeatMapEditorToolbar({
             <DeleteOutlined fontSize="small" />
           </IconButton>
         </Tooltip>
+      )}
+
+      <Divider />
+
+      {single && onSetShape && (
+        <Stack spacing={0.5} sx={{ px: 0.5, pt: 0.25, minWidth: 0 }}>
+          <Typography variant="caption" sx={{ color: "text.secondary", fontSize: 9 }}>
+            Form
+          </Typography>
+          <Select
+            size="small"
+            fullWidth
+            value={selectedShape ?? SHAPE_DEFAULT[single.type]}
+            disabled={geometryDisabled}
+            onChange={(e) => onSetShape(String(e.target.value))}
+          >
+            {SHAPE_OPTIONS[single.type].map((s) => (
+              <MenuItem key={s.value} value={s.value}>
+                {s.label}
+              </MenuItem>
+            ))}
+          </Select>
+          {singleTable && onMakeTableSquare && (
+            <Button
+              size="small"
+              variant="outlined"
+              disabled={geometryDisabled}
+              onClick={onMakeTableSquare}
+            >
+              Quadrat
+            </Button>
+          )}
+        </Stack>
       )}
 
       <Divider />

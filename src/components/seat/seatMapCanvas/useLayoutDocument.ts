@@ -1,14 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { exportMove, importLayout, type SourceLayout } from "./core/adapter";
-import type { LayoutDocument, LayoutNode, MoveOperation } from "./core/document";
-export type PersistMove = (
-  kind: LayoutNode["kind"],
-  input: { id: string; x: number; y: number },
-) => Promise<void>;
+import { importLayout, type SourceLayout } from "./core/adapter";
+import type { LayoutDocument, LayoutOperation } from "./core/document";
+export type PersistLayoutOperation = (operation: LayoutOperation) => Promise<void>;
 
-export function useLayoutDocument(eventId: string, source: SourceLayout, persist: PersistMove) {
+export function useLayoutDocument(
+  eventId: string,
+  source: SourceLayout,
+  persist: PersistLayoutOperation,
+) {
   const imported = useMemo(() => {
     try {
       return { document: importLayout(eventId, source), error: null };
@@ -47,23 +48,22 @@ export function useLayoutDocument(eventId: string, source: SourceLayout, persist
     local?.document.eventId === eventId && (pending || local.source === source)
       ? local.document
       : imported.document;
-  const move = useCallback(
-    async (operation: MoveOperation) => {
+  const apply = useCallback(
+    async (operation: LayoutOperation) => {
       if (
         flight.current ||
         operation.before.eventId !== eventId ||
         operation.before === operation.after
       )
         return;
-      const node = operation.after.nodes[operation.nodeId];
-      if (!node) return;
+      if (!operation.after.nodes[operation.nodeId]) return;
       const token = { eventId };
       flight.current = token;
       setPending(true);
       setError(null);
       setLocal({ document: operation.after, source });
       try {
-        await persist(node.kind, exportMove(operation.after, node.id));
+        await persist(operation);
         if (flight.current !== token || activeEvent.current !== eventId) return;
         // Apollo receives the correctly typed moved entity; subsequent query changes can replace the local copy.
         setLocal({ document: operation.after, source: latestSource.current });
@@ -88,7 +88,8 @@ export function useLayoutDocument(eventId: string, source: SourceLayout, persist
     document,
     pending,
     error: imported.error ?? error,
-    move,
+    move: apply,
+    resize: apply,
     clearError: () => setError(null),
   };
 }

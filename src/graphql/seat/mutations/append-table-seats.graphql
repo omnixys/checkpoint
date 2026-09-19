@@ -1,0 +1,5 @@
+mutation AppendTableSeats($input: AppendTableSeatsInput!) {
+  appendTableSeats(input: $input) {
+    id
+  }
+}

@@ -173,6 +173,7 @@ export default function SeatNode({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          overflow: "hidden",
           fontSize: 10,
           fontWeight: 700,
           cursor: isEditing ? "move" : "pointer",

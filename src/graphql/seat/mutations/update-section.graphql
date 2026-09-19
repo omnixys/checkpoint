@@ -1,0 +1,9 @@
+mutation UpdateSection($input: UpdateSectionInput!) {
+  updateSection(input: $input) {
+    id
+    x
+    y
+    width
+    height
+  }
+}

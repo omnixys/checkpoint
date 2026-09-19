@@ -2,9 +2,10 @@ import { Alert, Box, Button, CssBaseline, Stack, ThemeProvider, Typography } fro
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import SeatMapCanvas from "../../src/components/seat/seatMapCanvas/SeatMapCanvas";
-import type { SourceLayout } from "../../src/components/seat/seatMapCanvas/core/adapter";
+import { exportMove, type SourceLayout } from "../../src/components/seat/seatMapCanvas/core/adapter";
+import { type LayoutOperation } from "../../src/components/seat/seatMapCanvas/core/document";
 import {
-  type PersistMove,
+  type PersistLayoutOperation,
   useLayoutDocument,
 } from "../../src/components/seat/seatMapCanvas/useLayoutDocument";
 import { createAppTheme } from "../../src/themes/createAppTheme";
@@ -71,7 +72,7 @@ const fixture: SourceLayout = [
         y: 50,
         width: 140,
         height: 80,
-        rotation: 30,
+        rotation: 0,
         shape: "RECTANGLE",
         meta: null,
         seats: [],
@@ -102,10 +103,17 @@ function Harness() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [source, setSource] = useState(fixture);
   const [requests, setRequests] = useState<HarnessSnapshot["requests"]>([]);
+  const [resizeOps, setResizeOps] = useState<LayoutOperation[]>([]);
+  const [rotateOps, setRotateOps] = useState<LayoutOperation[]>([]);
   const outcome = useRef<"success" | "failure" | "defer">("success");
   const settlement = useRef<{ resolve(): void; reject(error: Error): void } | null>(null);
-  const persist = useCallback<PersistMove>(async (kind, input) => {
-    setRequests((previous) => [...previous, { kind, input }]);
+  const persist = useCallback<PersistLayoutOperation>(async (operation) => {
+    const node = operation.after.nodes[operation.nodeId];
+    if (node)
+      setRequests((previous) => [
+        ...previous,
+        { kind: node.kind, input: exportMove(operation.after, operation.nodeId) },
+      ]);
     if (outcome.current === "failure") throw new Error("Kontrollierter Speicherfehler");
     if (outcome.current === "defer")
       await new Promise<void>((resolve, reject) => {
@@ -121,6 +129,8 @@ function Harness() {
         pending: layout.pending,
         error: layout.error,
         requests,
+        resizeOps,
+        rotateOps,
       }),
       setEvent: setEventId,
       setEditing,
@@ -175,6 +185,14 @@ function Harness() {
               selectedIds={selectedIds}
               onSelect={setSelectedIds}
               onMove={layout.move}
+              onResize={(operation) => {
+                setResizeOps((previous) => [...previous, operation]);
+                void layout.resize(operation);
+              }}
+              onRotate={(operation) => {
+                setRotateOps((previous) => [...previous, operation]);
+                void layout.move(operation);
+              }}
               pending={layout.pending}
             />
           )}

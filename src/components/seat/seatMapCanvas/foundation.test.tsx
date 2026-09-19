@@ -1,9 +1,10 @@
 import { act, cleanup, fireEvent, render, renderHook, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { importLayout } from "./core/adapter";
+import { importLayout, type SourceLayout } from "./core/adapter";
 import { type MoveOperation, moveNode } from "./core/document";
 import { source } from "./core/test-fixture";
 import SeatMapCanvas from "./SeatMapCanvas";
+import SeatMapEditorToolbar from "./SeatMapEditorToolbar";
 import { useLayoutDocument } from "./useLayoutDocument";
 
 class TestPointerEvent extends MouseEvent {
@@ -37,18 +38,27 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 const doc = importLayout("event", source);
-function canvas(onMove = vi.fn(), onSelect = vi.fn()) {
+function canvas(
+  onMove = vi.fn(),
+  onSelect = vi.fn(),
+  onResize = vi.fn(),
+  selectedIds: string[] = [],
+  document = doc,
+  onRotate = vi.fn(),
+) {
   const props = {
-    document: doc,
+    document,
     presenceMap: new Map(),
     colorGroups: new Map(),
     seats: [],
     getSeatHolderLabel: () => "",
     role: "ADMIN",
     isEditing: true,
-    selectedIds: [],
+    selectedIds,
     onMove,
     onSelect,
+    onResize,
+    onRotate,
     pending: false,
   };
   const view = render(<SeatMapCanvas {...props} />);
@@ -57,6 +67,8 @@ function canvas(onMove = vi.fn(), onSelect = vi.fn()) {
     props,
     onMove,
     onSelect,
+    onResize,
+    onRotate,
     root: screen.getByTestId("seatmap-canvas"),
     table: screen.getByTestId("table-table"),
   };
@@ -149,7 +161,7 @@ describe("move persistence", () => {
     });
     expect(result.current.pending).toBe(true);
     expect(result.current.document?.nodes.table?.x).toBe(700);
-    expect(persist).toHaveBeenCalledExactlyOnceWith("TABLE", { id: "table", x: 200, y: -50 });
+    expect(persist).toHaveBeenCalledExactlyOnceWith(operation);
     await act(async () => {
       reject(new Error("Speichern fehlgeschlagen"));
       await flight;
@@ -188,5 +200,138 @@ describe("move persistence", () => {
     expect(result.current.document?.nodes.table?.x).toBe(700);
     rerender({ payload: [...source] });
     expect(result.current.document?.nodes.table?.x).toBe(600);
+  });
+});
+const perimeterSource: SourceLayout = [
+  {
+    id: "section",
+    name: "S",
+    x: 0,
+    y: 0,
+    width: 400,
+    height: 300,
+    rotation: 0,
+    shape: "RECTANGLE",
+    meta: null,
+    tables: [
+      {
+        id: "table",
+        name: "T",
+        sectionId: "section",
+        x: 0,
+        y: 0,
+        width: 100,
+        height: 60,
+        rotation: 0,
+        shape: "ROUND",
+        meta: null,
+        seats: [
+          {
+            id: "seat",
+            sectionId: "section",
+            tableId: "table",
+            x: 90,
+            y: 80,
+            rotation: 0,
+            number: 1,
+            meta: null,
+          },
+        ],
+      },
+    ],
+    seats: [],
+  },
+];
+describe("resize handles", () => {
+  it("resizes a selected table via its handle and anchors the north-west corner", () => {
+    const per = importLayout("per", perimeterSource);
+    const { onResize } = canvas(vi.fn(), vi.fn(), vi.fn(), ["table"], per);
+    const handle = screen.getByRole("button", { name: "Tisch T vergrößern" });
+    down(handle, 100, 100);
+    move(handle, 236, 100);
+    up(handle, 236, 100);
+    expect(onResize).toHaveBeenCalledTimes(1);
+    const operation = onResize.mock.calls[0]![0] as { after: typeof doc };
+    expect(operation.after.nodes.table).toMatchObject({ width: 136, height: 60 });
+    expect(operation.after.nodes.table!.x).toBeCloseTo(18);
+    expect(operation.after.nodes.seat).toBe(per.nodes.seat);
+  });
+  it("resizes a selected seat via keyboard and stays above the minimum", () => {
+    const { onResize } = canvas(vi.fn(), vi.fn(), vi.fn(), ["seat"]);
+    const handle = screen.getByRole("button", { name: "Sitz 1 vergrößern" });
+    fireEvent.keyDown(handle, { key: "ArrowRight" });
+    expect(onResize).toHaveBeenCalledTimes(1);
+    const operation = onResize.mock.calls[0]![0] as { after: typeof doc };
+    expect(operation.after.nodes.seat).toMatchObject({ width: 48, height: 28 });
+  });
+  it("rotates a selected seat via the rotate handle keyboard in 5° steps", () => {
+    const onRotate = vi.fn();
+    const { rerender, props } = canvas(vi.fn(), vi.fn(), vi.fn(), ["seat"], doc, onRotate);
+    const handle = screen.getByRole("button", { name: "Sitz 1 drehen" });
+    fireEvent.keyDown(handle, { key: "ArrowRight" });
+    expect(onRotate).toHaveBeenCalledTimes(1);
+    const first = onRotate.mock.calls[0]![0] as { after: typeof doc };
+    expect(first.after.nodes.seat).toMatchObject({ rotation: 5 });
+    rerender(<SeatMapCanvas {...props} document={first.after} />);
+    fireEvent.keyDown(screen.getByRole("button", { name: "Sitz 1 drehen" }), { key: "ArrowRight" });
+    const second = onRotate.mock.calls[1]![0] as { after: typeof doc };
+    expect(second.after.nodes.seat).toMatchObject({ rotation: 10 });
+  });
+});
+function toolbar(onSetShape = vi.fn(), onMakeTableSquare = vi.fn()) {
+  const props = {
+    mode: "edit" as const,
+    selectedItems: [{ type: "table" as const, id: "t", name: "T", sectionId: "s" }],
+    selectedShape: "ROUND",
+    onSetShape,
+    onMakeTableSquare,
+    onModeToggle: vi.fn(),
+    onAddSection: vi.fn(),
+    onAddTable: vi.fn(),
+    onAddSeats: vi.fn(),
+    onDelete: vi.fn(),
+    onDuplicateTable: vi.fn(),
+    onCloneSection: vi.fn(),
+    onAutoGenerate: vi.fn(),
+    onRename: vi.fn(),
+    onUndo: vi.fn(),
+    onRedo: vi.fn(),
+  };
+  const view = render(<SeatMapEditorToolbar {...props} />);
+  return { ...view, props, onSetShape, onMakeTableSquare };
+}
+describe("shape toolbar", () => {
+  it("switches a table shape and triggers the square action", () => {
+    const { onSetShape, onMakeTableSquare } = toolbar();
+    fireEvent.click(screen.getByRole("button", { name: "Quadrat" }));
+    expect(onMakeTableSquare).toHaveBeenCalled();
+    fireEvent.mouseDown(screen.getByRole("combobox"));
+    fireEvent.click(screen.getByRole("option", { name: "Reihen" }));
+    expect(onSetShape).toHaveBeenCalledWith("ROW");
+  });
+  it("offers bench shapes for seats and stays editable while a local draft is active", () => {
+    toolbar();
+    const props = {
+      mode: "edit" as const,
+      selectedItems: [{ type: "seat" as const, id: "s", label: "1" }],
+      selectedShape: "RECTANGLE",
+      onSetShape: vi.fn(),
+      onMakeTableSquare: vi.fn(),
+      onModeToggle: vi.fn(),
+      onAddSection: vi.fn(),
+      onAddTable: vi.fn(),
+      onAddSeats: vi.fn(),
+      onDelete: vi.fn(),
+      onDuplicateTable: vi.fn(),
+      onCloneSection: vi.fn(),
+      onAutoGenerate: vi.fn(),
+      onRename: vi.fn(),
+      onUndo: vi.fn(),
+      onRedo: vi.fn(),
+    };
+    cleanup();
+    const view = render(<SeatMapEditorToolbar {...props} />);
+    expect(view.getByRole("combobox")).toHaveTextContent("Bank");
+    expect(view.getByRole("combobox")).toBeEnabled();
   });
 });

@@ -138,6 +138,11 @@ export type AnalyticsSecurityChartsPayload = {
   warnings: Array<AnalyticsChartPointPayload>;
 };
 
+export type AppendTableSeatsInput = {
+  count: Scalars['Int']['input'];
+  tableId: Scalars['ID']['input'];
+};
+
 export type ApproveInvitationDataInput = {
   /** ID of the invitation to approve/unapprove (cuid). */
   invitationId: Scalars['ID']['input'];
@@ -1408,6 +1413,7 @@ export type Mutation = {
   adminChangePassword: Scalars['Boolean']['output'];
   adminSignUp: TokenPayload;
   adminUpdateUser: Scalars['Boolean']['output'];
+  appendTableSeats: Array<SeatPayload>;
   approveInvitation: InvitationPayload;
   archiveAnalyticsSavedSearch: SavedSearchPayload;
   archiveEventRole: EventRoleDefinitionPayload;
@@ -1516,7 +1522,6 @@ export type Mutation = {
   requestPasswordReset: Scalars['Boolean']['output'];
   /** Re-sends the confirmation message (email or WhatsApp) to guests who have not yet completed their registration. */
   resendGuestConfirmations: ResendGuestConfirmationsPayload;
-  /** Reset the device binding of a ticket so it can be activated again (staff only) */
   resetDeviceBinding: TicketPayload;
   /** Revoke a ticket (security or admin) */
   revokeTicket: TicketPayload;
@@ -1555,7 +1560,6 @@ export type Mutation = {
   updateTable: TablePayload;
   updateTemplate: TemplatePayload;
   updateTenant: TenantType;
-  /** Manually override the presence state of a ticket (security staff) */
   updateTicketPresence: TicketPayload;
   updateTimeLines: EventPayload;
   updateUser: UserPayload;
@@ -1649,6 +1653,11 @@ export type MutationAdminSignUpArgs = {
 export type MutationAdminUpdateUserArgs = {
   id: Scalars['ID']['input'];
   input: UpdateKcUserInput;
+};
+
+
+export type MutationAppendTableSeatsArgs = {
+  input: AppendTableSeatsInput;
 };
 
 
