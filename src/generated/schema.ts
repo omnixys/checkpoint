@@ -143,6 +143,11 @@ export type AppendTableSeatsInput = {
   tableId: Scalars['ID']['input'];
 };
 
+export type ApplyLayoutGeometryInput = {
+  changes: Array<LayoutGeometryChangeInput>;
+  eventId: Scalars['ID']['input'];
+};
+
 export type ApproveInvitationDataInput = {
   /** ID of the invitation to approve/unapprove (cuid). */
   invitationId: Scalars['ID']['input'];
@@ -1232,6 +1237,22 @@ export enum LayoutChangeType {
   TABLE_UPDATE = 'TABLE_UPDATE'
 }
 
+export type LayoutGeometryChangeInput = {
+  height: Scalars['Float']['input'];
+  id: Scalars['ID']['input'];
+  kind: LayoutGeometryKind;
+  rotation: Scalars['Float']['input'];
+  width: Scalars['Float']['input'];
+  x: Scalars['Float']['input'];
+  y: Scalars['Float']['input'];
+};
+
+export enum LayoutGeometryKind {
+  SEAT = 'SEAT',
+  SECTION = 'SECTION',
+  TABLE = 'TABLE'
+}
+
 export type LayoutVersionPayload = {
   __typename: 'LayoutVersionPayload';
   createdAt: Scalars['DateTime']['output'];
@@ -1414,6 +1435,7 @@ export type Mutation = {
   adminSignUp: TokenPayload;
   adminUpdateUser: Scalars['Boolean']['output'];
   appendTableSeats: Array<SeatPayload>;
+  applySeatMapGeometry: Scalars['Boolean']['output'];
   approveInvitation: InvitationPayload;
   archiveAnalyticsSavedSearch: SavedSearchPayload;
   archiveEventRole: EventRoleDefinitionPayload;
@@ -1658,6 +1680,11 @@ export type MutationAdminUpdateUserArgs = {
 
 export type MutationAppendTableSeatsArgs = {
   input: AppendTableSeatsInput;
+};
+
+
+export type MutationApplySeatMapGeometryArgs = {
+  input: ApplyLayoutGeometryInput;
 };
 
 

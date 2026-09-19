@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import React from "react";
 import RouteGuard from "@/checkpoint/components/guard/RouteGuard";
 import { setNodeShape } from "@/checkpoint/components/seat/seatMapCanvas/core/document";
-import { planGeometryWrite } from "@/checkpoint/components/seat/seatMapCanvas/core/persist-geometry";
+import { worldToRelative } from "@/checkpoint/components/seat/seatMapCanvas/core/geometry";
 import { SeatMapCreateDialog } from "@/checkpoint/components/seat/seatMapCanvas/import/SeatMapCreateDialog";
 import { useDraftLossWarning } from "@/checkpoint/components/seat/seatMapCanvas/import/useDraftLossWarning";
 import { useLocalLayoutDraft } from "@/checkpoint/components/seat/seatMapCanvas/import/useLocalLayoutDraft";
@@ -28,6 +28,7 @@ import {
 import { BackToEventDetailButton } from "@/checkpoint/components/utils/back-to-event-detail-button";
 import {
   AppendTableSeatsDocument,
+  ApplySeatMapGeometryDocument,
   AutoGenerateSeatMapDocument,
   CloneSectionDocument,
   CreateSectionDocument,
@@ -36,9 +37,6 @@ import {
   DeleteSectionDocument,
   DeleteTableDocument,
   DuplicateTableDocument,
-  MoveSeatDocument,
-  MoveSectionDocument,
-  MoveTableDocument,
   RedoLayoutDocument,
   RenameSectionDocument,
   RenameTableDocument,
@@ -47,10 +45,8 @@ import {
   type SectionShape,
   type TableShape,
   UndoLayoutDocument,
-  UpdateSeatDocument,
-  UpdateSectionDocument,
-  UpdateTableDocument,
 } from "@/checkpoint/generated/graphql";
+import { LayoutGeometryKind } from "@/checkpoint/generated/schema";
 import useEventTreeQuery from "@/checkpoint/hooks/events/useEventTreeQuery";
 import useSeatListQuery from "@/checkpoint/hooks/seat/useSeatListQuery";
 import { useSeats } from "@/checkpoint/hooks/seat/useSeats";
@@ -145,17 +141,12 @@ function SeatMapEvent({ eventId }: { eventId: string }) {
   const [createSection] = useMutation(CreateSectionDocument);
   const [createTable] = useMutation(CreateTableDocument);
   const [appendTableSeats] = useMutation(AppendTableSeatsDocument);
-  const [updateSection] = useMutation(UpdateSectionDocument);
-  const [updateSeat] = useMutation(UpdateSeatDocument);
-  const [updateTable] = useMutation(UpdateTableDocument);
+  const [applySeatMapGeometry] = useMutation(ApplySeatMapGeometryDocument);
   const [deleteSection] = useMutation(DeleteSectionDocument);
   const [deleteTable] = useMutation(DeleteTableDocument);
   const [deleteSeat] = useMutation(DeleteSeatDocument);
   const [duplicateTable] = useMutation(DuplicateTableDocument);
   const [cloneSection] = useMutation(CloneSectionDocument);
-  const [moveSeat] = useMutation(MoveSeatDocument);
-  const [moveTable] = useMutation(MoveTableDocument);
-  const [moveSection] = useMutation(MoveSectionDocument);
   const [autoGenerate] = useMutation(AutoGenerateSeatMapDocument);
   const [undoLayout] = useMutation(UndoLayoutDocument);
   const [redoLayout] = useMutation(RedoLayoutDocument);
@@ -166,17 +157,30 @@ function SeatMapEvent({ eventId }: { eventId: string }) {
   const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
   const persistLayout = React.useCallback<PersistLayoutOperation>(
     async (operation) => {
-      for (const write of planGeometryWrite(operation)) {
-        if (write.type === "moveSection") await moveSection({ variables: write.variables });
-        else if (write.type === "moveTable") await moveTable({ variables: write.variables });
-        else if (write.type === "moveSeat") await moveSeat({ variables: write.variables });
-        else if (write.type === "updateSection")
-          await updateSection({ variables: write.variables });
-        else if (write.type === "updateTable") await updateTable({ variables: write.variables });
-        else await updateSeat({ variables: write.variables });
-      }
+      const changes = Object.values(operation.after.nodes)
+        .filter((node) => operation.before.nodes[node.id] !== node)
+        .map((node) => {
+          const parent =
+            node.kind === "SECTION"
+              ? null
+              : node.kind === "SEAT" && node.tableId
+                ? operation.after.nodes[node.tableId]
+                : operation.after.nodes[node.sectionId];
+          const position = parent ? worldToRelative(node, parent) : { x: node.x, y: node.y };
+          return {
+            id: node.id,
+            kind: LayoutGeometryKind[node.kind],
+            x: position.x,
+            y: position.y,
+            width: node.width,
+            height: node.height,
+            rotation: node.rotation,
+          };
+        });
+      if (changes.length)
+        await applySeatMapGeometry({ variables: { input: { eventId, changes } } });
     },
-    [moveSection, moveTable, moveSeat, updateSection, updateSeat, updateTable],
+    [applySeatMapGeometry, eventId],
   );
   const layout = useLayoutDocument(eventId, mapData?.seatLayout ?? EMPTY_LAYOUT, persistLayout);
   const draftLayout = useLocalLayoutDraft(eventId, layout.document, layout.move);
@@ -534,30 +538,6 @@ function SeatMapEvent({ eventId }: { eventId: string }) {
           />
         </Box>
 
-        {isAdmin && (
-          <SeatMapEditorToolbar
-            disabled={blocked || draftLayout.isLocal}
-            importDisabled={blocked}
-            mode={editorMode}
-            onModeToggle={handleModeToggle}
-            selectedItems={selectedItems}
-            onAddSection={() => void runAction(handleAddSection)}
-            onAddTable={() => void runAction(handleAddTable)}
-            onAddSeats={() => setAddSeatsOpen(true)}
-            onDelete={() => void runAction(handleDelete)}
-            onDuplicateTable={() => void runAction(handleDuplicateTable)}
-            onCloneSection={() => void runAction(handleCloneSection)}
-            onAutoGenerate={() => setAutoGenerateOpen(true)}
-            onRename={() => setRenameOpen(true)}
-            onUndo={() => void runAction(handleUndo)}
-            onRedo={() => void runAction(handleRedo)}
-            selectedShape={selectedSingleNode?.shape ?? null}
-            onSetShape={handleSetShape}
-            onMakeTableSquare={handleMakeTableSquare}
-            geometryDisabled={blocked}
-          />
-        )}
-
         {draftLayout.isLocal && (
           <Alert
             severity="warning"
@@ -614,6 +594,31 @@ function SeatMapEvent({ eventId }: { eventId: string }) {
                 void draftLayout.resize(operation);
               }}
               pending={blocked}
+              editorToolbar={
+                isAdmin ? (
+                  <SeatMapEditorToolbar
+                    disabled={blocked || draftLayout.isLocal}
+                    importDisabled={blocked}
+                    mode={editorMode}
+                    onModeToggle={handleModeToggle}
+                    selectedItems={selectedItems}
+                    onAddSection={() => void runAction(handleAddSection)}
+                    onAddTable={() => void runAction(handleAddTable)}
+                    onAddSeats={() => setAddSeatsOpen(true)}
+                    onDelete={() => void runAction(handleDelete)}
+                    onDuplicateTable={() => void runAction(handleDuplicateTable)}
+                    onCloneSection={() => void runAction(handleCloneSection)}
+                    onAutoGenerate={() => setAutoGenerateOpen(true)}
+                    onRename={() => setRenameOpen(true)}
+                    onUndo={() => void runAction(handleUndo)}
+                    onRedo={() => void runAction(handleRedo)}
+                    selectedShape={selectedSingleNode?.shape ?? null}
+                    onSetShape={handleSetShape}
+                    onMakeTableSquare={handleMakeTableSquare}
+                    geometryDisabled={blocked}
+                  />
+                ) : undefined
+              }
             />
           )
         )}

@@ -25,6 +25,7 @@ interface Options {
   camera: Camera;
   editing: boolean;
   pending: boolean;
+  selectedIds: readonly string[];
   onSelect: (ids: string[]) => void;
   onMove: (operation: MoveOperation) => void;
   onCamera: (camera: Camera) => void;
@@ -34,6 +35,7 @@ export function useSeatMapInteraction({
   camera,
   editing,
   pending,
+  selectedIds,
   onSelect,
   onMove,
   onCamera,
@@ -120,10 +122,18 @@ export function useSeatMapInteraction({
     const id = (e.target as HTMLElement).closest<HTMLElement>("[data-node-id]")?.dataset.nodeId;
     if (id && editing && e.button === 0 && !space.current) {
       if (pending) return;
-      onSelect([id]);
+      const nextIds =
+        e.ctrlKey || e.metaKey
+          ? selectedIds.includes(id)
+            ? selectedIds.filter((selectedId) => selectedId !== id)
+            : [...selectedIds, id]
+          : selectedIds.includes(id)
+            ? [...selectedIds]
+            : [id];
+      onSelect(nextIds);
       gesture.current = {
         type: "drag",
-        drag: beginDrag(document, id, e.pointerId, point(e), camera),
+        drag: beginDrag(document, nextIds, e.pointerId, point(e), camera),
       };
     } else {
       if (id && !editing && document.nodes[id]?.kind === "SEAT" && e.button === 0 && !space.current)

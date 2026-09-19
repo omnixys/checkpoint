@@ -303,6 +303,7 @@ function toolbar(onSetShape = vi.fn(), onMakeTableSquare = vi.fn()) {
 describe("shape toolbar", () => {
   it("switches a table shape and triggers the square action", () => {
     const { onSetShape, onMakeTableSquare } = toolbar();
+    fireEvent.click(screen.getByRole("button", { name: "Bearbeiten" }));
     fireEvent.click(screen.getByRole("button", { name: "Quadrat" }));
     expect(onMakeTableSquare).toHaveBeenCalled();
     fireEvent.mouseDown(screen.getByRole("combobox"));
@@ -331,6 +332,7 @@ describe("shape toolbar", () => {
     };
     cleanup();
     const view = render(<SeatMapEditorToolbar {...props} />);
+    fireEvent.click(view.getByRole("button", { name: "Bearbeiten" }));
     expect(view.getByRole("combobox")).toHaveTextContent("Bank");
     expect(view.getByRole("combobox")).toBeEnabled();
   });

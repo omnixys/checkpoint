@@ -212,6 +212,7 @@ async function mockGraphQL(page: Page): Promise<void> {
           });
 
         case "AutoGenerateSeatMap":
+        case "ApplySeatMapGeometry":
         case "MoveSection":
         case "MoveTable":
         case "MoveSeat":
@@ -295,16 +296,12 @@ test.describe("Seat Map Engine", () => {
     expect(updated).not.toBe(original);
   });
 
-  test("canvas transform contains scale and translate", async ({ page }) => {
-    const transform = await page.locator('[data-testid="seatmap-canvas"]').evaluate((el) => {
-      const child = el.firstElementChild;
-      if (!child) return "";
-      const grandchild = child.firstElementChild;
-      if (!grandchild) return "";
-      return (grandchild as HTMLElement).style.transform || "";
-    });
-    expect(transform).toContain("scale(");
-    expect(transform).toContain("translate(");
+  test("canvas world has a non-identity camera transform", async ({ page }) => {
+    const transform = await page
+      .locator('[data-testid="seatmap-world"]')
+      .evaluate((el) => getComputedStyle(el).transform || "");
+    expect(transform).toMatch(/^matrix\([^)]*\)$/);
+    expect(transform).not.toBe("matrix(1, 0, 0, 1, 0, 0)");
   });
 
   /* ---------------------------------------------------------------- */
@@ -312,17 +309,11 @@ test.describe("Seat Map Engine", () => {
   /* ---------------------------------------------------------------- */
   test("pan changes viewport translate", async ({ page }) => {
     const canvas = page.locator('[data-testid="seatmap-canvas"]');
-    const content = canvas.locator("> div > div").first();
-
-    const beforeTransform = await content.evaluate((el) => {
-      const parent = el.parentElement;
-      if (!parent) return "";
-      const grandparent = parent.parentElement;
-      return grandparent ? (grandparent as HTMLElement).style.transform : "";
-    });
+    const world = page.locator('[data-testid="seatmap-world"]');
+    const beforeTransform = await world.evaluate((el) => getComputedStyle(el).transform);
 
     const box = await canvas.boundingBox();
-    if (!canvasBox) return;
+    if (!box) return;
     const canvasBox = box;
 
     await page.mouse.move(canvasBox.x + 100, canvasBox.y + 100);
@@ -331,12 +322,7 @@ test.describe("Seat Map Engine", () => {
     await page.mouse.up();
     await page.waitForTimeout(300);
 
-    const afterTransform = await content.evaluate((el) => {
-      const parent = el.parentElement;
-      if (!parent) return "";
-      const grandparent = parent.parentElement;
-      return grandparent ? (grandparent as HTMLElement).style.transform : "";
-    });
+    const afterTransform = await world.evaluate((el) => getComputedStyle(el).transform);
 
     expect(afterTransform).not.toBe(beforeTransform);
   });
@@ -357,7 +343,7 @@ test.describe("Seat Map Engine", () => {
   /*  Own seat                                                        */
   /* ---------------------------------------------------------------- */
   test("own seat is rendered with seat number visible", async ({ page }) => {
-    await expect(page.getByLabel(/Sitz 1/)).toBeAttached();
+    await expect(page.locator('[data-testid="seat-st-0-0-0"]')).toBeVisible();
   });
 
   /* ---------------------------------------------------------------- */
@@ -388,7 +374,7 @@ test.describe("Seat Map Engine", () => {
   /*  Auto-generate dialog                                            */
   /* ---------------------------------------------------------------- */
   test("auto-generate dialog opens from edit toolbar", async ({ page }) => {
-    const editBtn = page.getByLabel("Bearbeiten");
+    const editBtn = page.getByRole("button", { name: "Bearbeiten" });
     await expect(editBtn).toBeVisible();
     await editBtn.click();
     await page.waitForTimeout(500);
@@ -398,9 +384,9 @@ test.describe("Seat Map Engine", () => {
     await autoGenBtn.click();
     await page.waitForTimeout(500);
 
-    const dialog = page.locator('[role="dialog"]');
+    const dialog = page.getByRole("dialog", { name: "Sitzplan erstellen" });
     await expect(dialog).toBeVisible();
-    await expect(dialog.getByText("Sitzplan generieren")).toBeAttached();
+    await expect(dialog.getByText("Sitzplan automatisch generieren")).toBeAttached();
     await expect(dialog.getByRole("button", { name: "Generieren" })).toBeVisible();
   });
 });
@@ -409,12 +395,17 @@ test.describe("Seat Map Engine", () => {
 /*  Role-based views                                                  */
 /* ================================================================== */
 test.describe("Seat Map Roles", () => {
-  test("admin sees edit toolbar with Bearbeiten button", async ({ page }) => {
+  test("admin sees the edit SpeedDial below the debug control", async ({ page }) => {
     currentRole = "ADMIN";
     useDefaultData();
     await mockGraphQL(page);
     await navigateToSeatMap(page);
-    await expect(page.getByLabel("Bearbeiten")).toBeVisible({ timeout: 15_000 });
+    const edit = page.getByRole("button", { name: "Bearbeiten" });
+    await expect(edit).toBeVisible({ timeout: 15_000 });
+    await edit.click();
+    const debug = page.getByTestId("debug-toggle");
+    await expect(debug).toBeVisible();
+    expect((await edit.boundingBox())?.y).toBeGreaterThan((await debug.boundingBox())?.y ?? 0);
   });
 
   test("guest does not see edit toolbar", async ({ page }) => {
@@ -424,7 +415,7 @@ test.describe("Seat Map Roles", () => {
     await mockGraphQL(page);
     await navigateToSeatMap(page);
     await expect(page.locator('[data-testid="seatmap-canvas"]')).toBeVisible({ timeout: 15_000 });
-    await expect(page.getByLabel("Bearbeiten")).not.toBeVisible();
+    await expect(page.getByRole("button", { name: "Bearbeiten" })).not.toBeVisible();
   });
 });
 
@@ -439,7 +430,7 @@ test.describe("Seat Map Drag-and-Drop", () => {
   });
 
   test("entering edit mode and clicking a section selects it", async ({ page }) => {
-    await page.getByLabel("Bearbeiten").click();
+    await page.getByRole("button", { name: "Bearbeiten" }).click();
     await page.waitForTimeout(500);
     const section = page.locator('[data-testid="section-sec-0"]');
     await section.click();
@@ -448,8 +439,36 @@ test.describe("Seat Map Drag-and-Drop", () => {
     await expect(toolbar).toBeVisible();
   });
 
+  test("closing the edit SpeedDial keeps edit mode, ending it clears the selection", async ({ page }) => {
+    const edit = page.getByRole("button", { name: "Bearbeiten" });
+    const canvas = page.locator('[data-testid="seatmap-canvas"]');
+    await edit.click();
+    await expect(page.getByTestId("editor-toolbar")).toBeVisible();
+    await expect(canvas).toHaveAttribute("aria-label", "Sitzplan bearbeiten");
+
+    await edit.click();
+    await expect(page.getByTestId("editor-toolbar")).not.toBeVisible();
+    await expect(canvas).toHaveAttribute("aria-label", "Sitzplan bearbeiten");
+
+    await edit.click();
+    const section = page.locator('[data-testid="section-sec-0"]');
+    await section.click();
+    await expect(page.getByTestId("editor-toolbar").getByText("Section 1", { exact: true })).toBeVisible();
+    await page.getByLabel("Bearbeitung beenden").click();
+    await expect(canvas).toHaveAttribute("aria-label", "Sitzplan ansehen");
+    await expect(page.getByTestId("editor-toolbar")).not.toBeVisible();
+    await edit.click();
+    await expect(page.getByText("Form", { exact: true })).not.toBeVisible();
+  });
+
+  test("single selection exposes the shape control in the edit action bar", async ({ page }) => {
+    await page.getByRole("button", { name: "Bearbeiten" }).click();
+    await page.locator('[data-testid="section-sec-0"]').click();
+    await expect(page.getByText("Form", { exact: true })).toBeVisible();
+  });
+
   test("dragging a section changes its position", async ({ page }) => {
-    await page.getByLabel("Bearbeiten").click();
+    await page.getByRole("button", { name: "Bearbeiten" }).click();
     await page.waitForTimeout(500);
 
     const section = page.locator('[data-testid="section-sec-0"]');

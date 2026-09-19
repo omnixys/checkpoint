@@ -3,7 +3,7 @@ import {
   type LayoutNode,
   type MoveOperation,
   movableNodes,
-  moveNode,
+  moveNodes,
 } from "./document";
 import { type Camera, type Point, screenToWorld } from "./geometry";
 
@@ -11,6 +11,7 @@ export const DRAG_THRESHOLD = 3;
 export interface DragGesture {
   readonly pointerId: number;
   readonly nodeId: string;
+  readonly nodeIds: readonly string[];
   readonly document: LayoutDocument;
   readonly camera: Camera;
   readonly start: Point;
@@ -20,18 +21,20 @@ export interface DragGesture {
 }
 export function beginDrag(
   document: LayoutDocument,
-  nodeId: string,
+  nodeIds: readonly string[] | string,
   pointerId: number,
   start: Point,
   camera: Camera,
 ): DragGesture {
+  const selection = typeof nodeIds === "string" ? [nodeIds] : nodeIds;
   return {
     document,
-    nodeId,
+    nodeId: selection[0] ?? "",
+    nodeIds: selection,
     pointerId,
     start,
     camera,
-    originals: movableNodes(document, nodeId),
+    originals: selection.flatMap((id) => movableNodes(document, id)),
     active: false,
     delta: { x: 0, y: 0 },
   };
@@ -47,7 +50,7 @@ export function updateDrag(gesture: DragGesture, point: Point): DragGesture {
 }
 export function finishDrag(gesture: DragGesture): MoveOperation | null {
   if (!gesture.active || !gesture.originals.length) return null;
-  const after = moveNode(gesture.document, gesture.nodeId, gesture.delta);
+  const after = moveNodes(gesture.document, gesture.nodeIds, gesture.delta);
   return after === gesture.document
     ? null
     : { nodeId: gesture.nodeId, before: gesture.document, after };

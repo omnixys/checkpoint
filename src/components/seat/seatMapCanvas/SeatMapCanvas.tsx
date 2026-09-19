@@ -2,7 +2,7 @@
 
 import { FitScreen, RotateRight, ZoomIn, ZoomOut } from "@mui/icons-material";
 import { Box, Chip, IconButton, Stack, Tooltip, Typography } from "@mui/material";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { SeatListQuery, SeatMapViewQuery } from "@/checkpoint/generated/graphql";
 import {
   type LayoutDocument,
@@ -13,6 +13,8 @@ import {
   type RotateOperation,
   resizeNode,
   rotateNode,
+  scaleNodes,
+  selectionBounds,
 } from "./core/document";
 import { type Camera, clientToScreen, fitCamera, zoomCamera } from "./core/geometry";
 import SeatMapDebugOverlay from "./SeatMapDebugOverlay";
@@ -46,6 +48,7 @@ interface Props {
   onResize?: (operation: ResizeOperation) => void;
   onRotate?: (operation: RotateOperation) => void;
   pending: boolean;
+  editorToolbar?: ReactNode;
 }
 const Body = memo(function Body({
   node,
@@ -126,6 +129,7 @@ export default function SeatMapCanvas({
   onResize,
   onRotate,
   pending,
+  editorToolbar,
   worldBackground,
   showObjects = true,
 }: Props) {
@@ -136,6 +140,7 @@ export default function SeatMapCanvas({
     camera,
     editing: isEditing,
     pending,
+    selectedIds,
     onSelect,
     onMove,
     onCamera: setCamera,
@@ -160,6 +165,13 @@ export default function SeatMapCanvas({
     pointerId: number;
     lastAngle: number;
     delta: number;
+    before: LayoutDocument;
+    after: LayoutDocument;
+  } | null>(null);
+  const [groupScaling, setGroupScaling] = useState<{
+    pointerId: number;
+    start: { x: number; y: number };
+    bounds: NonNullable<ReturnType<typeof selectionBounds>>;
     before: LayoutDocument;
     after: LayoutDocument;
   } | null>(null);
@@ -362,11 +374,50 @@ export default function SeatMapCanvas({
     const after = rotateNode(document, node.id, rotation);
     if (after !== document) onRotate?.({ nodeId: node.id, before: document, after });
   };
+  const groupBounds = useMemo(
+    () => (selectedIds.length > 1 ? selectionBounds(document, selectedIds) : null),
+    [document, selectedIds],
+  );
+  const groupScaleStart = (event: React.PointerEvent<HTMLButtonElement>) => {
+    if (!groupBounds || pending) return;
+    event.stopPropagation();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    setGroupScaling({
+      pointerId: event.pointerId,
+      start: { x: event.clientX, y: event.clientY },
+      bounds: groupBounds,
+      before: document,
+      after: document,
+    });
+  };
+  const groupScaleMove = (event: React.PointerEvent<HTMLButtonElement>) => {
+    if (!groupScaling || event.pointerId !== groupScaling.pointerId) return;
+    const sx = Math.max(
+      0.1,
+      (groupScaling.bounds.width + (event.clientX - groupScaling.start.x) / camera.scale) /
+        groupScaling.bounds.width,
+    );
+    const sy = Math.max(
+      0.1,
+      (groupScaling.bounds.height + (event.clientY - groupScaling.start.y) / camera.scale) /
+        groupScaling.bounds.height,
+    );
+    setGroupScaling((active) =>
+      active ? { ...active, after: scaleNodes(active.before, selectedIds, sx, sy) } : active,
+    );
+  };
+  const groupScaleFinish = (event: React.PointerEvent<HTMLButtonElement>) => {
+    if (!groupScaling || event.pointerId !== groupScaling.pointerId) return;
+    const operation = groupScaling.after === groupScaling.before ? null : groupScaling;
+    setGroupScaling(null);
+    if (operation)
+      onResize?.({ nodeId: selectedIds[0]!, before: operation.before, after: operation.after });
+  };
   const kindName = (node: LayoutNode) =>
     node.kind === "SECTION" ? "Bereich" : node.kind === "TABLE" ? "Tisch" : "Sitz";
   const displayNodes = useMemo(
-    () => orderedNodes(rotating?.after ?? resizing?.after ?? document),
-    [document, resizing?.after, rotating?.after],
+    () => orderedNodes(groupScaling?.after ?? rotating?.after ?? resizing?.after ?? document),
+    [document, groupScaling?.after, resizing?.after, rotating?.after],
   );
   const resizeHandle = (node: LayoutNode) => (
     <Box
@@ -421,7 +472,7 @@ export default function SeatMapCanvas({
         border: 2,
         borderColor: "background.paper",
         bgcolor: "secondary.main",
-        cursor: "grab",
+        cursor: "crosshair",
         p: 0,
         zIndex: 2,
         display: "grid",
@@ -508,6 +559,43 @@ export default function SeatMapCanvas({
           transformOrigin: "0 0",
         }}
       >
+        {groupBounds && (
+          <Box
+            sx={{
+              position: "absolute",
+              left: groupBounds.left,
+              top: groupBounds.top,
+              width: groupBounds.width,
+              height: groupBounds.height,
+              border: 2,
+              borderColor: "primary.main",
+              pointerEvents: "none",
+              zIndex: 30,
+            }}
+          >
+            <Box
+              component="button"
+              type="button"
+              aria-label="Auswahl proportional skalieren"
+              onPointerDown={groupScaleStart}
+              onPointerMove={groupScaleMove}
+              onPointerUp={groupScaleFinish}
+              sx={{
+                pointerEvents: "auto",
+                position: "absolute",
+                right: -10,
+                bottom: -10,
+                width: 20,
+                height: 20,
+                borderRadius: "50%",
+                border: 2,
+                borderColor: "background.paper",
+                bgcolor: "primary.main",
+                cursor: "nwse-resize",
+              }}
+            />
+          </Box>
+        )}
         {worldBackground?.visible && (
           <Box
             component="img"
@@ -542,6 +630,8 @@ export default function SeatMapCanvas({
                   position: "absolute",
                   left: 0,
                   top: 0,
+                  width: n.width,
+                  height: n.height,
                   transform: nodeTransform(n),
                   transformOrigin: "0 0",
                 }}
@@ -606,6 +696,9 @@ export default function SeatMapCanvas({
           visible={showDebug}
           onToggle={() => setShowDebug((v) => !v)}
         />
+      )}
+      {editorToolbar && (
+        <Box sx={{ position: "absolute", top: 52, left: 1, zIndex: 69 }}>{editorToolbar}</Box>
       )}
     </Box>
   );

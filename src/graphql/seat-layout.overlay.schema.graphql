@@ -5,6 +5,24 @@ type Mutation {
   moveTable(input: MoveTableInput!): TablePayload!
   updateSection(input: UpdateSectionInput!): SectionPayload!
   appendTableSeats(input: AppendTableSeatsInput!): [SeatPayload!]!
+  applySeatMapGeometry(input: ApplyLayoutGeometryInput!): Boolean!
+}
+
+enum LayoutGeometryKind { SEAT TABLE SECTION }
+
+input LayoutGeometryChangeInput {
+  id: ID!
+  kind: LayoutGeometryKind!
+  x: Float!
+  y: Float!
+  width: Float!
+  height: Float!
+  rotation: Float!
+}
+
+input ApplyLayoutGeometryInput {
+  eventId: ID!
+  changes: [LayoutGeometryChangeInput!]!
 }
 
 input AppendTableSeatsInput {

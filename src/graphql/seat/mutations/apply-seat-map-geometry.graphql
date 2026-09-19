@@ -1,0 +1,3 @@
+mutation ApplySeatMapGeometry($input: ApplyLayoutGeometryInput!) {
+  applySeatMapGeometry(input: $input)
+}

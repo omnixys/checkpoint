@@ -18,10 +18,13 @@ import {
   IconButton,
   MenuItem,
   Select,
+  SpeedDial,
+  SpeedDialIcon,
   Stack,
   Tooltip,
   Typography,
 } from "@mui/material";
+import { useState } from "react";
 
 export type EditorMode = "view" | "edit";
 
@@ -138,201 +141,213 @@ export default function SeatMapEditorToolbar({
   const single = selectedItems.length === 1 ? selectedItems[0] : null;
   const label = selectionLabel(selectedItems);
 
-  if (mode === "view") {
-    return (
-      <Stack
-        spacing={1}
-        sx={{
-          position: "absolute",
-          top: 72,
-          left: 12,
-          zIndex: 60,
-          bgcolor: "background.paper",
-          borderRadius: 2,
-          boxShadow: 3,
-          p: 1,
-        }}
-      >
-        <Tooltip title="Bearbeiten">
-          <IconButton size="small" aria-label="Edit" onClick={onModeToggle} color="primary">
-            <EditOutlined fontSize="small" />
-          </IconButton>
-        </Tooltip>
-      </Stack>
-    );
-  }
+  const [open, setOpen] = useState(false);
+
+  const toggle = () => {
+    if (mode === "view") onModeToggle();
+    setOpen((current) => !current);
+  };
+
+  const endEditing = () => {
+    setOpen(false);
+    if (mode === "edit") onModeToggle();
+  };
 
   return (
-    <Stack
-      spacing={0.5}
-      data-testid="editor-toolbar"
-      sx={{
-        position: "absolute",
-        top: 72,
-        left: 12,
-        zIndex: 60,
-        bgcolor: "background.paper",
-        borderRadius: 2,
-        boxShadow: 3,
-        p: 1,
-        minWidth: single ? 136 : 40,
-      }}
-    >
-      <Tooltip title="Ansicht">
-        <IconButton size="small" aria-label="View" onClick={onModeToggle} color="primary">
-          <VisibilityOutlined fontSize="small" />
-        </IconButton>
-      </Tooltip>
-
-      <Divider />
-
-      <Tooltip title="Rückgängig">
-        <IconButton disabled={disabled} size="small" aria-label="Undo" onClick={onUndo}>
-          <Undo fontSize="small" />
-        </IconButton>
-      </Tooltip>
-
-      <Tooltip title="Wiederholen">
-        <IconButton disabled={disabled} size="small" aria-label="Redo" onClick={onRedo}>
-          <Redo fontSize="small" />
-        </IconButton>
-      </Tooltip>
-
-      <Divider />
-
-      <Tooltip title="Bereich hinzufügen">
-        <IconButton
-          disabled={disabled}
-          size="small"
-          aria-label="Add section"
-          onClick={onAddSection}
+    <Box data-camera-control sx={{ position: "relative" }}>
+      <SpeedDial
+        ariaLabel="Bearbeiten"
+        direction="down"
+        icon={<SpeedDialIcon openIcon={<EditOutlined />} />}
+        onClick={toggle}
+        open={open}
+        sx={{ position: "relative", "& .MuiSpeedDial-fab": { width: 40, height: 40 } }}
+      />
+      {mode === "edit" && open && (
+        <Stack
+          spacing={0.5}
+          data-testid="editor-toolbar"
+          sx={{
+            position: "absolute",
+            top: 44,
+            left: 0,
+            zIndex: 1,
+            bgcolor: "background.paper",
+            border: 1,
+            borderColor: "divider",
+            borderRadius: 1,
+            boxShadow: 3,
+            p: 0.5,
+            minWidth: single ? 136 : 40,
+          }}
         >
-          <Add fontSize="small" />
-        </IconButton>
-      </Tooltip>
-
-      <Tooltip title="Tisch hinzufügen">
-        <IconButton
-          disabled={disabled || !singleSection}
-          size="small"
-          aria-label="Add table"
-          onClick={onAddTable}
-        >
-          <Add fontSize="small" />
-        </IconButton>
-      </Tooltip>
-
-      {singleTable && (
-        <Tooltip title="Sitzplätze hinzufügen">
-          <IconButton disabled={disabled} size="small" aria-label="Add seats" onClick={onAddSeats}>
-            <Add fontSize="small" />
-          </IconButton>
-        </Tooltip>
-      )}
-
-      <Divider />
-
-      {singleSection && (
-        <Tooltip title="Bereich duplizieren">
-          <IconButton
-            disabled={disabled}
-            size="small"
-            aria-label="Clone section"
-            onClick={onCloneSection}
-          >
-            <ContentCopy fontSize="small" />
-          </IconButton>
-        </Tooltip>
-      )}
-
-      {singleTable && (
-        <Tooltip title="Tisch duplizieren">
-          <IconButton
-            disabled={disabled}
-            size="small"
-            aria-label="Duplicate table"
-            onClick={onDuplicateTable}
-          >
-            <ContentCopy fontSize="small" />
-          </IconButton>
-        </Tooltip>
-      )}
-
-      {selectedItems.length > 0 && (
-        <Tooltip title="Umbenennen">
-          <IconButton disabled={disabled} size="small" aria-label="Rename" onClick={onRename}>
-            <DriveFileRenameOutline fontSize="small" />
-          </IconButton>
-        </Tooltip>
-      )}
-
-      {selectedItems.length > 0 && (
-        <Tooltip title="Löschen">
-          <IconButton
-            disabled={disabled}
-            size="small"
-            aria-label="Delete"
-            onClick={onDelete}
-            color="error"
-          >
-            <DeleteOutlined fontSize="small" />
-          </IconButton>
-        </Tooltip>
-      )}
-
-      <Divider />
-
-      {single && onSetShape && (
-        <Stack spacing={0.5} sx={{ px: 0.5, pt: 0.25, minWidth: 0 }}>
-          <Typography variant="caption" sx={{ color: "text.secondary", fontSize: 9 }}>
-            Form
-          </Typography>
-          <Select
-            size="small"
-            fullWidth
-            value={selectedShape ?? SHAPE_DEFAULT[single.type]}
-            disabled={geometryDisabled}
-            onChange={(e) => onSetShape(String(e.target.value))}
-          >
-            {SHAPE_OPTIONS[single.type].map((s) => (
-              <MenuItem key={s.value} value={s.value}>
-                {s.label}
-              </MenuItem>
-            ))}
-          </Select>
-          {singleTable && onMakeTableSquare && (
-            <Button
+          <Tooltip title="Ansicht">
+            <IconButton
               size="small"
-              variant="outlined"
-              disabled={geometryDisabled}
-              onClick={onMakeTableSquare}
+              aria-label="Bearbeitung beenden"
+              onClick={endEditing}
+              color="primary"
             >
-              Quadrat
-            </Button>
+              <VisibilityOutlined fontSize="small" />
+            </IconButton>
+          </Tooltip>
+
+          <Divider />
+
+          <Tooltip title="Rückgängig">
+            <IconButton disabled={disabled} size="small" aria-label="Undo" onClick={onUndo}>
+              <Undo fontSize="small" />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Wiederholen">
+            <IconButton disabled={disabled} size="small" aria-label="Redo" onClick={onRedo}>
+              <Redo fontSize="small" />
+            </IconButton>
+          </Tooltip>
+
+          <Divider />
+
+          <Tooltip title="Bereich hinzufügen">
+            <IconButton
+              disabled={disabled}
+              size="small"
+              aria-label="Add section"
+              onClick={onAddSection}
+            >
+              <Add fontSize="small" />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Tisch hinzufügen">
+            <IconButton
+              disabled={disabled || !singleSection}
+              size="small"
+              aria-label="Add table"
+              onClick={onAddTable}
+            >
+              <Add fontSize="small" />
+            </IconButton>
+          </Tooltip>
+
+          {singleTable && (
+            <Tooltip title="Sitzplätze hinzufügen">
+              <IconButton
+                disabled={disabled}
+                size="small"
+                aria-label="Add seats"
+                onClick={onAddSeats}
+              >
+                <Add fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
+
+          <Divider />
+
+          {singleSection && (
+            <Tooltip title="Bereich duplizieren">
+              <IconButton
+                disabled={disabled}
+                size="small"
+                aria-label="Clone section"
+                onClick={onCloneSection}
+              >
+                <ContentCopy fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
+
+          {singleTable && (
+            <Tooltip title="Tisch duplizieren">
+              <IconButton
+                disabled={disabled}
+                size="small"
+                aria-label="Duplicate table"
+                onClick={onDuplicateTable}
+              >
+                <ContentCopy fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
+
+          {selectedItems.length > 0 && (
+            <Tooltip title="Umbenennen">
+              <IconButton disabled={disabled} size="small" aria-label="Rename" onClick={onRename}>
+                <DriveFileRenameOutline fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
+
+          {selectedItems.length > 0 && (
+            <Tooltip title="Löschen">
+              <IconButton
+                disabled={disabled}
+                size="small"
+                aria-label="Delete"
+                onClick={onDelete}
+                color="error"
+              >
+                <DeleteOutlined fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
+
+          <Divider />
+
+          {single && onSetShape && (
+            <Stack spacing={0.5} sx={{ px: 0.5, pt: 0.25, minWidth: 0 }}>
+              <Typography variant="caption" sx={{ color: "text.secondary", fontSize: 9 }}>
+                Form
+              </Typography>
+              <Select
+                size="small"
+                fullWidth
+                value={selectedShape ?? SHAPE_DEFAULT[single.type]}
+                disabled={geometryDisabled}
+                onChange={(e) => onSetShape(String(e.target.value))}
+              >
+                {SHAPE_OPTIONS[single.type].map((s) => (
+                  <MenuItem key={s.value} value={s.value}>
+                    {s.label}
+                  </MenuItem>
+                ))}
+              </Select>
+              {singleTable && onMakeTableSquare && (
+                <Button
+                  size="small"
+                  variant="outlined"
+                  disabled={geometryDisabled}
+                  onClick={onMakeTableSquare}
+                >
+                  Quadrat
+                </Button>
+              )}
+            </Stack>
+          )}
+
+          <Divider />
+
+          <Tooltip title="Sitzplan erstellen">
+            <IconButton
+              disabled={importDisabled}
+              size="small"
+              aria-label="Auto-Generieren"
+              onClick={onAutoGenerate}
+            >
+              <AutoFixHigh fontSize="small" />
+            </IconButton>
+          </Tooltip>
+
+          {label && (
+            <Box sx={{ px: 0.5, pt: 0.5 }}>
+              <Typography variant="caption" sx={{ color: "text.secondary", fontSize: 9 }}>
+                {label}
+              </Typography>
+            </Box>
           )}
         </Stack>
       )}
-
-      <Divider />
-
-      <Tooltip title="Sitzplan erstellen">
-        <IconButton
-          disabled={importDisabled}
-          size="small"
-          aria-label="Create layout"
-          onClick={onAutoGenerate}
-        >
-          <AutoFixHigh fontSize="small" />
-        </IconButton>
-      </Tooltip>
-
-      {label && (
-        <Box sx={{ px: 0.5, pt: 0.5 }}>
-          <Typography variant="caption" sx={{ color: "text.secondary", fontSize: 9 }}>
-            {label}
-          </Typography>
-        </Box>
-      )}
-    </Stack>
+    </Box>
   );
 }

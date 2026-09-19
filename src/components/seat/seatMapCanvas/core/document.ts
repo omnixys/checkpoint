@@ -76,6 +76,65 @@ export function moveNode(document: LayoutDocument, id: string, delta: Point): La
   for (const node of moving) nodes[node.id] = { ...node, x: node.x + delta.x, y: node.y + delta.y };
   return { ...document, nodes };
 }
+
+/** Removes descendants whose selected parent already carries their transform. */
+export function normalizeTransformIds(document: LayoutDocument, ids: readonly string[]): string[] {
+  const selected = new Set(ids.filter((id) => document.nodes[id]));
+  return [...selected].filter((id) => {
+    const node = document.nodes[id]!;
+    return !(
+      (node.kind !== "SECTION" && selected.has(node.sectionId)) ||
+      (node.kind === "SEAT" && node.tableId && selected.has(node.tableId))
+    );
+  });
+}
+
+export function moveNodes(
+  document: LayoutDocument,
+  ids: readonly string[],
+  delta: Point,
+): LayoutDocument {
+  let next = document;
+  for (const id of normalizeTransformIds(document, ids)) next = moveNode(next, id, delta);
+  return next;
+}
+
+export function selectionBounds(document: LayoutDocument, ids: readonly string[]) {
+  const nodes = normalizeTransformIds(document, ids).flatMap((id) => movableNodes(document, id));
+  const unique = [...new Map(nodes.map((node) => [node.id, node])).values()];
+  if (!unique.length) return null;
+  const left = Math.min(...unique.map((node) => node.x - node.width / 2));
+  const top = Math.min(...unique.map((node) => node.y - node.height / 2));
+  const right = Math.max(...unique.map((node) => node.x + node.width / 2));
+  const bottom = Math.max(...unique.map((node) => node.y + node.height / 2));
+  return { left, top, width: right - left, height: bottom - top, nodes: unique };
+}
+
+/** Scales every selected root and its descendants around the north-west selection corner. */
+export function scaleNodes(
+  document: LayoutDocument,
+  ids: readonly string[],
+  scaleX: number,
+  scaleY: number,
+): LayoutDocument {
+  const bounds = selectionBounds(document, ids);
+  if (!bounds || !Number.isFinite(scaleX) || !Number.isFinite(scaleY) || scaleX <= 0 || scaleY <= 0)
+    return document;
+  const nodes = { ...document.nodes };
+  for (const node of bounds.nodes) {
+    const min = MIN_SIZE[node.kind];
+    const width = Math.max(min.width, node.width * scaleX);
+    const height = Math.max(min.height, node.height * scaleY);
+    nodes[node.id] = {
+      ...node,
+      x: bounds.left + (node.x - bounds.left) * scaleX,
+      y: bounds.top + (node.y - bounds.top) * scaleY,
+      width,
+      height,
+    };
+  }
+  return { ...document, nodes };
+}
 const MIN_SIZE: Record<LayoutNode["kind"], { width: number; height: number }> = {
   SECTION: { width: 160, height: 120 },
   TABLE: { width: 60, height: 40 },
@@ -238,7 +297,10 @@ export function rotateNode(document: LayoutDocument, id: string, rotation: numbe
   if (toPositiveAngle(node.rotation) === next) return document;
   const delta = next - toPositiveAngle(node.rotation);
   const center = { x: node.x, y: node.y };
-  const nodes: Record<string, LayoutNode> = { ...document.nodes, [id]: { ...node, rotation: next } };
+  const nodes: Record<string, LayoutNode> = {
+    ...document.nodes,
+    [id]: { ...node, rotation: next },
+  };
   if (node.kind === "SECTION") {
     for (const child of orderedNodes(document))
       if (child.kind !== "SECTION" && child.sectionId === node.id) {
