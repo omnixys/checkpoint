@@ -1,0 +1,11 @@
+mutation UpdateTable($input: UpdateTableInput!) {
+  updateTable(input: $input) {
+    id
+    x
+    y
+    width
+    height
+    shape
+    rotation
+  }
+}

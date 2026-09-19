@@ -4163,6 +4163,7 @@ export type UpdatePlusOneInput = {
 };
 
 export type UpdateSeatInput = {
+  height: InputMaybe<Scalars['Float']['input']>;
   id: Scalars['ID']['input'];
   label: InputMaybe<Scalars['String']['input']>;
   meta: InputMaybe<Scalars['JSON']['input']>;
@@ -4170,6 +4171,8 @@ export type UpdateSeatInput = {
   number: InputMaybe<Scalars['Int']['input']>;
   rotation: InputMaybe<Scalars['Float']['input']>;
   seatType: InputMaybe<SeatType>;
+  shape: InputMaybe<SeatShape>;
+  width: InputMaybe<Scalars['Float']['input']>;
   x: InputMaybe<Scalars['Float']['input']>;
   y: InputMaybe<Scalars['Float']['input']>;
 };
@@ -4181,6 +4184,7 @@ export type UpdateSectionInput = {
   meta: InputMaybe<Scalars['JSON']['input']>;
   name: InputMaybe<Scalars['String']['input']>;
   order: InputMaybe<Scalars['Int']['input']>;
+  rotation: InputMaybe<Scalars['Float']['input']>;
   shape: InputMaybe<SectionShape>;
   width: InputMaybe<Scalars['Float']['input']>;
   x: InputMaybe<Scalars['Float']['input']>;

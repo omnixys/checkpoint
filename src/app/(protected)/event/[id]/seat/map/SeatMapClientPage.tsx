@@ -5,8 +5,8 @@ import { Alert, Box, Button, Chip, CircularProgress, Stack, Typography } from "@
 import { useParams } from "next/navigation";
 import React from "react";
 import RouteGuard from "@/checkpoint/components/guard/RouteGuard";
-import { exportMove } from "@/checkpoint/components/seat/seatMapCanvas/core/adapter";
 import { setNodeShape } from "@/checkpoint/components/seat/seatMapCanvas/core/document";
+import { planGeometryWrite } from "@/checkpoint/components/seat/seatMapCanvas/core/persist-geometry";
 import { SeatMapCreateDialog } from "@/checkpoint/components/seat/seatMapCanvas/import/SeatMapCreateDialog";
 import { useDraftLossWarning } from "@/checkpoint/components/seat/seatMapCanvas/import/useDraftLossWarning";
 import { useLocalLayoutDraft } from "@/checkpoint/components/seat/seatMapCanvas/import/useLocalLayoutDraft";
@@ -47,7 +47,9 @@ import {
   type SectionShape,
   type TableShape,
   UndoLayoutDocument,
+  UpdateSeatDocument,
   UpdateSectionDocument,
+  UpdateTableDocument,
 } from "@/checkpoint/generated/graphql";
 import useEventTreeQuery from "@/checkpoint/hooks/events/useEventTreeQuery";
 import useSeatListQuery from "@/checkpoint/hooks/seat/useSeatListQuery";
@@ -144,6 +146,8 @@ function SeatMapEvent({ eventId }: { eventId: string }) {
   const [createTable] = useMutation(CreateTableDocument);
   const [appendTableSeats] = useMutation(AppendTableSeatsDocument);
   const [updateSection] = useMutation(UpdateSectionDocument);
+  const [updateSeat] = useMutation(UpdateSeatDocument);
+  const [updateTable] = useMutation(UpdateTableDocument);
   const [deleteSection] = useMutation(DeleteSectionDocument);
   const [deleteTable] = useMutation(DeleteTableDocument);
   const [deleteSeat] = useMutation(DeleteSeatDocument);
@@ -162,38 +166,17 @@ function SeatMapEvent({ eventId }: { eventId: string }) {
   const [selectedIds, setSelectedIds] = React.useState<string[]>([]);
   const persistLayout = React.useCallback<PersistLayoutOperation>(
     async (operation) => {
-      const node = operation.after.nodes[operation.nodeId];
-      const before = operation.before.nodes[operation.nodeId];
-      if (!node || !before) return;
-      if (
-        node.kind === "SECTION" &&
-        before.kind === "SECTION" &&
-        (node.width !== before.width || node.height !== before.height)
-      ) {
-        await updateSection({
-          variables: {
-            input: {
-              id: node.id,
-              x: node.x,
-              y: node.y,
-              width: node.width,
-              height: node.height,
-              capacity: null,
-              meta: null,
-              name: null,
-              order: null,
-              shape: null,
-            },
-          },
-        });
-        return;
+      for (const write of planGeometryWrite(operation)) {
+        if (write.type === "moveSection") await moveSection({ variables: write.variables });
+        else if (write.type === "moveTable") await moveTable({ variables: write.variables });
+        else if (write.type === "moveSeat") await moveSeat({ variables: write.variables });
+        else if (write.type === "updateSection")
+          await updateSection({ variables: write.variables });
+        else if (write.type === "updateTable") await updateTable({ variables: write.variables });
+        else await updateSeat({ variables: write.variables });
       }
-      const input = exportMove(operation.after, node.id);
-      if (node.kind === "SECTION") await moveSection({ variables: { input } });
-      else if (node.kind === "TABLE") await moveTable({ variables: { input } });
-      else await moveSeat({ variables: { input: { ...input, rotation: null } } });
     },
-    [moveSection, moveTable, moveSeat, updateSection],
+    [moveSection, moveTable, moveSeat, updateSection, updateSeat, updateTable],
   );
   const layout = useLayoutDocument(eventId, mapData?.seatLayout ?? EMPTY_LAYOUT, persistLayout);
   const draftLayout = useLocalLayoutDraft(eventId, layout.document, layout.move);
@@ -250,7 +233,7 @@ function SeatMapEvent({ eventId }: { eventId: string }) {
     if (!node || !draftLayout.document || actionFlight.current) return;
     const after = setNodeShape(draftLayout.document, node.id, shape);
     if (after !== draftLayout.document)
-      draftLayout.localApply({ nodeId: node.id, before: draftLayout.document, after });
+      draftLayout.resize({ nodeId: node.id, before: draftLayout.document, after });
   };
   const handleMakeTableSquare = () => {
     const node = selectedSingleNode;
@@ -259,7 +242,7 @@ function SeatMapEvent({ eventId }: { eventId: string }) {
     const size = Math.max(node.width, node.height);
     const after = setNodeShape(draftLayout.document, node.id, "RECTANGLE", size, size);
     if (after !== draftLayout.document)
-      draftLayout.localApply({ nodeId: node.id, before: draftLayout.document, after });
+      draftLayout.resize({ nodeId: node.id, before: draftLayout.document, after });
   };
   const [autoGenerateOpen, setAutoGenerateOpen] = React.useState(false);
   const [addSeatsOpen, setAddSeatsOpen] = React.useState(false);
@@ -624,12 +607,11 @@ function SeatMapEvent({ eventId }: { eventId: string }) {
               }}
               onResize={(operation) => {
                 if (actionFlight.current) return;
-                const kind = operation.after.nodes[operation.nodeId]?.kind;
-                if (kind === "SECTION") void draftLayout.resize(operation);
-                else if (kind) draftLayout.localApply(operation);
+                void draftLayout.resize(operation);
               }}
               onRotate={(operation) => {
-                if (!actionFlight.current) draftLayout.localApply(operation);
+                if (actionFlight.current) return;
+                void draftLayout.resize(operation);
               }}
               pending={blocked}
             />

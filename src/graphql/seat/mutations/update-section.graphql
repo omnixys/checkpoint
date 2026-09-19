@@ -5,5 +5,7 @@ mutation UpdateSection($input: UpdateSectionInput!) {
     y
     width
     height
+    shape
+    rotation
   }
 }

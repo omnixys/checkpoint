@@ -11,3 +11,13 @@ input AppendTableSeatsInput {
   tableId: ID!
   count: Int!
 }
+
+input UpdateSectionInput {
+  rotation: Float
+}
+
+input UpdateSeatInput {
+  width: Float
+  height: Float
+  shape: SeatShape
+}

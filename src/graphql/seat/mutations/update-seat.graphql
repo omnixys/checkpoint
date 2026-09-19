@@ -1,0 +1,11 @@
+mutation UpdateSeat($input: UpdateSeatInput!) {
+  updateSeat(input: $input) {
+    id
+    x
+    y
+    width
+    height
+    shape
+    rotation
+  }
+}
