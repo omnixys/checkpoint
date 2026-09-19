@@ -19,6 +19,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { centerStyle } from "@/checkpoint/app/(protected)/event/[id]/settings/EventSettingsClientPage";
 import OwnerTransferDialog from "@/checkpoint/components/event/settings/dialog/OwnerTransferDialog";
+import IndividualUserPermissionsSection from "@/checkpoint/components/event/settings/sections/IndividualUserPermissionsSection";
 import type { CreateEventInput, GetSubEventNameListQuery } from "@/checkpoint/generated/graphql";
 import {
   EventCategory,
@@ -227,6 +228,8 @@ export default function EventMetaSection({ meta, actions, roles }: Props) {
             </AnimatePresence>
           </Stack>
         </Stack>
+
+        <IndividualUserPermissionsSection eventId={meta.id} />
       </Stack>
 
       {/* OWNER TRANSFER */}
