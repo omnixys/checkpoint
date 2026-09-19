@@ -61,6 +61,19 @@ function jwtSubject(token: string): string {
   return (JSON.parse(Buffer.from(payload, "base64url").toString("utf8")) as { sub: string }).sub;
 }
 
+function jwtTenantId(token: string): string {
+  const payload = token.split(".")[1];
+  if (!payload) throw new Error("Access token has no payload");
+  const claims = JSON.parse(Buffer.from(payload, "base64url").toString("utf8")) as {
+    tenant_ids?: unknown;
+  };
+  const tenantId = Array.isArray(claims.tenant_ids)
+    ? claims.tenant_ids.find((value): value is string => typeof value === "string")
+    : undefined;
+  if (!tenantId) throw new Error("Access token has no tenant_ids claim");
+  return tenantId;
+}
+
 test("graphql-transport-ws answers wsPing and accepts an HttpOnly-cookie subscription", async ({
   context,
   page,
@@ -71,6 +84,7 @@ test("graphql-transport-ws answers wsPing and accepts an HttpOnly-cookie subscri
     e2eEnv.USER_USERNAME,
   );
   const conversationId = await directConversationId(request, accessToken);
+  const tenantId = jwtTenantId(accessToken);
 
   await context.addCookies([
     {
@@ -84,7 +98,7 @@ test("graphql-transport-ws answers wsPing and accepts an HttpOnly-cookie subscri
   await page.goto(`${gatewayUrl}/health/liveness`);
 
   const result = await page.evaluate(
-    ({ url, conversationId }) =>
+    ({ url, conversationId, tenantId }) =>
       new Promise<{ ping: string; authenticatedSubscription: boolean }>((resolve, reject) => {
         const socket = new WebSocket(url, "graphql-transport-ws");
         const timeout = window.setTimeout(() => {
@@ -102,7 +116,13 @@ test("graphql-transport-ws answers wsPing and accepts an HttpOnly-cookie subscri
         };
 
         socket.onerror = () => reject(new Error("WebSocket connection failed"));
-        socket.onopen = () => socket.send(JSON.stringify({ type: "connection_init" }));
+        socket.onopen = () =>
+          socket.send(
+            JSON.stringify({
+              type: "connection_init",
+              payload: { "x-tenant-id": tenantId },
+            }),
+          );
         socket.onmessage = ({ data }) => {
           const message = JSON.parse(String(data)) as {
             id?: string;
@@ -141,7 +161,7 @@ test("graphql-transport-ws answers wsPing and accepts an HttpOnly-cookie subscri
           }
         };
       }),
-    { url: websocketUrl, conversationId },
+    { url: websocketUrl, conversationId, tenantId },
   );
 
   expect(result).toEqual({ ping: "ok", authenticatedSubscription: true });

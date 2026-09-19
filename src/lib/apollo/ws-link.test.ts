@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const websocket = vi.hoisted(() => ({
   options: undefined as
     | {
+        connectionParams: () => Record<string, string>;
         on: {
           connecting: () => void;
           opened: (socket: { close: (code: number, reason: string) => void }) => void;
@@ -63,5 +64,14 @@ describe("central GraphQL websocket transport", () => {
     websocket.options?.on.closed({ code: 4401, reason: "Unauthorized" });
 
     expect(transport.getRealtimeStatus()).toBe("authentication_failed");
+  });
+
+  it("sends only the requested tenant in WebSocket connection parameters", async () => {
+    const transport = await import("./ws-link");
+    transport.createWsLinkWithAuth();
+
+    expect(websocket.options?.connectionParams()).toEqual({
+      "x-tenant-id": expect.any(String),
+    });
   });
 });

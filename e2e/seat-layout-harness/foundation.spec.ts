@@ -9,7 +9,7 @@ const camera = (page: Page) =>
     return { x: matrix.e, y: matrix.f, scale: matrix.a };
   });
 async function center(page: Page, id: string) {
-  const box = await page.locator(`[data-node-id="${id}"] button`).boundingBox();
+  const box = await page.locator(`[data-node-id="${id}"] button`).first().boundingBox();
   if (!box) throw new Error(`Missing node ${id}`);
   return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
 }

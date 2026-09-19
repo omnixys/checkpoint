@@ -1,6 +1,7 @@
 import type {
   LayoutDocument,
   LayoutNode,
+  LayoutOperation,
 } from "../../src/components/seat/seatMapCanvas/core/document";
 
 export interface HarnessSnapshot {
@@ -9,6 +10,8 @@ export interface HarnessSnapshot {
   pending: boolean;
   error: string | null;
   requests: { kind: LayoutNode["kind"]; input: { id: string; x: number; y: number } }[];
+  resizeOps: LayoutOperation[];
+  rotateOps: LayoutOperation[];
 }
 declare global {
   interface Window {

@@ -55,7 +55,6 @@ export function createWsLinkWithAuth(): ApolloLink | null {
       const context = getAuthContext();
       return {
         "x-tenant-id": context.tenantId,
-        ...(context.actorId ? { "x-actor-id": context.actorId } : {}),
       };
     },
     on: {
