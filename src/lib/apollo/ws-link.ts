@@ -5,7 +5,12 @@ import { getAuthContext } from "@/checkpoint/lib/apollo/auth-context";
 import { env } from "@/checkpoint/lib/env";
 import { getLogger } from "@/checkpoint/utils/logger";
 
-export type RealtimeStatus = "connecting" | "connected" | "reconnecting" | "offline";
+export type RealtimeStatus =
+  | "connecting"
+  | "connected"
+  | "reconnecting"
+  | "authentication_failed"
+  | "offline";
 
 let status: RealtimeStatus = "offline";
 let hasConnected = false;
@@ -85,7 +90,13 @@ export function createWsLinkWithAuth(): ApolloLink | null {
             ? event.reason
             : "";
         restartSocket = null;
-        setStatus(code === 1000 ? "offline" : "reconnecting");
+        setStatus(
+          code === 4401 || code === 4403
+            ? "authentication_failed"
+            : code === 1000
+              ? "offline"
+              : "reconnecting",
+        );
         logger.warn("WS closed", { code, reason });
       },
       error: (error) => {

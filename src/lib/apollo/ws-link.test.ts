@@ -55,4 +55,13 @@ describe("central GraphQL websocket transport", () => {
     on?.connected();
     expect(transport.getRealtimeStatus()).toBe("connected");
   });
+
+  it("exposes an authentication failure instead of showing the socket as offline", async () => {
+    const transport = await import("./ws-link");
+    transport.createWsLinkWithAuth();
+
+    websocket.options?.on.closed({ code: 4401, reason: "Unauthorized" });
+
+    expect(transport.getRealtimeStatus()).toBe("authentication_failed");
+  });
 });

@@ -19,6 +19,8 @@ export function realtimeStatusLabel(status: RealtimeStatus): string {
       return "Verbindung wird hergestellt";
     case "reconnecting":
       return "Verbindung wird wiederhergestellt";
+    case "authentication_failed":
+      return "Anmeldung für Live-Nachrichten fehlgeschlagen";
     case "offline":
       return "Offline";
   }
