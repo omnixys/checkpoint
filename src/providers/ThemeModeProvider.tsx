@@ -16,6 +16,7 @@ interface ThemeModeProviderProps {
 }
 
 const WEDDING_PROFILE: ThemeProfile = "wedding";
+const DEFAULT_MODE: PaletteMode = "dark";
 
 function clearThemeProfileCookie() {
   const domain = window.location.hostname.endsWith(".omnixys.com") ? "; domain=.omnixys.com" : "";
@@ -47,7 +48,7 @@ export default function ThemeModeProvider({
   // State
   // -------------------------------------------------------------
   const [mode, setMode] = React.useState<PaletteMode>(
-    initialThemeProfile === WEDDING_PROFILE ? "dark" : "light",
+    initialThemeProfile === WEDDING_PROFILE ? "dark" : DEFAULT_MODE,
   );
   const [scheme, setScheme] = React.useState<OmnixysColorScheme>(
     initialThemeProfile === WEDDING_PROFILE ? "wedding" : "original",
@@ -80,9 +81,7 @@ export default function ThemeModeProvider({
 
     const savedScheme = window.localStorage.getItem(STORAGE_SCHEME) as OmnixysColorScheme | null;
 
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-
-    setMode(savedMode ?? (prefersDark ? "dark" : "light"));
+    setMode(savedMode ?? DEFAULT_MODE);
     setScheme(savedScheme ?? "original");
   }, [initialThemeProfile]);
 
