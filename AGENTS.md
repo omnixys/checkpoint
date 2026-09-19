@@ -361,3 +361,13 @@ node_modules/.bin/tsc --project e2e/seat-layout-harness/tsconfig.json
 ```
 
 Build the sibling Seat service before the import browser test. The harness starts loopback-only test servers, uses the production renderer and real deterministic recognition, and never writes Seat domain entities. Source lifecycle mocks and controlled Move adapters remain explicitly separated from the real image-analysis path. See `SEAT_LAYOUT_IMPORT_ARCHITECTURE.md` for transport and local-draft boundaries. Do not add partial persistence for accepted imports before a shared Document-Save contract exists.
+
+## Seat map persistence E2E
+
+The GraphQL persistence proof (`e2e/seat-map-persist.spec.ts`) needs the gateway, the seated service and a seeded event:
+
+```bash
+npx playwright test e2e/seat-map-persist.spec.ts --project=chromium
+```
+
+Fixture ids and names are discovered at runtime, so a re-seeded database does not invalidate the spec. The section test rotates ~501 entities in one burst; the seat service rate limit must be raised in the gitignored `services/seat/.env` (`RATE_LIMIT_REQUEST=5000` — the key is singular, the plural `RATE_LIMIT_REQUESTS` key is dead config) or the run fails with 429. Restore the limit afterwards.
