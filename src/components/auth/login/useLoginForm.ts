@@ -139,7 +139,7 @@ export function useLoginForm({ onSuccess }: UseLoginFormOptions): LoginFormState
   }
 
   function submitGuestPhoneNumberAndReset(value: string): void {
-    setGuestPhoneNumberState(value);
+    setGuestPhoneNumberState(value.replace(/\D/g, ""));
     resetGuestErrors();
   }
 

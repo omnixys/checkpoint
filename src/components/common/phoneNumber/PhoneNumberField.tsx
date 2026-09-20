@@ -107,7 +107,7 @@ export default function PhoneNumberField({
             fullWidth={true}
             label="Phone number"
             value={value?.number}
-            onChange={(e) => onChange(index, "number", e.target.value)}
+            onChange={(e) => onChange(index, "number", e.target.value.replace(/\D/g, ""))}
             placeholder="17612345678"
           />
         </Stack>

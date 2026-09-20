@@ -182,6 +182,19 @@ describe("useLoginForm", () => {
     expect(result.current.guestInvalid).toBe(true);
   });
 
+  it("strips non-digit characters from the guest phone number", async () => {
+    const { result } = renderHook(() => useLoginForm({ onSuccess: vi.fn() }));
+
+    await act(async () => {
+      result.current.setGuestTab("tel");
+      result.current.setGuestPhoneNumber("+49 151-234 (56789)!");
+      result.current.setGuestFirstName("Max");
+      result.current.setGuestLastName("Mustermann");
+    });
+
+    expect(result.current.guestPhoneNumber).toBe("4915123456789");
+  });
+
   it("shows only the technical retry state when transport fails", async () => {
     mocks.requestGuestMagicLink.mockRejectedValueOnce(new Error("network unavailable"));
     const { result } = renderHook(() => useLoginForm({ onSuccess: vi.fn() }));
