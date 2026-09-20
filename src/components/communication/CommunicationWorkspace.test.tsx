@@ -122,6 +122,33 @@ describe("CommunicationWorkspace", () => {
 
     expect(screen.getByText("Hello, I have a question.")).toBeInTheDocument();
     expect(screen.getByText("Sure, how can we help?")).toBeInTheDocument();
+    expect(screen.getByTestId("communication-message-m-1")).toHaveStyle({
+      alignSelf: "flex-start",
+    });
+    expect(screen.getByTestId("communication-message-m-2")).toHaveStyle({
+      alignSelf: "flex-end",
+    });
+  });
+
+  it("keeps the newest outgoing message in view", () => {
+    const originalScrollHeight = Object.getOwnPropertyDescriptor(
+      HTMLElement.prototype,
+      "scrollHeight",
+    );
+    Object.defineProperty(HTMLElement.prototype, "scrollHeight", {
+      configurable: true,
+      get: () => 480,
+    });
+
+    try {
+      renderWorkspace("support", baseDataSource({ selectedId: "conv-1" }));
+
+      expect(screen.getByTestId("communication-timeline").scrollTop).toBe(480);
+    } finally {
+      if (originalScrollHeight) {
+        Object.defineProperty(HTMLElement.prototype, "scrollHeight", originalScrollHeight);
+      }
+    }
   });
 
   it("sends the draft via onSend and clears the composer", () => {

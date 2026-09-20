@@ -86,7 +86,7 @@ export function CommunicationWorkspaceClientPage({
         }),
       );
       const messages: CommunicationMessage[] = support.messages.map((message) => {
-        const outgoing = message.senderId !== "guest";
+        const outgoing = !message.fromGuest;
         return {
           id: message.id,
           body: message.body ?? "",

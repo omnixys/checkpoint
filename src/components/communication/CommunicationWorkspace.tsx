@@ -28,7 +28,7 @@ import {
 } from "@mui/material";
 import type { Theme } from "@mui/material/styles";
 import type { ReactNode } from "react";
-import { useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 
 export type CommunicationWorkspaceKind = "support" | "messages";
@@ -446,14 +446,49 @@ function Inbox({
   );
 }
 
-function Timeline({ messages }: { messages: CommunicationMessage[] }) {
+function Timeline({
+  conversationId,
+  messages,
+}: {
+  conversationId: string;
+  messages: CommunicationMessage[];
+}) {
   const theme = useTheme();
+  const timelineRef = useRef<HTMLDivElement | null>(null);
+  const isNearBottomRef = useRef(true);
+  const latestMessage = messages.at(-1);
+
+  useLayoutEffect(() => {
+    isNearBottomRef.current = true;
+  }, [conversationId]);
+
+  useLayoutEffect(() => {
+    const timeline = timelineRef.current;
+    if (!timeline || !latestMessage) return;
+
+    if (latestMessage.outgoing || isNearBottomRef.current) {
+      timeline.scrollTop = timeline.scrollHeight;
+      isNearBottomRef.current = true;
+    }
+  }, [latestMessage?.id, latestMessage?.outgoing]);
+
   return (
-    <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto", px: { xs: 1.5, md: 3 }, py: 2 }}>
+    <Box
+      ref={timelineRef}
+      data-testid="communication-timeline"
+      onScroll={(event) => {
+        const timeline = event.currentTarget;
+        isNearBottomRef.current =
+          timeline.scrollHeight - timeline.scrollTop - timeline.clientHeight <=
+          Number.parseFloat(theme.spacing(6));
+      }}
+      sx={{ flex: 1, minHeight: 0, overflowY: "auto", px: { xs: 1.5, md: 3 }, py: 2 }}
+    >
       <Stack spacing={0.9}>
         {messages.map((message) => (
           <Box
             key={message.id}
+            data-testid={`communication-message-${message.id}`}
             sx={{
               alignSelf: message.outgoing ? "flex-end" : "flex-start",
               maxWidth: { xs: "88%", sm: "68%" },
@@ -624,7 +659,7 @@ function Conversation({
           </IconButton>
         </Tooltip>
       </Box>
-      <Timeline messages={messages ?? []} />
+      <Timeline conversationId={conversation.id} messages={messages ?? []} />
       {failed ? (
         <Typography
           aria-live="polite"

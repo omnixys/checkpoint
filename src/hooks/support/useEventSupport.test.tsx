@@ -90,14 +90,19 @@ function supportConversation(id: string, channel: ConversationChannel): SupportC
   };
 }
 
-function supportMessage(id: string, conversationId: string, body: string): SupportMessage {
+function supportMessage(
+  id: string,
+  conversationId: string,
+  body: string,
+  fromGuest = true,
+): SupportMessage {
   return {
     __typename: "SupportMessage",
     id,
     conversationId,
-    fromGuest: true,
-    fromUserId: null,
-    direction: SupportMessageDirection.INBOUND,
+    fromGuest,
+    fromUserId: fromGuest ? null : "support-1",
+    direction: fromGuest ? SupportMessageDirection.INBOUND : SupportMessageDirection.OUTBOUND,
     body,
     mediaUrl: null,
     mimeType: null,
@@ -161,6 +166,21 @@ describe("useEventSupport – message fetching and sending", () => {
     expect(result.current.selectedId).toBe("wa-1");
     expect(result.current.messages).toHaveLength(1);
     expect(result.current.messages[0]!.body).toBe("Fetched msg");
+    expect(result.current.messages[0]!.fromGuest).toBe(true);
+  });
+
+  it("preserves the support-domain sender direction for the staff timeline", async () => {
+    apollo.messages = [
+      supportMessage("guest-1", "wa-1", "From guest", true),
+      supportMessage("staff-1", "wa-1", "From support", false),
+    ];
+    const { result } = renderHook(() => useEventSupport("evt"));
+
+    await act(async () => {
+      await result.current.fetchMessages("wa-1");
+    });
+
+    expect(result.current.messages.map((message) => message.fromGuest)).toEqual([true, false]);
   });
 
   it("adds a sent message to the conversation immediately", async () => {

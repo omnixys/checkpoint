@@ -21,7 +21,16 @@ import { getLogger } from "@/checkpoint/utils/logger";
 
 const logger = getLogger("EventSupport");
 
-export type { Message, SupportConversation };
+export type { SupportConversation };
+
+/**
+ * Retains the support-domain sender direction for the staff workspace while
+ * preserving the legacy message fields still consumed by the existing page.
+ */
+export type EventSupportMessage = Omit<SupportMessageFieldsFragment, "body"> & {
+  body: string;
+} &
+  Pick<Message, "senderId" | "deliveryStatus" | "contentType">;
 
 export type SupportChannel = "WHATSAPP" | "IN_APP" | "EMAIL";
 
@@ -192,12 +201,21 @@ export function useEventSupport(eventId?: string, initialSelectedId?: string | n
     void fetchMessages(target);
   }, [allConversations, fetchMessages, initialSelectedId]);
 
-  const messages = useMemo<Message[]>(() => {
+  const messages = useMemo<EventSupportMessage[]>(() => {
     if (!selectedId) return [];
     return mergeMessagesById(
       fetchedMessages[selectedId] ?? [],
       realtimeByConversation[selectedId] ?? [],
-    ).map((m) => toChatMessage(m, null));
+    ).map((message) => {
+      const legacy = toChatMessage(message, null);
+      return {
+        ...message,
+        body: message.body ?? "",
+        senderId: legacy.senderId,
+        deliveryStatus: legacy.deliveryStatus,
+        contentType: legacy.contentType,
+      };
+    });
   }, [selectedId, fetchedMessages, realtimeByConversation]);
 
   const sendMessage = useCallback(
