@@ -1087,6 +1087,65 @@ export enum InterestType {
   TRAVEL = 'TRAVEL'
 }
 
+export type InternalConversation = {
+  __typename: 'InternalConversation';
+  archivedAt: Maybe<Scalars['DateTime']['output']>;
+  channel: InternalConversationChannel;
+  createdAt: Scalars['DateTime']['output'];
+  createdBy: Scalars['String']['output'];
+  description: Maybe<Scalars['String']['output']>;
+  eventId: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  isActive: Scalars['Boolean']['output'];
+  participants: Maybe<Array<InternalParticipant>>;
+  roleId: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+  type: InternalConversationType;
+  unreadCount: Maybe<Scalars['Int']['output']>;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export enum InternalConversationChannel {
+  EMAIL = 'EMAIL',
+  IN_APP = 'IN_APP',
+  WHATSAPP = 'WHATSAPP'
+}
+
+export enum InternalConversationType {
+  BROADCAST = 'BROADCAST',
+  DIRECT = 'DIRECT',
+  ROLE_CHANNEL = 'ROLE_CHANNEL'
+}
+
+export type InternalMessage = {
+  __typename: 'InternalMessage';
+  body: Scalars['String']['output'];
+  channel: InternalConversationChannel;
+  conversationId: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  editedAt: Maybe<Scalars['DateTime']['output']>;
+  id: Scalars['ID']['output'];
+  priority: InternalMessagePriority;
+  senderId: Scalars['String']['output'];
+};
+
+export enum InternalMessagePriority {
+  HIGH = 'HIGH',
+  LOW = 'LOW',
+  NORMAL = 'NORMAL',
+  URGENT = 'URGENT'
+}
+
+export type InternalParticipant = {
+  __typename: 'InternalParticipant';
+  conversationId: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  joinedAt: Scalars['DateTime']['output'];
+  lastReadAt: Maybe<Scalars['DateTime']['output']>;
+  leftAt: Maybe<Scalars['DateTime']['output']>;
+  userId: Scalars['String']['output'];
+};
+
 export enum InvitationApprovalMode {
   AUTO = 'AUTO',
   AUTO_INVITE_ONLY = 'AUTO_INVITE_ONLY',
@@ -1468,6 +1527,7 @@ export type Mutation = {
   createEventAddress: EventAddressPayload;
   createEventRole: EventRoleDefinitionPayload;
   createInAppConversation: Conversation;
+  createInternalConversation: InternalConversation;
   createInvitation: InvitationPayload;
   createInvitationFromRsvp: InvitationPayload;
   createMedia: Scalars['String']['output'];
@@ -1512,6 +1572,7 @@ export type Mutation = {
   loginTotp: TokenPayload;
   logout: SuccessPayload;
   markConversationAsRead: SupportConversation;
+  markInternalConversationRead: InternalParticipant;
   markMyNotificationAsRead: NotificationPayload;
   markNotificationAsRead: NotificationPayload;
   markNotificationAsUnread: NotificationPayload;
@@ -1557,6 +1618,7 @@ export type Mutation = {
   seedCountries: SeedPayload;
   seedPostalCodes: SeedPayload;
   seedStates: SeedPayload;
+  sendInternalMessage: InternalMessage;
   sendInvitations: Scalars['Boolean']['output'];
   sendMagicLink: Scalars['Boolean']['output'];
   sendMessage: Message;
@@ -1856,6 +1918,15 @@ export type MutationCreateInAppConversationArgs = {
 };
 
 
+export type MutationCreateInternalConversationArgs = {
+  description: InputMaybe<Scalars['String']['input']>;
+  eventId: Scalars['String']['input'];
+  participantIds: InputMaybe<Array<Scalars['String']['input']>>;
+  title: Scalars['String']['input'];
+  type: InternalConversationType;
+};
+
+
 export type MutationCreateInvitationArgs = {
   input: InvitationCreateInput;
 };
@@ -2042,6 +2113,11 @@ export type MutationLoginTotpArgs = {
 
 
 export type MutationMarkConversationAsReadArgs = {
+  conversationId: Scalars['String']['input'];
+};
+
+
+export type MutationMarkInternalConversationReadArgs = {
   conversationId: Scalars['String']['input'];
 };
 
@@ -2236,6 +2312,13 @@ export type MutationSaveLayoutVersionArgs = {
 
 export type MutationScanTokenArgs = {
   input: ScanInput;
+};
+
+
+export type MutationSendInternalMessageArgs = {
+  body: Scalars['String']['input'];
+  conversationId: Scalars['String']['input'];
+  priority: InputMaybe<InternalMessagePriority>;
 };
 
 
@@ -2702,6 +2785,9 @@ export type Query = {
   getTenant: TenantType;
   getUserAddressesByUserId: Array<UserAddressPayload>;
   getUserList: Array<UserPayload>;
+  internalConversation: InternalConversation;
+  internalConversations: Array<InternalConversation>;
+  internalMessages: Array<InternalMessage>;
   invitation: InvitationPayload;
   invitations: Array<InvitationPayload>;
   kc_users: Array<KcUser>;
@@ -3070,6 +3156,22 @@ export type QueryGetUserAddressesByUserIdArgs = {
 
 export type QueryGetUserListArgs = {
   userIds: Array<Scalars['ID']['input']>;
+};
+
+
+export type QueryInternalConversationArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type QueryInternalConversationsArgs = {
+  eventId: Scalars['String']['input'];
+};
+
+
+export type QueryInternalMessagesArgs = {
+  conversationId: Scalars['String']['input'];
+  limit: InputMaybe<Scalars['Float']['input']>;
 };
 
 
@@ -3912,6 +4014,7 @@ export type Subscription = {
   __typename: 'Subscription';
   conversationUpdated: Conversation;
   eventConversationsChanged: EventConversationsUpdate;
+  internalMessageReceived: InternalMessage;
   messageReceived: Message;
   rsvpSupportMessageReceived: SupportMessage;
   supportMessageReceived: SupportMessage;

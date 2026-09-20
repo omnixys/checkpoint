@@ -1,0 +1,131 @@
+query EventInternalConversations($eventId: String!) {
+  internalConversations(eventId: $eventId) {
+    id
+    eventId
+    channel
+    title
+    description
+    type
+    roleId
+    createdBy
+    isActive
+    createdAt
+    updatedAt
+    unreadCount
+    participants {
+      id
+      userId
+      lastReadAt
+    }
+  }
+}
+
+query EventInternalConversationDetail($id: String!, $limit: Float) {
+  internalConversation(id: $id) {
+    id
+    eventId
+    channel
+    title
+    description
+    type
+    roleId
+    createdBy
+    isActive
+    createdAt
+    updatedAt
+    unreadCount
+    participants {
+      id
+      userId
+      lastReadAt
+    }
+  }
+  internalMessages(conversationId: $id, limit: $limit) {
+    id
+    conversationId
+    senderId
+    channel
+    body
+    priority
+    createdAt
+  }
+}
+
+mutation CreateEventInternalConversation(
+  $eventId: String!
+  $title: String!
+  $type: InternalConversationType!
+  $description: String
+  $participantIds: [String!]
+) {
+  createInternalConversation(
+    eventId: $eventId
+    title: $title
+    type: $type
+    description: $description
+    participantIds: $participantIds
+  ) {
+    id
+    eventId
+    channel
+    title
+    description
+    type
+    roleId
+    createdBy
+    isActive
+    createdAt
+    updatedAt
+    unreadCount
+    participants {
+      id
+      userId
+      lastReadAt
+    }
+  }
+}
+
+query EventInternalMessages($conversationId: String!, $limit: Float) {
+  internalMessages(conversationId: $conversationId, limit: $limit) {
+    id
+    conversationId
+    senderId
+    channel
+    body
+    priority
+    createdAt
+  }
+}
+
+mutation SendEventInternalMessage($conversationId: String!, $body: String!) {
+  sendInternalMessage(conversationId: $conversationId, body: $body) {
+    id
+    conversationId
+    senderId
+    channel
+    body
+    priority
+    createdAt
+  }
+}
+
+mutation MarkEventInternalConversationRead($conversationId: String!) {
+  markInternalConversationRead(conversationId: $conversationId) {
+    id
+    conversationId
+    userId
+    lastReadAt
+  }
+}
+
+subscription EventInternalMessageReceived {
+  internalMessageReceived {
+    id
+    conversationId
+    senderId
+    channel
+    body
+    priority
+    createdAt
+  }
+}

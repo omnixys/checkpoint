@@ -208,6 +208,7 @@ async function loadSanitizedSchemaDocument(pointer: string): Promise<DocumentNod
       "./src/graphql/seat-layout.overlay.schema.graphql",
       "./src/graphql/scan-gate.overlay.schema.graphql",
       "./src/graphql/ticket-device.overlay.schema.graphql",
+      "./src/graphql/internal-conversations.overlay.schema.graphql",
     ]) {
       const overlay = parse(await readFile(new URL(overlayFile, import.meta.url), "utf8"));
       document = applyOverlay(document, overlay);
@@ -264,6 +265,7 @@ const config: CodegenConfig = {
       },
     },
     "src/graphql/support-subscriptions.schema.graphql",
+    "src/graphql/internal-conversations.overlay.schema.graphql",
     ...(process.env.CODEGEN_OFFLINE === "true"
       ? ["src/graphql/guest-confirmation.overlay.schema.graphql"]
       : []),

@@ -1,0 +1,81 @@
+enum InternalConversationType {
+  BROADCAST
+  DIRECT
+  ROLE_CHANNEL
+}
+
+enum InternalConversationChannel {
+  IN_APP
+  WHATSAPP
+  EMAIL
+}
+
+enum InternalMessagePriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+type InternalParticipant {
+  id: ID!
+  conversationId: String!
+  userId: String!
+  lastReadAt: DateTime
+  joinedAt: DateTime!
+  leftAt: DateTime
+}
+
+type InternalConversation {
+  id: ID!
+  eventId: String!
+  channel: InternalConversationChannel!
+  title: String!
+  description: String
+  type: InternalConversationType!
+  roleId: String
+  createdBy: String!
+  isActive: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  archivedAt: DateTime
+  unreadCount: Int
+  participants: [InternalParticipant!]
+}
+
+type InternalMessage {
+  id: ID!
+  conversationId: String!
+  senderId: String!
+  channel: InternalConversationChannel!
+  body: String!
+  priority: InternalMessagePriority!
+  createdAt: DateTime!
+  editedAt: DateTime
+}
+
+type Query {
+  internalConversations(eventId: String!): [InternalConversation!]!
+  internalConversation(id: String!): InternalConversation!
+  internalMessages(conversationId: String!, limit: Float): [InternalMessage!]!
+}
+
+type Mutation {
+  createInternalConversation(
+    eventId: String!
+    title: String!
+    type: InternalConversationType!
+    description: String
+    participantIds: [String!]
+  ): InternalConversation!
+  sendInternalMessage(
+    conversationId: String!
+    body: String!
+    priority: InternalMessagePriority
+  ): InternalMessage!
+  markInternalConversationRead(conversationId: String!): InternalParticipant!
+}
+
+type Subscription {
+  internalMessageReceived: InternalMessage!
+}
