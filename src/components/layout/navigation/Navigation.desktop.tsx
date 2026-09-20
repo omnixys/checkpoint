@@ -20,6 +20,7 @@ import EventSelector from "@/checkpoint/components/Selectors/EventSelector";
 import ThemeToggleButton from "@/checkpoint/components/ThemeToggleButton";
 import UserMenu from "@/checkpoint/components/UserMenu";
 import { useTourAnchor } from "@/checkpoint/hooks/core/useTourAnchor";
+import { useInternalNavigationUnread } from "@/checkpoint/hooks/internal/useInternalNavigationUnread";
 import { useSupportNavigationUnread } from "@/checkpoint/hooks/support/useSupportNavigationUnread";
 import { env } from "@/checkpoint/lib/env";
 import { NAVIGATION_GROUPS } from "@/checkpoint/lib/experience/groups";
@@ -79,9 +80,17 @@ export default function NavigationDesktop(): JSX.Element | null {
     activeEvent?.id,
     experience.features.some((feature) => feature.id === "support"),
   );
+  const internalUnread = useInternalNavigationUnread(
+    activeEvent?.id,
+    experience.features.some((feature) => feature.id === "notifications"),
+  );
   const groups = buildGroupedNavigation(experience, activeEvent?.id).map((group) => ({
     ...group,
-    items: withNavigationBadge(group.items, "sidebar.support", supportUnread),
+    items: withNavigationBadge(
+      withNavigationBadge(group.items, "sidebar.support", supportUnread),
+      "sidebar.notifications",
+      internalUnread,
+    ),
   }));
   const flatItems = groups.flatMap((g) => g.items);
 

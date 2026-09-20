@@ -2,6 +2,7 @@
 
 import type { JSX } from "react";
 import { useSupportNavigationUnread } from "@/checkpoint/hooks/support/useSupportNavigationUnread";
+import { useInternalNavigationUnread } from "@/checkpoint/hooks/internal/useInternalNavigationUnread";
 import {
   buildNavigation,
   withNavigationBadge,
@@ -21,10 +22,18 @@ export default function NavigationMobile(): JSX.Element {
     activeEvent?.id,
     experience.features.some((feature) => feature.id === "support"),
   );
+  const internalUnread = useInternalNavigationUnread(
+    activeEvent?.id,
+    experience.features.some((feature) => feature.id === "notifications"),
+  );
   const items = withNavigationBadge(
-    buildNavigation(experience, activeEvent?.id),
-    "sidebar.support",
-    supportUnread,
+    withNavigationBadge(
+      buildNavigation(experience, activeEvent?.id),
+      "sidebar.support",
+      supportUnread,
+    ),
+    "sidebar.notifications",
+    internalUnread,
   );
   return <>{isAuthenticated && <MobileNavCarousel items={items} eventId={activeEvent?.id} />}</>;
 }

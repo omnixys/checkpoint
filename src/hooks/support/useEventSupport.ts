@@ -51,10 +51,19 @@ function matchesTab(channel: ConversationChannel, tab: SupportChannel): boolean 
  * Event-scoped staff support workspace backed by the notification support domain:
  * supportConversationsByEvent + supportMessages + sendSupportMessage.
  */
-export function useEventSupport(eventId?: string) {
+export function useEventSupport(eventId?: string, initialSelectedId?: string | null) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const selectedIdRef = useRef(selectedId);
   selectedIdRef.current = selectedId;
+  const autoSelectedRef = useRef(false);
+  const prevInitialSelectedRef = useRef(initialSelectedId);
+  useEffect(() => {
+    if (prevInitialSelectedRef.current !== initialSelectedId) {
+      prevInitialSelectedRef.current = initialSelectedId;
+      autoSelectedRef.current = false;
+      setSelectedId(null);
+    }
+  }, [initialSelectedId]);
   const [channel, setChannel] = useState<SupportChannel>("IN_APP");
   const [realtimeByConversation, setRealtimeByConversation] = useState<
     Record<string, SupportMessageFieldsFragment[]>
@@ -110,6 +119,19 @@ export function useEventSupport(eventId?: string) {
       }));
   }, [allConversations, channel]);
 
+  const allConversationViews = useMemo<ConversationView[]>(() => {
+    return allConversations.map((c) => ({
+      id: c.id,
+      externalDisplayName: c.guestName,
+      channel: toWorkspaceChannel(c.channel),
+      lastMessage: c.lastMessagePreview ?? null,
+      lastMessageAt: c.lastMessageAt ?? null,
+      externalAddress: c.guestContact ?? null,
+      unreadCount: c.unreadCount ?? 0,
+      status: c.status,
+    }));
+  }, [allConversations]);
+
   const [loadMessages, { loading: messagesLoading }] = useLazyQuery(SupportMessagesDocument);
 
   const [sendMessageMutation] = useMutation(SendSupportMessageDocument);
@@ -161,6 +183,15 @@ export function useEventSupport(eventId?: string) {
     [loadMessages, markAsRead],
   );
 
+  // Preselect the conversation referenced by a deep link once conversations load.
+  useEffect(() => {
+    const target = initialSelectedId;
+    if (!target || !allConversations.length || autoSelectedRef.current) return;
+    if (!allConversations.some((conversation) => conversation.id === target)) return;
+    autoSelectedRef.current = true;
+    void fetchMessages(target);
+  }, [allConversations, fetchMessages, initialSelectedId]);
+
   const messages = useMemo<Message[]>(() => {
     if (!selectedId) return [];
     return mergeMessagesById(
@@ -191,6 +222,7 @@ export function useEventSupport(eventId?: string) {
 
   return {
     conversations,
+    allConversationViews,
     conversationsLoading,
     selectedId,
     setSelectedId,
