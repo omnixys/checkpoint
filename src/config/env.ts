@@ -17,7 +17,7 @@ export const env = {
     process.env.NEXT_PUBLIC_BACKEND_SERVER_URL,
     { required: true, transform: toHttpUrl },
   ),
-  ANALYTICS_URL: getEnv("NEXT_PUBLIC_ANALYTICS_URL", process.env.NEXT_PUBLIC_ANALYTICS_URL, {
+  GATEWAY_URL: getEnv("NEXT_PUBLIC_GATEWAY_URL", process.env.NEXT_PUBLIC_GATEWAY_URL, {
     fallback: NODE_ENV === "production" ? "https://api.omnixys.com" : "http://localhost:8000",
     transform: toHttpUrl,
   }),

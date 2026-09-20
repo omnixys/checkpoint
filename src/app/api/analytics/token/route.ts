@@ -15,7 +15,7 @@ export async function POST(request?: Request): Promise<NextResponse> {
 
   try {
     const requestHeaders = await headers();
-    const response = await fetch(`${env.ANALYTICS_URL}/v1/analytics/tokens`, {
+    const response = await fetch(`${env.GATEWAY_URL}/v1/analytics/token`, {
       method: "POST",
       headers: {
         "content-type": "application/json",

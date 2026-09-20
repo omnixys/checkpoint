@@ -38,10 +38,10 @@ export function CheckpointAnalyticsProvider({
     const boundFetch = fetch.bind(globalThis);
     return createAnalytics({
       consent: initialConsent,
-      endpoint: env.ANALYTICS_URL,
+      endpoint: env.GATEWAY_URL,
       flushAt: 10,
       tokenProvider: fetchAnalyticsToken,
-      transport: new FetchAnalyticsTransport(env.ANALYTICS_URL, tokens, boundFetch),
+      transport: new FetchAnalyticsTransport(env.GATEWAY_URL, tokens, boundFetch),
       context: () => ({
         application: "checkpoint",
         path: globalThis.location?.pathname,

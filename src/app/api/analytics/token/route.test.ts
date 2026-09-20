@@ -11,7 +11,7 @@ vi.mock("next/headers", () => ({
 vi.mock("@/checkpoint/config/env.server", () => ({
   env: {
     IS_PRODUCTION: false,
-    ANALYTICS_URL: "http://gateway.local",
+    GATEWAY_URL: "http://gateway.local",
   },
 }));
 
@@ -54,7 +54,7 @@ describe("POST /api/analytics/token", () => {
     expect(payload).toEqual({ token: "browser-token", expiresIn: 3600 });
 
     expect(fetchMock).toHaveBeenCalledWith(
-      "http://gateway.local/v1/analytics/tokens",
+      "http://gateway.local/v1/analytics/token",
       expect.objectContaining({
         method: "POST",
         headers: expect.objectContaining({
@@ -81,7 +81,7 @@ describe("POST /api/analytics/token", () => {
 
     expect(response.status).toBe(200);
     expect(fetchMock).toHaveBeenCalledWith(
-      "http://gateway.local/v1/analytics/tokens",
+      "http://gateway.local/v1/analytics/token",
       expect.objectContaining({
         headers: expect.objectContaining({
           authorization: "Bearer browser-session",
