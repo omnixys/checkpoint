@@ -111,7 +111,11 @@ export default function InvitationCardView({ logic }: { logic: InvitationLogic }
                 </Stack>
 
                 <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-                  <InvitationStatusChip status={inv.status} rsvp={inv.rsvpChoice ?? undefined} />
+                  <InvitationStatusChip
+                    status={inv.status}
+                    rsvp={inv.rsvpChoice ?? undefined}
+                    verified={Boolean(inv.guestProfileId)}
+                  />
                   <InvitationDeliveryChip
                     guestProfileId={inv.guestProfileId}
                     confirmationSentAt={inv.confirmationSentAt}

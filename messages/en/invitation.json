@@ -14,7 +14,8 @@
     "REJECTED": "Rejected",
     "DECLINED": "Declined",
     "ACCEPTED": "Accepted",
-    "CANCELED": "Canceled"
+    "CANCELED": "Canceled",
+    "VERIFIED": "Verified"
   },
   "title": "Invitations",
   "subtitle": "Manage guests, statuses and invitations",

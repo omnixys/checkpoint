@@ -14,7 +14,8 @@
     "REJECTED": "Abgelehnt",
     "DECLINED": "Abgesagt",
     "ACCEPTED": "Zugesagt",
-    "CANCELED": "Stoniert"
+    "CANCELED": "Stoniert",
+    "VERIFIED": "Verifiziert"
   },
   "title": "Einladungen",
   "subtitle": "Verwalte Gäste, Status und Einladungen",

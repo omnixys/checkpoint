@@ -231,6 +231,7 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
                       <InvitationStatusChip
                         status={parent.status}
                         rsvp={parent.rsvpChoice ?? undefined}
+                        verified={Boolean(parent.guestProfileId)}
                       />
                       <InvitationDeliveryChip
                         guestProfileId={parent.guestProfileId}
@@ -328,9 +329,11 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
                                   sx={{
                                     justifyContent: "space-between",
                                     alignItems: "center",
+                                    flexWrap: { xs: "wrap", sm: "nowrap" },
+                                    gap: 1.5,
                                   }}
                                 >
-                                  <Stack direction="row" spacing={1}>
+                                  <Stack direction="row" spacing={1} sx={{ minWidth: 0 }}>
                                     <InvitationSelectionCheckbox
                                       checked={selected.includes(plusOne.id)}
                                       onClick={(event) => event.stopPropagation()}
@@ -342,20 +345,82 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
                                       }}
                                     />
 
-                                    <Typography
-                                      sx={{
-                                        fontWeight: 500,
-                                        overflowWrap: "anywhere",
-                                      }}
-                                    >
-                                      {plusOne.firstName ?? "-"} {plusOne.lastName ?? ""}
-                                    </Typography>
+                                    <Stack spacing={0.5} sx={{ minWidth: 0 }}>
+                                      <Typography
+                                        sx={{
+                                          fontWeight: 500,
+                                          overflowWrap: "anywhere",
+                                        }}
+                                      >
+                                        {plusOne.firstName ?? "-"} {plusOne.lastName ?? ""}
+                                      </Typography>
+
+                                      <Stack
+                                        direction={{ xs: "column", sm: "row" }}
+                                        spacing={1}
+                                        sx={{ flexWrap: "wrap" }}
+                                      >
+                                        <Typography
+                                          variant="caption"
+                                          sx={{
+                                            opacity: 0.7,
+                                            overflowWrap: "anywhere",
+                                          }}
+                                        >
+                                          {plusOne.phoneNumber ?? "-"}
+                                        </Typography>
+                                        <Typography
+                                          variant="caption"
+                                          sx={{
+                                            opacity: 0.6,
+                                            overflowWrap: "anywhere",
+                                          }}
+                                        >
+                                          {plusOne.email ?? "-"}
+                                        </Typography>
+                                      </Stack>
+                                    </Stack>
                                   </Stack>
 
-                                  <InvitationStatusChip
-                                    status={plusOne.status}
-                                    rsvp={plusOne.rsvpChoice ?? undefined}
-                                  />
+                                  <Stack
+                                    direction="row"
+                                    spacing={1}
+                                    sx={{ alignItems: "center", flexWrap: "wrap" }}
+                                  >
+                                    <InvitationStatusChip
+                                      status={plusOne.status}
+                                      rsvp={plusOne.rsvpChoice ?? undefined}
+                                      verified={Boolean(plusOne.guestProfileId)}
+                                    />
+                                    <InvitationDeliveryChip
+                                      guestProfileId={plusOne.guestProfileId}
+                                      confirmationSentAt={plusOne.confirmationSentAt}
+                                    />
+                                    <Tooltip title={t("copyLink")}>
+                                      <IconButton
+                                        size="small"
+                                        aria-label="Copy invitation link"
+                                        onClick={(event) => {
+                                          event.stopPropagation();
+                                          void handleCopyLink(plusOne.id);
+                                        }}
+                                      >
+                                        <ContentCopyIcon fontSize="small" />
+                                      </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title={t("delete")}>
+                                      <IconButton
+                                        color="error"
+                                        aria-label="Delete invitation"
+                                        onClick={(event) => {
+                                          event.stopPropagation();
+                                          void handleDelete(plusOne.id);
+                                        }}
+                                      >
+                                        <DeleteForeverIcon />
+                                      </IconButton>
+                                    </Tooltip>
+                                  </Stack>
                                 </Stack>
                               </Box>
                             ))}
