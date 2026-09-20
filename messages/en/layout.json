@@ -1,7 +1,7 @@
 {
   "sidebar": {
     "home": "Home",
-    "notifications": "Notifications",
+    "notifications": "Messages",
     "scanner": "Scanner",
     "activeEvent": "Active event",
     "invitations": "Invitations",
@@ -14,5 +14,33 @@
     "myTicket": "My ticket",
     "mySeat": "My seat",
     "plusOnes": "Plus-ones"
+  },
+  "communication": {
+    "support": "Support",
+    "messages": "Messages",
+    "conversations": "conversations",
+    "search": "Search conversations",
+    "all": "All",
+    "direct": "Direct",
+    "role": "Role",
+    "broadcast": "Broadcast",
+    "status": "Status",
+    "statuses": { "OPEN": "Open", "WAITING": "Waiting", "CLOSED": "Closed" },
+    "loading": "Loading communication…",
+    "noResults": "No conversations match these filters.",
+    "selectConversation": "Select a conversation",
+    "selectConversationDescription": "Choose a conversation from the inbox to review its messages and context.",
+    "back": "Back to inbox",
+    "details": "Details",
+    "sendFailed": "The message could not be sent. Please try again.",
+    "reply": "Write a reply",
+    "writeMessage": "Write a message",
+    "send": "Send",
+    "closeDetails": "Close details",
+    "noDetails": "Select a conversation to see its details.",
+    "guest": "Guest",
+    "staff": "Staff",
+    "contact": "Contact",
+    "event": "Event"
   }
 }
