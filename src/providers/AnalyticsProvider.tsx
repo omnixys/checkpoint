@@ -9,6 +9,7 @@ import type React from "react";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { fetchAnalyticsToken } from "@/checkpoint/lib/analytics/browser-token-provider";
+import { nonCriticalAnalyticsTransport } from "@/checkpoint/lib/analytics/non-critical-transport";
 import { AuthEventsBus } from "@/checkpoint/lib/auth/AuthManager";
 import { env } from "@/checkpoint/lib/env";
 import { getLogger } from "@/checkpoint/utils/logger";
@@ -41,7 +42,9 @@ export function CheckpointAnalyticsProvider({
       endpoint: env.GATEWAY_URL,
       flushAt: 10,
       tokenProvider: fetchAnalyticsToken,
-      transport: new FetchAnalyticsTransport(env.GATEWAY_URL, tokens, boundFetch),
+      transport: nonCriticalAnalyticsTransport(
+        new FetchAnalyticsTransport(env.GATEWAY_URL, tokens, boundFetch),
+      ),
       context: () => ({
         application: "checkpoint",
         path: globalThis.location?.pathname,
