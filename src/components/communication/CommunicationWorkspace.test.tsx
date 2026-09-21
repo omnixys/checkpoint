@@ -1,10 +1,11 @@
 import { ThemeProvider } from "@mui/material/styles";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createAppTheme } from "@/checkpoint/themes/createAppTheme";
 import layoutEn from "../../../messages/en/layout.json";
 import { type CommunicationDataSource, CommunicationWorkspace } from "./CommunicationWorkspace";
+import type { PersonData } from "./PersonListItem";
 
 const conversations: CommunicationDataSource["conversations"] = [
   {
@@ -55,6 +56,25 @@ const messages: CommunicationDataSource["messages"] = [
     sender: "Guest",
   },
   { id: "m-2", body: "Sure, how can we help?", createdAt: "14:00", outgoing: true, sender: "You" },
+];
+
+const staff: PersonData[] = [
+  {
+    id: "staff-1",
+    name: "Lena Müller",
+    roles: ["Ops"],
+    channels: ["IN_APP"],
+    isOnline: false,
+    unreadCount: 0,
+  },
+  {
+    id: "staff-2",
+    name: "Jonas Weber",
+    roles: ["Security"],
+    channels: ["IN_APP"],
+    isOnline: false,
+    unreadCount: 0,
+  },
 ];
 
 function baseDataSource(overrides: Partial<CommunicationDataSource> = {}): CommunicationDataSource {
@@ -222,6 +242,100 @@ describe("CommunicationWorkspace", () => {
     fireEvent.click(screen.getByRole("button", { name: "Details" }));
 
     expect(screen.getByRole("button", { name: "Close details" })).toBeInTheDocument();
+  });
+
+  it("offers a new conversation flow in the messages workspace", async () => {
+    const onCreateConversation = vi.fn().mockResolvedValue("conv-new");
+    renderWorkspace(
+      "messages",
+      baseDataSource({
+        conversations: [],
+        staff,
+        onCreateConversation,
+        capabilities: { send: true, create: true },
+      }),
+    );
+
+    expect(screen.getByRole("button", { name: "New conversation" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "New conversation" }));
+
+    expect(screen.getByRole("heading", { name: "Select staff" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Start conversation" })).toBeDisabled();
+
+    fireEvent.change(screen.getByRole("combobox"), { target: { value: "Lena" } });
+    fireEvent.click(screen.getByRole("option", { name: /Lena Müller/ }));
+    fireEvent.change(screen.getByRole("combobox"), { target: { value: "Jonas" } });
+    fireEvent.click(screen.getByRole("option", { name: /Jonas Weber/ }));
+
+    fireEvent.click(screen.getByRole("button", { name: "Start conversation" }));
+
+    expect(onCreateConversation).toHaveBeenCalledWith(["staff-1", "staff-2"]);
+    await waitFor(() =>
+      expect(screen.queryByRole("heading", { name: "Select staff" })).not.toBeInTheDocument(),
+    );
+  });
+
+  it("keeps the start button disabled until at least one staff member is chosen", async () => {
+    const onCreateConversation = vi.fn().mockResolvedValue("conv-new");
+    renderWorkspace(
+      "messages",
+      baseDataSource({
+        conversations: [],
+        staff,
+        onCreateConversation,
+        capabilities: { send: true, create: true },
+      }),
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "New conversation" }));
+
+    fireEvent.change(screen.getByRole("combobox"), { target: { value: "Lena" } });
+    fireEvent.click(screen.getByRole("option", { name: /Lena Müller/ }));
+
+    expect(screen.getByRole("button", { name: "Start conversation" })).toBeEnabled();
+    fireEvent.click(screen.getByRole("button", { name: "Start conversation" }));
+    expect(onCreateConversation).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+    await waitFor(() =>
+      expect(screen.queryByRole("heading", { name: "Select staff" })).not.toBeInTheDocument(),
+    );
+  });
+
+  it("does not offer the new conversation flow in the support workspace", () => {
+    renderWorkspace("support", baseDataSource({ staff, onCreateConversation: vi.fn() }));
+
+    expect(screen.queryByRole("button", { name: "New conversation" })).not.toBeInTheDocument();
+  });
+
+  it("hides the new conversation button when creation is not supported", () => {
+    renderWorkspace(
+      "messages",
+      baseDataSource({ conversations: [], staff, onCreateConversation: vi.fn() }),
+    );
+
+    expect(screen.queryByRole("button", { name: "New conversation" })).not.toBeInTheDocument();
+  });
+
+  it("surfaces a failure when creating the conversation returns no id", async () => {
+    renderWorkspace(
+      "messages",
+      baseDataSource({
+        conversations: [],
+        staff,
+        onCreateConversation: vi.fn().mockResolvedValue(null),
+        capabilities: { send: true, create: true },
+      }),
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "New conversation" }));
+    fireEvent.change(screen.getByRole("combobox"), { target: { value: "Lena" } });
+    fireEvent.click(screen.getByRole("option", { name: /Lena Müller/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Start conversation" }));
+
+    expect(
+      await screen.findByText("The conversation could not be created. Please try again."),
+    ).toBeInTheDocument();
   });
 });
 

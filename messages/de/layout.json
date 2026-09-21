@@ -41,6 +41,13 @@
     "guest": "Gast",
     "staff": "Team",
     "contact": "Kontakt",
-    "event": "Event"
+    "event": "Event",
+    "new": "Neue Unterhaltung",
+    "selectStaff": "Team auswählen",
+    "staffSearch": "Team suchen…",
+    "noStaff": "Für dieses Event ist kein Team verfügbar.",
+    "start": "Unterhaltung starten",
+    "cancel": "Abbrechen",
+    "createFailed": "Die Unterhaltung konnte nicht erstellt werden. Bitte versuche es erneut."
   }
 }

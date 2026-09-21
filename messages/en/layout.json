@@ -41,6 +41,13 @@
     "guest": "Guest",
     "staff": "Staff",
     "contact": "Contact",
-    "event": "Event"
+    "event": "Event",
+    "new": "New conversation",
+    "selectStaff": "Select staff",
+    "staffSearch": "Search staff…",
+    "noStaff": "No staff available for this event.",
+    "start": "Start conversation",
+    "cancel": "Cancel",
+    "createFailed": "The conversation could not be created. Please try again."
   }
 }

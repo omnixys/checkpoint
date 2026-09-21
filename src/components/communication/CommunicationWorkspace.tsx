@@ -1,5 +1,6 @@
 "use client";
 
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
@@ -10,17 +11,24 @@ import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import SupportAgentRoundedIcon from "@mui/icons-material/SupportAgentRounded";
 import {
+  Autocomplete,
   Avatar,
   alpha,
   Badge,
   Box,
+  Button,
   Chip,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
   Drawer,
   IconButton,
   InputBase,
   Stack,
+  TextField,
   Tooltip,
   Typography,
   useMediaQuery,
@@ -30,6 +38,7 @@ import type { Theme } from "@mui/material/styles";
 import type { ReactNode } from "react";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import type { PersonData } from "./PersonListItem";
 
 export type CommunicationWorkspaceKind = "support" | "messages";
 export type CommunicationChannel = "IN_APP" | "WHATSAPP" | "EMAIL";
@@ -61,6 +70,7 @@ export interface CommunicationMessage {
 
 export interface CommunicationCapabilities {
   send: boolean;
+  create?: boolean;
 }
 
 export interface CommunicationDataSource {
@@ -69,6 +79,10 @@ export interface CommunicationDataSource {
   onSelect: (id: string) => void;
   messages?: CommunicationMessage[] | undefined;
   onSend?: ((body: string) => Promise<void> | void) | undefined;
+  staff?: PersonData[] | undefined;
+  onCreateConversation?:
+    | ((participantIds: string[]) => Promise<string | null | undefined> | string | null | undefined)
+    | undefined;
   loading?: boolean | undefined;
   error?: string | null | undefined;
   capabilities?: CommunicationCapabilities | undefined;
@@ -252,11 +266,15 @@ function Inbox({
   conversations,
   selectedId,
   onSelect,
+  canCreate = false,
+  onOpenCompose,
 }: {
   workspace: CommunicationWorkspaceKind;
   conversations: CommunicationConversation[];
   selectedId: string | null;
   onSelect: (id: string) => void;
+  canCreate?: boolean;
+  onOpenCompose?: (() => void) | undefined;
 }) {
   const theme = useTheme();
   const t = useTypedTranslations("layout");
@@ -300,13 +318,33 @@ function Inbox({
       }}
     >
       <Box sx={{ px: 2, pt: 2, pb: 1.25 }}>
-        <Box>
-          <Typography component="h1" variant="h6" sx={{ fontWeight: 500 }}>
-            {title}
-          </Typography>
-          <MutedText>
-            {rows.length} {t("communication.conversations")}
-          </MutedText>
+        <Box
+          sx={{
+            alignItems: "flex-start",
+            display: "flex",
+            gap: 1,
+            justifyContent: "space-between",
+          }}
+        >
+          <Box>
+            <Typography component="h1" variant="h6" sx={{ fontWeight: 500 }}>
+              {title}
+            </Typography>
+            <MutedText>
+              {rows.length} {t("communication.conversations")}
+            </MutedText>
+          </Box>
+          {canCreate && onOpenCompose ? (
+            <Button
+              startIcon={<AddRoundedIcon />}
+              onClick={onOpenCompose}
+              size="small"
+              variant="contained"
+              sx={{ mt: 0.25, whiteSpace: "nowrap" }}
+            >
+              {t("communication.new")}
+            </Button>
+          ) : null}
         </Box>
         <Box
           sx={{
@@ -443,6 +481,122 @@ function Inbox({
         )}
       </Box>
     </Box>
+  );
+}
+
+function NewConversationDialog({
+  open,
+  staff,
+  onCreate,
+  onClose,
+}: {
+  open: boolean;
+  staff: PersonData[];
+  onCreate?: CommunicationDataSource["onCreateConversation"];
+  onClose: () => void;
+}) {
+  const theme = useTheme();
+  const t = useTypedTranslations("layout");
+  const [selected, setSelected] = useState<PersonData[]>([]);
+  const [pending, setPending] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  const submit = async () => {
+    if (!onCreate || !selected.length || pending) return;
+    setPending(true);
+    setFailed(false);
+    try {
+      const id = await onCreate(selected.map((person) => person.id));
+      if (id) {
+        setSelected([]);
+        onClose();
+      } else {
+        setFailed(true);
+      }
+    } catch {
+      setFailed(true);
+    } finally {
+      setPending(false);
+    }
+  };
+
+  return (
+    <Dialog
+      aria-labelledby="new-conversation-title"
+      maxWidth="sm"
+      fullWidth
+      open={open}
+      onClose={pending ? undefined : onClose}
+    >
+      <DialogTitle id="new-conversation-title">{t("communication.selectStaff")}</DialogTitle>
+      <DialogContent>
+        <Autocomplete
+          multiple={true}
+          options={staff}
+          getOptionLabel={(option) => option.name}
+          isOptionEqualToValue={(option, value) => option.id === value.id}
+          value={selected}
+          onChange={(_, value) => setSelected(value)}
+          filterSelectedOptions={true}
+          noOptionsText={t("communication.noStaff")}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              autoFocus={true}
+              label={t("communication.selectStaff")}
+              placeholder={t("communication.staffSearch")}
+              size="small"
+            />
+          )}
+          renderOption={(props, option) => (
+            <li {...props} key={option.id}>
+              <Stack direction="row" spacing={1.25} sx={{ alignItems: "center", width: "100%" }}>
+                <Avatar
+                  sx={{
+                    bgcolor: alpha(theme.palette.primary.main, 0.12),
+                    color: "primary.main",
+                    fontSize: "0.75rem",
+                    fontWeight: 700,
+                    height: 32,
+                    width: 32,
+                  }}
+                >
+                  {initials(option.name)}
+                </Avatar>
+                <Typography sx={{ flex: 1, fontSize: "0.875rem", fontWeight: 600, minWidth: 0 }}>
+                  {option.name}
+                </Typography>
+                {option.roles?.slice(0, 2).map((role) => (
+                  <Chip key={role} label={role} size="small" />
+                ))}
+              </Stack>
+            </li>
+          )}
+        />
+        {failed ? (
+          <Typography
+            variant="caption"
+            role="alert"
+            sx={{ color: "error.main", display: "block", mt: 1 }}
+          >
+            {t("communication.createFailed")}
+          </Typography>
+        ) : null}
+      </DialogContent>
+      <DialogActions>
+        <Button color="inherit" disabled={pending} onClick={onClose}>
+          {t("communication.cancel")}
+        </Button>
+        <Button
+          disabled={!selected.length || pending}
+          onClick={submit}
+          startIcon={pending ? <CircularProgress size={16} /> : undefined}
+          variant="contained"
+        >
+          {t("communication.start")}
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }
 
@@ -908,6 +1062,8 @@ export function CommunicationWorkspace({
 
   const capabilities = dataSource.capabilities ?? { send: true };
   const canSend = capabilities.send && Boolean(dataSource.onSend);
+  const canCreate = capabilities.create === true && Boolean(dataSource.onCreateConversation);
+  const [composeOpen, setComposeOpen] = useState(false);
 
   return (
     <Box
@@ -939,10 +1095,18 @@ export function CommunicationWorkspace({
               conversations={conversations}
               selectedId={dataSource.selectedId}
               onSelect={select}
+              canCreate={canCreate}
+              onOpenCompose={() => setComposeOpen(true)}
             />
           )}
         </Box>
       ) : null}
+      <NewConversationDialog
+        open={composeOpen}
+        staff={dataSource.staff ?? []}
+        onCreate={dataSource.onCreateConversation}
+        onClose={() => setComposeOpen(false)}
+      />
       {!isMobile || mobileView === "conversation" ? (
         <Conversation
           workspace={workspace}

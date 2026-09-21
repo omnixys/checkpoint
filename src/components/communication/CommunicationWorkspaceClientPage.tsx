@@ -2,7 +2,7 @@
 
 import { Box } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import {
   type CommunicationCapabilities,
   type CommunicationConversation,
@@ -10,7 +10,10 @@ import {
   type CommunicationMessage,
   CommunicationWorkspace,
 } from "@/checkpoint/components/communication/CommunicationWorkspace";
+import type { PersonData } from "@/checkpoint/components/communication/PersonListItem";
 import RouteGuard from "@/checkpoint/components/guard/RouteGuard";
+import { InternalConversationType } from "@/checkpoint/generated/graphql";
+import { resolveStaffName, useEventStaff } from "@/checkpoint/hooks/events/useEventStaff";
 import { useEventInternalMessages } from "@/checkpoint/hooks/internal/useEventInternalMessages";
 import { useEventSupport } from "@/checkpoint/hooks/support/useEventSupport";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
@@ -41,6 +44,7 @@ function toChannel(value: string): "IN_APP" | "WHATSAPP" | "EMAIL" {
 }
 
 const SEND_CAPABILITY: CommunicationCapabilities = { send: true };
+const MESSAGES_CAPABILITY: CommunicationCapabilities = { send: true, create: true };
 
 /** Shared host for both communication workspaces; drives the shell from real GraphQL data. */
 export function CommunicationWorkspaceClientPage({
@@ -66,6 +70,45 @@ export function CommunicationWorkspaceClientPage({
   const internal = useEventInternalMessages(
     workspace === "messages" ? eventId : undefined,
     workspace === "messages" ? deepLinkConversationId : undefined,
+  );
+
+  const { staff: staffMembers } = useEventStaff({
+    ...(workspace === "messages" && eventId ? { eventId } : {}),
+  });
+
+  const staff = useMemo<PersonData[]>(
+    () =>
+      staffMembers.map((s) => ({
+        id: s.userId,
+        name: resolveStaffName(s),
+        roles: s.roles,
+        channels: s.phoneNumbers?.length
+          ? ["WHATSAPP", ...(s.email ? ["EMAIL"] : [])]
+          : s.email
+            ? ["EMAIL"]
+            : ["IN_APP"],
+        isOnline: false,
+        unreadCount: 0,
+      })),
+    [staffMembers],
+  );
+
+  const onCreateConversation = useCallback(
+    async (participantIds: string[]): Promise<string | null> => {
+      const names = staff
+        .filter((person) => participantIds.includes(person.id))
+        .map((person) => person.name)
+        .filter(Boolean);
+      const title = names.length ? names.join(", ") : "Internal";
+      const conversation = await internal.createConversation({
+        title,
+        participantIds,
+        type: InternalConversationType.DIRECT,
+      });
+      if (conversation) router.push(`${basePath}/${conversation.id}`);
+      return conversation?.id ?? null;
+    },
+    [basePath, internal, router, staff],
   );
 
   const dataSource = useMemo<CommunicationDataSource>(() => {
@@ -145,11 +188,23 @@ export function CommunicationWorkspaceClientPage({
       onSend: (body) => {
         void internal.send(body);
       },
+      staff,
+      onCreateConversation,
       loading: internal.conversationsLoading,
       error: internal.conversationsError ? internal.conversationsError.message : null,
-      capabilities: SEND_CAPABILITY,
+      capabilities: MESSAGES_CAPABILITY,
     };
-  }, [basePath, currentUser?.id, eventId, internal, router, support, workspace]);
+  }, [
+    basePath,
+    currentUser?.id,
+    eventId,
+    internal,
+    onCreateConversation,
+    router,
+    staff,
+    support,
+    workspace,
+  ]);
 
   return (
     <RouteGuard featureId={workspace === "support" ? "support" : "notifications"}>

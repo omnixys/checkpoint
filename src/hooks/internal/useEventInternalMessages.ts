@@ -3,14 +3,27 @@
 import { useLazyQuery, useMutation, useQuery, useSubscription } from "@apollo/client/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  CreateEventInternalConversationDocument,
+  type CreateEventInternalConversationMutation,
   EventInternalConversationsDocument,
   EventInternalMessageReceivedDocument,
   EventInternalMessagesDocument,
   type EventInternalMessagesQuery,
+  InternalConversationType,
   MarkEventInternalConversationReadDocument,
   SendEventInternalMessageDocument,
 } from "@/checkpoint/generated/graphql";
 import { appendMessageById } from "./message-stream";
+
+export interface CreateInternalConversationInput {
+  title: string;
+  description?: string;
+  participantIds: string[];
+  type?: InternalConversationType;
+}
+
+type InternalConversationResult =
+  CreateEventInternalConversationMutation["createInternalConversation"];
 
 export function useEventInternalMessages(eventId?: string, initialSelectedId?: string | null) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -39,6 +52,7 @@ export function useEventInternalMessages(eventId?: string, initialSelectedId?: s
   );
   const [sendMutation] = useMutation(SendEventInternalMessageDocument);
   const [markRead] = useMutation(MarkEventInternalConversationReadDocument);
+  const [createConversationMutation] = useMutation(CreateEventInternalConversationDocument);
 
   const select = useCallback(
     async (conversationId: string) => {
@@ -77,6 +91,34 @@ export function useEventInternalMessages(eventId?: string, initialSelectedId?: s
     [refetch, selectedId, sendMutation],
   );
 
+  const createConversation = useCallback(
+    async (input: CreateInternalConversationInput): Promise<InternalConversationResult | null> => {
+      if (!eventId || !input.title.trim() || input.participantIds.length === 0) return null;
+      try {
+        const result = await createConversationMutation({
+          variables: {
+            eventId,
+            title: input.title.trim(),
+            type: input.type ?? InternalConversationType.DIRECT,
+            description: input.description?.trim() ? input.description.trim() : null,
+            participantIds: [...new Set(input.participantIds)],
+          },
+        });
+        const conversation = result.data?.createInternalConversation;
+        if (conversation) {
+          setMessages([]);
+          setSelectedId(conversation.id);
+          await refetch();
+        }
+        return conversation ?? null;
+      } catch (error) {
+        console.error("Failed to create internal conversation", error);
+        return null;
+      }
+    },
+    [createConversationMutation, eventId, refetch],
+  );
+
   useSubscription(EventInternalMessageReceivedDocument, {
     skip: !selectedId,
     onData: ({ data: result }) => {
@@ -104,6 +146,7 @@ export function useEventInternalMessages(eventId?: string, initialSelectedId?: s
     selectedId,
     setSelectedId,
     select,
+    createConversation,
     send,
     totalUnread,
   };
