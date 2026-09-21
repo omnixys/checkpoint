@@ -11,6 +11,7 @@ export const NAVIGATION_GROUPS: Record<string, NavigationGroupDefinition> = {
   event: {
     id: "event",
     label: "Event",
+    labelKey: "sidebar.group.event",
     collapsible: true,
     defaultExpanded: true,
     order: 1,
@@ -18,6 +19,7 @@ export const NAVIGATION_GROUPS: Record<string, NavigationGroupDefinition> = {
   tools: {
     id: "tools",
     label: "Tools",
+    labelKey: "sidebar.group.tools",
     collapsible: true,
     defaultExpanded: true,
     order: 2,
@@ -25,6 +27,7 @@ export const NAVIGATION_GROUPS: Record<string, NavigationGroupDefinition> = {
   personal: {
     id: "personal",
     label: "Account",
+    labelKey: "sidebar.group.personal",
     collapsible: true,
     defaultExpanded: true,
     order: 3,
@@ -32,6 +35,7 @@ export const NAVIGATION_GROUPS: Record<string, NavigationGroupDefinition> = {
   admin: {
     id: "admin",
     label: "Administration",
+    labelKey: "sidebar.group.admin",
     collapsible: true,
     defaultExpanded: false,
     order: 4,

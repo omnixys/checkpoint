@@ -1,7 +1,10 @@
 import { Badge } from "@mui/material";
 import type { JSX } from "react";
+import type { NamespaceKeys } from "@/checkpoint/i18n/typed";
 import { NAVIGATION_GROUPS } from "./groups";
 import type { FeatureDefinition, ResolvedExperience } from "./types";
+
+export type NavLabelResolver = (key: NamespaceKeys<"layout">) => string | undefined;
 
 export interface NavItem {
   label: string;
@@ -60,13 +63,33 @@ function buildPath(feature: FeatureDefinition, activeEventId?: string): string {
   return `/${path}`;
 }
 
-export function buildNavigation(experience: ResolvedExperience, activeEventId?: string): NavItem[] {
+function resolveLabel(
+  labelKey: NamespaceKeys<"layout"> | undefined,
+  fallback: string,
+  t?: NavLabelResolver,
+): string {
+  return (labelKey && t?.(labelKey)) ?? fallback;
+}
+
+function resolveGroupLabel(groupId: string, t?: NavLabelResolver): string {
+  const group = NAVIGATION_GROUPS[groupId];
+  if (group?.labelKey) {
+    return t?.(group.labelKey) ?? group.label;
+  }
+  return group?.label ?? groupId;
+}
+
+export function buildNavigation(
+  experience: ResolvedExperience,
+  activeEventId?: string,
+  t?: NavLabelResolver,
+): NavItem[] {
   const hasEvent = Boolean(activeEventId);
 
   return experience.features.map((feature) => {
     const IconComponent = feature.icon;
     return {
-      label: feature.label,
+      label: resolveLabel(feature.labelKey, feature.label, t),
       icon: <IconComponent />,
       path: buildPath(feature, activeEventId),
       ...(feature.tourId ? { tourId: feature.tourId } : {}),
@@ -79,8 +102,9 @@ export function buildNavigation(experience: ResolvedExperience, activeEventId?: 
 export function buildGroupedNavigation(
   experience: ResolvedExperience,
   activeEventId?: string,
+  t?: NavLabelResolver,
 ): GroupedNavItems[] {
-  const flatItems = buildNavigation(experience, activeEventId);
+  const flatItems = buildNavigation(experience, activeEventId, t);
   const groupMap = new Map<string, NavItem[]>();
 
   for (const item of flatItems) {
@@ -100,7 +124,7 @@ export function buildGroupedNavigation(
     if (groupItems && groupItems.length > 0) {
       result.push({
         groupId,
-        groupLabel: NAVIGATION_GROUPS[groupId]?.label ?? groupId,
+        groupLabel: resolveGroupLabel(groupId, t),
         items: groupItems,
       });
       seen.add(groupId);
@@ -111,7 +135,7 @@ export function buildGroupedNavigation(
     if (!seen.has(groupId) && groupItems.length > 0) {
       result.push({
         groupId,
-        groupLabel: NAVIGATION_GROUPS[groupId]?.label ?? groupId,
+        groupLabel: resolveGroupLabel(groupId, t),
         items: groupItems,
       });
     }

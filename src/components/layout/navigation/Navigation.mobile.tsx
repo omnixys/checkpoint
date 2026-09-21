@@ -1,8 +1,9 @@
 "use client";
 
 import type { JSX } from "react";
-import { useSupportNavigationUnread } from "@/checkpoint/hooks/support/useSupportNavigationUnread";
 import { useInternalNavigationUnread } from "@/checkpoint/hooks/internal/useInternalNavigationUnread";
+import { useSupportNavigationUnread } from "@/checkpoint/hooks/support/useSupportNavigationUnread";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import {
   buildNavigation,
   withNavigationBadge,
@@ -13,6 +14,7 @@ import { useAuth } from "@/checkpoint/providers/AuthProvider";
 import { MobileNavCarousel } from "./MobileNavCarousel";
 
 export default function NavigationMobile(): JSX.Element {
+  const t = useTypedTranslations("layout");
   const { isAuthenticated } = useAuth();
   const { activeEvent, myRoles, myPermissions } = useActiveEvent();
 
@@ -28,7 +30,7 @@ export default function NavigationMobile(): JSX.Element {
   );
   const items = withNavigationBadge(
     withNavigationBadge(
-      buildNavigation(experience, activeEvent?.id),
+      buildNavigation(experience, activeEvent?.id, t),
       "sidebar.support",
       supportUnread,
     ),

@@ -3,6 +3,7 @@
   "locale": "en-US",
   "all": "All",
   "cancel": "Cancel",
+  "logout": "Log out",
 
   "analyticsConsent": {
     "label": "Analytics consent",

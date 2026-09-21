@@ -23,6 +23,7 @@ import ThemeToggleButton from "@/checkpoint/components/ThemeToggleButton";
 import UserMenu from "@/checkpoint/components/UserMenu";
 import { useInternalNavigationUnread } from "@/checkpoint/hooks/internal/useInternalNavigationUnread";
 import { useSupportNavigationUnread } from "@/checkpoint/hooks/support/useSupportNavigationUnread";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { NAVIGATION_GROUPS } from "@/checkpoint/lib/experience/groups";
 import {
   buildGroupedNavigation,
@@ -36,6 +37,7 @@ import { getRoleColor, isActiveNavItem } from "./navigation.util";
 
 export default function NavigationTablet(): JSX.Element {
   const theme = useTheme();
+  const t = useTypedTranslations("layout");
 
   const [collapsed, setCollapsed] = useState(false);
 
@@ -72,7 +74,7 @@ export default function NavigationTablet(): JSX.Element {
     activeEvent?.id,
     experience.features.some((feature) => feature.id === "notifications"),
   );
-  const groups = buildGroupedNavigation(experience, activeEvent?.id).map((group) => ({
+  const groups = buildGroupedNavigation(experience, activeEvent?.id, t).map((group) => ({
     ...group,
     items: withNavigationBadge(
       withNavigationBadge(group.items, "sidebar.support", supportUnread),

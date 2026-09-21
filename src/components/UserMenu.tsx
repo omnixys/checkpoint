@@ -24,6 +24,7 @@ import React, { useMemo } from "react";
 import ColorBubbleSwitcher from "@/checkpoint/components/ColorBubbleSwitcher";
 import LanguageSwitcher from "@/checkpoint/components/LanguageSwitcher";
 import ThemeToggleButton from "@/checkpoint/components/ThemeToggleButton";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
 import { resolveExperience } from "@/checkpoint/lib/experience/resolver";
 import { buildUserMenuItems } from "@/checkpoint/lib/experience/user-menu-builder";
@@ -45,6 +46,8 @@ const ICON_MAP: Record<string, React.ElementType> = {
 
 export default function UserMenu() {
   const router = useRouter();
+  const t = useTypedTranslations("layout");
+  const commonT = useTypedTranslations("common");
   const { device } = useDevice();
   const { currentUser, isAuthenticated, currentUserLoading, logout } = useAuth();
   const { myRoles, myPermissions } = useActiveEvent();
@@ -55,8 +58,8 @@ export default function UserMenu() {
   const menuItems = useMemo(() => {
     const roleIds = myRoles.map((r) => r.key);
     const experience = resolveExperience(roleIds, myPermissions);
-    return buildUserMenuItems(experience);
-  }, [myRoles, myPermissions]);
+    return buildUserMenuItems(experience, t);
+  }, [myRoles, myPermissions, t]);
 
   if (currentUserLoading) return null;
   if (!isAuthenticated || !currentUser) return null;
@@ -154,7 +157,7 @@ export default function UserMenu() {
           <ListItemIcon>
             <LogoutIcon fontSize="small" />
           </ListItemIcon>
-          Abmelden
+          {commonT("logout")}
         </MenuItem>
 
         <Link href={`${env.NEXYS_HOME_URL}/home`}>

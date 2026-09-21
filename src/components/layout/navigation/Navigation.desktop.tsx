@@ -22,6 +22,7 @@ import UserMenu from "@/checkpoint/components/UserMenu";
 import { useTourAnchor } from "@/checkpoint/hooks/core/useTourAnchor";
 import { useInternalNavigationUnread } from "@/checkpoint/hooks/internal/useInternalNavigationUnread";
 import { useSupportNavigationUnread } from "@/checkpoint/hooks/support/useSupportNavigationUnread";
+import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
 import { NAVIGATION_GROUPS } from "@/checkpoint/lib/experience/groups";
 import {
@@ -64,6 +65,7 @@ export default function NavigationDesktop(): JSX.Element | null {
   }, []);
 
   const theme = useTheme();
+  const t = useTypedTranslations("layout");
 
   const { isAuthenticated } = useAuth();
   const { activeEvent, myRoles, myPermissions, activeRole } = useActiveEvent();
@@ -84,7 +86,7 @@ export default function NavigationDesktop(): JSX.Element | null {
     activeEvent?.id,
     experience.features.some((feature) => feature.id === "notifications"),
   );
-  const groups = buildGroupedNavigation(experience, activeEvent?.id).map((group) => ({
+  const groups = buildGroupedNavigation(experience, activeEvent?.id, t).map((group) => ({
     ...group,
     items: withNavigationBadge(
       withNavigationBadge(group.items, "sidebar.support", supportUnread),
@@ -251,10 +253,13 @@ export default function NavigationDesktop(): JSX.Element | null {
           gap: collapsed ? 1 : 0,
         }}
       >
-        <Tooltip title={collapsed ? "Expand sidebar" : "Collapse sidebar"} placement="right">
+        <Tooltip
+          title={collapsed ? t("sidebar.expandSidebar") : t("sidebar.collapseSidebar")}
+          placement="right"
+        >
           <IconButton
             size="small"
-            aria-label="Toggle sidebar"
+            aria-label={t("sidebar.toggleSidebar")}
             onClick={toggleSidebar}
             sx={{
               transition: "transform 0.25s ease",

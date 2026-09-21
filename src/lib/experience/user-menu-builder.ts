@@ -1,3 +1,4 @@
+import type { NamespaceKeys } from "@/checkpoint/i18n/typed";
 import { getFeature } from "./feature-registry";
 import type { FeatureCategory, FeatureId, ResolvedExperience } from "./types";
 
@@ -9,11 +10,16 @@ export interface UserMenuItem {
   category: "personal" | "action" | "utility";
 }
 
+type UserMenuLabelResolver = (key: NamespaceKeys<"layout">) => string | undefined;
+
 const PERSONAL_FEATURES: FeatureId[] = ["my-profile", "my-ticket", "my-plus-ones", "my-support"];
 
 const ACTION_CATEGORIES: FeatureCategory[] = ["tools", "admin"];
 
-export function buildUserMenuItems(experience: ResolvedExperience): UserMenuItem[] {
+export function buildUserMenuItems(
+  experience: ResolvedExperience,
+  t?: UserMenuLabelResolver,
+): UserMenuItem[] {
   const allowed = new Set(experience.allowedFeatureIds);
   const items: UserMenuItem[] = [];
 
@@ -24,7 +30,7 @@ export function buildUserMenuItems(experience: ResolvedExperience): UserMenuItem
     if (!feature) continue;
     items.push({
       featureId: fid,
-      label: feature.label,
+      label: (feature.labelKey && t?.(feature.labelKey)) ?? feature.label,
       path: `/${feature.path}`,
       iconName: feature.icon?.name ?? "Person",
       category: "personal",
@@ -37,7 +43,7 @@ export function buildUserMenuItems(experience: ResolvedExperience): UserMenuItem
     if (PERSONAL_FEATURES.includes(feature.id)) continue; // already added
     items.push({
       featureId: feature.id,
-      label: feature.label,
+      label: (feature.labelKey && t?.(feature.labelKey)) ?? feature.label,
       path: `/${feature.path}`,
       iconName: feature.icon?.name ?? "Settings",
       category: "action",

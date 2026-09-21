@@ -1,4 +1,5 @@
 import type { ComponentType } from "react";
+import type { NamespaceKeys } from "@/checkpoint/i18n/typed";
 import type { EventPermissionKey } from "@/checkpoint/lib/rbac/event-permissions";
 
 export type FeatureId =
@@ -35,6 +36,7 @@ export interface FeatureDefinition {
   id: FeatureId;
   category: FeatureCategory;
   label: string;
+  labelKey?: NamespaceKeys<"layout">;
   description: string;
   icon: IconComponent;
   path: string;
@@ -48,6 +50,7 @@ export interface FeatureDefinition {
 export interface NavigationGroupDefinition {
   id: string;
   label: string;
+  labelKey?: NamespaceKeys<"layout">;
   collapsible: boolean;
   defaultExpanded: boolean;
   order: number;
