@@ -50,3 +50,5 @@ TODO.md
 tmp
 
 .npmrc
+.secrets
+docker-bake.hcl

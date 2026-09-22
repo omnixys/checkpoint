@@ -194,14 +194,22 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
                         </IconButton>
                       )}
 
-                      <Typography
-                        sx={{
-                          fontWeight: 600,
-                          overflowWrap: "anywhere",
-                        }}
+                      <Tooltip title={`${parent.firstName ?? "-"} ${parent.lastName ?? ""}`.trim()}
+                        enterDelay={300}
                       >
-                        {parent.firstName ?? "-"} {parent.lastName ?? ""}
-                      </Typography>
+                        <Typography
+                          sx={{
+                            fontWeight: 600,
+                            overflowWrap: "anywhere",
+                            whiteSpace: { xs: "normal", sm: "nowrap" },
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            minWidth: 0,
+                          }}
+                        >
+                          {parent.firstName ?? "-"} {parent.lastName ?? ""}
+                        </Typography>
+                      </Tooltip>
 
                       {(parent.selectedInvitedBy?.length ?? 0) > 0 && (
                         <Stack direction="row" spacing={0.5} sx={{ flexWrap: "wrap" }}>
@@ -346,14 +354,22 @@ export default function InvitationTable({ logic }: { logic: InvitationLogic }) {
                                     />
 
                                     <Stack spacing={0.5} sx={{ minWidth: 0 }}>
-                                      <Typography
-                                        sx={{
-                                          fontWeight: 500,
-                                          overflowWrap: "anywhere",
-                                        }}
+                                      <Tooltip title={`${plusOne.firstName ?? "-"} ${plusOne.lastName ?? ""}`.trim()}
+                                        enterDelay={300}
                                       >
-                                        {plusOne.firstName ?? "-"} {plusOne.lastName ?? ""}
-                                      </Typography>
+                                        <Typography
+                                          sx={{
+                                            fontWeight: 500,
+                                            overflowWrap: "anywhere",
+                                            whiteSpace: { xs: "normal", sm: "nowrap" },
+                                            overflow: "hidden",
+                                            textOverflow: "ellipsis",
+                                            minWidth: 0,
+                                          }}
+                                        >
+                                          {plusOne.firstName ?? "-"} {plusOne.lastName ?? ""}
+                                        </Typography>
+                                      </Tooltip>
 
                                       <Stack
                                         direction={{ xs: "column", sm: "row" }}
