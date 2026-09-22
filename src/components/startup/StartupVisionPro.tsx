@@ -80,6 +80,7 @@ export default function StartupVisionPro(): JSX.Element | null {
         position: "fixed",
         inset: 0,
         zIndex: 999_999,
+        pointerEvents: "none",
 
         /**
          * ✅ THEME DRIVEN BACKGROUND
@@ -108,6 +109,7 @@ export default function StartupVisionPro(): JSX.Element | null {
             inset: 0,
             width: "100%",
             height: "100%",
+            pointerEvents: "none",
           }}
         />
 
