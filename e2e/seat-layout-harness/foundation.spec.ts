@@ -174,3 +174,20 @@ test("refetch keeps explicit zoom; viewer renders the same flat world", async ({
   );
   await page.screenshot({ path: "test-results/seat-layout-harness/viewer.png" });
 });
+
+test("viewer popover closes on an outside click instead of freezing the page", async ({ page }) => {
+  await page.evaluate(() => window.seatHarness.setEditing(false));
+  await expect(page.getByRole("region", { name: "Sitzplan ansehen" })).toBeVisible();
+  const seat = page.locator('[data-node-id="seat-a"] button');
+  await seat.click();
+  await expect(page.locator(".MuiPopover-root")).toHaveCount(1);
+  await expect(page.locator(".MuiBackdrop-root")).toBeVisible();
+  const canvas = await page.getByTestId("seatmap-canvas").boundingBox();
+  await page.mouse.click(canvas!.x + 8, canvas!.y + canvas!.height - 8);
+  await expect(page.locator(".MuiPopover-root")).toHaveCount(0);
+  await seat.click();
+  await expect(page.locator(".MuiPopover-root")).toHaveCount(1);
+  await page.mouse.click(canvas!.x + 8, canvas!.y + canvas!.height - 8);
+  await expect(page.locator(".MuiPopover-root")).toHaveCount(0);
+  await page.screenshot({ path: "test-results/seat-layout-harness/viewer-popover.png" });
+});

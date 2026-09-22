@@ -116,6 +116,7 @@ export function useSeatMapInteraction({
     if (
       gesture.current ||
       (e.button !== 0 && e.button !== 1) ||
+      !containerRef.current?.contains(e.target as Node) ||
       (e.target as HTMLElement).closest("[data-camera-control]")
     )
       return;

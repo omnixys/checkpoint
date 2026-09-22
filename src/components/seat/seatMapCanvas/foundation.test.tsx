@@ -1,4 +1,5 @@
 import { act, cleanup, fireEvent, render, renderHook, screen } from "@testing-library/react";
+import { createPortal } from "react-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { importLayout, type SourceLayout } from "./core/adapter";
 import { type MoveOperation, moveNode } from "./core/document";
@@ -6,6 +7,7 @@ import { source } from "./core/test-fixture";
 import SeatMapCanvas from "./SeatMapCanvas";
 import SeatMapEditorToolbar from "./SeatMapEditorToolbar";
 import { useLayoutDocument } from "./useLayoutDocument";
+import { useSeatMapInteraction } from "./useSeatMapInteraction";
 
 class TestPointerEvent extends MouseEvent {
   pointerId: number;
@@ -136,6 +138,61 @@ describe("flat renderer and pointer lifecycle", () => {
     expect(table).toHaveStyle({ transform: "translate(600px, 350px) rotate(180deg)" });
     up(root, 300);
     expect(onMove).not.toHaveBeenCalled();
+  });
+});
+describe("overlay portals do not trigger canvas gestures", () => {
+  function harness() {
+    const onMove = vi.fn();
+    const onSelect = vi.fn();
+    const onCamera = vi.fn();
+    function Harness() {
+      const { containerRef, handlers } = useSeatMapInteraction({
+        document: doc,
+        camera: { x: 0, y: 0, scale: 1 },
+        editing: true,
+        pending: false,
+        selectedIds: [],
+        onSelect,
+        onMove,
+        onCamera,
+      });
+      return (
+        <div ref={containerRef} {...handlers} data-testid="harness-canvas">
+          <button type="button" data-node-id="table" data-testid="harness-table">
+            Tisch T
+          </button>
+          {createPortal(<div data-testid="portal-backdrop" />, document.body)}
+        </div>
+      );
+    }
+    return { render: () => render(<Harness />), onMove, onSelect, onCamera };
+  }
+  function outsidePointer(root: HTMLElement, onCamera: ReturnType<typeof vi.fn>) {
+    const backdrop = screen.getByTestId("portal-backdrop");
+    fireEvent.pointerDown(backdrop, { pointerId: 7, button: 0, clientX: 10, clientY: 10 });
+    fireEvent.pointerMove(backdrop, { pointerId: 7, clientX: 120, clientY: 80 });
+    fireEvent.pointerUp(backdrop, { pointerId: 7, clientX: 120, clientY: 80 });
+    expect(root.setPointerCapture).not.toHaveBeenCalled();
+    expect(onCamera).not.toHaveBeenCalled();
+  }
+  it("ignores pointer interaction that starts on a body portal like a Popover backdrop", () => {
+    const { render: renderHarness, onMove, onCamera } = harness();
+    renderHarness();
+    const root = screen.getByTestId("harness-canvas");
+    outsidePointer(root, onCamera);
+    expect(onMove).not.toHaveBeenCalled();
+  });
+  it("still captures gestures that start inside the canvas", () => {
+    const { render: renderHarness } = harness();
+    renderHarness();
+    const root = screen.getByTestId("harness-canvas");
+    fireEvent.pointerDown(screen.getByTestId("harness-table"), {
+      pointerId: 7,
+      button: 0,
+      clientX: 80,
+      clientY: 80,
+    });
+    expect(root.setPointerCapture).toHaveBeenCalledWith(7);
   });
 });
 describe("move persistence", () => {
