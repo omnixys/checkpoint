@@ -19,6 +19,7 @@
   },
   "title": "Invitations",
   "subtitle": "Manage guests, statuses and invitations",
+  "counter": "{count} invitations",
   "backToEvent": "Back to event",
   "create": "Create invitation",
   "showFilters": "Show filters",

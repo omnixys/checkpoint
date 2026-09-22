@@ -10,6 +10,7 @@ import { alpha, Box, IconButton, Stack, Tooltip, Typography, useTheme } from "@m
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { InvitationCounter } from "@/checkpoint/components/invitation/InvitationCounter";
 import UserCreationInbox from "@/checkpoint/components/invitation/UserCreationInbox";
 import RefreshArcButton from "@/checkpoint/components/RefreshArcButton";
 import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
@@ -78,6 +79,8 @@ export function InvitationHeaderBar({ collapsed, onToggle, logic }: Props) {
 
             {/* PRIMARY ACTION */}
             <Stack direction="row" spacing={1}>
+              <InvitationCounter count={logic.invitations.length} />
+
               <Tooltip title={t("create")}>
                 <motion.div whileTap={{ scale: 0.9 }}>
                   <IconButton
@@ -212,6 +215,8 @@ export function InvitationHeaderBar({ collapsed, onToggle, logic }: Props) {
 
           {/* ACTIONS */}
           <Stack direction="row" spacing={1} sx={{ flexShrink: 0, flexWrap: "wrap" }}>
+            <InvitationCounter count={logic.invitations.length} />
+
             <Tooltip title={t("create")}>
               <motion.div whileTap={{ scale: 0.9 }}>
                 <IconButton

@@ -19,6 +19,7 @@
   },
   "title": "Einladungen",
   "subtitle": "Verwalte Gäste, Status und Einladungen",
+  "counter": "{count} Einladungen",
   "backToEvent": "Zurück zum Event",
   "create": "Einladung erstellen",
   "showFilters": "Filter anzeigen",
