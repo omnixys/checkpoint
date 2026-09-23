@@ -59,7 +59,9 @@ export function WorkspaceChatInput({
           placeholder={placeholder}
           maxRows={4}
           value={value}
-          sx={{ flex: 1, fontSize: "0.9rem", px: 1.5, py: 1 }}
+          // iOS Safari zooms focused inputs smaller than 16px. Keep browser
+          // zoom available while using the body size for the mobile composer.
+          sx={{ flex: 1, fontSize: { xs: "1rem", sm: "0.9rem" }, px: 1.5, py: 1 }}
         />
       </Box>
       <IconButton
@@ -71,9 +73,9 @@ export function WorkspaceChatInput({
         sx={{
           bgcolor: value.trim() ? "primary.main" : "transparent",
           color: value.trim() ? "primary.contrastText" : "text.disabled",
-          width: 40,
-          height: 40,
-          transition: "all 0.2s",
+          minWidth: 48,
+          minHeight: 48,
+          transition: "background-color 0.2s",
           "&:hover": {
             bgcolor: value.trim() ? "primary.dark" : "transparent",
           },

@@ -148,7 +148,9 @@ function Composer({
             onKeyDown={onKeyDown}
             placeholder={placeholder}
             value={input}
-            sx={{ fontSize: "0.95rem", py: 1.25 }}
+            // iOS Safari zooms a focused input below 16px. Keep the composer
+            // at the platform body size on phones without disabling user zoom.
+            sx={{ fontSize: { xs: "1rem", sm: "0.95rem" }, py: 1.25 }}
           />
         </Box>
       ) : (
@@ -166,7 +168,8 @@ function Composer({
             bgcolor: alpha(theme.palette.action.hover, 0.3),
             borderRadius: 2,
             flex: 1,
-            fontSize: "0.85rem",
+            // See the large composer: 16px prevents iOS focus zoom.
+            fontSize: { xs: "1rem", sm: "0.85rem" },
             px: 1.5,
             py: 1,
           }}
@@ -186,7 +189,10 @@ function Composer({
                 height: 48,
                 width: 48,
               }
-            : {}),
+            : {
+                minHeight: 48,
+                minWidth: 48,
+              }),
         }}
       >
         {isCreating ? (

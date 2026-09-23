@@ -40,6 +40,7 @@ interface RenderOptions {
   isCreating?: boolean;
   currentUserId?: string | undefined;
   messagesLoading?: boolean;
+  composerSize?: "compact" | "large";
 }
 
 function renderPanel(options: RenderOptions = {}) {
@@ -53,12 +54,14 @@ function renderPanel(options: RenderOptions = {}) {
     isCreating = false,
     currentUserId = undefined,
     messagesLoading = false,
+    composerSize = "compact",
   } = options;
 
   return render(
     <ThemeProvider theme={createAppTheme("light")}>
       <NextIntlClientProvider messages={{ support: supportEn }} locale="en">
         <SupportChatPanel
+          composerSize={composerSize}
           currentUserId={currentUserId}
           isCreating={isCreating}
           latestMessage={latestMessage}
@@ -113,6 +116,17 @@ describe("SupportChatPanel", () => {
     renderPanel({});
 
     expect(screen.getByLabelText("Send message")).toBeDisabled();
+  });
+
+  it("keeps mobile composer text at 16px and gives the compact send action a 48px target", () => {
+    renderPanel();
+
+    const composer = screen.getByPlaceholderText("Type your message...");
+    const send = screen.getByLabelText("Send message");
+
+    expect(document.head.textContent).toContain("font-size:1rem");
+    expect(send).toHaveStyle({ minHeight: "48px", minWidth: "48px" });
+    expect(composer).toBeInTheDocument();
   });
 
   it("renders a failed pending message with an accessible retry action", () => {
