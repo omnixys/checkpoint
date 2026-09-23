@@ -28,6 +28,7 @@ import { AppleCard } from "@/checkpoint/components/apple/AppleCard";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { env } from "@/checkpoint/lib/env";
 import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
+import { stripNonDigits } from "@/checkpoint/utils/input/numericInput";
 import type { LoginFormState } from "./useLoginForm";
 
 export interface LoginFormCardProps {
@@ -259,7 +260,7 @@ export function LoginFormCard({
                       value={guestPhoneNumber}
                       error={guestInvalid}
                       helperText={guestInvalid ? t("login.guestInvalid") : undefined}
-                      onChange={(e) => setGuestPhoneNumber(e.target.value)}
+                      onChange={(e) => setGuestPhoneNumber(stripNonDigits(e.target.value))}
                       slotProps={{
                         htmlInput: { inputMode: "tel", spellCheck: false },
                         input: {

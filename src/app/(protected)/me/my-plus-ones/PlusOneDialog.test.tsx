@@ -89,4 +89,22 @@ describe("PlusOneDialog (my plus ones)", () => {
       }),
     );
   });
+
+  it("strips letters and special characters from the phone number while typing", () => {
+    renderDialog(makePlusOne({ status: "APPROVED" }));
+
+    const phone = screen.getByLabelText("Phone number");
+    fireEvent.change(phone, { target: { value: "abc0170!-def12345" } });
+
+    expect(phone).toHaveValue("017012345");
+  });
+
+  it("keeps only digits and a single leading plus in the country code while typing", () => {
+    renderDialog(makePlusOne({ status: "APPROVED" }));
+
+    const code = screen.getByLabelText("Country code");
+    fireEvent.change(code, { target: { value: "++49-030-456" } });
+
+    expect(code).toHaveValue("+49030456");
+  });
 });

@@ -34,6 +34,7 @@ import type { ChildEventDraft } from "@/checkpoint/app/(protected)/event/new/typ
 import { formatEnum } from "@/checkpoint/i18n/format-enum";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { formatChildEventDateRange } from "@/checkpoint/utils/date-utils";
+import { blockNonNumericKey, numericHtmlInput } from "@/checkpoint/utils/input/numericInput";
 
 const CATEGORY_OPTIONS = [
   "general",
@@ -261,6 +262,8 @@ function ChildEventAccordion({
                 type="number"
                 label={t("children.maxSeats")}
                 fullWidth={true}
+                onKeyDown={blockNonNumericKey}
+                slotProps={{ htmlInput: numericHtmlInput({ min: 0 }) }}
                 {...maxSeats}
               />
             </Grid>

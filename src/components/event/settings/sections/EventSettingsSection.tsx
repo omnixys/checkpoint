@@ -27,6 +27,7 @@ import {
 import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
 import type { Safe } from "@/checkpoint/types/core/core.type";
 import { mapSettingsPatchToInput } from "@/checkpoint/utils/event/settings.mapper";
+import { blockNonNumericKey, numericHtmlInput } from "@/checkpoint/utils/input/numericInput";
 
 const EVENT_CATEGORIES: EventCategory[] = [
   EventCategory.GENERAL,
@@ -306,6 +307,8 @@ export default function EventSettingsSection({ settings, actions }: Props) {
               type="number"
               value={local.maxPlusOnes ?? 0}
               onChange={(e) => update("maxPlusOnes", Number(e.target.value))}
+              onKeyDown={blockNonNumericKey}
+              slotProps={{ htmlInput: numericHtmlInput({ min: 0 }) }}
               sx={inputSx}
             />
           </Stack>
@@ -432,6 +435,8 @@ export default function EventSettingsSection({ settings, actions }: Props) {
               type="number"
               value={local.rotateSeconds}
               onChange={(e) => update("rotateSeconds", Number(e.target.value))}
+              onKeyDown={blockNonNumericKey}
+              slotProps={{ htmlInput: numericHtmlInput({ min: 30 }) }}
               sx={inputSx}
             />
             <TextField
@@ -440,6 +445,8 @@ export default function EventSettingsSection({ settings, actions }: Props) {
               type="number"
               value={local.maxSeats}
               onChange={(e) => update("maxSeats", Number(e.target.value))}
+              onKeyDown={blockNonNumericKey}
+              slotProps={{ htmlInput: numericHtmlInput({ min: 1 }) }}
               sx={inputSx}
             />
           </Stack>

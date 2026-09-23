@@ -21,6 +21,7 @@ import { type GetEventSettingsQuery, GuestReminderPreset } from "@/checkpoint/ge
 import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
 import type { Safe } from "@/checkpoint/types/core/core.type";
 import { mapSettingsPatchToInput } from "@/checkpoint/utils/event/settings.mapper";
+import { blockNonNumericKey, numericHtmlInput } from "@/checkpoint/utils/input/numericInput";
 
 type SettingsType = Safe<Safe<GetEventSettingsQuery["event"]>["settings"]>;
 
@@ -167,7 +168,8 @@ export default function EventGuestReminderSection({ settings, actions }: Props) 
             fullWidth={true}
             label="Maximale Erinnerungen"
             type="number"
-            slotProps={{ input: { inputProps: { min: 1, max: 5 } } }}
+            onKeyDown={blockNonNumericKey}
+            slotProps={{ htmlInput: numericHtmlInput({ min: 1, max: 5 }) }}
             value={local.guestConfirmationMaxResends ?? 2}
             onChange={(e) => update("guestConfirmationMaxResends", Number(e.target.value) || null)}
             helperText="Wie oft die Bestätigungsanfrage pro Gast erneut gesendet werden darf."

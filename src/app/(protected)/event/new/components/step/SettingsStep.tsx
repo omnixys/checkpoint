@@ -21,6 +21,7 @@ import { motion } from "framer-motion";
 import CreateWizardCard from "@/checkpoint/app/(protected)/event/new/components/CreateWizardCard";
 import { useField } from "@/checkpoint/app/(protected)/event/new/hooks/useField";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
+import { blockNonNumericKey, numericHtmlInput } from "@/checkpoint/utils/input/numericInput";
 
 /**
  * -------------------------------------------------------------
@@ -84,6 +85,8 @@ export default function SettingsStep() {
                 label={t("settings.maxSeatsField")}
                 type="number"
                 fullWidth={true}
+                onKeyDown={blockNonNumericKey}
+                slotProps={{ htmlInput: numericHtmlInput({ min: 1 }) }}
                 {...maxSeats}
               />
             </Stack>
@@ -107,6 +110,8 @@ export default function SettingsStep() {
                 label={t("settings.rotateSecondsField")}
                 type="number"
                 fullWidth={true}
+                onKeyDown={blockNonNumericKey}
+                slotProps={{ htmlInput: numericHtmlInput({ min: 30 }) }}
                 {...rotateSeconds}
               />
             </Stack>

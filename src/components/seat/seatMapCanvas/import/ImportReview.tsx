@@ -12,6 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useMemo, useState } from "react";
+import { blockNonNumericKey, numericHtmlInput } from "@/checkpoint/utils/input/numericInput";
 import SeatMapCanvas from "../SeatMapCanvas";
 import type { DraftElement, LayoutImportDraft } from "./contract";
 import {
@@ -279,7 +280,8 @@ export function ImportReview({
                       )
                     }
                     onChange={(e) => setCount(e.target.value)}
-                    slotProps={{ htmlInput: { min: 0, max: 10000, step: 1 } }}
+                    onKeyDown={blockNonNumericKey}
+                    slotProps={{ htmlInput: numericHtmlInput({ min: 0, max: 10000, step: 1 }) }}
                   />
                   <Button
                     onClick={() =>
@@ -314,7 +316,8 @@ export function ImportReview({
                       numberConfirmed: e.target.value !== "",
                     })
                   }
-                  slotProps={{ htmlInput: { min: 1, step: 1 } }}
+                  onKeyDown={blockNonNumericKey}
+                  slotProps={{ htmlInput: numericHtmlInput({ min: 1, step: 1 }) }}
                 />
               )}
               <Button

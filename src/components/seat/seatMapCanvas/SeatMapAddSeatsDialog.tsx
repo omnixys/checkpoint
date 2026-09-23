@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
+import { blockNonNumericKey, numericHtmlInput } from "@/checkpoint/utils/input/numericInput";
 
 interface Props {
   open: boolean;
@@ -49,7 +50,8 @@ export default function SeatMapAddSeatsDialog({
             type="number"
             value={count}
             onChange={(event) => setCount(Number(event.target.value))}
-            slotProps={{ htmlInput: { min: 1, max: 1000, step: 1 } }}
+            onKeyDown={blockNonNumericKey}
+            slotProps={{ htmlInput: numericHtmlInput({ min: 1, max: 1000, step: 1 }) }}
             error={!valid}
             helperText={
               valid ? `Danach: ${currentCount + count} Sitzplätze` : "Bitte 1 bis 1.000 eingeben."

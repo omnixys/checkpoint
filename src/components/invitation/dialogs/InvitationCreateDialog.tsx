@@ -26,6 +26,7 @@ import { useInvitationForm } from "@/checkpoint/hooks/invitation/useInvitationFo
 import type { InvitationLogic } from "@/checkpoint/hooks/invitation/useInvitationLogic";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import type { CallingCodeCountry } from "@/checkpoint/types/country.type";
+import { blockNonNumericKey, numericHtmlInput } from "@/checkpoint/utils/input/numericInput";
 
 /**
  * Props for InvitationCreateDialog
@@ -239,6 +240,8 @@ export default function InvitationCreateDialog({
               fullWidth={true}
               value={values.maxInvitees}
               onChange={(e) => setField("maxInvitees", Math.max(0, Number(e.target.value) || 0))}
+              onKeyDown={blockNonNumericKey}
+              slotProps={{ htmlInput: numericHtmlInput({ min: 0 }) }}
             />
 
             <TextField

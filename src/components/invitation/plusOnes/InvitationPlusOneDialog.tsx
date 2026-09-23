@@ -33,6 +33,7 @@ import type {
 import { PhoneNumberType } from "@/checkpoint/generated/graphql";
 import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
+import { stripNonDigits, stripNonDigitsAllowPlus } from "@/checkpoint/utils/input/numericInput";
 
 type PlusOneDialogMode = "create" | "edit";
 
@@ -320,16 +321,18 @@ export default function InvitationPlusOneDialog({
                 <TextField
                   label={tInvitation("plusOnes.fields.countryCode")}
                   value={countryCode}
-                  onChange={(event) => setCountryCode(event.target.value)}
+                  onChange={(event) => setCountryCode(stripNonDigitsAllowPlus(event.target.value))}
                   fullWidth={true}
+                  slotProps={{ htmlInput: { inputMode: "tel" } }}
                   sx={glassInputSx(theme)}
                 />
 
                 <TextField
                   label={tInvitation("plusOnes.fields.phoneNumber")}
                   value={number}
-                  onChange={(event) => setNumber(event.target.value)}
+                  onChange={(event) => setNumber(stripNonDigits(event.target.value))}
                   fullWidth={true}
+                  slotProps={{ htmlInput: { inputMode: "tel" } }}
                   sx={glassInputSx(theme)}
                 />
               </Stack>

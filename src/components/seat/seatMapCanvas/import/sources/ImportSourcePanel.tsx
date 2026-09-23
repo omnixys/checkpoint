@@ -2,6 +2,7 @@
 
 import { Alert, Box, Button, CircularProgress, Stack, TextField, Typography } from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { blockNonNumericKey, numericHtmlInput } from "@/checkpoint/utils/input/numericInput";
 import { imageQuad, type Quad } from "./geometry";
 import { canvas, canvasPng, context, decodeImage, prepareImage, rotateSource } from "./image";
 import { PdfSource } from "./pdf";
@@ -345,7 +346,13 @@ export function ImportSourcePanel({ kind, onPrepared, disabled = false }: Props)
             value={pageNumber}
             disabled={disabled || busy}
             onChange={(event) => choosePage(Number(event.target.value))}
-            slotProps={{ htmlInput: { min: 1, max: pageCount, step: 1, name: "import-pdf-page" } }}
+            onKeyDown={blockNonNumericKey}
+            slotProps={{
+              htmlInput: {
+                ...numericHtmlInput({ min: 1, max: pageCount, step: 1 }),
+                name: "import-pdf-page",
+              },
+            }}
           />
           <Button
             disabled={
@@ -530,11 +537,14 @@ export function ImportSourcePanel({ kind, onPrepared, disabled = false }: Props)
                         event.target.value === "" ? Number.NaN : Number(event.target.value),
                       )
                     }
+                    onKeyDown={blockNonNumericKey}
                     slotProps={{
                       htmlInput: {
-                        min: 0,
-                        max: axis === "x" ? dimensions.width : dimensions.height,
-                        step: 1,
+                        ...numericHtmlInput({
+                          min: 0,
+                          max: axis === "x" ? dimensions.width : dimensions.height,
+                          step: 1,
+                        }),
                         name: `import-corner-${index}-${axis}`,
                       },
                     }}
