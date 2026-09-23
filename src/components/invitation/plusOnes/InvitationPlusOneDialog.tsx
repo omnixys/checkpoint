@@ -22,6 +22,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
 import { useEffect, useMemo, useState } from "react";
 import type {
   CreatePlusOneInput,
@@ -34,6 +35,45 @@ import { useTypedTranslations } from "@/checkpoint/i18n/useTypedTranslations";
 import { glassInputSx } from "@/checkpoint/themes/styles/glassInput";
 
 type PlusOneDialogMode = "create" | "edit";
+
+interface ContactPhoneFallback {
+  countryCode?: string;
+  number?: string;
+  type?: PhoneNumberType;
+  label?: string | null;
+}
+
+function resolveContactPhone(
+  invitation: InvitationPayload | null | undefined,
+): ContactPhoneFallback {
+  const structured =
+    invitation?.phoneNumbers?.find((phone) => phone.isPrimary) ?? invitation?.phoneNumbers?.[0];
+
+  if (structured?.countryCode && structured?.number) {
+    return {
+      countryCode: structured.countryCode,
+      number: structured.number,
+      type: structured.type,
+      label: structured.label,
+    };
+  }
+
+  const raw = invitation?.phoneNumber;
+  if (raw?.trim()) {
+    const parsed = parsePhoneNumberFromString(raw.trim());
+    if (parsed?.countryCallingCode && parsed.nationalNumber) {
+      return {
+        countryCode: `+${parsed.countryCallingCode}`,
+        number: parsed.nationalNumber,
+        type: PhoneNumberType.WHATSAPP,
+        label: null,
+      };
+    }
+    return { countryCode: "+49", number: raw.trim(), type: PhoneNumberType.WHATSAPP, label: null };
+  }
+
+  return {};
+}
 
 interface Props {
   open: boolean;
@@ -94,14 +134,11 @@ export default function InvitationPlusOneDialog({
     const contactSource = mode === "create" ? parentInvitation : initialValue;
     setEmail(contactSource?.email ?? "");
 
-    const primaryPhone =
-      contactSource?.phoneNumbers?.find((phone) => phone.isPrimary) ??
-      contactSource?.phoneNumbers?.[0];
-
-    setCountryCode(primaryPhone?.countryCode ?? "+49");
-    setNumber(primaryPhone?.number ?? "");
-    setPhoneType(primaryPhone?.type ?? PhoneNumberType.WHATSAPP);
-    setLabel(primaryPhone?.label ?? "");
+    const phone = resolveContactPhone(contactSource);
+    setCountryCode(phone.countryCode ?? "+49");
+    setNumber(phone.number ?? "");
+    setPhoneType(phone.type ?? PhoneNumberType.WHATSAPP);
+    setLabel(phone.label ?? "");
   }, [initialValue, parentInvitation, open, mode]);
 
   const title =

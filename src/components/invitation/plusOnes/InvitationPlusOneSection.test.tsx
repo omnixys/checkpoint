@@ -182,6 +182,29 @@ describe("InvitationPlusOneSection", () => {
     expect(onChanged).toHaveBeenCalled();
   });
 
+  it("prefills the parent phone from the legacy phoneNumber string when no structured numbers exist", async () => {
+    createPlusOneMutation.mockResolvedValue({});
+    const onChanged = vi.fn();
+
+    renderWithI18n(
+      <InvitationPlusOneSection
+        invitation={makeInvitation({
+          email: "jane@example.com",
+          phoneNumber: "+4917987654321",
+          phoneNumbers: [],
+        })}
+        canManage={true}
+        onChanged={onChanged}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Add guest" }));
+
+    expect(screen.getByLabelText("Email")).toHaveValue("jane@example.com");
+    expect(screen.getByLabelText("Country code")).toHaveValue("+49");
+    expect(screen.getByLabelText("Phone number")).toHaveValue("17987654321");
+  });
+
   it("updates an existing plus-one keeping its id", async () => {
     updatePlusOneMutation.mockResolvedValue({});
     const onChanged = vi.fn();
