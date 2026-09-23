@@ -89,7 +89,7 @@ export default function UserMenu() {
     if (!confirmAppNavigation(`${CHECKPOINT_BASE_PATH}login`)) return;
     handleClose();
     await logout();
-    router.replace(`${CHECKPOINT_BASE_PATH}login`);
+    window.location.assign(`${CHECKPOINT_BASE_PATH}login`);
   };
 
   const featureIcon = (featureId: string) => {

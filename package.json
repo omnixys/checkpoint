@@ -49,7 +49,7 @@
     "@omnixys/analytics-sdk": "2.0.1",
     "@omnixys/context-ts": "4.1.0",
     "@omnixys/contracts-ts": "4.1.0",
-    "@omnixys/observability-ts": "4.1.0",
+    "@omnixys/observability-ts": "4.1.1",
     "@react-hook/window-size": "^3.1.1",
     "@react-spring/web": "^10.0.3",
     "@vercel/speed-insights": "^2.0.0",

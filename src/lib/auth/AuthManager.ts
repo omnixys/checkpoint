@@ -36,8 +36,8 @@ import { getCookie } from "@/checkpoint/lib/apollo/cookie.utils";
 
 import type { ApolloClient } from "@apollo/client";
 import { AppError, ErrorCode, normalizeApolloError } from "@/checkpoint/errors/app-error";
+import { notificationService } from "@/checkpoint/errors/notification.service";
 import { restartWebSocketTransport } from "@/checkpoint/lib/apollo/ws-link";
-import { env } from "@/checkpoint/lib/env";
 import { getLogger } from "@/checkpoint/utils/logger";
 
 const logger = getLogger("AuthManager");
@@ -178,7 +178,7 @@ class AuthManagerClass {
    * Handle a failed periodic refresh.
    *
    * Definitive auth failures (expired session, revoked membership, ...)
-   * cannot recover by retrying: sign out and return to the login page.
+   * cannot recover by retrying: sign out and open the login dialog.
    * Transient failures are logged and retried on the next tick.
    */
   private async handleRecoveryFailure(error: unknown): Promise<void> {
@@ -197,15 +197,8 @@ class AuthManagerClass {
       const logoutAppError = normalizeApolloError(logoutError, { operationName: "Logout" });
       logger.warn("Logout during session recovery failed", logoutAppError.toLogContext());
     } finally {
-      this.redirectToLogin();
+      notificationService.capture(appError, { scope: "global" });
     }
-  }
-
-  private redirectToLogin(): void {
-    if (typeof window === "undefined") {
-      return;
-    }
-    window.location.assign(`${env.CHECKPOINT_BASE_PATH}login`);
   }
 
   /**

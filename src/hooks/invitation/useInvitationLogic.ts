@@ -690,7 +690,22 @@ export function useInvitationLogic(eventId: string) {
    * --------------------------------------------------------------------- */
   async function reload() {
     // TODO optimieren
-    await globalEventInvitationListRefetch();
+    const result = await globalEventInvitationListRefetch();
+    const refreshed = result.data?.getFullByEventIds;
+    if (!refreshed) {
+      return;
+    }
+
+    setActiveInvitation((current) => {
+      if (!current) {
+        return current;
+      }
+      return (
+        (refreshed.find((invitation) => invitation.id === current.id) as
+          | InvitationPayload
+          | undefined) ?? current
+      );
+    });
   }
 
   function resetUserInbox() {

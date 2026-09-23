@@ -74,11 +74,15 @@ export default function HomePage(): JSX.Element {
           </Typography>
 
           <Stack spacing={2}>
-            <Link href={`${basePath}login`}>
-              <Button size="large" variant="contained" fullWidth={true}>
-                {t("auth.login")}
-              </Button>
-            </Link>
+            <Button
+              component="a"
+              href={`${basePath}login`}
+              size="large"
+              variant="contained"
+              fullWidth={true}
+            >
+              {t("auth.login")}
+            </Button>
 
             <Tooltip title={!hasEventId ? t("auth.selectEventFirst") : ""}>
               <span>

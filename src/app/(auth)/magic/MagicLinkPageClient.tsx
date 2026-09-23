@@ -76,7 +76,7 @@ export default function MagicLinkPageClient(): JSX.Element {
             type="button"
             fullWidth={true}
             variant="tonal"
-            onClick={() => router.replace(`${env.CHECKPOINT_BASE_PATH}login`)}
+            onClick={() => window.location.assign(`${env.CHECKPOINT_BASE_PATH}login`)}
           >
             {t("magic.backToLogin")}
           </AppleButton>

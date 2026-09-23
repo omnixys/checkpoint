@@ -85,7 +85,7 @@ export default function LandingPage() {
                 </Typography>
                 <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
                   <Button
-                    component={Link}
+                    component="a"
                     href={`${CHECKPOINT_BASE_PATH}login`}
                     size="large"
                     fullWidth={true}

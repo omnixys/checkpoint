@@ -205,6 +205,114 @@ describe("InvitationPlusOneSection", () => {
     expect(screen.getByLabelText("Phone number")).toHaveValue("17987654321");
   });
 
+  it("shows the added plus-one immediately and reconciles with the server payload", async () => {
+    createPlusOneMutation.mockResolvedValue({
+      data: {
+        createPlusOnesInvitation: {
+          __typename: "InvitationPayload",
+          id: "po-server-9",
+          firstName: "Max",
+          lastName: "Mustermann",
+          email: "max@example.com",
+          status: InvitationStatus.ACCEPTED,
+          plusOneAgeCategory: "OVER_SIX",
+          phoneNumbers: [],
+        },
+      },
+    });
+    const onChanged = vi.fn();
+
+    renderWithI18n(
+      <InvitationPlusOneSection
+        invitation={makeInvitation({ maxInvitees: 1 })}
+        canManage={true}
+        onChanged={onChanged}
+      />,
+    );
+
+    expect(screen.getByText("No plus-ones yet")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Add guest" }));
+    fireEvent.change(screen.getByLabelText("First name"), { target: { value: "Max" } });
+    fireEvent.change(screen.getByLabelText("Last name"), { target: { value: "Mustermann" } });
+    fireEvent.click(screen.getByRole("radio", { name: "Over 6" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add" }));
+
+    expect(screen.getByText("Max Mustermann")).toBeInTheDocument();
+    expect(screen.getByText("Remaining slots: 0")).toBeInTheDocument();
+    expect(screen.queryByText("No plus-ones yet")).not.toBeInTheDocument();
+
+    await waitFor(() => expect(onChanged).toHaveBeenCalled());
+
+    expect(screen.getByText("Max Mustermann")).toBeInTheDocument();
+    expect(enqueueSnackbar).toHaveBeenCalledWith("Plus-one has been added.", expect.anything());
+  });
+
+  it("rolls back the optimistic plus-one when creation fails", async () => {
+    createPlusOneMutation.mockRejectedValue(new Error("boom"));
+    const onChanged = vi.fn();
+
+    renderWithI18n(
+      <InvitationPlusOneSection
+        invitation={makeInvitation({ maxInvitees: 1 })}
+        canManage={true}
+        onChanged={onChanged}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Add guest" }));
+    fireEvent.change(screen.getByLabelText("First name"), { target: { value: "Max" } });
+    fireEvent.change(screen.getByLabelText("Last name"), { target: { value: "Mustermann" } });
+    fireEvent.click(screen.getByRole("radio", { name: "Over 6" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add" }));
+
+    await waitFor(() =>
+      expect(enqueueSnackbar).toHaveBeenCalledWith(
+        "Plus-one could not be created.",
+        expect.anything(),
+      ),
+    );
+
+    expect(screen.getByText("No plus-ones yet")).toBeInTheDocument();
+    expect(screen.getByText("Remaining slots: 1")).toBeInTheDocument();
+    expect(onChanged).not.toHaveBeenCalled();
+  });
+
+  it("keeps the optimistic removal and reverts on failure", async () => {
+    const plusOne = makeInvitation({
+      id: "po-3",
+      firstName: "Max",
+      lastName: "Mustermann",
+      maxInvitees: 0,
+      status: InvitationStatus.PENDING,
+    });
+
+    removePlusOneMutation.mockRejectedValue(new Error("boom"));
+    const onChanged = vi.fn();
+
+    renderWithI18n(
+      <InvitationPlusOneSection
+        invitation={makeInvitation({ plusOnes: [plusOne] })}
+        canManage={true}
+        onChanged={onChanged}
+      />,
+    );
+
+    expect(screen.getByText("Max Mustermann")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Delete plus-one" }));
+
+    await waitFor(() =>
+      expect(enqueueSnackbar).toHaveBeenCalledWith(
+        "Plus-one could not be removed.",
+        expect.anything(),
+      ),
+    );
+
+    expect(screen.getByText("Max Mustermann")).toBeInTheDocument();
+    expect(screen.getByText("Remaining slots: 2")).toBeInTheDocument();
+    expect(onChanged).not.toHaveBeenCalled();
+  });
+
   it("updates an existing plus-one keeping its id", async () => {
     updatePlusOneMutation.mockResolvedValue({});
     const onChanged = vi.fn();

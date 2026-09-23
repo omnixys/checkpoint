@@ -2,6 +2,8 @@ import type { ApolloClient } from "@apollo/client";
 import { CombinedGraphQLErrors } from "@apollo/client/errors";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AppError, ErrorCode } from "@/checkpoint/errors/app-error";
+import type { ErrorNotification } from "@/checkpoint/errors/notification.service";
+import { notificationService } from "@/checkpoint/errors/notification.service";
 import { AuthEventsBus, AuthManager, isDefinitiveAuthFailure } from "./AuthManager";
 
 const realtime = vi.hoisted(() => ({ restart: vi.fn() }));
@@ -82,15 +84,19 @@ describe("AuthEventsBus.emit", () => {
 });
 
 describe("AuthManager recovery", () => {
-  const assign = vi.fn();
   let mutate: ReturnType<typeof vi.fn>;
 
+  function captureNotifications(): { getAll: () => ErrorNotification[]; stop: () => void } {
+    const notifications: ErrorNotification[] = [];
+    const unsubscribe = notificationService.subscribe((notification) =>
+      notifications.push(notification),
+    );
+    return { getAll: () => notifications, stop: unsubscribe };
+  }
+
   beforeEach(() => {
-    Object.defineProperty(window, "location", {
-      value: { assign, href: "http://localhost/" },
-      writable: true,
-    });
     mutate = vi.fn().mockResolvedValue({ data: { logout: true } });
+    notificationService.clear();
     AuthManager.init({ mutate } as unknown as ApolloClient);
   });
 
@@ -98,38 +104,50 @@ describe("AuthManager recovery", () => {
     vi.clearAllMocks();
   });
 
-  it("signs out and redirects on a definitive refresh failure", async () => {
+  it("signs out and opens the login dialog on a definitive refresh failure", async () => {
+    const { getAll, stop } = captureNotifications();
+
     await (
       AuthManager as unknown as {
         handleRecoveryFailure: (error: unknown) => Promise<void>;
       }
     ).handleRecoveryFailure(definitiveMembershipError());
+    stop();
 
     expect(mutate).toHaveBeenCalledTimes(1);
-    expect(assign).toHaveBeenCalledWith("/login");
+    expect(getAll()).toMatchObject([
+      { actions: [{ type: "redirect", to: "/login", mode: "login-modal" }] },
+    ]);
   });
 
   it("keeps the session on transient failures", async () => {
+    const { getAll, stop } = captureNotifications();
+
     await (
       AuthManager as unknown as {
         handleRecoveryFailure: (error: unknown) => Promise<void>;
       }
     ).handleRecoveryFailure(new TypeError("Failed to fetch"));
+    stop();
 
     expect(mutate).not.toHaveBeenCalled();
-    expect(assign).not.toHaveBeenCalled();
+    expect(getAll()).toEqual([]);
   });
 
-  it("still redirects when the logout call itself fails", async () => {
+  it("still opens the login dialog when the logout call itself fails", async () => {
     mutate.mockRejectedValue(new TypeError("Logout endpoint unreachable"));
+    const { getAll, stop } = captureNotifications();
 
     await (
       AuthManager as unknown as {
         handleRecoveryFailure: (error: unknown) => Promise<void>;
       }
     ).handleRecoveryFailure(definitiveMembershipError());
+    stop();
 
-    expect(assign).toHaveBeenCalledWith("/login");
+    expect(getAll()).toMatchObject([
+      { actions: [{ type: "redirect", to: "/login", mode: "login-modal" }] },
+    ]);
   });
 
   it("reconnects subscriptions after login, refresh, and logout cookie changes", async () => {
