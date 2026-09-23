@@ -1634,6 +1634,7 @@ export type Mutation = {
   updateEvent: EventPayload;
   updateEventAddress: EventAddressPayload;
   updateEventRole: EventRoleDefinitionPayload;
+  updateInvitationPlusOneLimit: InvitationPayload;
   updateMe: UserPayload;
   updateMyProfile: SuccessPayload;
   updatePlusOnesInvitation: InvitationPayload;
@@ -2399,6 +2400,11 @@ export type MutationUpdateEventAddressArgs = {
 
 export type MutationUpdateEventRoleArgs = {
   input: UpdateEventRoleInput;
+};
+
+
+export type MutationUpdateInvitationPlusOneLimitArgs = {
+  input: UpdateInvitationPlusOneLimitInput;
 };
 
 
@@ -4263,6 +4269,11 @@ export type UpdateEventRoleInput = {
   icon: InputMaybe<Scalars['String']['input']>;
   name: InputMaybe<Scalars['String']['input']>;
   roleId: Scalars['ID']['input'];
+};
+
+export type UpdateInvitationPlusOneLimitInput = {
+  id: Scalars['ID']['input'];
+  maxPlusOnes: Scalars['Int']['input'];
 };
 
 export type UpdateKcUserInput = {

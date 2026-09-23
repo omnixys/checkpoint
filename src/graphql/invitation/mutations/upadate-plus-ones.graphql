@@ -21,3 +21,10 @@ mutation UpdatePlusOne($input: UpdatePlusOneInput!) {
     }
   }
 }
+
+mutation UpdateInvitationPlusOneLimit($input: UpdateInvitationPlusOneLimitInput!) {
+  updateInvitationPlusOneLimit(input: $input) {
+    id
+    maxInvitees
+  }
+}

@@ -267,7 +267,10 @@ const config: CodegenConfig = {
     "src/graphql/support-subscriptions.schema.graphql",
     "src/graphql/internal-conversations.overlay.schema.graphql",
     ...(process.env.CODEGEN_OFFLINE === "true"
-      ? ["src/graphql/guest-confirmation.overlay.schema.graphql"]
+      ? [
+          "src/graphql/guest-confirmation.overlay.schema.graphql",
+          "src/graphql/invitation-plus-one-limit.overlay.schema.graphql",
+        ]
       : []),
   ],
 

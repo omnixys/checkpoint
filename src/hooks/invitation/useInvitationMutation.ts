@@ -36,6 +36,9 @@ import {
   SendBulkInvitationsDocument,
   type SendBulkInvitationsMutation,
   type SendBulkInvitationsMutationVariables,
+  UpdateInvitationPlusOneLimitDocument,
+  type UpdateInvitationPlusOneLimitMutation,
+  type UpdateInvitationPlusOneLimitMutationVariables,
   UpdatePlusOneDocument,
   type UpdatePlusOneMutation,
   type UpdatePlusOneMutationVariables,
@@ -57,6 +60,12 @@ export default function useInvitationMutation() {
     UpdatePlusOneMutationVariables
   >(UpdatePlusOneDocument);
   const updatePlusOnePayload = updatePlusOneMutationResult.data?.updatePlusOnesInvitation;
+
+  const [updateInvitationPlusOneLimitMutation, updateInvitationPlusOneLimitMutationResult] =
+    useMutation<
+      UpdateInvitationPlusOneLimitMutation,
+      UpdateInvitationPlusOneLimitMutationVariables
+    >(UpdateInvitationPlusOneLimitDocument);
 
   const [removePlusOneMutation, removePlusOneMutationResult] = useMutation<
     RemovePlusOneMutation,
@@ -129,6 +138,10 @@ export default function useInvitationMutation() {
     updatePlusOnePayload,
     updatePlusOneLoading: addPlusOneMutationResult.loading,
     updatePlusOneError: addPlusOneMutationResult.error,
+
+    updateInvitationPlusOneLimitMutation,
+    updateInvitationPlusOneLimitLoading: updateInvitationPlusOneLimitMutationResult.loading,
+    updateInvitationPlusOneLimitError: updateInvitationPlusOneLimitMutationResult.error,
 
     removePlusOneMutation,
     removePlusOnePayload,

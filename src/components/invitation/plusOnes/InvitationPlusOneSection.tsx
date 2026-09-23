@@ -7,7 +7,17 @@ import EmailRoundedIcon from "@mui/icons-material/EmailRounded";
 import GroupRoundedIcon from "@mui/icons-material/GroupRounded";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import PhoneIphoneRoundedIcon from "@mui/icons-material/PhoneIphoneRounded";
-import { Box, Button, Chip, Divider, IconButton, Stack, Tooltip, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Chip,
+  Divider,
+  IconButton,
+  Stack,
+  TextField,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import type {
@@ -92,18 +102,25 @@ function toInvitationPayload(plusOne: unknown): InvitationPayload {
 export default function InvitationPlusOneSection({ invitation, canManage, onChanged }: Props) {
   const t = useTypedTranslations("invitation");
   const { enqueueSnackbar } = useSnackbar();
-  const { createPlusOneMutation, updatePlusOneMutation, removePlusOneMutation } =
-    useInvitationMutation();
+  const {
+    createPlusOneMutation,
+    updatePlusOneMutation,
+    removePlusOneMutation,
+    updateInvitationPlusOneLimitMutation,
+  } = useInvitationMutation();
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<InvitationPayload | null>(null);
 
   const [plusOnes, setPlusOnes] = useState<InvitationPayload[]>(invitation.plusOnes ?? []);
   const [remaining, setRemaining] = useState(invitation.maxInvitees);
+  const [limitValue, setLimitValue] = useState(String(invitation.maxInvitees));
+  const [limitSaving, setLimitSaving] = useState(false);
 
   useEffect(() => {
     setPlusOnes(invitation.plusOnes ?? []);
     setRemaining(invitation.maxInvitees);
+    setLimitValue(String((invitation.plusOnes?.length ?? 0) + invitation.maxInvitees));
   }, [invitation]);
 
   if (!canManage) {
@@ -195,6 +212,37 @@ export default function InvitationPlusOneSection({ invitation, canManage, onChan
     }
   };
 
+  const usedCapacity = plusOnes.length;
+  const totalCapacity = usedCapacity + remaining;
+  const requestedLimit = Number(limitValue);
+  const limitIsValid = Number.isInteger(requestedLimit) && requestedLimit >= usedCapacity;
+  const limitHasChanged = limitIsValid && requestedLimit !== totalCapacity;
+
+  const handleLimitSave = async (): Promise<void> => {
+    if (!limitHasChanged || limitSaving) {
+      return;
+    }
+
+    setLimitSaving(true);
+    try {
+      const result = await updateInvitationPlusOneLimitMutation({
+        variables: { input: { id: invitation.id, maxPlusOnes: requestedLimit } },
+      });
+      const updated = result.data?.updateInvitationPlusOneLimit;
+      if (!updated) {
+        throw new Error("Plus-one limit update response was incomplete");
+      }
+      setRemaining(updated.maxInvitees);
+      setLimitValue(String(usedCapacity + updated.maxInvitees));
+      enqueueSnackbar(t("plusOnes.limitUpdated"), { variant: "success" });
+      onChanged();
+    } catch {
+      enqueueSnackbar(t("plusOnes.errorLimitUpdate"), { variant: "error" });
+    } finally {
+      setLimitSaving(false);
+    }
+  };
+
   return (
     <Box>
       <Stack
@@ -221,6 +269,31 @@ export default function InvitationPlusOneSection({ invitation, canManage, onChan
       <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
         {t("plusOnes.remaining", { count: remaining })}
       </Typography>
+
+      <Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ mt: 1.5 }}>
+        <TextField
+          label={t("plusOnes.limitLabel")}
+          size="small"
+          type="number"
+          value={limitValue}
+          onChange={(event) => setLimitValue(event.target.value)}
+          error={Boolean(limitValue) && !limitIsValid}
+          helperText={
+            limitIsValid
+              ? t("plusOnes.limitUsage", { assigned: usedCapacity, total: requestedLimit })
+              : t("plusOnes.limitMinimum", { count: usedCapacity })
+          }
+          slotProps={{ htmlInput: { inputMode: "numeric", min: usedCapacity, step: 1 } }}
+          sx={{ minWidth: { sm: 220 } }}
+        />
+        <Button
+          disabled={!limitHasChanged || limitSaving}
+          onClick={() => void handleLimitSave()}
+          variant="outlined"
+        >
+          {t("plusOnes.saveLimit")}
+        </Button>
+      </Stack>
 
       <Divider sx={{ my: 2 }} />
 

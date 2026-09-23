@@ -1,0 +1,9 @@
+# Offline codegen overlay for the staff-managed total plus-one limit.
+input UpdateInvitationPlusOneLimitInput {
+  id: ID!
+  maxPlusOnes: Int!
+}
+
+type Mutation {
+  updateInvitationPlusOneLimit(input: UpdateInvitationPlusOneLimitInput!): InvitationPayload!
+}

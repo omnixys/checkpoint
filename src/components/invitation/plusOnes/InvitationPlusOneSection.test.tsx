@@ -11,10 +11,16 @@ import commonEn from "../../../../messages/en/common.json";
 import invitationEn from "../../../../messages/en/invitation.json";
 import InvitationPlusOneSection from "./InvitationPlusOneSection";
 
-const { createPlusOneMutation, updatePlusOneMutation, removePlusOneMutation } = vi.hoisted(() => ({
+const {
+  createPlusOneMutation,
+  updatePlusOneMutation,
+  removePlusOneMutation,
+  updateInvitationPlusOneLimitMutation,
+} = vi.hoisted(() => ({
   createPlusOneMutation: vi.fn(),
   updatePlusOneMutation: vi.fn(),
   removePlusOneMutation: vi.fn(),
+  updateInvitationPlusOneLimitMutation: vi.fn(),
 }));
 
 const enqueueSnackbar = vi.hoisted(() => vi.fn());
@@ -24,6 +30,7 @@ vi.mock("@/checkpoint/hooks/invitation/useInvitationMutation", () => ({
     createPlusOneMutation,
     updatePlusOneMutation,
     removePlusOneMutation,
+    updateInvitationPlusOneLimitMutation,
   }),
 }));
 
@@ -97,6 +104,52 @@ describe("InvitationPlusOneSection", () => {
       />,
     );
     expect(screen.getByRole("button", { name: "Add guest" })).toBeDisabled();
+  });
+
+  it("lets staff increase a zero-capacity invitation's total plus-one limit", async () => {
+    updateInvitationPlusOneLimitMutation.mockResolvedValue({
+      data: { updateInvitationPlusOneLimit: { id: "inv-1", maxInvitees: 2 } },
+    });
+    const onChanged = vi.fn();
+
+    renderWithI18n(
+      <InvitationPlusOneSection
+        invitation={makeInvitation({ maxInvitees: 0 })}
+        canManage={true}
+        onChanged={onChanged}
+      />,
+    );
+
+    fireEvent.change(screen.getByLabelText("Plus-one limit"), { target: { value: "2" } });
+    fireEvent.click(screen.getByRole("button", { name: "Save limit" }));
+
+    await waitFor(() =>
+      expect(updateInvitationPlusOneLimitMutation).toHaveBeenCalledWith({
+        variables: { input: { id: "inv-1", maxPlusOnes: 2 } },
+      }),
+    );
+    expect(await screen.findByText("Remaining slots: 2")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Add guest" })).toBeEnabled();
+    expect(onChanged).toHaveBeenCalledOnce();
+  });
+
+  it("does not allow staff to lower the total below assigned plus-ones", () => {
+    const plusOne = makeInvitation({ id: "po-1", maxInvitees: 0 });
+
+    renderWithI18n(
+      <InvitationPlusOneSection
+        invitation={makeInvitation({ maxInvitees: 0, plusOnes: [plusOne] })}
+        canManage={true}
+        onChanged={vi.fn()}
+      />,
+    );
+
+    fireEvent.change(screen.getByLabelText("Plus-one limit"), { target: { value: "0" } });
+
+    expect(
+      screen.getByText("The limit cannot be less than 1 assigned plus-ones."),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Save limit" })).toBeDisabled();
   });
 
   it("creates a plus-one against the parent invitation and event", async () => {
