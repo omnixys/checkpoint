@@ -1,8 +1,10 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
 import { useSupportChat } from "@/checkpoint/hooks/support/useSupportChat";
 import { useAuth } from "@/checkpoint/providers/AuthProvider";
+import { isGuestSupportChatRoute } from "./support-route";
 
 const SupportChatWidget = dynamic(
   () => import("@/checkpoint/components/support/chat/SupportChatWidget"),
@@ -10,6 +12,7 @@ const SupportChatWidget = dynamic(
 );
 
 export default function AppShellSupportChat() {
+  const pathname = usePathname();
   const { isAuthenticated, currentUser } = useAuth();
 
   const guestName = currentUser?.personalInfo?.firstName
@@ -28,6 +31,7 @@ export default function AppShellSupportChat() {
   } = useSupportChat({});
 
   if (!isAuthenticated) return null;
+  if (isGuestSupportChatRoute(pathname)) return null;
 
   return (
     <SupportChatWidget

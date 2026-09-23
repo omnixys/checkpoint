@@ -64,6 +64,7 @@ export default getRequestConfig(async () => {
     onboarding: (await import(`../../messages/${language}/onboarding.json`)).default,
     scanner: (await import(`../../messages/${language}/scanner.json`)).default,
     qr: (await import(`../../messages/${language}/qr.json`)).default,
+    support: (await import(`../../messages/${language}/support.json`)).default,
     ticket: (await import(`../../messages/${language}/ticket.json`)).default,
   };
 

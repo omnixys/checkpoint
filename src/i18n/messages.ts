@@ -18,6 +18,7 @@ import qr from "../../messages/en/qr.json";
 import rsvp from "../../messages/en/rsvp.json";
 import scanner from "../../messages/en/scanner.json";
 import seat from "../../messages/en/seat.json";
+import support from "../../messages/en/support.json";
 import ticket from "../../messages/en/ticket.json";
 
 export const messages = {
@@ -40,6 +41,7 @@ export const messages = {
   onboarding,
   scanner,
   seat,
+  support,
   qr,
   ticket,
 };

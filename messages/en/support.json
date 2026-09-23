@@ -1,0 +1,24 @@
+{
+  "title": "Support",
+  "headline": "Checkpoint Support",
+  "back": "Back",
+  "guest": "Guest",
+  "status": {
+    "connected": "Live",
+    "connecting": "Connecting...",
+    "reconnecting": "Reconnecting...",
+    "authentication_failed": "Live unavailable",
+    "offline": "Offline"
+  },
+  "startingConversation": "Starting conversation...",
+  "composerPlaceholder": "Type your message...",
+  "emptyTitle": "How can we help?",
+  "emptyDescription": "Describe your issue and we'll connect you with our support team.",
+  "send": "Send message",
+  "sending": "Sending...",
+  "sendFailed": "Failed",
+  "retry": "Retry",
+  "scrollToBottom": "Scroll to bottom",
+  "openChat": "Open chat",
+  "closeChat": "Close chat"
+}

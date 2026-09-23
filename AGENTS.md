@@ -371,3 +371,14 @@ npx playwright test e2e/seat-map-persist.spec.ts --project=chromium
 ```
 
 Fixture ids and names are discovered at runtime, so a re-seeded database does not invalidate the spec. The section test rotates ~501 entities in one burst; the seat service rate limit must be raised in the gitignored `services/seat/.env` (`RATE_LIMIT_REQUEST=5000` — the key is singular, the plural `RATE_LIMIT_REQUESTS` key is dead config) or the run fails with 429. Restore the limit afterwards.
+
+## Support chat layout verification
+
+The `/me/support` guest chat is protected by auth/backend, so its responsive layout is verified in the isolated browser harness (`e2e/support-chat-harness`), which mounts the production `SupportChatPage` with deterministic fixtures at 390x844, 440x956 and 1440x900 and asserts full-bleed mobile width, no outer pill container, visible composer and a ~900px desktop card. The harness stubs `next/navigation` and never touches the backend:
+
+```bash
+node_modules/.bin/playwright test --config e2e/support-chat-harness/playwright.config.ts
+node_modules/.bin/tsc --project e2e/support-chat-harness/tsconfig.json
+```
+
+The harness emulates the AppShell + `/me` layout paddings (fixed for the running viewport) so the local full-bleed negative margins in `SupportChatPage.tsx` are exercised against the same values as the app. Inspect the screenshots in the Playwright report before considering `/me/support` UI work complete.

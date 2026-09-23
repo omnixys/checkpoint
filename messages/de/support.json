@@ -1,0 +1,24 @@
+{
+  "title": "Support",
+  "headline": "Checkpoint Support",
+  "back": "Zurück",
+  "guest": "Gast",
+  "status": {
+    "connected": "Live",
+    "connecting": "Verbindung wird hergestellt ...",
+    "reconnecting": "Verbindung wird wiederhergestellt ...",
+    "authentication_failed": "Live-Nachrichten nicht verfügbar",
+    "offline": "Offline"
+  },
+  "startingConversation": "Unterhaltung wird gestartet ...",
+  "composerPlaceholder": "Nachricht eingeben ...",
+  "emptyTitle": "Wie können wir helfen?",
+  "emptyDescription": "Beschreibe dein Anliegen und wir verbinden dich mit unserem Support-Team.",
+  "send": "Nachricht senden",
+  "sending": "Sendet ...",
+  "sendFailed": "Fehlgeschlagen",
+  "retry": "Erneut senden",
+  "scrollToBottom": "Nach unten scrollen",
+  "openChat": "Chat öffnen",
+  "closeChat": "Chat schließen"
+}

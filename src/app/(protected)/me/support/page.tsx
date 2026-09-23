@@ -19,16 +19,10 @@ export const metadata: Metadata = buildMetadata({
 
 export default function SupportPage(): JSX.Element {
   return (
-    <Box
-      style={{
-        flexGrow: 1,
-        display: "flex",
-        justifyContent: "center",
-        paddingTop: "2rem",
-        minHeight: "60vh",
-      }}
-    >
-      <Suspense fallback={<Skeleton variant="rectangular" width={210} height={118} />}>
+    <Box sx={{ width: "100%" }}>
+      <Suspense
+        fallback={<Skeleton variant="rounded" width="100%" height={540} sx={{ borderRadius: 2 }} />}
+      >
         <SupportChatPageClient />
       </Suspense>
     </Box>
