@@ -72,6 +72,7 @@ export function useInvitationLogic(eventId: string) {
   const { can } = useActiveEvent();
   const canApprove = can(EventPermissionKey.ApproveGuests);
   const canManage = can(EventPermissionKey.ManageInvitations);
+  const canManagePlusOnes = can(EventPermissionKey.ManagePlusOnes);
   const uiLocale = useLocale();
 
   /* -----------------------------------------------------------------------
@@ -829,6 +830,7 @@ export function useInvitationLogic(eventId: string) {
     loading: globalEventInvitationListLoading || fullEventTreeLoading,
     canApprove,
     canManage,
+    canManagePlusOnes,
 
     /* filters */
     search,

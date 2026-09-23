@@ -20,6 +20,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useLocale } from "next-intl";
 import { useEffect, useState } from "react";
 import InvitationDeleteConfirmDialog from "@/checkpoint/components/invitation/dialogs/InvitationDeleteConfirmDialog";
+import InvitationPlusOneSection from "@/checkpoint/components/invitation/plusOnes/InvitationPlusOneSection";
 import { MotionDialogTransition } from "@/checkpoint/components/motion/MotionDialogTransition";
 import {
   AssignSeatDocument,
@@ -288,6 +289,14 @@ export default function InvitationDetailDialog({ logic }: { logic: InvitationLog
                 </Box>
               </>
             )}
+
+            <Divider />
+
+            <InvitationPlusOneSection
+              invitation={inv}
+              canManage={logic.canManagePlusOnes}
+              onChanged={() => void logic.reload()}
+            />
 
             <Divider />
 

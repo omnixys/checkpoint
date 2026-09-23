@@ -175,6 +175,8 @@
   "plusOnes": {
     "title": "Your Plus Ones",
     "subtitle": "Manage all plus-ones for your invitation here. You can add, edit, remove them and optionally see their assigned seat.",
+    "manageTitle": "Plus-ones",
+    "emptyManageDescription": "Add a plus-one to this invitation.",
     "add": "Add guest",
     "removeAll": "Remove all",
     "remaining": "Remaining slots: {count}",

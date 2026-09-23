@@ -175,6 +175,8 @@
   "plusOnes": {
     "title": "Deine Begleitpersonen",
     "subtitle": "Verwalte hier alle Plus-Ones deiner Einladung. Du kannst sie hinzufügen, bearbeiten, entfernen und – falls vorhanden – auch ihren Sitzplatz sehen.",
+    "manageTitle": "Begleitpersonen",
+    "emptyManageDescription": "Füge dieser Einladung eine Begleitperson hinzu.",
     "add": "Gast hinzufügen",
     "removeAll": "Alle entfernen",
     "remaining": "Verbleibende Plätze: {count}",

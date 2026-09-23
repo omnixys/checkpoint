@@ -7,6 +7,7 @@ import { Box, Button, Chip, Divider, Drawer, Stack, Tooltip, Typography } from "
 import { useLocale } from "next-intl";
 import { useEffect, useState } from "react";
 import InvitationDeleteConfirmDialog from "@/checkpoint/components/invitation/dialogs/InvitationDeleteConfirmDialog";
+import InvitationPlusOneSection from "@/checkpoint/components/invitation/plusOnes/InvitationPlusOneSection";
 import {
   AssignSeatDocument,
   type AssignSeatMutation,
@@ -370,6 +371,14 @@ export default function InvitationDetailMobileDialog({ logic }: { logic: Invitat
                 </Stack>
               </>
             )}
+
+            <Divider />
+
+            <InvitationPlusOneSection
+              invitation={inv}
+              canManage={logic.canManagePlusOnes}
+              onChanged={() => void logic.reload()}
+            />
 
             <Divider />
 
