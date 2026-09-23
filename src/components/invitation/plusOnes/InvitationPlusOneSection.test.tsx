@@ -6,7 +6,7 @@ import type {
   InvitationPayload,
   UpdatePlusOneInput,
 } from "@/checkpoint/generated/graphql";
-import { InvitationStatus } from "@/checkpoint/generated/graphql";
+import { InvitationStatus, PhoneNumberType } from "@/checkpoint/generated/graphql";
 import commonEn from "../../../../messages/en/common.json";
 import invitationEn from "../../../../messages/en/invitation.json";
 import InvitationPlusOneSection from "./InvitationPlusOneSection";
@@ -131,6 +131,55 @@ describe("InvitationPlusOneSection", () => {
     });
     expect(onChanged).toHaveBeenCalled();
     expect(enqueueSnackbar).toHaveBeenCalledWith("Plus-one has been added.", expect.anything());
+  });
+
+  it("prefills the parent email and phone when adding a plus-one as staff", async () => {
+    createPlusOneMutation.mockResolvedValue({});
+    const onChanged = vi.fn();
+
+    renderWithI18n(
+      <InvitationPlusOneSection
+        invitation={makeInvitation({
+          email: "jane@example.com",
+          phoneNumbers: [
+            {
+              __typename: "PhoneNumberPayload",
+              id: "ph-1",
+              infoId: "parent-1",
+              createdAt: "2026-01-01T00:00:00.000Z",
+              updatedAt: "2026-01-01T00:00:00.000Z",
+              countryCode: "+49",
+              number: "017012345678",
+              type: PhoneNumberType.MOBILE,
+              label: "Mobile",
+              isPrimary: true,
+            },
+          ],
+        })}
+        canManage={true}
+        onChanged={onChanged}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Add guest" }));
+
+    expect(screen.getByLabelText("Email")).toHaveValue("jane@example.com");
+    expect(screen.getByLabelText("Country code")).toHaveValue("+49");
+    expect(screen.getByLabelText("Phone number")).toHaveValue("017012345678");
+
+    fireEvent.change(screen.getByLabelText("First name"), { target: { value: "Lena" } });
+    fireEvent.change(screen.getByLabelText("Last name"), { target: { value: "Müller" } });
+    fireEvent.click(screen.getByRole("radio", { name: "Over 6" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add" }));
+
+    await waitFor(() => expect(createPlusOneMutation).toHaveBeenCalledTimes(1));
+
+    const input = createPlusOneMutation.mock.calls[0]![0].variables.input as CreatePlusOneInput;
+    expect(input).toMatchObject({
+      email: "jane@example.com",
+      phoneNumbers: [{ countryCode: "+49", number: "017012345678", isPrimary: true }],
+    });
+    expect(onChanged).toHaveBeenCalled();
   });
 
   it("updates an existing plus-one keeping its id", async () => {

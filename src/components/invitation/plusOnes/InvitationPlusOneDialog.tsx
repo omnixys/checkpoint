@@ -41,6 +41,7 @@ interface Props {
   eventId: string;
   invitedByInvitationId: string;
   initialValue?: InvitationPayload | null;
+  parentInvitation?: InvitationPayload | null;
   onClose: () => void;
   onCreate: (input: CreatePlusOneInput) => Promise<void>;
   onUpdate: (input: UpdatePlusOneInput) => Promise<void>;
@@ -61,6 +62,7 @@ export default function InvitationPlusOneDialog({
   eventId,
   invitedByInvitationId,
   initialValue,
+  parentInvitation,
   onClose,
   onCreate,
   onUpdate,
@@ -87,18 +89,20 @@ export default function InvitationPlusOneDialog({
 
     setFirstName(initialValue?.firstName ?? "");
     setLastName(initialValue?.lastName ?? "");
-    setEmail(initialValue?.email ?? "");
     setPlusOneAgeCategory(initialValue?.plusOneAgeCategory ?? null);
 
+    const contactSource = mode === "create" ? parentInvitation : initialValue;
+    setEmail(contactSource?.email ?? "");
+
     const primaryPhone =
-      initialValue?.phoneNumbers?.find((phone) => phone.isPrimary) ??
-      initialValue?.phoneNumbers?.[0];
+      contactSource?.phoneNumbers?.find((phone) => phone.isPrimary) ??
+      contactSource?.phoneNumbers?.[0];
 
     setCountryCode(primaryPhone?.countryCode ?? "+49");
     setNumber(primaryPhone?.number ?? "");
     setPhoneType(primaryPhone?.type ?? PhoneNumberType.WHATSAPP);
     setLabel(primaryPhone?.label ?? "");
-  }, [initialValue, open]);
+  }, [initialValue, parentInvitation, open, mode]);
 
   const title =
     mode === "create"

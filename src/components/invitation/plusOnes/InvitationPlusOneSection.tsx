@@ -214,6 +214,7 @@ export default function InvitationPlusOneSection({ invitation, canManage, onChan
         eventId={invitation.eventId}
         invitedByInvitationId={invitation.id}
         initialValue={editing}
+        parentInvitation={invitation}
         onClose={closeDialog}
         onCreate={handleCreate}
         onUpdate={handleUpdate}
